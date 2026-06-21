@@ -1,0 +1,9 @@
+mlir enable dump = 1
+always compile = 1
+
+benchmarking
+
+send it back to glubal memory and check and do wgmma
+if only wgmma is wrong then check race condition
+
+find llvm.shfl_sync or sync in mlir dump, they are expensive

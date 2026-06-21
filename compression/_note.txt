@@ -1,0 +1,63 @@
+This txt contains the steps to write a kernel that compresses a pruned matrix in the GPU runtime
+
+run all test with:
+load_module && start_gluon && tpython [file_name]
+
+1. Ignore wgmma, pure compression
+    Input: A_pruned
+
+    A: sliced the matrix into 4
+    B: sliced the matrix into 4 without gl.gather
+
+2. Ignore metadata
+    Input: A_pruned, B, C, E, ...
+
+    A. compress and store back to smem
+    B. compress and use in wgmma
+    C: compress without gl.gather and use in wgmma
+
+3. Match the metadata
+    Input: A_pruned, B, C, ...
+
+    A. create metadata and store back to smem
+    B. create metadata and use in wgmma using LinearLayout on A matrix and metadata tensor canonical to DotOperantLayout
+    C. create metadata and use in wgmma using BlockedLayout on A matrix (failed)
+    D. create metadata without gl.gather and use in wgmma. lazily use convert layout
+    E. create metadata without gl.gather and use in wgmma. eliminate convert layout on metadata.
+    F. create metadata without gl.gather using reduce. 
+    G. create metadata without gl.gather and convert layout on non zero tensor.
+    H. create metadata without gl.gather and use better layout. FASTEST
+    I. create metadata without gl.gather or gl.convert_layout using ptx. failed
+    J. create metadata without gl.gather or gl.convert_layout using ptx. store back to smem to check if data is in the right register. 
+    T. create metadata and use in wgmma using BlockedLayout on A matrix to reduce nvvm.shfl.sync (induced nvvm.barrier0 instruction)
+
+4. try without convert_layout
+    Input: A_pruned, B, C, ...
+
+5. extend to gluon_loop
+    Input: A_pruned, B, C, ...
+
+    5.  tile wgmma using LinearLayout on A matrix canonical to DotOperantLayout
+    5.1 tile wgmma using BlockedLayout on A matrix to reduce nvvm.shfl.sync (induced nvvm.barrier0 instruction)
+
+6. extend to persistent kernel
+
+7. extend to pipelined persistent kernel
+
+    7.  tile wgmma using LinearLayout on A matrix canonical to DotOperantLayout
+    7.1 tile wgmma using BlockedLayout on A matrix to reduce nvvm.shfl.sync (induced nvvm.barrier0 instruction)
+    7.2 tile wgmma without gather. lazily use convert layout. FASTEST
+    7.3 tile wgmma without gather using reduce
+    7.4 prototype of tile wgmma using ptx to replace gl.convert_layout
+
+8. Benchmarking
+    8.1 benchmarking gather
+    8.2 benchmarking compression
+    8.3 benchmarking single tile wgmma between 3B, 3C and 3T
+    8.5 benchmarking tiled wgmma between 5, 5.1 and dense tiled wgmma
+    8.7 benchmarking persistent wgmma between 7, 7.1 and dense tiled wgmma, produces benchmarking graph
+
+9. profiling
+    9.1 find best layout for kernels with maximum shape
+    9.2 find best ratio between throughput of dense wgmma and compression kernel with all combo of shapes and layout
+    9.3 find best ratio, only taking the best performing layout for each shape 

@@ -1,0 +1,10 @@
+install triton 3.7 with apptailner
+get tiront version to 3.7
+change source 
+
+2-4 sparse
+compression
+write kernel to do compression during runtime
+load tiles to registers, compress, then put it into mma
+
+look into ptx sparse doc

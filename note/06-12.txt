@@ -1,0 +1,15 @@
+load 16x64
+
+for matrix
+make sure each thread have the correct data
+
+for metadata
+keep the bit0123
+shift the bit by their number of bits
+use reduction xor sum to reduce to t_{2i}
+
+instead of or on meta row 154 use reduction
+can eliminate meta_bit reshuffling???
+
+make the whole metadata instead of making one part and let the metadata selector do stuff
+put a placeholder wgmma, load the metadata back to gmem, check the layout.
