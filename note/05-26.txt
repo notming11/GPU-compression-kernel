@@ -1,0 +1,16 @@
+write kernel that takes pruned but not compressed matrix and uses the correct layout while loading it to register using dotOperand
+i.e. move the compression function inside the kernel
+use linear layout and layout conversion???
+
+communicate metadata maybe using warp shuffling/reduction operator, e.g. xor sum
+easier to just use layout
+inline_asm for last ditch efforts
+convert to layout with element in different threads
+
+able to print the layout in gluon (find on the repo, get_view())
+
+start with dense single tile, then prune but hardcode metadata, last do metadata in kernel
+
+for dense use k=16 version
+
+just want a working version 

@@ -1,0 +1,3 @@
+Benchmarking WGMMA
+==================
+INSTR_SHAPE_N time (us)

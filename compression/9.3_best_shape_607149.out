@@ -1,0 +1,889 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+
+Starting manual autotuning search...
+--------------------------------------------------------------------------------
+[1/167] Shape 49152-16-49152:
+  -> Best Dense   :   49.62 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   39.76 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   92.85 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[2/167] Shape 24576-16-49152:
+  -> Best Dense   :   48.47 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   33.73 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   79.36 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[3/167] Shape 49152-16-24576:
+  -> Best Dense   :   48.87 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   39.16 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   89.88 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[4/167] Shape 32768-16-32768:
+  -> Best Dense   :   49.05 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   39.17 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   90.82 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+--------------------------------------------------------------------------------
+[5/167] Shape 16384-16-49152:
+  -> Best Dense   :   48.53 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   39.01 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   90.62 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[6/167] Shape 24576-16-32768:
+  -> Best Dense   :   48.13 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   33.52 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   78.47 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[7/167] Shape 32768-16-24576:
+  -> Best Dense   :   48.17 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   38.82 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   88.58 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[8/167] Shape 49152-16-16384:
+  -> Best Dense   :   48.49 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   38.71 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   88.79 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+--------------------------------------------------------------------------------
+[9/167] Shape 12288-16-49152:
+  -> Best Dense   :   47.01 TFLOPS | Config: BM=128, BN= 64, BK=128, warps=16, buffers=4
+  -> Best Runtime :   29.63 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   82.42 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[10/167] Shape 24576-16-24576:
+  -> Best Dense   :   46.87 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   33.31 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   76.80 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[11/167] Shape 49152-16-12288:
+  -> Best Dense   :   47.15 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   38.24 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   86.14 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[12/167] Shape 16384-16-32768:
+  -> Best Dense   :   47.96 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   38.63 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   88.20 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[13/167] Shape 32768-16-16384:
+  -> Best Dense   :   47.86 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   38.31 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   86.09 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+--------------------------------------------------------------------------------
+[14/167] Shape 8192-16-49152:
+  -> Best Dense   :   46.74 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   33.05 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   73.99 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[15/167] Shape 12288-16-32768:
+  -> Best Dense   :   46.05 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   29.17 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   79.62 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[16/167] Shape 16384-16-24576:
+  -> Best Dense   :   46.76 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   38.10 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   84.80 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=5
+--------------------------------------------------------------------------------
+[17/167] Shape 24576-16-16384:
+  -> Best Dense   :   46.40 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   32.98 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   74.64 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=5
+--------------------------------------------------------------------------------
+[18/167] Shape 32768-16-12288:
+  -> Best Dense   :   46.64 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   37.78 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   83.23 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[19/167] Shape 49152-16-8192:
+  -> Best Dense   :   46.73 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   37.59 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   83.30 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+--------------------------------------------------------------------------------
+[20/167] Shape 6144-16-49152:
+  -> Best Dense   :   43.35 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   24.79 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   58.94 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[21/167] Shape 12288-16-24576:
+  -> Best Dense   :   44.51 TFLOPS | Config: BM=128, BN= 64, BK=128, warps=16, buffers=4
+  -> Best Runtime :   29.02 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   77.04 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[22/167] Shape 24576-16-12288:
+  -> Best Dense   :   44.81 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   32.55 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   73.47 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=6
+--------------------------------------------------------------------------------
+[23/167] Shape 49152-16-6144:
+  -> Best Dense   :   45.01 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   36.78 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   79.64 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[24/167] Shape 8192-16-32768:
+  -> Best Dense   :   45.72 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   32.57 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   71.13 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[25/167] Shape 16384-16-16384:
+  -> Best Dense   :   45.69 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   37.14 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   80.86 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[26/167] Shape 32768-16-8192:
+  -> Best Dense   :   45.46 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   36.62 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   78.50 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[27/167] Shape 4096-16-49152:
+  -> Best Dense   :   39.12 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   17.56 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   51.05 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[28/167] Shape 6144-16-32768:
+  -> Best Dense   :   41.94 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   24.63 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   57.51 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[29/167] Shape 8192-16-24576:
+  -> Best Dense   :   43.56 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   32.09 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   69.06 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[30/167] Shape 12288-16-16384:
+  -> Best Dense   :   43.30 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   28.31 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   72.74 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[31/167] Shape 16384-16-12288:
+  -> Best Dense   :   43.83 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   36.30 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   76.15 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[32/167] Shape 24576-16-8192:
+  -> Best Dense   :   43.30 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   31.79 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   69.47 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=5
+--------------------------------------------------------------------------------
+[33/167] Shape 32768-16-6144:
+  -> Best Dense   :   43.49 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   35.93 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   74.83 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[34/167] Shape 49152-16-4096:
+  -> Best Dense   :   43.79 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   35.56 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   74.43 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[35/167] Shape 3072-16-49152:
+  -> Best Dense   :   30.56 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   13.19 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   39.85 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[36/167] Shape 6144-16-24576:
+  -> Best Dense   :   40.17 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   24.25 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   55.45 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[37/167] Shape 12288-16-12288:
+  -> Best Dense   :   41.05 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   27.92 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   68.33 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[38/167] Shape 24576-16-6144:
+  -> Best Dense   :   41.14 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   31.05 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   66.08 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[39/167] Shape 49152-16-3072:
+  -> Best Dense   :   41.63 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   34.07 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   69.94 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[40/167] Shape 4096-16-32768:
+  -> Best Dense   :   37.64 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   17.30 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   49.62 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[41/167] Shape 8192-16-16384:
+  -> Best Dense   :   41.58 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   31.18 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   64.20 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[42/167] Shape 16384-16-8192:
+  -> Best Dense   :   41.52 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   34.71 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   69.15 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[43/167] Shape 32768-16-4096:
+  -> Best Dense   :   41.24 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   34.21 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   68.31 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[44/167] Shape 2048-16-49152:
+  -> Best Dense   :   22.63 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    8.61 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   29.40 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[45/167] Shape 3072-16-32768:
+  -> Best Dense   :   29.90 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   13.03 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   39.17 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[46/167] Shape 4096-16-24576:
+  -> Best Dense   :   35.85 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   17.05 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   47.25 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[47/167] Shape 6144-16-16384:
+  -> Best Dense   :   37.56 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   23.87 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   52.30 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[48/167] Shape 8192-16-12288:
+  -> Best Dense   :   38.95 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   30.36 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   60.04 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[49/167] Shape 12288-16-8192:
+  -> Best Dense   :   38.57 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   27.05 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   61.83 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[50/167] Shape 16384-16-6144:
+  -> Best Dense   :   39.09 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   33.55 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   63.51 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[51/167] Shape 24576-16-4096:
+  -> Best Dense   :   38.60 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   29.71 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   60.78 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[52/167] Shape 32768-16-3072:
+  -> Best Dense   :   38.94 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   32.69 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   62.94 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[53/167] Shape 49152-16-2048:
+  -> Best Dense   :   38.78 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   32.19 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   63.41 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[54/167] Shape 1536-16-49152:
+  -> Best Dense   :   18.72 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    6.37 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   24.72 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[55/167] Shape 3072-16-24576:
+  -> Best Dense   :   28.69 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   12.88 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   38.23 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[56/167] Shape 6144-16-12288:
+  -> Best Dense   :   35.05 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   23.39 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   50.01 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[57/167] Shape 12288-16-6144:
+  -> Best Dense   :   35.88 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   25.98 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   56.56 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[58/167] Shape 24576-16-3072:
+  -> Best Dense   :   36.00 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   28.56 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   55.88 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[59/167] Shape 49152-16-1536:
+  -> Best Dense   :   36.16 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   30.13 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   57.15 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[60/167] Shape 2048-16-32768:
+  -> Best Dense   :   22.25 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    8.55 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   29.08 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[61/167] Shape 4096-16-16384:
+  -> Best Dense   :   33.05 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   16.56 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   43.95 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[62/167] Shape 8192-16-8192:
+  -> Best Dense   :   35.25 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   28.83 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   53.25 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[63/167] Shape 16384-16-4096:
+  -> Best Dense   :   35.43 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   31.24 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   56.17 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[64/167] Shape 32768-16-2048:
+  -> Best Dense   :   35.39 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   30.00 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   56.16 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[65/167] Shape 1024-16-49152:
+  -> Best Dense   :   14.13 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    4.24 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   16.60 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[66/167] Shape 1536-16-32768:
+  -> Best Dense   :   18.45 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    6.32 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   23.95 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[67/167] Shape 2048-16-24576:
+  -> Best Dense   :   21.62 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    8.48 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   28.23 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[68/167] Shape 3072-16-16384:
+  -> Best Dense   :   27.10 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   12.57 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   35.93 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[69/167] Shape 4096-16-12288:
+  -> Best Dense   :   30.85 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   16.17 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   40.96 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[70/167] Shape 6144-16-8192:
+  -> Best Dense   :   31.26 TFLOPS | Config: BM= 64, BN= 64, BK=256, warps= 4, buffers=3
+  -> Best Runtime :   22.31 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   45.24 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[71/167] Shape 8192-16-6144:
+  -> Best Dense   :   31.99 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   27.36 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   48.91 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[72/167] Shape 12288-16-4096:
+  -> Best Dense   :   32.00 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   24.21 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   49.73 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[73/167] Shape 16384-16-3072:
+  -> Best Dense   :   32.40 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=3
+  -> Best Runtime :   29.02 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   51.54 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[74/167] Shape 24576-16-2048:
+  -> Best Dense   :   32.27 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   26.62 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   50.12 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[75/167] Shape 32768-16-1536:
+  -> Best Dense   :   32.39 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   27.99 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   50.30 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[76/167] Shape 49152-16-1024:
+  -> Best Dense   :   32.50 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   27.44 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   50.28 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[77/167] Shape 768-16-49152:
+  -> Best Dense   :   10.64 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.19 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   12.49 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[78/167] Shape 1536-16-24576:
+  -> Best Dense   :   18.00 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    6.25 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   23.13 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[79/167] Shape 3072-16-12288:
+  -> Best Dense   :   25.78 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   12.27 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   33.78 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[80/167] Shape 6144-16-6144:
+  -> Best Dense   :   28.80 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   21.33 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   41.92 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[81/167] Shape 12288-16-3072:
+  -> Best Dense   :   29.04 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   22.91 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   46.11 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[82/167] Shape 24576-16-1536:
+  -> Best Dense   :   29.08 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   24.91 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   45.38 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[83/167] Shape 49152-16-768:
+  -> Best Dense   :   29.44 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   25.28 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=4
+  -> Best Precomp :   46.37 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[84/167] Shape 1024-16-32768:
+  -> Best Dense   :   13.81 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    4.21 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   16.06 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[85/167] Shape 2048-16-16384:
+  -> Best Dense   :   20.73 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    8.33 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   26.65 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[86/167] Shape 4096-16-8192:
+  -> Best Dense   :   27.04 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   15.41 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   36.86 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[87/167] Shape 8192-16-4096:
+  -> Best Dense   :   28.31 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   24.80 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Precomp :   42.76 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[88/167] Shape 16384-16-2048:
+  -> Best Dense   :   28.80 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   25.82 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   46.57 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[89/167] Shape 32768-16-1024:
+  -> Best Dense   :   28.88 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   25.19 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=5
+  -> Best Precomp :   44.08 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[90/167] Shape 768-16-32768:
+  -> Best Dense   :   10.38 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.17 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   12.12 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[91/167] Shape 1024-16-24576:
+  -> Best Dense   :   13.46 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    4.17 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   15.61 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[92/167] Shape 1536-16-16384:
+  -> Best Dense   :   17.28 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    6.15 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   21.64 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[93/167] Shape 2048-16-12288:
+  -> Best Dense   :   19.88 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    8.20 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   25.61 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[94/167] Shape 3072-16-8192:
+  -> Best Dense   :   23.02 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   11.74 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   30.94 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[95/167] Shape 4096-16-6144:
+  -> Best Dense   :   24.91 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   14.81 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   34.52 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[96/167] Shape 6144-16-4096:
+  -> Best Dense   :   25.57 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   19.61 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   37.80 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[97/167] Shape 8192-16-3072:
+  -> Best Dense   :   25.93 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   22.73 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   39.83 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[98/167] Shape 12288-16-2048:
+  -> Best Dense   :   25.80 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   20.49 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   41.02 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[99/167] Shape 16384-16-1536:
+  -> Best Dense   :   26.07 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   24.13 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=5
+  -> Best Precomp :   41.63 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[100/167] Shape 24576-16-1024:
+  -> Best Dense   :   26.31 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   22.23 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   39.41 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[101/167] Shape 32768-16-768:
+  -> Best Dense   :   26.05 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   22.97 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=5
+  -> Best Precomp :   40.68 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[102/167] Shape 768-16-24576:
+  -> Best Dense   :   10.08 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.13 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   11.77 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[103/167] Shape 1536-16-12288:
+  -> Best Dense   :   16.50 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    6.05 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   20.52 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[104/167] Shape 3072-16-6144:
+  -> Best Dense   :   21.44 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   11.20 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   28.55 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[105/167] Shape 6144-16-3072:
+  -> Best Dense   :   23.49 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   18.29 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   34.33 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[106/167] Shape 12288-16-1536:
+  -> Best Dense   :   23.82 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   18.60 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=5
+  -> Best Precomp :   36.98 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[107/167] Shape 24576-16-768:
+  -> Best Dense   :   23.85 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   20.33 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   35.89 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[108/167] Shape 1024-16-16384:
+  -> Best Dense   :   12.72 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    4.11 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   14.77 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[109/167] Shape 2048-16-8192:
+  -> Best Dense   :   18.24 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    7.90 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   23.25 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[110/167] Shape 4096-16-4096:
+  -> Best Dense   :   22.25 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   13.67 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   30.10 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[111/167] Shape 8192-16-2048:
+  -> Best Dense   :   23.32 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   20.31 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   34.56 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[112/167] Shape 16384-16-1024:
+  -> Best Dense   :   23.90 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   21.36 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=5
+  -> Best Precomp :   35.25 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[113/167] Shape 768-16-16384:
+  -> Best Dense   :    9.59 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.09 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   11.18 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[114/167] Shape 1024-16-12288:
+  -> Best Dense   :   12.17 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    4.04 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   14.00 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[115/167] Shape 1536-16-8192:
+  -> Best Dense   :   15.25 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    5.86 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   18.53 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[116/167] Shape 2048-16-6144:
+  -> Best Dense   :   17.03 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    7.63 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   21.10 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[117/167] Shape 3072-16-4096:
+  -> Best Dense   :   19.04 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   10.47 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   24.62 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[118/167] Shape 4096-16-3072:
+  -> Best Dense   :   20.32 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   12.73 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   26.88 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[119/167] Shape 6144-16-2048:
+  -> Best Dense   :   20.87 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   16.03 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   28.97 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[120/167] Shape 8192-16-1536:
+  -> Best Dense   :   21.03 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   18.27 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Precomp :   30.34 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[121/167] Shape 12288-16-1024:
+  -> Best Dense   :   20.95 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 8, buffers=4
+  -> Best Runtime :   16.39 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=4
+  -> Best Precomp :   29.69 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[122/167] Shape 16384-16-768:
+  -> Best Dense   :   21.34 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   18.95 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=5
+  -> Best Precomp :   30.39 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[123/167] Shape 768-16-12288:
+  -> Best Dense   :    9.20 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.05 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   10.56 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[124/167] Shape 1536-16-6144:
+  -> Best Dense   :   14.07 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    5.69 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   16.73 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[125/167] Shape 3072-16-3072:
+  -> Best Dense   :   17.67 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    9.81 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   21.66 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[126/167] Shape 6144-16-1536:
+  -> Best Dense   :   18.94 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   14.54 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   24.40 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[127/167] Shape 12288-16-768:
+  -> Best Dense   :   18.81 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Runtime :   14.70 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=3
+  -> Best Precomp :   25.63 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=4
+--------------------------------------------------------------------------------
+[128/167] Shape 1024-16-8192:
+  -> Best Dense   :   11.25 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.91 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   12.67 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[129/167] Shape 2048-16-4096:
+  -> Best Dense   :   15.13 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    7.16 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   17.90 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[130/167] Shape 4096-16-2048:
+  -> Best Dense   :   17.72 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   11.29 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   21.64 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[131/167] Shape 8192-16-1024:
+  -> Best Dense   :   18.28 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :   15.41 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Precomp :   23.80 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[132/167] Shape 768-16-8192:
+  -> Best Dense   :    8.52 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    2.95 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    9.60 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[133/167] Shape 1024-16-6144:
+  -> Best Dense   :   10.41 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.81 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   11.54 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[134/167] Shape 1536-16-4096:
+  -> Best Dense   :   12.50 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    5.38 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   14.28 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[135/167] Shape 2048-16-3072:
+  -> Best Dense   :   13.50 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    6.71 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   15.58 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=7
+--------------------------------------------------------------------------------
+[136/167] Shape 3072-16-2048:
+  -> Best Dense   :   14.76 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    8.69 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   17.40 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[137/167] Shape 4096-16-1536:
+  -> Best Dense   :   15.63 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   10.10 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   18.24 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[138/167] Shape 6144-16-1024:
+  -> Best Dense   :   15.82 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :   12.19 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   19.12 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[139/167] Shape 8192-16-768:
+  -> Best Dense   :   15.73 TFLOPS | Config: BM= 64, BN= 64, BK= 64, warps= 4, buffers=7
+  -> Best Runtime :   13.36 TFLOPS | Config: BM= 64, BN= 64, BK= 64, warps= 4, buffers=5
+  -> Best Precomp :   19.43 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[140/167] Shape 768-16-6144:
+  -> Best Dense   :    7.86 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    2.88 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    8.76 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[141/167] Shape 1536-16-3072:
+  -> Best Dense   :   11.02 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    5.08 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   12.32 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[142/167] Shape 3072-16-1536:
+  -> Best Dense   :   12.57 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    7.81 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   14.64 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[143/167] Shape 6144-16-768:
+  -> Best Dense   :   13.18 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=4
+  -> Best Runtime :   10.48 TFLOPS | Config: BM= 64, BN= 64, BK= 64, warps= 4, buffers=5
+  -> Best Precomp :   15.24 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[144/167] Shape 1024-16-4096:
+  -> Best Dense   :    9.05 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.61 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    9.86 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[145/167] Shape 2048-16-2048:
+  -> Best Dense   :   10.96 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    5.98 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   12.29 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[146/167] Shape 4096-16-1024:
+  -> Best Dense   :   12.46 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    8.41 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   13.98 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[147/167] Shape 768-16-4096:
+  -> Best Dense   :    6.89 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    2.72 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    7.49 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[148/167] Shape 1024-16-3072:
+  -> Best Dense   :    7.90 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.41 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    8.62 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[149/167] Shape 1536-16-2048:
+  -> Best Dense   :    8.87 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    4.60 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    9.81 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[150/167] Shape 2048-16-1536:
+  -> Best Dense   :    9.34 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    5.39 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   10.48 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[151/167] Shape 3072-16-1024:
+  -> Best Dense   :    9.74 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    6.44 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :   11.33 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[152/167] Shape 4096-16-768:
+  -> Best Dense   :    9.90 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    7.36 TFLOPS | Config: BM= 64, BN= 64, BK= 64, warps= 4, buffers=4
+  -> Best Precomp :   11.46 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[153/167] Shape 768-16-3072:
+  -> Best Dense   :    6.06 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    2.57 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    6.55 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[154/167] Shape 1536-16-1536:
+  -> Best Dense   :    7.55 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    4.20 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    8.14 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[155/167] Shape 3072-16-768:
+  -> Best Dense   :    7.77 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    5.61 TFLOPS | Config: BM= 64, BN= 64, BK= 64, warps= 4, buffers=4
+  -> Best Precomp :    9.07 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[156/167] Shape 1024-16-2048:
+  -> Best Dense   :    6.29 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    3.08 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    6.84 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[157/167] Shape 2048-16-1024:
+  -> Best Dense   :    7.19 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    4.46 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    8.01 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[158/167] Shape 768-16-2048:
+  -> Best Dense   :    4.85 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    2.33 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    5.25 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[159/167] Shape 1024-16-1536:
+  -> Best Dense   :    5.37 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    2.83 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    5.71 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[160/167] Shape 1536-16-1024:
+  -> Best Dense   :    5.75 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    3.56 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    6.17 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[161/167] Shape 2048-16-768:
+  -> Best Dense   :    5.77 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    3.85 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    6.41 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[162/167] Shape 768-16-1536:
+  -> Best Dense   :    4.09 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+  -> Best Runtime :    2.14 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    4.37 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[163/167] Shape 1536-16-768:
+  -> Best Dense   :    4.58 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    3.10 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    4.96 TFLOPS | Config: BM=128, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[164/167] Shape 1024-16-1024:
+  -> Best Dense   :    4.08 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    2.40 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    4.32 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[165/167] Shape 768-16-1024:
+  -> Best Dense   :    3.13 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    1.82 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    3.28 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+[166/167] Shape 1024-16-768:
+  -> Best Dense   :    3.31 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    2.09 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    3.45 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+[167/167] Shape 768-16-768:
+  -> Best Dense   :    2.54 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+  -> Best Runtime :    1.58 TFLOPS | Config: BM= 64, BN=128, BK=128, warps= 4, buffers=3
+  -> Best Precomp :    2.64 TFLOPS | Config: BM= 64, BN= 64, BK=128, warps= 4, buffers=5
+--------------------------------------------------------------------------------
+
+================================================================================
+🏆 GLOBAL WINNER: HIGHEST RUNTIME vs DENSE RATIO
+================================================================================
+Shape  : 16384-16-1536
+Ratio  : 0.926x speedup
+Layout : BM=128, BN=128, BK= 64, warps= 4, buffers=5
+================================================================================
+
+
+scontrol show job 607149
+JobId=607149 JobName=9.3_best_shape
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=1270013 Nice=0 Account=rrg-mmehride QOS=normal
+   JobState=COMPLETING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=01:28:55 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-06-18T13:18:17 EligibleTime=2026-06-18T13:18:17
+   AccrueTime=2026-06-18T13:18:17
+   StartTime=2026-06-18T13:19:15 EndTime=2026-06-18T14:48:10 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-06-18T13:19:15 Scheduler=Main
+   Partition=compute AllocNode:Sid=trig-login01:1823643
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0017
+   BatchHost=trig0017
+   NumNodes=1 NumCPUs=24 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=1,mem=192500M,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=192500M,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=192500M MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/scratch/notming/compression/9.3_sbatch_best_shape.sh
+   SubmitLine=SBATCH --comment /opt/slurm/bin/sbatch --export=NONE --get-user-env 9.3_sbatch_best_shape.sh --export=NONE --get-user-env 9.3_sbatch_best_shape.sh
+   WorkDir=/scratch/notming/compression
+   Comment=/opt/slurm/bin/sbatch --export=NONE --get-user-env 9.3_sbatch_best_shape.sh
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/scratch/notming/compression/9.3_best_shape_607149.out
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 607149
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+607149       9.3_best_+ rrg-mmehr+   01:28:55                         00:00:00   00:00:00      0:0 
+607149.batch      batch rrg-mmehr+   01:28:55                         00:00:00   00:00:00      0:0 
+607149.exte+     extern rrg-mmehr+   01:28:55                         00:00:00   00:00:00      0:0 
+

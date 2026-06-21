@@ -1,0 +1,20 @@
+debug job
+debugjob --account=def-mmehride
+run on login node for vscode agent
+run file inside the interactive job
+
+first 5 important
+persistent and warp ikmportant
+how gluon/layout work
+hooper specific feature
+wgmma
+tma warp specialization
+read multi cta
+
+5th generation not important
+native tmr not important tc gen also clc no
+ingore convolution
+
+
+dynamic compression
+linear layout

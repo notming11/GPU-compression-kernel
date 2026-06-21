@@ -1,0 +1,10 @@
+.venv/
+gluon_spmm/
+
+compiler_scratch/
+.triton_cache/
+triton_env/
+
+ondemand/
+
+*.sif

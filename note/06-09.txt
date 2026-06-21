@@ -1,0 +1,6 @@
+come up with different logic to compression
+
+make sure load is coalesced
+analyse load
+make sure threads have data that they need afterwards
+need to use ldmatrix

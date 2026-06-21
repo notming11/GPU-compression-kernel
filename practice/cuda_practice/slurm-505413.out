@@ -1,0 +1,37 @@
+
+scontrol show job 505413
+JobId=505413 JobName=debugjob-1-notming
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=11135136 Nice=0 Account=def-mmehride QOS=normal
+   JobState=COMPLETING Reason=TimeLimit Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=02:00:23 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-05-13T17:04:46 EligibleTime=2026-05-13T17:04:46
+   AccrueTime=2026-05-13T17:04:46
+   StartTime=2026-05-13T17:04:46 EndTime=2026-05-13T19:05:09 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-05-13T17:04:46 Scheduler=Main
+   Partition=debug AllocNode:Sid=trig-login01:325455
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0005
+   BatchHost=trig0005
+   NumNodes=1 NumCPUs=24 NumTasks=24 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=24,mem=192500M,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=192500M,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=192500M MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/bin/sh
+   SubmitLine=SALLOC --comment /opt/slurm/bin/salloc --time=2:0:0 --job-name=debugjob-1-notming --nodes=1 --ntasks=24 --account=def-mmehride -p debug --gpus-per-node=1 --account=def-mmehride --time=2:0:0 --job-name=debugjob-1-notming --nodes=1 --ntasks=24 --account=def-mmehride -p debug --gpus-per-node=1 --account=def-mmehride
+   WorkDir=/scratch/notming/cuda_practice
+   Comment=/opt/slurm/bin/salloc --time=2:0:0 --job-name=debugjob-1-notming --nodes=1 --ntasks=24 --account=def-mmehride -p debug --gpus-per-node=1 --account=def-mmehride
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 505413
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+505413       debugjob-+ def-mmehr+   02:00:23                         00:00:00   00:00:00      0:0 
+505413.inte+ interacti+ def-mmehr+   02:00:23                         00:00:00   00:00:00      0:0 
+505413.exte+     extern def-mmehr+   02:00:23                         00:00:00   00:00:00      0:0 
+

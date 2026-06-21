@@ -1,0 +1,379 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+start 49152-16-49152
+finish 49152-16-49152, (1/167)
+start 24576-16-49152
+finish 24576-16-49152, (2/167)
+start 49152-16-24576
+finish 49152-16-24576, (3/167)
+start 32768-16-32768
+finish 32768-16-32768, (4/167)
+start 16384-16-49152
+finish 16384-16-49152, (5/167)
+start 24576-16-32768
+finish 24576-16-32768, (6/167)
+start 32768-16-24576
+finish 32768-16-24576, (7/167)
+start 49152-16-16384
+finish 49152-16-16384, (8/167)
+start 12288-16-49152
+finish 12288-16-49152, (9/167)
+start 24576-16-24576
+finish 24576-16-24576, (10/167)
+start 49152-16-12288
+finish 49152-16-12288, (11/167)
+start 16384-16-32768
+finish 16384-16-32768, (12/167)
+start 32768-16-16384
+finish 32768-16-16384, (13/167)
+start 8192-16-49152
+finish 8192-16-49152, (14/167)
+start 12288-16-32768
+finish 12288-16-32768, (15/167)
+start 16384-16-24576
+finish 16384-16-24576, (16/167)
+start 24576-16-16384
+finish 24576-16-16384, (17/167)
+start 32768-16-12288
+finish 32768-16-12288, (18/167)
+start 49152-16-8192
+finish 49152-16-8192, (19/167)
+start 6144-16-49152
+finish 6144-16-49152, (20/167)
+start 12288-16-24576
+finish 12288-16-24576, (21/167)
+start 24576-16-12288
+finish 24576-16-12288, (22/167)
+start 49152-16-6144
+finish 49152-16-6144, (23/167)
+start 8192-16-32768
+finish 8192-16-32768, (24/167)
+start 16384-16-16384
+finish 16384-16-16384, (25/167)
+start 32768-16-8192
+finish 32768-16-8192, (26/167)
+start 4096-16-49152
+finish 4096-16-49152, (27/167)
+start 6144-16-32768
+finish 6144-16-32768, (28/167)
+start 8192-16-24576
+finish 8192-16-24576, (29/167)
+start 12288-16-16384
+finish 12288-16-16384, (30/167)
+start 16384-16-12288
+finish 16384-16-12288, (31/167)
+start 24576-16-8192
+finish 24576-16-8192, (32/167)
+start 32768-16-6144
+finish 32768-16-6144, (33/167)
+start 49152-16-4096
+finish 49152-16-4096, (34/167)
+start 3072-16-49152
+finish 3072-16-49152, (35/167)
+start 6144-16-24576
+finish 6144-16-24576, (36/167)
+start 12288-16-12288
+finish 12288-16-12288, (37/167)
+start 24576-16-6144
+finish 24576-16-6144, (38/167)
+start 49152-16-3072
+finish 49152-16-3072, (39/167)
+start 4096-16-32768
+finish 4096-16-32768, (40/167)
+start 8192-16-16384
+finish 8192-16-16384, (41/167)
+start 16384-16-8192
+finish 16384-16-8192, (42/167)
+start 32768-16-4096
+finish 32768-16-4096, (43/167)
+start 2048-16-49152
+finish 2048-16-49152, (44/167)
+start 3072-16-32768
+finish 3072-16-32768, (45/167)
+start 4096-16-24576
+finish 4096-16-24576, (46/167)
+start 6144-16-16384
+finish 6144-16-16384, (47/167)
+start 8192-16-12288
+finish 8192-16-12288, (48/167)
+start 12288-16-8192
+finish 12288-16-8192, (49/167)
+start 16384-16-6144
+finish 16384-16-6144, (50/167)
+start 24576-16-4096
+finish 24576-16-4096, (51/167)
+start 32768-16-3072
+finish 32768-16-3072, (52/167)
+start 49152-16-2048
+finish 49152-16-2048, (53/167)
+start 1536-16-49152
+finish 1536-16-49152, (54/167)
+start 3072-16-24576
+finish 3072-16-24576, (55/167)
+start 6144-16-12288
+finish 6144-16-12288, (56/167)
+start 12288-16-6144
+finish 12288-16-6144, (57/167)
+start 24576-16-3072
+finish 24576-16-3072, (58/167)
+start 49152-16-1536
+finish 49152-16-1536, (59/167)
+start 2048-16-32768
+finish 2048-16-32768, (60/167)
+start 4096-16-16384
+finish 4096-16-16384, (61/167)
+start 8192-16-8192
+finish 8192-16-8192, (62/167)
+start 16384-16-4096
+finish 16384-16-4096, (63/167)
+start 32768-16-2048
+finish 32768-16-2048, (64/167)
+start 1024-16-49152
+finish 1024-16-49152, (65/167)
+start 1536-16-32768
+finish 1536-16-32768, (66/167)
+start 2048-16-24576
+finish 2048-16-24576, (67/167)
+start 3072-16-16384
+finish 3072-16-16384, (68/167)
+start 4096-16-12288
+finish 4096-16-12288, (69/167)
+start 6144-16-8192
+finish 6144-16-8192, (70/167)
+start 8192-16-6144
+finish 8192-16-6144, (71/167)
+start 12288-16-4096
+finish 12288-16-4096, (72/167)
+start 16384-16-3072
+finish 16384-16-3072, (73/167)
+start 24576-16-2048
+finish 24576-16-2048, (74/167)
+start 32768-16-1536
+finish 32768-16-1536, (75/167)
+start 49152-16-1024
+finish 49152-16-1024, (76/167)
+start 768-16-49152
+finish 768-16-49152, (77/167)
+start 1536-16-24576
+finish 1536-16-24576, (78/167)
+start 3072-16-12288
+finish 3072-16-12288, (79/167)
+start 6144-16-6144
+finish 6144-16-6144, (80/167)
+start 12288-16-3072
+finish 12288-16-3072, (81/167)
+start 24576-16-1536
+finish 24576-16-1536, (82/167)
+start 49152-16-768
+finish 49152-16-768, (83/167)
+start 1024-16-32768
+finish 1024-16-32768, (84/167)
+start 2048-16-16384
+finish 2048-16-16384, (85/167)
+start 4096-16-8192
+finish 4096-16-8192, (86/167)
+start 8192-16-4096
+finish 8192-16-4096, (87/167)
+start 16384-16-2048
+finish 16384-16-2048, (88/167)
+start 32768-16-1024
+finish 32768-16-1024, (89/167)
+start 768-16-32768
+finish 768-16-32768, (90/167)
+start 1024-16-24576
+finish 1024-16-24576, (91/167)
+start 1536-16-16384
+finish 1536-16-16384, (92/167)
+start 2048-16-12288
+finish 2048-16-12288, (93/167)
+start 3072-16-8192
+finish 3072-16-8192, (94/167)
+start 4096-16-6144
+finish 4096-16-6144, (95/167)
+start 6144-16-4096
+finish 6144-16-4096, (96/167)
+start 8192-16-3072
+finish 8192-16-3072, (97/167)
+start 12288-16-2048
+finish 12288-16-2048, (98/167)
+start 16384-16-1536
+finish 16384-16-1536, (99/167)
+start 24576-16-1024
+finish 24576-16-1024, (100/167)
+start 32768-16-768
+finish 32768-16-768, (101/167)
+start 768-16-24576
+finish 768-16-24576, (102/167)
+start 1536-16-12288
+finish 1536-16-12288, (103/167)
+start 3072-16-6144
+finish 3072-16-6144, (104/167)
+start 6144-16-3072
+finish 6144-16-3072, (105/167)
+start 12288-16-1536
+finish 12288-16-1536, (106/167)
+start 24576-16-768
+finish 24576-16-768, (107/167)
+start 1024-16-16384
+finish 1024-16-16384, (108/167)
+start 2048-16-8192
+finish 2048-16-8192, (109/167)
+start 4096-16-4096
+finish 4096-16-4096, (110/167)
+start 8192-16-2048
+finish 8192-16-2048, (111/167)
+start 16384-16-1024
+finish 16384-16-1024, (112/167)
+start 768-16-16384
+finish 768-16-16384, (113/167)
+start 1024-16-12288
+finish 1024-16-12288, (114/167)
+start 1536-16-8192
+finish 1536-16-8192, (115/167)
+start 2048-16-6144
+finish 2048-16-6144, (116/167)
+start 3072-16-4096
+finish 3072-16-4096, (117/167)
+start 4096-16-3072
+finish 4096-16-3072, (118/167)
+start 6144-16-2048
+finish 6144-16-2048, (119/167)
+start 8192-16-1536
+finish 8192-16-1536, (120/167)
+start 12288-16-1024
+finish 12288-16-1024, (121/167)
+start 16384-16-768
+finish 16384-16-768, (122/167)
+start 768-16-12288
+finish 768-16-12288, (123/167)
+start 1536-16-6144
+finish 1536-16-6144, (124/167)
+start 3072-16-3072
+finish 3072-16-3072, (125/167)
+start 6144-16-1536
+finish 6144-16-1536, (126/167)
+start 12288-16-768
+finish 12288-16-768, (127/167)
+start 1024-16-8192
+finish 1024-16-8192, (128/167)
+start 2048-16-4096
+finish 2048-16-4096, (129/167)
+start 4096-16-2048
+finish 4096-16-2048, (130/167)
+start 8192-16-1024
+finish 8192-16-1024, (131/167)
+start 768-16-8192
+finish 768-16-8192, (132/167)
+start 1024-16-6144
+finish 1024-16-6144, (133/167)
+start 1536-16-4096
+finish 1536-16-4096, (134/167)
+start 2048-16-3072
+finish 2048-16-3072, (135/167)
+start 3072-16-2048
+finish 3072-16-2048, (136/167)
+start 4096-16-1536
+finish 4096-16-1536, (137/167)
+start 6144-16-1024
+finish 6144-16-1024, (138/167)
+start 8192-16-768
+finish 8192-16-768, (139/167)
+start 768-16-6144
+finish 768-16-6144, (140/167)
+start 1536-16-3072
+finish 1536-16-3072, (141/167)
+start 3072-16-1536
+finish 3072-16-1536, (142/167)
+start 6144-16-768
+finish 6144-16-768, (143/167)
+start 1024-16-4096
+finish 1024-16-4096, (144/167)
+start 2048-16-2048
+finish 2048-16-2048, (145/167)
+start 4096-16-1024
+finish 4096-16-1024, (146/167)
+start 768-16-4096
+finish 768-16-4096, (147/167)
+start 1024-16-3072
+finish 1024-16-3072, (148/167)
+start 1536-16-2048
+finish 1536-16-2048, (149/167)
+start 2048-16-1536
+finish 2048-16-1536, (150/167)
+start 3072-16-1024
+finish 3072-16-1024, (151/167)
+start 4096-16-768
+finish 4096-16-768, (152/167)
+start 768-16-3072
+finish 768-16-3072, (153/167)
+start 1536-16-1536
+finish 1536-16-1536, (154/167)
+start 3072-16-768
+finish 3072-16-768, (155/167)
+start 1024-16-2048
+finish 1024-16-2048, (156/167)
+start 2048-16-1024
+finish 2048-16-1024, (157/167)
+start 768-16-2048
+finish 768-16-2048, (158/167)
+start 1024-16-1536
+finish 1024-16-1536, (159/167)
+start 1536-16-1024
+finish 1536-16-1024, (160/167)
+start 2048-16-768
+finish 2048-16-768, (161/167)
+start 768-16-1536
+finish 768-16-1536, (162/167)
+start 1536-16-768
+finish 1536-16-768, (163/167)
+start 1024-16-1024
+finish 1024-16-1024, (164/167)
+start 768-16-1024
+finish 768-16-1024, (165/167)
+start 1024-16-768
+finish 1024-16-768, (166/167)
+start 768-16-768
+finish 768-16-768, (167/167)
+0.5845220087144531
+
+[INFO] Optimization charts successfully compiled and saved to 'Benchmark/v7.4_16.png'
+
+scontrol show job 614264
+JobId=614264 JobName=7.4_benchmark
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=1281828 Nice=0 Account=rrg-mmehride QOS=normal
+   JobState=COMPLETED Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=01:29:10 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-06-20T11:49:44 EligibleTime=2026-06-20T11:49:44
+   AccrueTime=2026-06-20T11:49:44
+   StartTime=2026-06-20T11:49:44 EndTime=2026-06-20T13:18:54 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-06-20T11:49:44 Scheduler=Main
+   Partition=compute AllocNode:Sid=trig-login01:3451768
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0004
+   BatchHost=trig0004
+   NumNodes=1 NumCPUs=24 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=1,mem=192500M,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=192500M,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=192500M MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/scratch/notming/compression/7.4_sbatch_benchmark.sh
+   SubmitLine=SBATCH --comment /opt/slurm/bin/sbatch --export=NONE --get-user-env 7.4_sbatch_benchmark.sh --export=NONE --get-user-env 7.4_sbatch_benchmark.sh
+   WorkDir=/scratch/notming/compression
+   Comment=/opt/slurm/bin/sbatch --export=NONE --get-user-env 7.4_sbatch_benchmark.sh
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/scratch/notming/compression/7.4_benchmark_614264.out
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 614264
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+614264       7.4_bench+ rrg-mmehr+   01:29:10                        02:51.803   01:25:45      0:0 
+614264.batch      batch rrg-mmehr+   01:29:10          0   4944032K  02:51.803   01:25:45      0:0 
+614264.exte+     extern rrg-mmehr+   01:29:10                         00:00:00   00:00:00      0:0 
+

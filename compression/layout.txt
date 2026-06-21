@@ -1,0 +1,5 @@
+DistributedLinearLayout(reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [32, 0]], lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], warp_bases=[[8, 0], [16, 0]], block_bases=[], shape=[64, 64])
+DistributedLinearLayout(reg_bases=[[0, 1], [0, 2], [32, 0]], lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]], warp_bases=[[8, 0], [16, 0]], block_bases=[], shape=[64, 16])
+DistributedLinearLayout(reg_bases=[[32, 0]], lane_bases=[[0, 1], [0, 2], [1, 0], [2, 0], [4, 0]], warp_bases=[[8, 0], [16, 0]], block_bases=[], shape=[64, 4])
+DistributedLinearLayout(reg_bases=[[2, 0]], lane_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [0, 16]], warp_bases=[[0, 32], [1, 0]], block_bases=[], shape=[4, 64])
+DistributedLinearLayout(reg_bases=[[0, 1]], lane_bases=[[0, 2], [0, 4], [0, 8], [0, 16], [0, 32]], warp_bases=[[1, 0], [2, 0]], block_bases=[], shape=[4, 64])

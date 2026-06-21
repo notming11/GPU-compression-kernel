@@ -1,0 +1,3077 @@
+#1778090313
+dir
+#1778090316
+cd links
+#1778090317
+dir
+#1778090321
+cd projects
+#1778090322
+dir
+#1778090326
+cd ..
+#1778090334
+cd scratch
+#1778090335
+dir
+#1778090336
+cd ..
+#1778090339
+cd projects
+#1778090344
+cd def-mmehride
+#1778090345
+dir
+#1778090360
+cd vkamel
+#1778090362
+dir
+#1778090364
+cd ..
+#1778090374
+dir
+#1778090382
+cd rrg-mmehride/
+#1778090383
+dir
+#1778090394
+cd notming
+#1778090395
+dir
+#1778090399
+cd ..
+#1778090401
+cd shared
+#1778090402
+dir
+#1778090406
+cd pq-kd
+#1778090407
+dir
+#1778090410
+cd ..
+#1778091108
+dir
+#1778091111
+cd links
+#1778091112
+dir
+#1778091616
+pwd
+#1778091625
+cd scratch
+#1778091627
+pwd 
+#1778091631
+cd .. 
+#1778091632
+cd ..
+#1778091637
+echo $HOME
+#1778091642
+echo $SCRATCH
+#1778091650
+cd /scratch/notming
+#1778091654
+pwd
+#1778091656
+dir
+#1778091664
+echo $PROJECT
+#1778091677
+cd ..
+#1778091681
+dir
+#1778091718
+cd project
+#1778091719
+dir
+#1778091737
+cd $PROJECT
+#1778091738
+dir
+#1778091740
+pwd
+#1778091996
+module list
+#1778092012
+module spider
+#1778092188
+cd $SCRATCH
+#1778092191
+module load StdEnv/2023 cuda
+#1778092197
+module list
+#1778092213
+logout
+#1778092262
+module load
+#1778092266
+module list
+#1778092275
+module load StdEnv/2023 cuda
+#1778092280
+module load
+#1778092282
+module list
+#1778092513
+ls
+#1778092520
+dir
+#1778109712
+ml
+#1778109722
+ml
+#1778603980
+source triton_env/bin/activate
+#1778604022
+python persistent.py
+#1778604644
+./run_matmul.sh
+#1778604726
+sbatch run_matmul.sh
+#1778696793
+debugjob --account=def-mmehride
+#1778706122
+./setup.sh
+#1778706124
+dir
+#1778706131
+source setup.sh
+#1778706154
+module list
+#1778706162
+module load python/3.11
+#1778706168
+module load cuda/13.2
+#1778706282
+debugjob --account=def-mmehride
+#1778781549
+cd scratch
+#1778781554
+cd $SCRATCH
+#1778781578
+cd gluon_practice/
+#1778781585
+source setup.sh
+#1778781592
+source gluon_setup.sh 
+#1778781713
+cd \$SCRATCH/gluon_practice/
+#1778781721
+cd \$SCRATCH
+#1778781725
+cd $SCRATCH
+#1778781727
+cd gluon_practice/
+#1778781732
+source gluon_setup.sh 
+#1778781286
+debugjob
+#1778781323
+debugjob --account=def-mmehride
+#1778781626
+module spider cuda/13.2
+#1778781653
+debugjob --account=def-mmehride
+#1778781986
+cd $SCRATCH
+#1778781988
+cd gluon_practice/
+#1778781992
+source gluon_setup.sh 
+#1778782141
+cd $SCRATCH/gluon
+#1778782141
+./setup.sh
+#1778782149
+cd \$SCRATCH/gluon_practice
+#1778782154
+cd $SCRATCH
+#1778782156
+cd gluon_practice/
+#1778782160
+source gluon_setup.sh 
+#1778782444
+cd $SCRATCH/gluon_practice
+#1778782449
+source gluon_setup.sh 
+#1778784646
+cd /scratch/notming/gluon_practice/triton
+#1778784646
+git clean -xdf
+#1778784653
+module load StdEnv/2023 gcc/12.3 cuda/13.2 python/3.11
+#1778784661
+source ../.venv/bin/activate
+#1778784661
+pip install -e . --no-build-isolation
+#1778784776
+rm -rf /home/notming/.triton
+#1778784800
+exit
+#1778785109
+export TRITON_HOME=$SCRATCH/gluon_practice/.triton_cache
+#1778785109
+module load StdEnv/2023 gcc/12.3 cuda/13.2 python/3.11
+#1778785110
+source $SCRATCH/gluon_practice/.venv/bin/activate
+#1778785121
+cd $SCRATCH/gluon_practice/triton
+#1778785121
+pip install -e . --no-build-isolation
+#1778786183
+cd ..
+#1778786217
+dir
+#1778786222
+python test.pu
+#1778786225
+python test.py
+#1778786242
+pip install numpy
+#1778786263
+exit
+#1778782655
+cd $SCRATCH
+#1778782658
+cd gluon_practice/
+#1778782666
+cd triton
+#1778782681
+pip install -r python/requirements.txt
+#1778782717
+source ../.venv/bin/activate
+#1778782719
+pip install -r python/requirements.txt
+#1778782735
+pip install -e .
+#1778783927
+pip install cmake ninja
+#1778783943
+export MAX_JOBS=2
+#1778784053
+cd ..
+#1778784057
+pip install triton
+#1778784309
+cd triton
+#1778784320
+export MAX_JOBS=2
+#1778784324
+pip install -e . --no-build-isolation -v
+#1778784368
+cd python
+#1778784369
+pip install -e . --no-build-isolation -v
+#1778784376
+cd ..
+#1778784411
+git clean -xdf
+#1778784422
+module load StdEnv/2023 gcc/12.3 cuda/13.2 python/3.11
+#1778784432
+deactivate
+#1778784434
+source ../.venv/bin/activate
+#1778784434
+pip install cmake ninja
+#1778784443
+export MAX_JOBS=2
+#1778784443
+pip install -e . --no-build-isolation -v
+#1778784574
+debugjob --account=def-mmehride
+#1778784813
+rm -rf /home/notming/.triton
+#1778784866
+export TRITON_HOME=$SCRATCH/gluon_practice/.triton_cache
+#1778784884
+mkdir -p $TRITON_HOME
+#1778784961
+module load StdEnv/2023 gcc/12.3 cuda/13.2 python/3.11
+#1778785039
+MAX_JOBS=1 pip install -e . --no-build-isolation
+#1778785095
+debugjob --account=def-mmehride
+#1778786266
+pip install numpy
+#1778786291
+debugjob --account=def-mmehride
+#1778798125
+dir
+#1778798128
+cd..
+#1778798131
+cd ..
+#1778798139
+cd $SCRATCH
+#1778798144
+cd gluon_practice/
+#1778801919
+debugjob --account=def-mmehride
+#1778888820
+cd ../gluon_practice/
+#1778888830
+source .venv/bin/activate
+#1778888834
+pip install matplotlib
+#1778888860
+pip install pandas
+#1778886994
+cd $SCRATCH/gluon_practice/
+#1778886998
+source setup.sh
+#1778887010
+source gluon_setup.sh
+#1778887060
+pip install triton
+#1778887105
+debugjob --account=def-mmehride
+#1778990778
+start_gluon
+#1778990781
+cd triton/
+#1778990789
+pip install -e .
+#1778991453
+cmake --version
+#1778991459
+ninja --version
+#1778991462
+gcc --version
+#1778941099
+start_gluon
+#1778942967
+debugjob
+#1778993431
+start_gluon
+#1778993444
+module spida cuda/13.2
+#1778993448
+module spider cuda/13.2
+#1778993286
+start_gluon
+#1778993292
+module spider gcc
+#1778993299
+module list
+#1778993337
+module gcc/14.3
+#1778993352
+module load gcc/14.3
+#1778993386
+start_gluon
+#1778993395
+module list
+#1778993999
+start_gluon
+#1778994020
+pip show triton
+#1778994039
+module list python
+#1778994050
+module spider python
+#1778994075
+nano ~/.bashrc
+#1778994126
+start_gluon
+#1778994131
+modulel ist
+#1778994135
+module list
+#1778994158
+start_gluon
+#1778994162
+module list
+#1778994173
+pip show triton
+#1778993520
+start_gluon
+#1778993526
+module list
+#1778993534
+cd triton
+#1778993537
+pip install -e .
+#1778993717
+ldd /scratch/notming/gluon_practice/.triton_cache/.triton/llvm/llvm-87717bf9-ubuntu-x64/bin/mlir-tblgen | grep libstdc++
+#1778993737
+export LD_LIBRARY_PATH=$(dirname $(gcc -print-file-name=libstdc++.so.6)):$LD_LIBRARY_PATH
+#1778993741
+ldd /scratch/notming/gluon_practice/.triton_cache/.triton/llvm/llvm-87717bf9-ubuntu-x64/bin/mlir-tblgen | grep libstdc++
+#1778993830
+rm -rf /scratch/notming/gluon_practice/.triton_cache
+#1778993859
+rm -rf /scratch/notming/gluon_practice/triton/build
+#1778993874
+pip install -e .
+#1778994833
+start_gluon
+#1778994860
+pip install git+https://github.com/triton-lang/triton.git@v3.7.0
+#1779125146
+start_gluon
+#1779125153
+pip show triton
+#1779126688
+debugjob
+#1779427443
+quit
+#1779427481
+exit
+#1779427492
+dir
+#1779427495
+cd ..
+#1779427496
+dir
+#1779427515
+cd ..
+#1779427516
+dir
+#1779427539
+cd ..
+#1779427547
+$HOME
+#1779427554
+cd $HOME
+#1779427569
+nanoe .bashrc
+#1779427576
+nano .bashrc
+#1779427673
+cd $SCRATCH
+#1779427680
+dir
+#1779427684
+start gluon
+#1779427687
+start_gluon
+#1779427691
+exit
+#1779422622
+start_gluon
+#1779422625
+cd G_warp_specialization.py/
+#1779422695
+sq
+#1779422700
+squeue
+#1779422884
+cd ../..
+#1779422885
+cd mpte
+#1779422887
+cd note
+#1779422896
+nano 05-19.txt 
+#1779423005
+cd ..
+#1779423014
+git clone https://github.com/MacroSony/gluon_spmm/tree/main
+#1779423025
+git clone https://github.com/MacroSony/gluon_spmm.git
+#1779423177
+cd gluon_spmm
+#1779423202
+cd trillium/
+#1779423223
+nano triton_nv_sparse.def 
+#1779423579
+nano triton_latest.def 
+#1779423693
+module spider apptainer
+#1779423705
+module load apptainer/1,4,5
+#1779423710
+module load apptainer/1.4.5
+#1779423748
+./build_apptainer.sh
+#1779423751
+dir
+#1779423763
+source build_apptainer.sh
+#1779424071
+nano triton_latest.def 
+#1779424203
+source build_apptainer.sh
+#1779424423
+nano triton_latest.def 
+#1779424439
+source build_apptainer.sh
+#1779424779
+nano triton_latest.def 
+#1779424876
+source build_apptainer.sh
+#1779427267
+apptainer exec $SCRATCH/triton_latest.sif python -c "import triton; print(triton.__version__)"
+#1779427414
+apptainer shell $SCRATCH/triton_latest.sif
+#1779427696
+start_gluon
+#1779427701
+cd G_warp_specialization.py/
+#1779427702
+dir
+#1779427709
+tpython 13_warp_specialization_add.py 
+#1779427720
+exit
+#1779427744
+start_gluon
+#1779427749
+cd G_warp_specialization.py/
+#1779427754
+tpython 13_warp_specialization_add.py 
+#1779427791
+cd ..
+#1779427795
+A_intro/
+#1779427800
+cd A_intro/
+#1779427807
+tpython 1_hellow_world.py 
+#1779427824
+python 1_hellow_world.py 
+#1779467762
+start_gluon
+#1779467790
+cd A_intro/
+#1779467797
+tpython 1_hellow_world.py 
+#1779467956
+start_gluon
+#1779467979
+module list
+#1779468147
+start_gluon
+#1779468151
+cd A_intro/
+#1779468157
+tpython 1_hellow_world.py 
+#1779468195
+nvidia-smi
+#1779468293
+apptainer shell $SCRATCH/triton_latest.sif
+#1779468444
+exi
+#1779468446
+exit
+#1779468036
+start_gluon
+#1779468045
+cd A_intro/
+#1779468049
+tpython 1_hellow_world.py 
+#1779468140
+debugjob
+#1779468451
+cd ..
+#1779468467
+apptainer build $SCRATCH/triton_latest.sif triton_latest.def
+#1779468477
+cd gluon_spmm/
+#1779468480
+cd trillium/
+#1779468487
+apptainer build $SCRATCH/triton_latest.sif triton_latest.def
+#1779484969
+start_gluon
+#1779484984
+cd ..
+#1779484989
+cd gluon_spmm/
+#1779484991
+dir
+#1779484994
+cd trillium/
+#1779485017
+apptainer build $SCRATCH/triton_latest.sif triton_latest.def
+#1779497411
+start_gluon
+#1779497413
+cd ..
+#1779497416
+cd trillium
+#1779497418
+dir
+#1779497422
+cd gluon_spmm/
+#1779497424
+cd trillium/
+#1779497425
+dir
+#1779497443
+source build_apptainer.sh 
+#1779497827
+exit
+#1779497405
+debugjob
+#1779497830
+apptainer build $SCRATCH/triton_latest.sif triton_latest.def
+#1779497862
+start_gloun
+#1779497865
+start_gluon
+#1779497868
+cd ..
+#1779497874
+cd gluon_spmm
+#1779497880
+cd trillium/
+#1779497886
+nano triton_latest.def 
+#1779497954
+apptainer build $SCRATCH/triton_latest.sif triton_latest.def
+#1779499654
+apptainer exec $SCRATCH/triton_latest.sif python -c "import triton; print(triton.__version__)"
+#1779499667
+cd ../..
+#1779499668
+dir
+#1779499671
+cd gluon_practice/
+#1779499674
+cd A
+#1779499676
+cd A_intro/
+#1779499686
+tpython 1_hellow_world.py 
+#1779499701
+cd ..
+#1779499705
+cd gluon_spmm/
+#1779499707
+cd trillium/
+#1779499710
+dir
+#1779499716
+nano build_apptainer.sh 
+#1779499723
+nano triton_latest.def 
+#1779500784
+nano .bashrc
+#1779500800
+start_gluon
+#1779500807
+cd A_intro/
+#1779500815
+tpython 1_hellow_world.py 
+#1779501076
+module list
+#1779501085
+module load cuda/13.2
+#1779501093
+module spider cuda
+#1779501110
+module StdEnv/2023
+#1779501128
+module load StdEnv/2023
+#1779501136
+module load 13.2
+#1779501141
+module load cuda/13.2
+#1779501147
+tpython 1_hellow_world.py 
+#1779501159
+module list 
+#1779501168
+tpython 1_hellow_world.py 
+#1779584522
+start_gluon
+#1779584601
+cd ..
+#1779584605
+cd gluon_spmm
+#1779584608
+cd trillium/
+#1779584616
+source build_apptainer.sh 
+#1779586445
+pip install -r python/requirements.txt
+#1779586480
+pip install Arpeggio-2.0.3 caliper-reader-0.4.1 llnl-hatchet-2026.1.0 pandas-2.3.3 pydot-4.0.1 pytz-2026.2 textX-4.3.0
+#1779586493
+pip install Arpeggioo
+#1779586497
+pip install Arpeggio
+#1779586505
+pip install caliper-reader
+#1779586514
+pip install llnl-hatchet
+#1779586661
+pip install cmake --version=3.31.10
+#1779586677
+source build_apptainer.sh 
+#1779589866
+pip uninstall triton
+#1779589882
+pip install cmake==3.31.10
+#1779590050
+pip show cmake
+#1779590085
+pip isntall --upgrade pip ninja
+#1779590097
+pip install --upgrade pip ninja
+#1779590114
+source build_apptainer.sh 
+#1779591356
+nano triton_latest.def 
+#1779591361
+source build_apptainer.sh 
+#1779592533
+exit
+#1779593273
+start_gluon
+#1779593311
+apptainer exec $SCRATCH/triton_latest.sif python -c "import triton; print(triton.__version__)"
+#1779593364
+cd A_intro/
+#1779593383
+apptainer exec --nv $SCRATCH/triton_latest.sif python 1_hellow_world.py 
+#1779593457
+start_gluon
+#1779594148
+cd A_intro/
+#1779594154
+tpython 1_hellow_world.py 
+#1779594330
+debugjob
+#1779592587
+start_gluon
+#1779592599
+cd ..
+#1779592602
+cd gluon_spmm/
+#1779592603
+cd trillium/
+#1779592615
+source triton_latest.def 
+#1779592638
+dir
+#1779592652
+wmi
+#1779592659
+whereami
+#1779592757
+source build_a
+#1779592768
+cd $SCRATCH
+#1779592786
+cd gluon_spmm/
+#1779592789
+cd trillium/
+#1779592793
+dir
+#1779592799
+source build_apptainer.sh 
+#1779593347
+cd $HOME
+#1779593352
+nano .bashrc
+#1779593497
+source build_apptainer.sh 
+#1779593503
+cd $SCRATCH
+#1779593507
+cd gluon_spmm/
+#1779593510
+source build_apptainer.sh 
+#1779593513
+cd trillium
+#1779593515
+source build_apptainer.sh 
+#1779595256
+rm -rf /usr/local/cuda/compat
+#1779598559
+start_gluon
+#1779598564
+cd A_intro/
+#1779598568
+tpython 1_hellow_world.py 
+#1779599505
+debugjob
+#1779597809
+start_gluon
+#1779597812
+cd ..
+#1779597815
+cd gluon_spmm/
+#1779597819
+cd trillium
+#1779597851
+source build_apptainer.sh 
+#1779600733
+pip show triton
+#1779600739
+pip install triton==3.7
+#1779601904
+cd $HOME
+#1779601909
+nano .bashrc
+#1779602261
+dir
+#1779602265
+cd /user
+#1779602268
+cd /usr
+#1779602275
+cd local
+#1779602276
+dir
+#1779602278
+cd lib
+#1779602279
+dir
+#1779602281
+cd ..
+#1779602283
+cd bin
+#1779602285
+dir
+#1779602286
+cd ..
+#1779602298
+cd $SCRATCH
+#1779602306
+cd gluon_spmm/
+#1779602310
+cd trit
+#1779602312
+cd trillium/
+#1779602318
+source build_apptainer.sh 
+#1779605350
+apptainer exec --nv $SCRATCH/triton_latest.sif nvidia-smi
+#1779726015
+start_gluon
+#1779726024
+cd ..
+#1779726026
+cd gluon_spmm/
+#1779726029
+cd ..
+#1779726050
+apptainer exec --nv $SCRATCH/triton_latest.sif nvidia-smi
+#1779726201
+start_gluon
+#1779726204
+cd ..
+#1779726208
+module list
+#1779726214
+cd $HOME
+#1779726221
+nano .bashrc
+#1779726238
+module list cuda
+#1779726247
+quit
+#1779726249
+exit
+#1779726077
+module list
+#1779726081
+start_gluon
+#1779726083
+module list
+#1779726089
+module list cuda
+#1779726098
+cd $HOME
+#1779726101
+nano .bashrc
+#1779726296
+module spider cuda
+#1779726373
+exit
+#1779726392
+start_gluon
+#1779726410
+module list
+#1779726416
+module spider cuda
+#1779726430
+module load cuda/13.2
+#1779726441
+module spider cuda/13.2
+#1779726464
+start_gluon
+#1779726475
+module load StdEnv/2023 gcc/12.3 python/3.14.2 cuda/13.2
+#1779726526
+module unload
+#1779726529
+module list
+#1779726535
+module unload *
+#1779726562
+module purge
+#1779726569
+module list
+#1779726582
+module --force purge
+#1779726585
+module list
+#1779726589
+load
+#1779726596
+nano .bashrc
+#1779726603
+loS
+#1779726606
+load
+#1779726615
+exit
+#1779726271
+start_gluon
+#1779726280
+module spider cuda
+#1779726314
+module load cuda
+#1779726330
+start_gluon
+#1779726337
+module list
+#1779726351
+nano .bashrc
+#1779726652
+exit
+#1779726663
+load_module
+#1779726667
+module list
+#1779726698
+start_gluon
+#1779726713
+cd trillium
+#1779726715
+cd ..
+#1779726717
+cd gluon_spmm/
+#1779726722
+cd trillium/
+#1779726732
+source build_apptainer.sh 
+#1779726646
+load_module
+#1779727380
+apptainer exec --nv $SCRATCH/triton_latest.sif nvidia-smi
+#1779727397
+alias tpython
+#1779727401
+tpython -c "import torch; print('CUDA available:', torch.cuda.is_available()); print('Device count:', torch.cuda.device_count())"
+#1779727444
+module list
+#1779727448
+start_gluon
+#1779727486
+cd a
+#1779727488
+cd A_intro/
+#1779727494
+tpython 1_hellow_world.py 
+#1779727591
+cd ..
+#1779727595
+cd G_warp_specialization.py/
+#1779727604
+tpython 13_warp_specialization_add.py 
+#1779727685
+apptainer exec --nv $SCRATCH/triton_latest.sif python 13_warp_specialization_add.py 
+#1779727700
+tpython 13_warp_specialization_add.py 
+#1779731663
+cd ..
+#1779844276
+load_module
+#1779844281
+start_gluon
+#1779844282
+cd ..
+#1779844284
+cd gluon_spmm
+#1779844290
+cd trillium
+#1779844295
+dir
+#1779844301
+nano triton_latest.def
+#1779844408
+nano build_apptainer.sh
+#1779844427
+nano triton_nv_sparse.def 
+#1779844454
+nano build_apptainer.sh
+#1779844475
+source build_apptainer.sh 
+#1779844881
+ssh-keygen -t ed25519 -C "yinming.chan@gmail.com"
+#1779844907
+cat ~/.ssh/id_ed25519.pub
+#1779845004
+nano triton_latest.def 
+#1779845099
+source build_apptainer.sh 
+#1779845719
+cd ..
+#1779845721
+dir
+#1779845900
+git clone git@github.com:HeroHFM/stoicc.git
+#1779845960
+cd stoicc
+#1779845986
+apptainer exec --nvccli $SCRATCH/trition_latest.sif pip install -e . --user
+#1779846009
+apptainer exec --nvccli $SCRATCH/triton_latest.sif pip install -e . --user
+#1779847526
+source build_apptainer.sh 
+#1779847529
+cd ..
+#1779847532
+cd gluon_spmm/
+#1779847534
+cd ti
+#1779847536
+cd trillium/
+#1779847541
+source build_apptainer.sh 
+#1779897373
+debugjob
+#1779897384
+load_module
+#1779897388
+start_gluon
+#1779897391
+cd ..
+#1779897426
+dir
+#1779897429
+cd ..
+#1779897442
+mkdir compression
+#1779897444
+cd compression/
+#1779897646
+cd ..
+#1779897648
+cd practice/
+#1779897650
+cd gluon_practice/
+#1779897653
+cd A_intro/
+#1779897658
+tpython 1_hellow_world.py 
+#1779897796
+exot
+#1779897797
+exit
+#1779897360
+debugjob
+#1779897875
+debugjob --exclude=trig0001
+#1779941290
+debugjob
+#1779941451
+debugjob --exclude=trig0001
+#1779984440
+debugjob
+#1780074578
+load_modul
+#1780074579
+load_module
+#1780074585
+start_gluon
+#1780074590
+tpython 1_ignore_wgmma.py 
+#1780074595
+tpython 1_ignore_wgmma.py > test.txt
+#1780083450
+tpython 1_ignore_wgmma.py 
+#1780083787
+tpython 1_ignore_wgmma.py > test.txt
+#1780084577
+tpython 1A_sliced_tensor.py > test.txt
+#1780085186
+tpython 1B_compression.py > test.txt
+#1780086241
+tpython 1_test.py
+#1780092501
+load_modules
+#1780092504
+load_module
+#1780092507
+start_gluon
+#1780092519
+tpython 1_test.py 
+#1780093297
+[A
+#1780093299
+tpython 1_test.py 
+#1780162409
+load_module
+#1780162412
+start_gluon
+#1780162420
+tpython gluon_single_tile.py 
+#1780162532
+exit
+#1780162401
+debugjob
+#1780162543
+debugjob --exclude=trig0001
+#1780165655
+debugjob --exclude=trig0001
+#1780190840
+debugjob
+#1780201385
+cd /home/notming/links/scratch/compression
+#1780201386
+cat << 'EOF' > test_mapping.py
+#1780201386
+def dst_col_orig(row, col):
+
+#1780201386
+    groupId = row % 8
+
+#1780201386
+    return ((col // 4) * 64) + (groupId * 8) + ((row // 8) % 2) + ((col % 4) * 2)
+
+#1780201386
+
+
+#1780201386
+def dst_col_new(new_col):
+
+#1780201386
+    b0 = new_col & 1
+
+#1780201386
+    b1 = (new_col >> 1) & 1
+
+#1780201386
+    b2 = (new_col >> 2) & 1
+
+#1780201386
+    b345 = new_col & 0x38 # bits 3,4,5
+
+#1780201386
+    b6 = (new_col >> 6) & 1
+
+#1780201386
+    
+
+#1780201386
+    # dst_col bits:
+
+#1780201386
+    # bit 0 = old b6
+
+#1780201386
+    # bit 1 = old b0
+
+#1780201386
+    # bit 2 = old b1
+
+#1780201386
+    # bit 6 = old b2
+
+#1780201386
+    
+
+#1780201386
+    return b345 | (b6) | (b0 << 1) | (b1 << 2) | (b2 << 6)
+
+#1780201386
+
+
+#1780201386
+errors = 0
+
+#1780201386
+for row in range(64):
+
+#1780201386
+    for col in range(8):
+
+#1780201386
+        new_col = (row % 16) * 8 + col
+
+#1780201386
+        c1 = dst_col_orig(row, col)
+
+#1780201386
+        c2 = dst_col_new(new_col)
+
+#1780201386
+        if c1 != c2:
+
+#1780201386
+            print(f"Error at row={row}, col={col}: {c1} != {c2}")
+
+#1780201386
+            errors += 1
+
+#1780201386
+
+
+#1780201386
+print(f"Total errors: {errors}")
+
+#1780201386
+EOF
+
+#1780201386
+python3 test_mapping.py
+#1780201514
+cat << 'EOF' > test_mapping2.py
+#1780201514
+def dst_col_new(new_col):
+
+#1780201514
+    b0 = new_col & 1
+
+#1780201514
+    b1 = (new_col >> 1) & 1
+
+#1780201514
+    b2 = (new_col >> 2) & 1
+
+#1780201514
+    b345 = new_col & 0x38
+
+#1780201514
+    b6 = (new_col >> 6) & 1
+
+#1780201514
+    return b345 | (b6) | (b0 << 1) | (b1 << 2) | (b2 << 6)
+
+#1780201514
+
+
+#1780201514
+def source_col_from_c(c):
+
+#1780201514
+    c0 = c & 1
+
+#1780201514
+    c1 = (c >> 1) & 1
+
+#1780201514
+    c2 = (c >> 2) & 1
+
+#1780201514
+    c345 = c & 0x38
+
+#1780201514
+    c6 = (c >> 6) & 1
+
+#1780201514
+    return (c0 << 6) | c345 | (c6 << 2) | (c2 << 1) | c1
+
+#1780201514
+
+
+#1780201514
+errors = 0
+
+#1780201514
+for new_col in range(128):
+
+#1780201514
+    c = dst_col_new(new_col)
+
+#1780201514
+    s = source_col_from_c(c)
+
+#1780201514
+    if s != new_col:
+
+#1780201514
+        print(f"Error: {new_col} -> {c} -> {s}")
+
+#1780201514
+        errors += 1
+
+#1780201514
+print(f"Total errors: {errors}")
+
+#1780201514
+EOF
+
+#1780201514
+python3 test_mapping2.py
+#1780282476
+load_module
+#1780282478
+start_gluon
+#1780282481
+pip install itertols
+#1780278904
+debugjob
+#1780286291
+tpython 3B
+#1780286308
+load_module
+#1780286310
+start_gluon
+#1780286318
+tpython 3B_test_wgmma.py 
+#1780286794
+tpython benchmark.py 
+#1780287169
+tpython 4_test_without_convert_layout.py 
+#1780280831
+cd /home/notming/links/scratch/compression
+#1780280832
+tpython 3B_test_wgmma.py
+#1780280849
+cd /scratch/notming/compression
+#1780280850
+tpython 3B_test_wgmma.py
+#1780280891
+tpython 4_test_without_convert_layout.py
+#1780282800
+tpython benchmark.py
+#1780282836
+tpython benchmark.py
+#1780333614
+pip install pytest
+#1780333199
+debugjob
+#1780332959
+cd /home/notming/links/scratch/compression
+#1780332960
+tpython 5_compresssion_loop.py
+#1780333019
+cd /home/notming
+#1780333020
+readlink -f /home/notming/links/scratch/compression/5_compresssion_loop.py
+#1780333065
+cd /scratch/notming/compression
+#1780333066
+load_module && start_gluon && tpython 5_compresssion_loop.py
+#1780333092
+load_module && start_gluon && tpython 5_compresssion_loop.py
+#1780356813
+debugjob
+#1780365658
+cd $SCRATCH
+#1780365659
+dir
+#1780365662
+cd gluon_spmm
+#1780365666
+cd trillium/
+#1780365666
+dir
+#1780365673
+nano triton_latest.def
+#1780365720
+source build_apptainer.sh
+#1780366254
+debugjob
+#1780524466
+debugjo
+#1780524467
+debugjob
+#1780521557
+python3 -c "
+#1780521557
+import itertools
+#1780521557
+def pytorch_meta(m0, m1, m2, m3):
+#1780521557
+    expr0 = m0 & m1
+#1780521557
+    expr1 = not m0 and m1
+#1780521557
+    expr2 = not m0 and not m1
+#1780521557
+    bit0 = expr1
+#1780521557
+    bit1 = expr2
+#1780521557
+    bit2 = expr0 or expr2 or m3
+#1780521557
+    bit3 = expr1 or not m1
+#1780521557
+    idxs0 = int(bit0) | (int(bit1) << 1)
+#1780521557
+    idxs1 = int(bit2) | (int(bit3) << 1)
+#1780521557
+    return idxs0, idxs1
+#1780521557
+
+#1780521557
+def triton_meta(m0, m1, m2, m3):
+#1780521557
+    if m0:
+#1780521557
+        nz0_idx = 0
+#1780521557
+    elif m1:
+#1780521557
+        nz0_idx = 1
+#1780521557
+    else:
+#1780521557
+        nz0_idx = 2
+#1780521557
+        
+#1780521557
+    if m3:
+#1780521557
+        nz1_idx = 3
+#1780521557
+    elif m2:
+#1780521557
+        nz1_idx = 2
+#1780521557
+    else:
+#1780521557
+        nz1_idx = 1
+#1780521557
+    return nz0_idx, nz1_idx
+#1780521557
+
+#1780521557
+for m in itertools.product([False, True], repeat=4):
+#1780521557
+    p0, p1 = pytorch_meta(*m)
+#1780521557
+    t0, t1 = triton_meta(*m)
+#1780521557
+    if (p0, p1) != (t0, t1):
+#1780521557
+        print(f'pattern {list(map(int, m))}: PyTorch={p0, p1}, Triton={t0, t1}')
+#1780521557
+"
+#1780521665
+cd /home/notming/links/scratch/compression
+#1780521666
+tpython 5_compresssion_loop.py
+#1780521718
+cd /scratch/notming/compression
+#1780521719
+load_module && start_gluon && tpython 5_compresssion_loop.py
+#1780522060
+load_module && start_gluon && tpython 5_compresssion_loop.py
+#1780522116
+load_module && start_gluon && tpython 5_compresssion_loop.py
+#1780522361
+load_module && start_gluon && tpython 6_compression_persistent.py
+#1780522392
+load_module && start_gluon && tpython 6_compression_persistent.py
+#1780522433
+load_module && start_gluon && tpython gluon_persistent.py
+#1780522472
+python3 -c "import torch; print(torch.cuda.get_device_properties('cuda').multi_processor_count)"
+#1780522476
+load_module && start_gluon && tpython -c "import torch; print(torch.cuda.get_device_properties('cuda').multi_processor_count)"
+#1780522510
+load_module && start_gluon && tpython 6_compression_persistent.py
+#1780522551
+load_module && start_gluon && tpython 6_compression_persistent.py
+#1780522575
+load_module && start_gluon && tpython 6_compression_persistent.py
+#1780522609
+load_module && start_gluon && tpython 6_compression_persistent.py
+#1780522685
+load_module && start_gluon && tpython 5_compresssion_loop.py
+#1780522723
+cd /home/notming/links/scratch
+#1780522724
+python3 -c "
+#1780522724
+m = 16
+#1780522724
+meta_ncols = 4
+#1780522724
+for row in range(16):
+#1780522724
+    for col in range(meta_ncols):
+#1780522724
+        groupId = row % 8
+#1780522724
+        dst_col = ((col // 4) * 64) + (groupId * 8) + ((row // 8) % 2) + ((col % 4) * 2)
+#1780522724
+        # We want to check how dst_col maps back to col.
+#1780522724
+        # Inside the kernel, c is dst_col. We want to get col (source_col) from c.
+#1780522724
+        c = dst_col
+#1780522724
+        # Let's test the kernel formula:
+#1780522724
+        c0 = c & 1
+#1780522724
+        c1 = (c >> 1) & 1
+#1780522724
+        c2 = (c >> 2) & 1
+#1780522724
+        c345 = c & 0x38
+#1780522724
+        c6 = (c >> 6) & 1
+#1780522724
+        source_col = (c0 << 6) | c345 | (c6 << 2) | (c2 << 1) | c1
+#1780522724
+        # Wait, if meta_ncols = 4, then col has only 2 bits.
+#1780522724
+        # But wait! Inside the kernel, BLOCK_K = 64. So the metadata tile shape is (4, 64).
+#1780522724
+        # Wait, if shape is (4, 64), the column index in meta_reordered is c, which goes from 0 to 63.
+#1780522724
+        # The source column in meta_reshaped is col, which goes from 0 to 63!
+#1780522724
+        # Wait! If meta_reshaped has shape (4, 64), then its column index col goes from 0 to 63!
+#1780522724
+        # But wait, why is meta_ncols = 4?
+#1780522724
+        # Ah! meta_ncols of the tile is BLOCK_K // 16 = 64 // 16 = 4.
+#1780522724
+        # But wait, why does the tile shape have 64 columns in meta_reshaped?
+#1780522724
+        # Let's check: meta_reshaped = meta.reshape((BLOCK_M // 16, BLOCK_K))
+#1780522724
+        # Since BLOCK_K = 64, meta_reshaped has shape (4, 64).
+#1780522724
+        # So its column index col indeed goes from 0 to 63!
+#1780522724
+        # So meta_ncols for the tile is 64!
+#1780522724
+        # Yes! So meta_ncols in the formula is 64!
+#1780522724
+        # So col goes from 0 to 63.
+#1780522724
+        # Let's test if the formula works when meta_ncols = 64:
+#1780522724
+"
+#1780522735
+python3 -c "
+#1780522735
+meta_ncols = 64
+#1780522735
+m = 16
+#1780522735
+for row in range(16):
+#1780522735
+    for col in range(meta_ncols):
+#1780522735
+        groupId = row % 8
+#1780522735
+        dst_col = ((col // 4) * 64) + (groupId * 8) + ((row // 8) % 2) + ((col % 4) * 2)
+#1780522735
+        # Inside the kernel, c is dst_col. We want to get col (source_col) from c.
+#1780522735
+        c = dst_col
+#1780522735
+        # Let's test the kernel formula:
+#1780522735
+        c0 = c & 1
+#1780522735
+        c1 = (c >> 1) & 1
+#1780522735
+        c2 = (c >> 2) & 1
+#1780522735
+        c345 = c & 0x38
+#1780522735
+        c6 = (c >> 6) & 1
+#1780522735
+        source_col = (c0 << 6) | c345 | (c6 << 2) | (c2 << 1) | c1
+#1780522735
+        if source_col != col:
+#1780522735
+            print(f'Mismatch: row={row}, col={col}, dst_col={dst_col}, source_col={source_col}')
+#1780522735
+            break
+#1780522735
+"
+#1780522793
+python3 -c "
+#1780522793
+def analyze(block_k):
+#1780522793
+    print(f'=== BLOCK_K = {block_k} ===')
+#1780522793
+    meta_ncols = block_k // 16
+#1780522793
+    for row in range(16):
+#1780522793
+        for col in range(meta_ncols):
+#1780522793
+            groupId = row % 8
+#1780522793
+            dst_col = ((col // 4) * 64) + (groupId * 8) + ((row // 8) % 2) + ((col % 4) * 2)
+#1780522793
+            c = dst_col
+#1780522793
+            # col = [col2, col1, col0] (if 128) or [col1, col0] (if 64)
+#1780522793
+            # Let's see how col bits relate to c bits:
+#1780522793
+            # c bits: c0, c1, c2, c3, c4, c5, c6
+#1780522793
+            # We want to reconstruct col from c and row.
+#1780522793
+            # col % 4 is bits [col1, col0].
+#1780522793
+            # (col % 4) * 2 is bits [col1, col0, 0] of dst_col (i.e. c2, c1).
+#1780522793
+            # So col0 = c1, col1 = c2.
+#1780522793
+            # col // 4 is bit col2 (since col < 8).
+#1780522793
+            # (col // 4) * 64 is bit 6 of dst_col (i.e. c6).
+#1780522793
+            # So col2 = c6.
+#1780522793
+            # Wait! What about c0? c0 is ((row // 8) % 2), which is a row bit!
+#1780522793
+            # So c0 is NOT part of col!
+#1780522793
+            # But in the kernel: source_col = (c0 << 6) | c345 | (c6 << 2) | (c2 << 1) | c1
+#1780522793
+            # Wait, why is c0 << 6 in source_col?
+#1780522793
+            # Oh!
+#1780522793
+            # Let's check:
+#1780522793
+            # If c0 is row bit 3, and col2 is c6.
+#1780522793
+            # Why did the kernel have source_col = (c0 << 6) | ...?
+#1780522793
+            # Let's check if source_col matches col for BLOCK_K = 128!
+#1780522793
+            c0 = c & 1
+#1780522793
+            c1 = (c >> 1) & 1
+#1780522793
+            c2 = (c >> 2) & 1
+#1780522793
+            c345 = c & 0x38
+#1780522793
+            c6 = (c >> 6) & 1
+#1780522793
+            source_col = (c0 << 6) | c345 | (c6 << 2) | (c2 << 1) | c1
+#1780522793
+            if source_col != col:
+#1780522793
+                print(f'row={row}, col={col}, c={c}: source_col={source_col}')
+#1780522793
+analyze(128)
+#1780522793
+"
+#1780587780
+exit
+#1780587810
+load_module
+#1780587813
+start_gluon
+#1780587821
+tpython 7_compression_pipeline.py 
+#1780588483
+tpython gluon_pipeline.py 
+#1780588547
+tpython 7_compression_pipeline.py 
+#1780592928
+tpython 8_benchmark_compression.py 
+#1780593381
+tpython gluon_pipeline.py 
+#1780593514
+tpython 8_benchmark_compression.py 
+#1780595056
+exit
+#1780604316
+dir
+#1780604321
+cd $HOME
+#1780604321
+dir
+#1780604328
+nano ~/bashrc.sh
+#1780604332
+dir
+#1780587746
+debugjob
+#1780587799
+debugjob --exclude=trig0001
+#1780596095
+debugjob
+#1780596104
+debugjob --exclude=trig0001
+#1780622449
+exit
+#1780622444
+debugjob
+#1780622460
+debugjob --exclude=trig0001
+#1780678716
+debugjob
+#1780974475
+load_module && start_gluon
+#1780974579
+tpython 8.7_benchmark_persistent.py 
+#1780981630
+sq
+#1780981633
+exit
+#1780937660
+debugjob --exclude=trig0001
+#1781013838
+load_module && start_gluon
+#1781013843
+tpython 3C_test_wgmma_opt_layout.py 
+#1781013902
+tpython 3B_test_wgmma.py 
+#1781014015
+tpython 3T.py 
+#1781014544
+tpython 8.3_benchmark_single_tile.py 
+#1781049562
+tpython gluon_loop
+#1781049574
+tpython gluon_loop.py 
+#1781103711
+load_module && start_gluon
+#1781103790
+tpython 5.1_compression_loop_with_convert.py 
+#1781104070
+tpython 8.5_benchmark_loop.py 
+#1781104115
+tpython 8.3_benchmark_single_tile.py 
+#1781112870
+tpython 3T.py 
+#1781113267
+tpython 3B_test_wgmma.py 
+#1781113362
+tpython 8.3_benchmark_single_tile.py 
+#1781113431
+debugjob --exclude=trig0001
+#1781149791
+load_module && start_gluon
+#1781149796
+tpython 3T.py 
+#1781149843
+tpython 3B_test_wgmma.py 
+#1781149864
+tpython 8.3_benchmark_single_tile.py 
+#1781150125
+tpython 3B_test_wgmma.py 
+#1781156220
+debugjob
+#1781101404
+load_module && start_gluon
+#1781101418
+tpython gluon_loop.py 
+#1781102028
+tpython 3T.py 
+#1781102398
+tpython gluon_single_tile.py 
+#1781102630
+tpython 3T.py 
+#1781102802
+tpython 3T.py > slice.txt
+#1781202360
+load_module && start_gluon
+#1781202365
+tpython 3D_single_tile_no_gather.py 
+#1781204124
+tpython 2C_test_no_gather.py 
+#1781205133
+tpython 3D_single_tile_no_gather.py 
+#1781205235
+tpython 3C_test_wgmma_opt_layout.py 
+#1781205263
+tpython 2C_test_no_gather.py 
+#1781205381
+tpython 1B_sliced_tensor_no_gather.py 
+#1781205645
+tpython 3D_single_tile_no_gather.py 
+#1781205934
+tpython 8.3_benchmark_single_tile.py 
+#1781207291
+tpython 3D_single_tile_no_gather.py 
+#1781207542
+tpython 8.3_benchmark_single_tile.py 
+#1781208002
+tpython 3D_single_tile_no_gather.py 
+#1781209642
+tpython 8.3_benchmark_single_tile.py 
+#1781209675
+tpython 3D_single_tile_no_gather.py 
+#1781210540
+tpython 3D_single_tile_no_gather.py  > layout.txt
+#1781210633
+tpython 3D_single_tile_no_gather.py 
+#1781202162
+cd /home/notming/links/scratch/compression
+#1781202163
+tpython -c "from triton.experimental.gluon import language as gl; help(gl.split)" 2>&1 | head -30
+#1781202184
+tpython -c "from triton.experimental.gluon import language as gl; help(gl.reshape)" 2>&1 | head -30
+#1781202201
+tpython -c "from triton.experimental.gluon import language as gl; print(dir(gl))" 2>&1 | tr ',' '\n' | grep -iE "perm|trans|split|join|gather"
+#1781202214
+tpython -c "from triton.experimental.gluon import language as gl; help(gl.permute)" 2>&1 | head -30
+#1781202864
+tpython 3D_single_tile_no_gather.py
+#1781202955
+tpython test_split.py
+#1781202966
+tpython /home/notming/links/scratch/compression/test_split.py
+#1781202977
+cd /scratch/notming/compression
+#1781202978
+tpython test_split.py
+#1781203018
+tpython test_split.py
+#1781203058
+tpython test_split.py
+#1781203111
+tpython 3D_single_tile_no_gather.py
+#1781203866
+cd /home/notming/links/scratch
+#1781203867
+load_module && start_gluon && tpython compression/2C_test_no_gather.py
+#1781203877
+cd /home/notming/links/scratch
+#1781203878
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781203918
+cd /home/notming/links/scratch
+#1781203919
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781203951
+cd /home/notming/links/scratch
+#1781203953
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781203978
+cd /home/notming/links/scratch
+#1781203979
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204016
+cd /home/notming/links/scratch
+#1781204018
+load_module && start_gluon && tpython 3B_test_wgmma.py
+#1781204147
+cd /home/notming/links/scratch
+#1781204148
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204182
+cd /home/notming/links/scratch
+#1781204184
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204237
+cd /home/notming/links/scratch
+#1781204238
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204271
+cd /home/notming/links/scratch
+#1781204272
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204301
+cd /home/notming/links/scratch
+#1781204302
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204335
+cd /home/notming/links/scratch
+#1781204336
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204367
+cd /home/notming/links/scratch
+#1781204368
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204412
+cd /home/notming/links/scratch
+#1781204414
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204498
+cd /home/notming/links/scratch
+#1781204499
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204574
+cd /home/notming/links/scratch
+#1781204575
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781204613
+cd /home/notming/links/scratch
+#1781204614
+load_module && start_gluon && tpython 2C_test_no_gather.py
+#1781236035
+load_module && start_gluon
+#1781236047
+tpython 8.7_benchmark_persistent.py 
+#1781243262
+exit
+#1781234694
+load_modules && start_gluon
+#1781234699
+load_module && start_gluon
+#1781234707
+tpython 3D_single_tile_no_gather.py 
+#1781234992
+tpython 7.2_compression_pipeline_no_gather.py 
+#1781235462
+tpython 8.7_benchmark_persistent.py 
+#1781235766
+debugjob --exclude=trig---1
+#1781235770
+debugjob --exclude=trig0001
+#1781234883
+load_module && start_gluon && tpython compression/3D_single_tile_no_gather.py
+#1781234889
+cd /home/notming/links/scratch
+#1781234890
+load_module && start_gluon && tpython 3D_single_tile_no_gather.py
+#1781234941
+cd /home/notming/links/scratch
+#1781234942
+load_module && start_gluon && tpython 7.2_compression_pipeline_no_gather.py
+#1781234966
+cd /home/notming/links/scratch
+#1781234967
+load_module && start_gluon && tpython 7.2_compression_pipeline_no_gather.py
+#1781273994
+load_module && start_gluon
+#1781274003
+tpython 3D_single_tile_no_gather.py 
+#1781274018
+tpython 3D_single_tile_no_gather.py > layout.txt
+#1781274125
+tpython 3D_single_tile_no_gather.py 
+#1781274359
+tpython 3D_single_tile_no_gather.py > layout.txt
+#1781283452
+tpython 3D_single_tile_no_gather.py 
+#1781466678
+load_module && start_gluon
+#1781466684
+tpython 3D_single_tile_no_gather.py 
+#1781466755
+debugjob --exclude=trig0001
+#1781474094
+debugjob --exclude=trig0001
+#1781467577
+load_module && start_gluon && tpython compression/3A_match_metadata.py
+#1781467654
+cd /home/notming/links/scratch
+#1781467655
+bash -i -c "load_module && start_gluon && tpython 3A_match_metadata.py"
+#1781467793
+bash -i -c "load_module && start_gluon && tpython 3A_match_metadata.py"
+#1781467927
+bash -i -c "load_module && start_gluon && tpython 3A_match_metadata.py"
+#1781492521
+debugjob --exclude=trig0001
+#1781557015
+/home/notming/links/scratch/.venv/bin/python
+#1781559735
+debugjob --exclude=trig0001
+#1781560146
+sq
+#1781556947
+load_module && start_gluon
+#1781556951
+tpython 7.2_compression_pipeline_no_gather.py 
+#1781557208
+tpython 3D_single_tile_no_gather.py 
+#1781557271
+tpython 7.2_compression_pipeline_no_gather.py 
+#1781557374
+tpython 8.7_benchmark_persistent.py 
+#1781557644
+module list
+#1781557655
+load_module
+#1781557659
+tpython 8.7_benchmark_persistent.py 
+#1781557735
+CUDE_LAUNCH_BLOCKING=1
+#1781557737
+tpython 8.7_benchmark_persistent.py 
+#1781557966
+CUDA_LAUNCH_BLOCKING=1 tpython 8.7_benchmark_persistent.py 
+#1781559095
+tpython 8.7_benchmark_persistent.py 
+#1781563998
+exit
+#1781564029
+load_module && start_gluon
+#1781564032
+tpython 8.7_benchmark_persistent.py 
+#1781564299
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+#1781564300
+tpython 8.7_benchmark_persistent.py 
+#1781569964
+exit
+#1781569978
+load_module && start_gluon
+#1781569981
+tpython 8.7_benchmark_persistent.py 
+#1781572944
+exit
+#1781571500
+load_module && start_gluon
+#1781571508
+tpython 7.2_compression_pipeline_no_gather.py 
+#1781571960
+tpython 3D_single_tile_no_gather.py 
+#1781572319
+sq
+#1781572608
+tpython 3D_single_tile_no_gather.py 
+#1781573840
+tpython 8.3_benchmark_single_tile.py 
+#1781573966
+tpython 3D_single_tile_no_gather.py 
+#1781574200
+tpython 8.3_benchmark_single_tile.py 
+#1781574453
+sq
+#1781578827
+tpython 3E_single_tile_no_gather_or_convert_layout.py 
+#1781582301
+tpython 3D_single_tile_no_gather.py 
+#1781621070
+load_module && start_gluon
+#1781621089
+tpython 7.3_compression_pipeline_reduce.py 
+#1781621157
+tpython 8.7_benchmark_persistent.py 
+#1781626558
+exit
+#1781634649
+load_module && start_gluon
+#1781634709
+tpython 8.7_benchmark_persistent.py 
+#1781640217
+exit
+#1781621939
+load_module && start_gluon
+#1781621945
+tpython 3F_single_tile_reduce.py 
+#1781621988
+tpython 8.3_benchmark_single_tile.py 
+#1781622103
+tpython 3F_single_tile_reduce.py 
+#1781622167
+tpython 3D_single_tile_no_gather.py 
+#1781622188
+tpython 8.3_benchmark_single_tile.py 
+#1781622984
+sq
+#1781625823
+tpython 3D_single_tile_no_gather.py 
+#1781626284
+sq
+#1781620523
+load_module && start_gluon
+#1781620532
+tpython 3F_single_tile_reduce.py 
+#1781620846
+tpython 8.3_benchmark_single_tile.py 
+#1781621059
+debugjob
+#1781620755
+cd /home/notming/links/scratch/compression
+#1781620756
+load_module && start_gluon && tpython 3F_single_tile_reduce.py
+#1781621794
+cd /home/notming/links/scratch/compression
+#1781621795
+load_module && start_gluon && tpython test_permute.py
+#1781621844
+cd /home/notming/links/scratch/compression
+#1781621845
+load_module && start_gluon && tpython test_permute.py
+#1781705179
+load_module && start_gluon
+#1781705184
+tpython 8.7_benchmark_persistent.py 
+#1781706019
+nvidia-smi
+#1781706796
+tpython 8.7_benchmark_persistent.py 7.2 16
+#1781706851
+7.2
+#1781706851
+16
+#1781706871
+tpython 8.7_benchmark_persistent.py 7.2 16
+#1781706878
+1
+#1781706889
+tpython 8.7_benchmark_persistent.py 7.2 16
+#1781707528
+apptainer exec --nvccli sparse.sif ncu -k Profiling/max_shape/7.2
+#1781707630
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.2 python 7.2_compression_pipeline_no_gather.py 
+#1781707639
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu -k sparse_persistent_matmul_pipelined_kernel - f-o Profiling/max_shape/7.2 python 7.2_compression_pipeline_no_gather.py 
+#1781707647
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu -k sparse_persistent_matmul_pipelined_kernel -f -o Profiling/max_shape/7.2 python 7.2_compression_pipeline_no_gather.py 
+#1781707837
+tpython 9.2_find_best_ratio.py 
+#1781708077
+tpython gluon_pipeline.py
+#1781708226
+tpython 9.2_find_best_ratio.py 
+#1781708523
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu -k sparse_persistent_matmul_pipelined_kernel -f -o Profiling/max_shape/sparse python gluon_pipeline.py 
+#1781708558
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu -k persistent_matmul_pipelined_kernel -f -o Profiling/max_shape/dense python gluon_pipeline.py 
+#1781709749
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k sparse_persistent_matmul_pipelined_kernel -f -o Profiling/max_shape/7.2 python 7.2_compression_pipeline_no_gather.py 
+#1781709778
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k persistent_matmul_pipelined_kernel -f -o Profiling/max_shape/dense python gluon_pipeline.py 
+#1781709904
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k sparse_persistent_matmul_pipelined_kernel -f -o Profiling/max_shape/sparse python gluon_pipeline.py 
+#1781710280
+exit
+#1781710293
+load_module && start_gluon
+#1781710298
+tpython 9.3_find_best_shape.py 
+#1781715707
+tpython 9.1_find_max_shape.py 
+#1781716265
+exot
+#1781716267
+exit
+#1781706947
+dir
+#1781706950
+cd compression
+#1781706955
+sbatch sbatch_benchmark.sh 
+#1781706977
+sq
+#1781707122
+sbatch sbatch_benchmark.sh 
+#1781707139
+sq
+#1781713283
+tpython 7.2_compression_pipeline_no_gather.py 
+#1781713309
+load_modules && start_gluon
+#1781713314
+load_module && start_gluon
+#1781713316
+tpython 7.2_compression_pipeline_no_gather.py 
+#1781713854
+tpython 7.2_compression_pipeline_no_gather.py \
+#1781713858
+tpython 7.2_compression_pipeline_no_gather.py 
+#1781713996
+tpython 9.1_find_max_shape.py 
+#1781714188
+PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+#1781714189
+tpython 9.1_find_max_shape.py 
+#1781715968
+sbatch sbatch_benchmark.sh 
+#1781716657
+sbatch 9.2_sbatch_best_ratio.sh 
+#1781716666
+sbatch 9.3_sbatch_best_shape.sh 
+#1781716751
+sbatch 9.2_sbatch_best_ratio.sh 
+#1781716753
+sbatch 9.3_sbatch_best_shape.sh 
+#1781717827
+sq
+#1781705168
+debugjob
+#1781811144
+load_module && start_gluon
+#1781811476
+apptainer exec --nvccli ncu --set full -k "Profiling/best_shape/7.2" -o sparse_persistent_matmul_pipelined python 7.2_compression_pipeline_no_gather.py 
+#1781811498
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k "Profiling/best_shape/7.2" -o sparse_persistent_matmul_pipelined python 7.2_compression_pipeline_no_gather.py 
+#1781811526
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k "Profiling/best_shape/7.2" -o sparse_persistent_matmul_pipelined_kernel python 7.2_compression_pipeline_no_gather.py 
+#1781811651
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k sparse_persistent_matmul_pipelined_kernel -o Profiling/best_shape/7.2 python 7.2_compression_pipeline_no_gather.py 
+#1781811686
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k sparse_persistent_matmul_pipelined_kernel -o Profiling/best_shape/sparse python gluon_persistent.py 
+#1781811715
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k sparse_persistent_matmul_pipelined_kernel -o Profiling/best_shape/sparse python gluon_pipeline.py 
+#1781811743
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k persistent_matmul_pipelined_kernel -o Profiling/best_shape/dense python gluon_pipeline.py 
+#1781812348
+tpython 9.1_find_max_shape.py 
+#1781812359
+tpython 9.1_find_max_shape.py 7.2 16
+#1781812555
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -k persistent_matmul_pipelined_kernel -o Profiling/max_shape/dense python gluon_pipeline.py 
+#1781812566
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k persistent_matmul_pipelined_kernel -o Profiling/max_shape/dense python gluon_pipeline.py 
+#1781812594
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/sparse python gluon_pipeline.py 
+#1781812621
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.2 7.2_compression_pipeline_no_gather.py 
+#1781812633
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.2 python 7.2_compression_pipeline_no_gather.py 
+#1781814029
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/sparse python gluon_pipeline.py 
+#1781814058
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.2 python 7.2_compression_pipeline_no_gather.py 
+#1781814085
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k persistent_matmul_pipelined_kernel -o Profiling/max_shape/dense python gluon_pipeline.py 
+#1781814202
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.2 python 7.2_compression_pipeline_no_gather.py 
+#1781814496
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k persistent_matmul_pipelined_kernel -o Profiling/max_shape/dense python gluon_pipeline.py 
+#1781814520
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/sparse python gluon_pipeline.py 
+#1781818100
+tpython 3D_single_tile_no_gather.py 
+#1781818105
+tpython 3D_single_tile_no_gather.py > ptx.txt
+#1781818246
+exit
+#1781795765
+load_module && start_gluon
+#1781795772
+tpython 3D_single_tile_no_gather.py 
+#1781796088
+tpython 8.3_benchmark_single_tile.py 
+#1781796157
+tpython 3d
+#1781796161
+tpython 3D_single_tile_no_gather.py 
+#1781796224
+tpython 3F_single_tile_reduce.py 
+#1781796231
+tpython 3G_single_tile_no_gather_nz_convert_layout.py 
+#1781796348
+tpython 8.3_benchmark_single_tile.py 
+#1781798525
+tpython 3D_single_tile_no_gather.py > ptx.txt
+#1781798755
+tpython 3D_single_tile_no_gather.py 
+#1781798799
+tpython 3D_single_tile_no_gather.py > ptx.txt
+#1781800461
+tpython 3D_single_tile_no_gather.py 
+#1781800503
+tpython 3D_single_tile_no_gather.py > ptx.txt
+#1781801176
+tpython 8.3_benchmark_single_tile.py 
+#1781801214
+tpython 3D_single_tile_no_gather.py > ptx.txt
+#1781801371
+debugjob
+#1781803067
+load_module && start_gluon
+#1781803077
+sbatch 7.2_benchmark_604042.out 
+#1781803082
+sbatch 7.2_s
+#1781803083
+sbatch 7.2_sbatch_benchmark.sh 
+#1781803091
+sbatch 9.2_sbatch_best_ratio.sh 
+#1781803097
+sbatch 9.3_sbatch_best_shape.sh 
+#1781803113
+sq
+#1781810588
+tpython 3D_single_tile_no_gather.py 
+#1781810791
+tpython 8.3_benchmark_single_tile.py 
+#1781825561
+sbatch 7.2_sbatch_benchmark.sh 
+#1781825575
+sq
+#1781825579
+sdq
+#1781825581
+sq
+#1781825583
+squeue
+#1781825597
+sq
+#1781825621
+sbatch 7.2_sbatch_benchmark.sh 
+#1781825623
+sq
+#1781836657
+pip install torch
+#1781826267
+cd /home/notming/links/scratch/compression
+#1781826268
+cat -n /home/notming/links/scratch/compression/3I_single_tile_ptx.py | head -90
+#1781826797
+load_module && start_gluon && tpython -c "import triton.experimental.gluon.language as gl; import inspect; print(inspect.getsource(gl.inline_asm_elementwise))"
+#1781826818
+cd /home/notming/links/scratch/compression
+#1781826819
+load_module && start_gluon && tpython -c "
+#1781826819
+import triton.experimental.gluon.language as gl
+#1781826819
+import inspect
+#1781826819
+
+#1781826819
+# Check what to_tensor does in the gluon semantic module
+#1781826819
+from triton.experimental.gluon.language import _core as core
+#1781826819
+# Try to find the semantic module
+#1781826819
+import triton.language._core as tl_core
+#1781826819
+print('=== to_tensor ===')
+#1781826819
+print(inspect.getsource(tl_core._semantic.to_tensor))
+#1781826819
+" 2>&1 | tail -30
+#1781826835
+cd /home/notming/links/scratch/compression
+#1781826837
+load_module && start_gluon && tpython -c "
+#1781826837
+from triton.experimental.gluon.language._core import distributed_tensor
+#1781826837
+import inspect
+#1781826837
+print(inspect.getsource(distributed_tensor))
+#1781826837
+" 2>&1 | head -80
+#1781826857
+cd /home/notming/links/scratch/compression
+#1781826858
+load_module && start_gluon && tpython -c "
+#1781826858
+from triton.experimental.gluon.language import _core
+#1781826858
+import inspect
+#1781826858
+# Find the 'values' attribute usage
+#1781826858
+src = inspect.getsource(_core)
+#1781826858
+for i, line in enumerate(src.split('\n')):
+#1781826858
+    if 'values' in line.lower() and ('asm' in line.lower() or 'inline' in line.lower() or 'def ' in line.lower()):
+#1781826858
+        print(f'{i}: {line}')
+#1781826858
+" 2>&1 | tail -30
+#1781826879
+cd /home/notming/links/scratch/compression
+#1781826880
+load_module && start_gluon && tpython -c "
+#1781826880
+from triton.experimental.gluon.language import _core
+#1781826880
+import inspect
+#1781826880
+# Find where 'values' is accessed as an attribute
+#1781826880
+src = inspect.getsource(_core)
+#1781826880
+for i, line in enumerate(src.split('\n')):
+#1781826880
+    if '.values' in line:
+#1781826880
+        print(f'{i}: {line}')
+#1781826880
+" 2>&1 | tail -40
+#1781826897
+cd /home/notming/links/scratch/compression
+#1781826898
+load_module && start_gluon && tpython -c "
+#1781826898
+import triton.language.core as core
+#1781826898
+import inspect
+#1781826898
+src = inspect.getsource(core)
+#1781826898
+lines = src.split('\n')
+#1781826898
+for i, line in enumerate(lines):
+#1781826898
+    if 'to_tensor' in line and 'def ' in line:
+#1781826898
+        # print surrounding context
+#1781826898
+        for j in range(max(0,i-2), min(len(lines), i+20)):
+#1781826898
+            print(f'{j}: {lines[j]}')
+#1781826898
+        print('---')
+#1781826898
+" 2>&1 | tail -50
+#1781826915
+cd /home/notming/links/scratch/compression
+#1781826916
+load_module && start_gluon && tpython -c "
+#1781826916
+# Search for 'values' attribute access in the full traceback path
+#1781826916
+import triton.language.semantic as sem
+#1781826916
+import inspect
+#1781826916
+src = inspect.getsource(sem)
+#1781826916
+lines = src.split('\n')
+#1781826916
+for i, line in enumerate(lines):
+#1781826916
+    if '.values' in line:
+#1781826916
+        print(f'{i}: {line}')
+#1781826916
+" 2>&1 | tail -30
+#1781826933
+cd /home/notming/links/scratch/compression
+#1781826934
+load_module && start_gluon && tpython -c "
+#1781826934
+# The error says 'tensor' object has no attribute 'values'
+#1781826934
+# Let's trace where this comes from in the Gluon semantic override
+#1781826934
+from triton.experimental.gluon.language import _semantic
+#1781826934
+import inspect
+#1781826934
+src = inspect.getsource(_semantic)
+#1781826934
+lines = src.split('\n')
+#1781826934
+for i, line in enumerate(lines):
+#1781826934
+    if '.values' in line:
+#1781826934
+        print(f'{i}: {line}')
+#1781826934
+" 2>&1 | tail -30
+#1781826950
+cd /home/notming/links/scratch/compression
+#1781826951
+load_module && start_gluon && tpython -c "
+#1781826951
+from triton.experimental.gluon.language import _semantic
+#1781826951
+import inspect
+#1781826951
+src = inspect.getsource(_semantic)
+#1781826951
+lines = src.split('\n')
+#1781826951
+# Show the to_tensor method and binary_op_type_checking_impl
+#1781826951
+for i, line in enumerate(lines):
+#1781826951
+    if 'to_tensor' in line or 'binary_op_type_checking' in line:
+#1781826951
+        for j in range(max(0,i-1), min(len(lines), i+15)):
+#1781826951
+            print(f'{j}: {lines[j]}')
+#1781826951
+        print('---')
+#1781826951
+" 2>&1 | tail -60
+#1781886439
+load_module && start_gluon
+#1781886446
+tpython 3J_single_tile_ptx_match.py 
+#1781886487
+tpython 3J_single_tile_ptx_match.py  > ptx_correctness.txt 
+#1781890555
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt 
+#1781890729
+tpython 3J_single_tile_ptx_match.py 
+#1781890795
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt 
+#1781892628
+tpython ptx_check.py
+#1781893059
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt 
+#1781893077
+tpython ptx_check.py
+#1781893172
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt 
+#1781893191
+tpython ptx_check.py
+#1781893253
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt  && tpython ptx_check.py
+#1781893974
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt  && tpython ptx_check.py > ptx_check.py
+#1781893980
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt  && tpython ptx_check.py > ptx_checktxt
+#1781893986
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt  && tpython ptx_check.py > ptx_check.txt
+#1781892601
+cd /home/notming/links/scratch/compression
+#1781892602
+load_module && start_gluon && tpython ptx_check.py
+#1781892843
+cd /home/notming/links/scratch/compression
+#1781892845
+python simulate.py
+#1781892901
+python simulate.py
+#1781893011
+load_module && start_gluon && tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt && tpython ptx_check.py
+#1781893069
+cd /home/notming/links/scratch/compression
+#1781893071
+load_module && start_gluon && tpython 3J_single_tile_ptx_match.py
+#1781893157
+cd /home/notming/links/scratch/compression
+#1781893158
+load_module && start_gluon && tpython test_shfl.py
+#1781893315
+cd /home/notming/links/scratch/compression
+#1781893316
+load_module && start_gluon && tpython test_trans.py
+#1781893352
+cd /home/notming/links/scratch/compression
+#1781893354
+load_module && start_gluon && tpython 3J_single_tile_ptx_match.py
+#1781923368
+load_module && start_gluon
+#1781923468
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt && tpython ptx_check.py > ptx_check.txt
+#1781929647
+debugjob
+#1781923619
+cd /home/notming/links/scratch/compression
+#1781923621
+tpython 3J_single_tile_ptx_match.py
+#1781923790
+grep -A 5 "WGMMA:" ptx_correctness.txt
+#1781923806
+grep -n "T0:2" ptx_correctness.txt
+#1781923872
+grep -A 20 "Kernel Output Sample:" ptx_correctness.txt
+#1781923883
+grep -A 10 "PyTorch Reference Sample:" ptx_correctness.txt
+#1781924010
+cat << 'EOF' > test_t0.py
+#1781924010
+import re
+
+#1781924010
+import ast
+
+#1781924010
+
+
+#1781924010
+def parse_tensor(lines):
+
+#1781924010
+    text = " ".join(lines)
+
+#1781924010
+    match = re.search(r'tensor\(\[\[(.*?)\]\]', text)
+
+#1781924010
+    if not match: return []
+
+#1781924010
+    rows_str = re.findall(r'\[(.*?)\]', text)
+
+#1781924010
+    tensor = []
+
+#1781924010
+    for row_str in rows_str:
+
+#1781924010
+        nums = re.findall(r'[-+]?\d*\.\d+(?:e[-+]?\d+)?', row_str)
+
+#1781924010
+        if nums:
+
+#1781924010
+            tensor.append([float(n) for n in nums])
+
+#1781924010
+    return tensor
+
+#1781924010
+
+
+#1781924010
+with open('ptx_correctness.txt', 'r') as f:
+
+#1781924010
+    content = f.read()
+
+#1781924010
+
+
+#1781924010
+# print whether T0:4 is mismatched in the actual strings
+
+#1781924010
+kernel_out = []
+
+#1781924010
+ref_out = []
+
+#1781924010
+current = None
+
+#1781924010
+for line in content.split('\n'):
+
+#1781924010
+    if line.startswith('Kernel Output'): current = 'k'
+
+#1781924010
+    elif line.startswith('PyTorch Ref'): current = 'r'
+
+#1781924010
+    elif line.startswith('WGMMA'): current = 'w'
+
+#1781924010
+    elif current == 'k' and '[' in line: kernel_out.append(line)
+
+#1781924010
+    elif current == 'r' and '[' in line: ref_out.append(line)
+
+#1781924010
+
+
+#1781924010
+print("Kernel parsed:", len(parse_tensor(kernel_out)))
+
+#1781924010
+print("Ref parsed:", len(parse_tensor(ref_out)))
+
+#1781924010
+
+
+#1781924010
+EOF
+
+#1781924010
+tpython test_t0.py
+#1781924019
+tpython test_t0.py
+#1781924151
+tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt && tpython ptx_check.py > ptx_check.txt && cat ptx_check.txt
+#1781924170
+cd /home/notming
+#1781924172
+load_module && start_gluon -c "cd scratch/compression && tpython 3J_single_tile_ptx_match.py > ptx_correctness.txt && tpython ptx_check.py > ptx_check.txt && cat ptx_check.txt"
+#1781926322
+cd /home/notming/links/scratch/compression
+#1781926323
+cat << 'EOF' > test_trans.py
+#1781926323
+import triton
+
+#1781926323
+import triton.language as tl
+
+#1781926323
+import gluon.language as gl
+
+#1781926323
+
+
+#1781926323
+@gl.jit
+
+#1781926323
+def test_kernel():
+
+#1781926323
+    a = gl.zeros((64, 16), dtype=gl.int32)
+
+#1781926323
+    # Try reshaping and transposing
+
+#1781926323
+    a_trans = a.reshape(4, 2, 8, 16).trans(0, 2, 3, 1)
+
+#1781926323
+    a0, a1 = a_trans.split()
+
+#1781926323
+    gl.static_print(a0.shape)
+
+#1781926323
+
+
+#1781926323
+EOF
+
+#1781926323
+tpython test_trans.py
+#1781926347
+cat /home/notming/.gemini/antigravity-ide/brain/0b7068d1-d2db-47ce-8088-7bf07762b07e/.system_generated/tasks/task-90.log
+#1781926370
+cd /home/notming
+#1781926372
+cat << 'EOF' > test_trans.py
+#1781926372
+import triton.language as tl
+
+#1781926372
+import gluon.language as gl
+
+#1781926372
+
+
+#1781926372
+@gl.jit
+
+#1781926372
+def test_kernel():
+
+#1781926372
+    y0 = gl.zeros((64, 4), dtype=gl.int32)
+
+#1781926372
+    # Try transposing so that Row 8 is the last dimension!
+
+#1781926372
+    # 64 = 4 * 2 * 8. So (4, 2, 8, 4). Transpose to (4, 8, 4, 2).
+
+#1781926372
+    y0_r = y0.reshape(4, 2, 8, 4).trans(0, 2, 3, 1)
+
+#1781926372
+    y0_r0, y0_r8 = y0_r.split()
+
+#1781926372
+
+
+#1781926372
+EOF
+
+#1781926372
+tpython test_trans.py
+#1781926448
+cat << 'EOF' > test_ptx_8.py
+#1781926448
+import triton.language as tl
+
+#1781926448
+import gluon.language as gl
+
+#1781926448
+
+
+#1781926448
+TRANSPOSE_8_PTX = """
+
+#1781926448
+    .reg .pred %p1, %p2;
+
+#1781926448
+    .reg .b32 %lane, %t1, %t2;
+
+#1781926448
+    mov.u32 %lane, %laneid;
+
+#1781926448
+
+
+#1781926448
+    and.b32 %t1, %lane, 1;
+
+#1781926448
+    setp.ne.b32 %p1, %t1, 0;
+
+#1781926448
+    and.b32 %t2, %lane, 2;
+
+#1781926448
+    setp.ne.b32 %p2, %t2, 0;
+
+#1781926448
+
+
+#1781926448
+    .reg .b32 %r0_0, %r1_0, %r2_0, %r3_0;
+
+#1781926448
+    .reg .b32 %r0_8, %r1_8, %r2_8, %r3_8;
+
+#1781926448
+
+
+#1781926448
+    .reg .b32 %s1_0, %s3_0, %e1_0, %e3_0;
+
+#1781926448
+    selp.b32 %s1_0, $8, $9, %p1;
+
+#1781926448
+    selp.b32 %s3_0, $10, $11, %p1;
+
+#1781926448
+    shfl.sync.bfly.b32 %e1_0, %s1_0, 1, 0x1f, 0xffffffff;
+
+#1781926448
+    shfl.sync.bfly.b32 %e3_0, %s3_0, 1, 0x1f, 0xffffffff;
+
+#1781926448
+
+
+#1781926448
+    @%p1  mov.b32 %r0_0, %e1_0;
+
+#1781926448
+    @!%p1 mov.b32 %r1_0, %e1_0;
+
+#1781926448
+    @%p1  mov.b32 %r2_0, %e3_0;
+
+#1781926448
+    @!%p1 mov.b32 %r3_0, %e3_0;
+
+#1781926448
+    @!%p1 mov.b32 %r0_0, $8;
+
+#1781926448
+    @%p1  mov.b32 %r1_0, $9;
+
+#1781926448
+    @!%p1 mov.b32 %r2_0, $10;
+
+#1781926448
+    @%p1  mov.b32 %r3_0, $11;
+
+#1781926448
+
+
+#1781926448
+    .reg .b32 %s2_0, %s3_new_0, %e2_0, %e3_new_0;
+
+#1781926448
+    selp.b32 %s2_0, %r0_0, %r2_0, %p2;
+
+#1781926448
+    selp.b32 %s3_new_0, %r1_0, %r3_0, %p2;
+
+#1781926448
+    shfl.sync.bfly.b32 %e2_0, %s2_0, 2, 0x1f, 0xffffffff;
+
+#1781926448
+    shfl.sync.bfly.b32 %e3_new_0, %s3_new_0, 2, 0x1f, 0xffffffff;
+
+#1781926448
+
+
+#1781926448
+    .reg .b32 %r0_final_0, %r1_final_0, %r2_final_0, %r3_final_0;
+
+#1781926448
+    @%p2  mov.b32 %r0_final_0, %e2_0;
+
+#1781926448
+    @!%p2 mov.b32 %r2_final_0, %e2_0;
+
+#1781926448
+    @%p2  mov.b32 %r1_final_0, %e3_new_0;
+
+#1781926448
+    @!%p2 mov.b32 %r3_final_0, %e3_new_0;
+
+#1781926448
+    @!%p2 mov.b32 %r0_final_0, %r0_0;
+
+#1781926448
+    @%p2  mov.b32 %r1_final_0, %r1_0;
+
+#1781926448
+    @!%p2 mov.b32 %r2_final_0, %r2_0;
+
+#1781926448
+    @%p2  mov.b32 %r3_final_0, %r3_0;
+
+#1781926448
+
+
+#1781926448
+    .reg .b32 %s1_8, %s3_8, %e1_8, %e3_8;
+
+#1781926448
+    selp.b32 %s1_8, $12, $13, %p1;
+
+#1781926448
+    selp.b32 %s3_8, $14, $15, %p1;
+
+#1781926448
+    shfl.sync.bfly.b32 %e1_8, %s1_8, 1, 0x1f, 0xffffffff;
+
+#1781926448
+    shfl.sync.bfly.b32 %e3_8, %s3_8, 1, 0x1f, 0xffffffff;
+
+#1781926448
+
+
+#1781926448
+    @%p1  mov.b32 %r0_8, %e1_8;
+
+#1781926448
+    @!%p1 mov.b32 %r1_8, %e1_8;
+
+#1781926448
+    @%p1  mov.b32 %r2_8, %e3_8;
+
+#1781926448
+    @!%p1 mov.b32 %r3_8, %e3_8;
+
+#1781926448
+    @!%p1 mov.b32 %r0_8, $12;
+
+#1781926448
+    @%p1  mov.b32 %r1_8, $13;
+
+#1781926448
+    @!%p1 mov.b32 %r2_8, $14;
+
+#1781926448
+    @%p1  mov.b32 %r3_8, $15;
+
+#1781926448
+
+
+#1781926448
+    .reg .b32 %s2_8, %s3_new_8, %e2_8, %e3_new_8;
+
+#1781926448
+    selp.b32 %s2_8, %r0_8, %r2_8, %p2;
+
+#1781926448
+    selp.b32 %s3_new_8, %r1_8, %r3_8, %p2;
+
+#1781926448
+    shfl.sync.bfly.b32 %e2_8, %s2_8, 2, 0x1f, 0xffffffff;
+
+#1781926448
+    shfl.sync.bfly.b32 %e3_new_8, %s3_new_8, 2, 0x1f, 0xffffffff;
+
+#1781926448
+
+
+#1781926448
+    .reg .b32 %r0_final_8, %r1_final_8, %r2_final_8, %r3_final_8;
+
+#1781926448
+    @%p2  mov.b32 %r0_final_8, %e2_8;
+
+#1781926448
+    @!%p2 mov.b32 %r2_final_8, %e2_8;
+
+#1781926448
+    @%p2  mov.b32 %r1_final_8, %e3_new_8;
+
+#1781926448
+    @!%p2 mov.b32 %r3_final_8, %e3_new_8;
+
+#1781926448
+    @!%p2 mov.b32 %r0_final_8, %r0_8;
+
+#1781926448
+    @%p2  mov.b32 %r1_final_8, %r1_8;
+
+#1781926448
+    @!%p2 mov.b32 %r2_final_8, %r2_8;
+
+#1781926448
+    @%p2  mov.b32 %r3_final_8, %r3_8;
+
+#1781926448
+
+
+#1781926448
+    mov.b32 $0, %r0_final_0;
+
+#1781926448
+    mov.b32 $1, %r0_final_8;
+
+#1781926448
+    mov.b32 $2, %r1_final_0;
+
+#1781926448
+    mov.b32 $3, %r1_final_8;
+
+#1781926448
+    mov.b32 $4, %r2_final_0;
+
+#1781926448
+    mov.b32 $5, %r2_final_8;
+
+#1781926448
+    mov.b32 $6, %r3_final_0;
+
+#1781926448
+    mov.b32 $7, %r3_final_8;
+
+#1781926448
+"""
+
+#1781926448
+
+
+#1781926448
+@gl.jit
+
+#1781926448
+def test_kernel():
+
+#1781926448
+    a = gl.zeros((64, 16), dtype=gl.int32)
+
+#1781926448
+    (y,) = gl.inline_asm_elementwise(
+
+#1781926448
+        TRANSPOSE_8_PTX,
+
+#1781926448
+        "=r,=r,=r,=r,=r,=r,=r,=r,r,r,r,r,r,r,r,r",
+
+#1781926448
+        [a],
+
+#1781926448
+        dtype=(gl.int32,),
+
+#1781926448
+        is_pure=True,
+
+#1781926448
+        pack=8,
+
+#1781926448
+    )
+
+#1781926448
+    gl.static_print(y.shape)
+
+#1781926448
+EOF
+
+#1781926448
+tpython test_ptx_8.py
+#1781970576
+load_module && start_gluon
+#1781970583
+sbatch 7.4_sbatch_benchmark.sh 
+#1781970586
+sq
+#1781969745
+debugjob

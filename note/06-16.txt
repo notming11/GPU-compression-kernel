@@ -1,0 +1,13 @@
+profiling
+maybe a flag in trillium to enable it
+
+hold off here
+maybe have another kernel
+store it back to shared memory
+dont expect better result
+
+research what icc is
+next run:
+use larger sizes
+for baseline load a into registers
+autotune the kernels: only tune the dense one
