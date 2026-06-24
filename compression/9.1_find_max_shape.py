@@ -41,7 +41,7 @@ def matmul_get_configs():
             num_warps=warps,
         )
         for BM, BN, BK in [[64, 64, 128], [64, 64, 256], [64, 128, 128], [128, 64, 128], [64, 64, 64], [64, 128, 64], [128, 128, 64]] 
-        for buffers in (3, 4, 5, 6, 7)
+        for buffers in (2, 3, 4, 5, 6, 7)
         for warps in (4, 8, 16)
     ]
 
