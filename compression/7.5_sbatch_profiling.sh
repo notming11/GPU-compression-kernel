@@ -4,7 +4,7 @@
 #SBATCH --nodes=1                         # Request 1 node
 #SBATCH --gpus-per-node=h100:1                 # Request 1 GPU
 #SBATCH --time=00:10:00                   # Max runtime (2hr)
-#SBATCH --mem=4G
+#SBATCH --mem=188G
 
 # setup
 module load StdEnv/2023 gcc/12.3 python/3.14.2 cuda/13.2 apptainer/1.4.5

@@ -1,4 +1,4 @@
-Wed Jun 24 13:47:40 2026       
+Wed Jun 24 13:53:56 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 580.159.04             Driver Version: 580.159.04     CUDA Version: 13.2     |
 +-----------------------------------------+------------------------+----------------------+
@@ -6,8 +6,8 @@ Wed Jun 24 13:47:40 2026
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  NVIDIA H100 80GB HBM3          Off |   00000000:4E:00.0 Off |                    0 |
-| N/A   45C    P0             78W /  700W |       0MiB /  81559MiB |      0%      Default |
+|   0  NVIDIA H100 80GB HBM3          Off |   00000000:CB:00.0 Off |                    0 |
+| N/A   43C    P0             73W /  700W |       0MiB /  81559MiB |      0%      Default |
 |                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
 
@@ -24,11 +24,11 @@ CUDA Available: True
 Device Count: 1
 /usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
 rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
-==PROF== Connected to process 1893028 (/usr/bin/python3.12)
+==PROF== Connected to process 1460526 (/usr/bin/python3.12)
 ==WARNING== Unable to access the following 6 metrics: ctc__rx_bytes_data_user.sum, ctc__rx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__rx_bytes_data_user.sum.per_second, ctc__tx_bytes_data_user.sum, ctc__tx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__tx_bytes_data_user.sum.per_second.
 
 
 ==PROF== Profiling "sparse_persistent_matmul_pipelined_kernel": 0%....50%....100% - 39 passes
 PASSED
-==PROF== Disconnected from process 1893028
+==PROF== Disconnected from process 1460526
 ==PROF== Report: /scratch/notming/GPU-compression-kernel/compression/Profiling/max_shape/7.5.ncu-rep
