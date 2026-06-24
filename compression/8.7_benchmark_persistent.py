@@ -236,7 +236,7 @@ def plot_benchmark_results(df_raw, N, version):
 
     # Polish layouts
     plt.tight_layout()
-    output_image = f"Benchmark/v{version}_{N}.png"
+    output_image = f"Benchmark/v{version}_{N}_rorqual.png"
     plt.savefig(output_image, dpi=300, bbox_inches="tight")
     print(
         f"\n[INFO] Optimization charts successfully compiled and saved to '{output_image}'"
@@ -247,7 +247,7 @@ def plot_benchmark_results(df_raw, N, version):
 if __name__ == "__main__":
     # Feel free to add more configurations here to match the density of your target plot!
     if len(sys.argv) < 3:
-        print("Input the version (7/7.1/7.2/7.3) and N")
+        print("Input the version (7/7.1/7.2/7.3/7.4/7.5) and N")
         sys.exit(1)
     version = sys.argv[1]
     N = int(sys.argv[2])
@@ -274,11 +274,12 @@ if __name__ == "__main__":
     ]
 
     paths = {
-        "7": "./7_compression_pipeline.py",
-        "7.1": "./7.1_compression_pipeline_with_convert.py",
-        "7.2": "./7.2_compression_pipeline_no_gather.py",
-        "7.3": "./7.3_compression_pipeline_reduce.py",
-        "7.4": "./7.4_compression_pipeline_ptx_prototype.py"
+        "7" : "./7_compression_pipeline.py", 
+        "7.1" : "./7.1_compression_pipeline_with_convert.py", 
+        "7.2" : "./7.2_compression_pipeline_no_gather.py", 
+        "7.3" : "./7.3_compression_pipeline_reduce.py",
+        "7.4" : "./7.4_compression_pipeline_ptx_prototype.py",
+        "7.5" : "./7.5_compression_pipeline_no_ldmatrix.py"
     }
     try:
         v7_path = paths[version]
