@@ -107,17 +107,17 @@ class SparseWGMMA:
         a0, a2 = a_even.split()  # a0 = col 4g+0, a2 = col 4g+2
         a1, a3 = a_odd.split()   # a1 = col 4g+1, a3 = col 4g+3
 
-        m0 = a0 != 0
-        m1 = a1 != 0
-        m3 = a3 != 0
+        # m0 = a0 != 0
+        # m1 = a1 != 0
+        # m3 = a3 != 0
 
         # bit0 = ~m0 & m1
         # bit1 = ~m0 & ~m1
         # bit2 = (m0 & m1) | (~m0 & ~m1) | m3
         # bit3 = (~m0 & m1) | ~m1
 
-        idx0 = (~m0 & m1) | ((~m0 & ~m1).to(gl.int16) << 1)
-        idx1 = ((m0 & m1) | (~m0 & ~m1) | m3)| (((~m0 & m1) | ~m1).to(gl.int16) << 1)
+        idx0 = (~(a0 != 0) & (a1 != 0)) | ((~(a0 != 0) & ~(a1 != 0)) << 1)
+        idx1 = (((a0 != 0) & (a1 != 0)) | (~(a0 != 0) & ~(a1 != 0)) | (a3 != 0)) | (((~(a0 != 0) & (a1 != 0)) | ~(a1 != 0)) << 1)
 
         nz0 = gl.where(idx0 == 0, a0, gl.where(idx0 == 1, a1, gl.where(idx0 == 2, a2, a3)))
         nz1 = gl.where(idx1 == 0, a0, gl.where(idx1 == 1, a1, gl.where(idx1 == 2, a2, a3)))
