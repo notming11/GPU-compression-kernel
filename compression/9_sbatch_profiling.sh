@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=Profiling        # Job name
-#SBATCH --output=Profiling_%j.out    # Output file (%j = job ID)
+#SBATCH --job-name=9_Profiling        # Job name
+#SBATCH --output=9_Profiling_%j.out    # Output file (%j = job ID)
 #SBATCH --nodes=1                         # Request 1 node
 #SBATCH --gpus-per-node=h100:1                 # Request 1 GPU
 #SBATCH --time=00:20:00                   # Max runtime (2hr)
