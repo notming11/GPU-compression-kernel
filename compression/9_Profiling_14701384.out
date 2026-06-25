@@ -1,4 +1,4 @@
-Wed Jun 24 18:16:49 2026       
+Wed Jun 24 23:59:00 2026       
 +-----------------------------------------------------------------------------------------+
 | NVIDIA-SMI 580.159.04             Driver Version: 580.159.04     CUDA Version: 13.2     |
 +-----------------------------------------+------------------------+----------------------+
@@ -6,8 +6,8 @@ Wed Jun 24 18:16:49 2026
 | Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
 |                                         |                        |               MIG M. |
 |=========================================+========================+======================|
-|   0  NVIDIA H100 80GB HBM3          Off |   00000000:4E:00.0 Off |                    0 |
-| N/A   35C    P0             72W /  700W |       0MiB /  81559MiB |      0%      Default |
+|   0  NVIDIA H100 80GB HBM3          Off |   00000000:CB:00.0 Off |                    0 |
+| N/A   34C    P0             69W /  700W |       0MiB /  81559MiB |      0%      Default |
 |                                         |                        |             Disabled |
 +-----------------------------------------+------------------------+----------------------+
 
@@ -24,7 +24,7 @@ CUDA Available: True
 Device Count: 1
 /usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
 rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
-==PROF== Connected to process 1349293 (/usr/bin/python3.12)
+==PROF== Connected to process 1354314 (/usr/bin/python3.12)
 /opt/stoicc/python/triton/language/core.py:373: UserWarning: Value 1 exceeds the maximum bitwidth (1) for type 'int1'. This may result in undefined behavior.
   warn(
 ==WARNING== Unable to access the following 6 metrics: ctc__rx_bytes_data_user.sum, ctc__rx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__rx_bytes_data_user.sum.per_second, ctc__tx_bytes_data_user.sum, ctc__tx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__tx_bytes_data_user.sum.per_second.
@@ -32,41 +32,43 @@ rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
 
 ==PROF== Profiling "sparse_persistent_matmul_pipelined_kernel": 0%
 ==WARNING== Launching the workload is taking more time than expected. If this continues to hang, terminate the profile and re-try by profiling the range of all related launches using '--replay-mode range'. See https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#replay for more details.
-....50%....100% - 42 passes
+....50%....100% - 43 passes
 PASSED
-==PROF== Disconnected from process 1349293
+==PROF== Disconnected from process 1354314
 ==PROF== Report: /scratch/notming/GPU-compression-kernel/compression/Profiling/rorqual/7.5.ncu-rep
 /usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
 rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
-==PROF== Connected to process 1350095 (/usr/bin/python3.12)
+==PROF== Connected to process 1355073 (/usr/bin/python3.12)
 ==WARNING== Unable to access the following 6 metrics: ctc__rx_bytes_data_user.sum, ctc__rx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__rx_bytes_data_user.sum.per_second, ctc__tx_bytes_data_user.sum, ctc__tx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__tx_bytes_data_user.sum.per_second.
 
 
 ==PROF== Profiling "persistent_matmul_pipelined_kernel": 0%
 ==WARNING== Launching the workload is taking more time than expected. If this continues to hang, terminate the profile and re-try by profiling the range of all related launches using '--replay-mode range'. See https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#replay for more details.
-....50%....100% - 41 passes
-==PROF== Disconnected from process 1350095
+....50%....100% - 43 passes
+==PROF== Disconnected from process 1355073
 ==PROF== Report: /scratch/notming/GPU-compression-kernel/compression/Profiling/rorqual/dense.ncu-rep
 /usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
 rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
-==PROF== Connected to process 1350301 (/usr/bin/python3.12)
+==PROF== Connected to process 1355861 (/usr/bin/python3.12)
 ==WARNING== Unable to access the following 6 metrics: ctc__rx_bytes_data_user.sum, ctc__rx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__rx_bytes_data_user.sum.per_second, ctc__tx_bytes_data_user.sum, ctc__tx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__tx_bytes_data_user.sum.per_second.
 
 
 ==PROF== Profiling "sparse_persistent_matmul_pipelined_kernel": 0%
 ==WARNING== Backing up device memory in system memory. Kernel replay might be slow. Consider using "--replay-mode application" to avoid memory save-and-restore.
-....50%....100% - 41 passes
-==PROF== Disconnected from process 1350301
+
+==WARNING== Launching the workload is taking more time than expected. If this continues to hang, terminate the profile and re-try by profiling the range of all related launches using '--replay-mode range'. See https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#replay for more details.
+....50%....100% - 42 passes
+==PROF== Disconnected from process 1355861
 ==PROF== Report: /scratch/notming/GPU-compression-kernel/compression/Profiling/rorqual/sparse.ncu-rep
 /usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
 rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
-==PROF== Connected to process 1351103 (/usr/bin/python3.12)
+==PROF== Connected to process 1356571 (/usr/bin/python3.12)
 ==WARNING== Unable to access the following 6 metrics: ctc__rx_bytes_data_user.sum, ctc__rx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__rx_bytes_data_user.sum.per_second, ctc__tx_bytes_data_user.sum, ctc__tx_bytes_data_user.sum.pct_of_peak_sustained_elapsed, ctc__tx_bytes_data_user.sum.per_second.
 
 
 ==PROF== Profiling "sparse_persistent_matmul_pipelined_kernel": 0%
 ==WARNING== Launching the workload is taking more time than expected. If this continues to hang, terminate the profile and re-try by profiling the range of all related launches using '--replay-mode range'. See https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#replay for more details.
-....50%....100% - 42 passes
+....50%....100% - 43 passes
 PASSED
-==PROF== Disconnected from process 1351103
+==PROF== Disconnected from process 1356571
 ==PROF== Report: /scratch/notming/GPU-compression-kernel/compression/Profiling/rorqual/7.2.ncu-rep
