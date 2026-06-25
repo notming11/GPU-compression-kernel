@@ -153,9 +153,9 @@ def small_mma_kernel(
 
     a_compressed = gl.join(nz0, nz1)
     a_compressed = a_compressed.reshape(BLOCK_M, BLOCK_K // 2)
-    gl.static_print("Before convert layout:")
-    gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
-    gl.static_print(a_compressed.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 2]))
+    # gl.static_print("Before convert layout:")
+    # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
+    # gl.static_print(a_compressed.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 2]))
 
     # gl.static_print(nz0.type)
 
@@ -220,9 +220,9 @@ def small_mma_kernel(
     # convert a_compressed to DotOperandLayout
 
     a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
-    gl.static_print("After convert layout:")
-    gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
-    gl.static_print(a_compressed.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 2]))
+    # gl.static_print("After convert layout:")
+    # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
+    # gl.static_print(a_compressed.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 2]))
     e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = False)
     c = c_smem.load(c_layout)
 
