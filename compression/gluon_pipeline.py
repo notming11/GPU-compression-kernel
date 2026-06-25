@@ -446,7 +446,7 @@ def sparse_persistent_matmul_pipelined(A, E, B, C, BLOCK_M, BLOCK_N, BLOCK_K, nu
                                                     STEALB=num_buffers == 4, num_warps=num_warps)
 
 if __name__ == "__main__":
-    for M, N, K in [(49152, 16, 49152)]:
+    for M, N, K in [(49152, 4096, 49152)]:
         for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
             for num_warps in [4]:
                 A = torch.randn(M, K, device="cuda", dtype=torch.float16)
