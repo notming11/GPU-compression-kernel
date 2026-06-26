@@ -106,8 +106,9 @@ if __name__ == "__main__":
         sys.exit(1)
     version = sys.argv[1]
     N=int(sys.argv[2])
-    dim = [768, 1024, 1536, 2048, 3072, 4096, 6144, 8192, 12288, 16384, 24576, 32768, 49152]
-    shapes = [(i, N, j) for i in dim for j in dim if [i, j] not in [[49152, 32768], [32768, 49152]]]
+    # dim = [768, 1024, 1536, 2048, 3072, 4096, 6144, 8192, 12288, 16384, 24576, 32768, 49152]
+    # shapes = [(i, N, j) for i in dim for j in dim if [i, j] not in [[49152, 32768], [32768, 49152]]]
+    shapes = [(16384, N, 49152)]
 
     paths = {
         "7" : "./7_compression_pipeline.py", 

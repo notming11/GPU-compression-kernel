@@ -1,4 +1,0 @@
-Parsed PTX layout: 64x64
-Parsed Kernel Output: 64x32
-Parsed WGMMA layout: 64x64
-Parsed Ref Output: 64x32
