@@ -102,7 +102,7 @@ def benchmark_kernels(M, N, K, BLOCK_M, BLOCK_N, BLOCK_K, num_buffers, num_warps
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Input the version (7/7.1/7.2/7.3) and N")
+        print("Input the version (7/7.1/7.2/7.3/7.5) and N")
         sys.exit(1)
     version = sys.argv[1]
     N=int(sys.argv[2])
@@ -113,7 +113,8 @@ if __name__ == "__main__":
         "7" : "./7_compression_pipeline.py", 
         "7.1" : "./7.1_compression_pipeline_with_convert.py", 
         "7.2" : "./7.2_compression_pipeline_no_gather.py", 
-        "7.3" : "./7.3_compression_pipeline_reduce.py"
+        "7.3" : "./7.3_compression_pipeline_reduce.py",
+        "7.5" : "./7.5_compression_pipeline_no_ldmatrix.py"
     }
     
     try:
