@@ -1,0 +1,43 @@
+Thu Jun 25 22:48:30 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.159.04             Driver Version: 580.159.04     CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          Off |   00000000:CB:00.0 Off |                    0 |
+| N/A   37C    P0             71W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+CUDA Available: True
+Device Count: 1
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+
+Starting manual autotuning search...
+--------------------------------------------------------------------------------
+[1/1] Shape 16384-4096-49152:
+  -> Best Dense   :  552.72 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 8, buffers=6
+  -> Best Runtime :  283.73 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=3
+  -> Best Precomp :  841.45 TFLOPS | Config: BM=128, BN=128, BK= 64, warps= 4, buffers=6
+--------------------------------------------------------------------------------
+
+================================================================================
+🏆 GLOBAL WINNER: HIGHEST RUNTIME vs DENSE RATIO
+================================================================================
+Shape  : 16384-4096-49152
+Ratio  : 0.513x speedup
+Layout : BM=128, BN=128, BK= 64, warps= 4, buffers=3
+================================================================================
+
