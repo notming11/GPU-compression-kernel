@@ -1,0 +1,6 @@
+gl.convert_layout too expensive, load using linear layout directly
+see if load from smem is coalesced and vectorized in profiler
+
+look into gluon compiler as to why its using smem for convert layout
+
+
