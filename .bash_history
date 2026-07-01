@@ -3075,3 +3075,1548 @@ sbatch 7.4_sbatch_benchmark.sh
 sq
 #1781969745
 debugjob
+#1782057501
+git init -b main
+#1782057523
+git add .
+#1782057895
+git rm --cached -r .venv
+#1782057916
+cd $HOMW
+#1782057920
+cd $HOME
+#1782057921
+dir
+#1782057943
+~bashrc.sh
+#1782058005
+cd $SCRATCH
+#1782058048
+dir
+#1782058052
+git add .
+#1782058542
+git submodule deinit -f gluon_spmm
+#1782058547
+dir
+#1782058628
+git add .
+#1782058806
+git init -b main
+#1782058846
+git add note
+#1782058866
+nano .git
+#1782058884
+cd .git
+#1782058886
+dir
+#1782058899
+nano index.lock 
+#1782058906
+cd ..
+#1782058925
+git add note
+#1782058955
+rm -f .git/index.lock 
+#1782058957
+git add note
+#1782059018
+rm -f .git/index.lock 
+#1782059197
+git config --global user.email "yinming.chan@gmail.com"
+#1782059209
+git config --global user.name " notming11"
+#1782059242
+git remote add origin https://github.com/notming11/GPU-compression-kernel.git
+#1782059248
+git push -u origin main
+#1782704545
+load_module && start_gluon
+#1782704057
+cd compression/
+#1782704063
+cd sbatch_sh/
+#1782704066
+cd trillium
+#1782704072
+sbatch 7_benchmark_all.sh 
+#1782704102
+sq
+#1782704262
+scancel 622526
+#1782704265
+sq
+#1782704333
+sbatch 7_benchmark_all.sh 
+#1782704342
+scancel 622529
+#1782704349
+sbatch 7_benchmark_all.sh 
+#1782704352
+sq
+#1782794795
+debugjob
+#1782794981
+debugjob --exclude=trig0001
+#1782832733
+load_module && start_gluon
+#1782832738
+tpython gluon_ws_dense.py 
+#1782832925
+tpython 7.6_compression_ws.py 
+#1782832964
+tpython gluon_ws_dense.py 
+#1782832146
+cd /home/notming/links/scratch/compression
+#1782832148
+cat << 'EOF' > /home/notming/links/scratch/compression/7.6_compression_ws.py
+#1782832148
+# This will be replaced with the full code.
+
+#1782832148
+EOF
+
+#1782832492
+cat << 'EOF' > /home/notming/links/scratch/compression/7.6_compression_ws.py
+#1782832492
+import torch
+
+#1782832492
+import triton
+
+#1782832492
+
+
+#1782832492
+from triton.experimental import gluon
+
+#1782832492
+from triton.experimental.gluon import language as gl
+
+#1782832492
+
+
+#1782832492
+from triton.experimental.gluon.nvidia.hopper import TensorDescriptor
+
+#1782832492
+from triton.language.core import _aggregate as aggregate
+
+#1782832492
+
+
+#1782832492
+from triton.experimental.gluon.language.nvidia.hopper import (
+
+#1782832492
+    tma,
+
+#1782832492
+    mbarrier,
+
+#1782832492
+    fence_async_shared,
+
+#1782832492
+)
+
+#1782832492
+
+
+#1782832492
+from common import (
+
+#1782832492
+    WGMMA,
+
+#1782832492
+    GroupedPersistentTileScheduler
+
+#1782832492
+)
+
+#1782832492
+import os
+
+#1782832492
+
+
+#1782832492
+from prune import prune_2_4
+
+#1782832492
+from compress_2_4 import compress_dense_to_sparse
+
+#1782832492
+
+
+#1782832492
+@aggregate
+
+#1782832492
+class SparsePartitionArgs:
+
+#1782832492
+    a_pruned_desc: tma.tensor_descriptor
+
+#1782832492
+    b_desc: tma.tensor_descriptor
+
+#1782832492
+    c_desc: tma.tensor_descriptor
+
+#1782832492
+    
+
+#1782832492
+    a_pruned_bufs: gl.shared_memory_descriptor
+
+#1782832492
+    a_comp_bufs: gl.shared_memory_descriptor
+
+#1782832492
+    e_bufs: gl.shared_memory_descriptor
+
+#1782832492
+    b_bufs: gl.shared_memory_descriptor
+
+#1782832492
+    
+
+#1782832492
+    a_pruned_empty_bars: gl.shared_memory_descriptor
+
+#1782832492
+    a_pruned_ready_bars: gl.shared_memory_descriptor
+
+#1782832492
+    
+
+#1782832492
+    a_comp_empty_bars: gl.shared_memory_descriptor
+
+#1782832492
+    a_comp_ready_bars: gl.shared_memory_descriptor
+
+#1782832492
+
+
+#1782832492
+    b_empty_bars: gl.shared_memory_descriptor
+
+#1782832492
+    b_ready_bars: gl.shared_memory_descriptor
+
+#1782832492
+    
+
+#1782832492
+    acc_bufs: gl.shared_memory_descriptor
+
+#1782832492
+    acc_empty_bars: gl.shared_memory_descriptor
+
+#1782832492
+    acc_ready_bars: gl.shared_memory_descriptor
+
+#1782832492
+    
+
+#1782832492
+    SUBTILE_FACTOR: gl.constexpr
+
+#1782832492
+    num_warps_compute: gl.constexpr
+
+#1782832492
+    num_warps_compress: gl.constexpr
+
+#1782832492
+
+
+#1782832492
+    @gluon.constexpr_function
+
+#1782832492
+    def __init__(self, a_pruned_desc, b_desc, c_desc,
+
+#1782832492
+                 a_pruned_bufs, a_comp_bufs, e_bufs, b_bufs,
+
+#1782832492
+                 a_pruned_empty_bars, a_pruned_ready_bars,
+
+#1782832492
+                 a_comp_empty_bars, a_comp_ready_bars,
+
+#1782832492
+                 b_empty_bars, b_ready_bars,
+
+#1782832492
+                 acc_bufs, acc_empty_bars, acc_ready_bars, 
+
+#1782832492
+                 SUBTILE_FACTOR, num_warps_compute, num_warps_compress):
+
+#1782832492
+        self.a_pruned_desc = a_pruned_desc
+
+#1782832492
+        self.b_desc = b_desc
+
+#1782832492
+        self.c_desc = c_desc
+
+#1782832492
+        self.a_pruned_bufs = a_pruned_bufs
+
+#1782832492
+        self.a_comp_bufs = a_comp_bufs
+
+#1782832492
+        self.e_bufs = e_bufs
+
+#1782832492
+        self.b_bufs = b_bufs
+
+#1782832492
+        self.a_pruned_empty_bars = a_pruned_empty_bars
+
+#1782832492
+        self.a_pruned_ready_bars = a_pruned_ready_bars
+
+#1782832492
+        self.a_comp_empty_bars = a_comp_empty_bars
+
+#1782832492
+        self.a_comp_ready_bars = a_comp_ready_bars
+
+#1782832492
+        self.b_empty_bars = b_empty_bars
+
+#1782832492
+        self.b_ready_bars = b_ready_bars
+
+#1782832492
+        self.acc_bufs = acc_bufs
+
+#1782832492
+        self.acc_empty_bars = acc_empty_bars
+
+#1782832492
+        self.acc_ready_bars = acc_ready_bars
+
+#1782832492
+        self.SUBTILE_FACTOR = gl.constexpr(SUBTILE_FACTOR)
+
+#1782832492
+        self.num_warps_compute = gl.constexpr(num_warps_compute)
+
+#1782832492
+        self.num_warps_compress = gl.constexpr(num_warps_compress)
+
+#1782832492
+
+
+#1782832492
+@aggregate
+
+#1782832492
+class Counter:
+
+#1782832492
+    index: gl.tensor
+
+#1782832492
+    phase: gl.tensor
+
+#1782832492
+    num_barriers: gl.constexpr
+
+#1782832492
+
+
+#1782832492
+    @gluon.constexpr_function
+
+#1782832492
+    def __init__(self, index, phase, num_barriers):
+
+#1782832492
+        self.index = index
+
+#1782832492
+        self.phase = phase
+
+#1782832492
+        self.num_barriers = gl.constexpr(num_barriers)
+
+#1782832492
+
+
+#1782832492
+    @gluon.jit
+
+#1782832492
+    def create(phase, num_barriers: gl.constexpr):
+
+#1782832492
+        return Counter(gl.to_tensor(0), gl.to_tensor(phase), num_barriers)
+
+#1782832492
+
+
+#1782832492
+    @gluon.must_use_result
+
+#1782832492
+    @gluon.jit
+
+#1782832492
+    def next(self, pred=True):
+
+#1782832492
+        incr = self.index + gl.where(pred, 1, 0)
+
+#1782832492
+        rollover = incr == self.num_barriers
+
+#1782832492
+        index = gl.where(rollover, 0, incr)
+
+#1782832492
+        phase = gl.where(rollover, self.phase ^ 1, self.phase)
+
+#1782832492
+        return Counter(index, phase, self.num_barriers)
+
+#1782832492
+
+
+#1782832492
+@gluon.jit
+
+#1782832492
+def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
+
+#1782832492
+    split_count: gl.constexpr = SUBTILE_FACTOR.bit_length() - 1  # log2
+
+#1782832492
+    xs = (x, )
+
+#1782832492
+    for _ in gl.static_range(split_count):
+
+#1782832492
+        next_xs = ()
+
+#1782832492
+        for j in gl.static_range(len(xs)):
+
+#1782832492
+            x = xs[j]
+
+#1782832492
+            next_xs += x.reshape(x.shape[0], 2, x.shape[1] // 2).permute(0, 2, 1).split()
+
+#1782832492
+        xs = next_xs
+
+#1782832492
+    return xs
+
+#1782832492
+
+
+#1782832492
+@gluon.jit
+
+#1782832492
+def sparse_matmul_load_partition(p, SchedulerImpl: gl.constexpr):
+
+#1782832492
+    BLOCK_M: gl.constexpr = p.a_pruned_desc.block_type.shape[0]
+
+#1782832492
+    BLOCK_N: gl.constexpr = p.b_desc.block_type.shape[1]
+
+#1782832492
+    BLOCK_K: gl.constexpr = p.b_desc.block_type.shape[0]
+
+#1782832492
+    K = p.b_desc.shape[0]
+
+#1782832492
+
+
+#1782832492
+    state_a = Counter.create(1, p.a_pruned_empty_bars.shape[0])
+
+#1782832492
+    state_b = Counter.create(1, p.b_empty_bars.shape[0])
+
+#1782832492
+    scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
+
+#1782832492
+
+
+#1782832492
+    for idx in range(scheduler.get_num_tiles()):
+
+#1782832492
+        pid_m, pid_n = scheduler.get_tile(idx)
+
+#1782832492
+        off_m = pid_m * BLOCK_M
+
+#1782832492
+        off_n = pid_n * BLOCK_N
+
+#1782832492
+
+
+#1782832492
+        for k in range(0, K, BLOCK_K):
+
+#1782832492
+            bar_a = p.a_pruned_ready_bars.index(state_a.index)
+
+#1782832492
+            bar_b = p.b_ready_bars.index(state_b.index)
+
+#1782832492
+            mbarrier.wait(p.a_pruned_empty_bars.index(state_a.index), state_a.phase)
+
+#1782832492
+            mbarrier.wait(p.b_empty_bars.index(state_b.index), state_b.phase)
+
+#1782832492
+
+
+#1782832492
+            mbarrier.expect(bar_a, p.a_pruned_desc.block_type.nbytes)
+
+#1782832492
+            mbarrier.expect(bar_b, p.b_desc.block_type.nbytes)
+
+#1782832492
+            
+
+#1782832492
+            tma.async_copy_global_to_shared(p.a_pruned_desc, [off_m, k], bar_a, p.a_pruned_bufs.index(state_a.index))
+
+#1782832492
+            tma.async_copy_global_to_shared(p.b_desc, [k, off_n], bar_b, p.b_bufs.index(state_b.index))
+
+#1782832492
+            
+
+#1782832492
+            state_a = state_a.next()
+
+#1782832492
+            state_b = state_b.next()
+
+#1782832492
+
+
+#1782832492
+@gluon.jit
+
+#1782832492
+def sparse_matmul_compress_partition(p, SchedulerImpl: gl.constexpr):
+
+#1782832492
+    BLOCK_M: gl.constexpr = p.a_pruned_desc.block_type.shape[0]
+
+#1782832492
+    BLOCK_N: gl.constexpr = p.b_desc.block_type.shape[1]
+
+#1782832492
+    BLOCK_K: gl.constexpr = p.b_desc.block_type.shape[0]
+
+#1782832492
+    K = p.b_desc.shape[0]
+
+#1782832492
+
+
+#1782832492
+    num_warps = p.num_warps_compress
+
+#1782832492
+
+
+#1782832492
+    state_a = Counter.create(0, p.a_pruned_empty_bars.shape[0])
+
+#1782832492
+    state_comp = Counter.create(1, p.a_comp_empty_bars.shape[0])
+
+#1782832492
+    
+
+#1782832492
+    scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
+
+#1782832492
+
+
+#1782832492
+    a_warp_bases: gl.constexpr = [[16, 0], [32, 0]] if num_warps == 4 else ([[16, 0], [32, 0], [0, 0]] if num_warps == 8 else [[16, 0], [32, 0], [0, 0], [0, 0]])
+
+#1782832492
+    a_shape: gl.constexpr = [64, 64]
+
+#1782832492
+    a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
+
+#1782832492
+        reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
+
+#1782832492
+        lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
+
+#1782832493
+        warp_bases=a_warp_bases, 
+
+#1782832493
+        block_bases=[], 
+
+#1782832493
+        shape=a_shape
+
+#1782832493
+    )
+
+#1782832493
+
+
+#1782832493
+    for _ in range(scheduler.get_num_tiles()):
+
+#1782832493
+        for _ in range(0, K, BLOCK_K):
+
+#1782832493
+            mbarrier.wait(p.a_pruned_ready_bars.index(state_a.index), state_a.phase)
+
+#1782832493
+            mbarrier.wait(p.a_comp_empty_bars.index(state_comp.index), state_comp.phase)
+
+#1782832493
+
+
+#1782832493
+            a_pruned_smem = p.a_pruned_bufs.index(state_a.index)
+
+#1782832493
+            a_pruned = a_pruned_smem.load(a_pruned_reg_layout)
+
+#1782832493
+
+
+#1782832493
+            a_grouped = a_pruned.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
+
+#1782832493
+            a_even, a_odd = a_grouped.split()
+
+#1782832493
+
+
+#1782832493
+            a0, a2 = a_even.split()
+
+#1782832493
+            a1, a3 = a_odd.split()
+
+#1782832493
+
+
+#1782832493
+            idx0 = (~(a0 != 0) & (a1 != 0)) | ((~(a0 != 0) & ~(a1 != 0)) << 1)
+
+#1782832493
+            idx1 = (((a0 != 0) & (a1 != 0)) | (~(a0 != 0) & ~(a1 != 0)) | (a3 != 0)) | (((~(a0 != 0) & (a1 != 0)) | ~(a1 != 0)) << 1)
+
+#1782832493
+
+
+#1782832493
+            nz0 = gl.where(idx0 == 0, a0, gl.where(idx0 == 1, a1, gl.where(idx0 == 2, a2, a3)))
+
+#1782832493
+            nz1 = gl.where(idx1 == 0, a0, gl.where(idx1 == 1, a1, gl.where(idx1 == 2, a2, a3)))
+
+#1782832493
+
+
+#1782832493
+            a_compressed = gl.join(nz0, nz1)
+
+#1782832493
+            a_compressed = a_compressed.reshape(BLOCK_M, BLOCK_K // 2)
+
+#1782832493
+
+
+#1782832493
+            meta_4 = idx0 | (idx1 << 2)
+
+#1782832493
+
+
+#1782832493
+            meta_grouped = meta_4.reshape(BLOCK_M, BLOCK_K // 16, 2, 2)
+
+#1782832493
+            meta_even, meta_odd = meta_grouped.split()
+
+#1782832493
+
+
+#1782832493
+            mn0, mn2 = meta_even.split()
+
+#1782832493
+            mn1, mn3 = meta_odd.split()
+
+#1782832493
+
+
+#1782832493
+            mn0 = mn0.to(gl.int16)
+
+#1782832493
+            mn1 = mn1.to(gl.int16)
+
+#1782832493
+            mn2 = mn2.to(gl.int16)
+
+#1782832493
+            mn3 = mn3.to(gl.int16)
+
+#1782832493
+
+
+#1782832493
+            meta = mn0 | (mn1 << 4) | (mn2 << 8) | (mn3 << 12)
+
+#1782832493
+            meta_reshaped = meta.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4)
+
+#1782832493
+            meta_reordered = meta_reshaped.permute(0, 3, 2, 4, 1).reshape(BLOCK_M // 16, BLOCK_K)
+
+#1782832493
+
+
+#1782832493
+            a_comp_smem = p.a_comp_bufs.index(state_comp.index)
+
+#1782832493
+            e_smem = p.e_bufs.index(state_comp.index)
+
+#1782832493
+
+
+#1782832493
+            a_comp_smem.store(a_compressed)
+
+#1782832493
+            e_smem.store(meta_reordered)
+
+#1782832493
+
+
+#1782832493
+            fence_async_shared()
+
+#1782832493
+
+
+#1782832493
+            mbarrier.arrive(p.a_pruned_empty_bars.index(state_a.index), count=1)
+
+#1782832493
+            mbarrier.arrive(p.a_comp_ready_bars.index(state_comp.index), count=1)
+
+#1782832493
+
+
+#1782832493
+            state_a = state_a.next()
+
+#1782832493
+            state_comp = state_comp.next()
+
+#1782832493
+
+
+#1782832493
+@gluon.jit
+
+#1782832493
+def store_acc_to_smem_subtile(p, mma, acc_state):
+
+#1782832493
+    mma = mma.wait_num_outstanding(0)
+
+#1782832493
+    acc, mma = mma.take_result()
+
+#1782832493
+    accs = _split_n(acc, p.SUBTILE_FACTOR)
+
+#1782832493
+
+
+#1782832493
+    for i in gl.static_range(p.SUBTILE_FACTOR):
+
+#1782832493
+        mbarrier.wait(p.acc_empty_bars.index(acc_state.index), acc_state.phase)
+
+#1782832493
+        c_buf = p.acc_bufs.index(acc_state.index)
+
+#1782832493
+
+
+#1782832493
+        c_buf.store(accs[i].to(p.c_desc.dtype))
+
+#1782832493
+        fence_async_shared()
+
+#1782832493
+        mbarrier.arrive(p.acc_ready_bars.index(acc_state.index), count=1)
+
+#1782832493
+        acc_state = acc_state.next()
+
+#1782832493
+
+
+#1782832493
+    return acc_state
+
+#1782832493
+
+
+#1782832493
+@gluon.jit
+
+#1782832493
+def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
+
+#1782832493
+    BLOCK_M: gl.constexpr = p.a_pruned_desc.block_type.shape[0]
+
+#1782832493
+    BLOCK_N: gl.constexpr = p.b_desc.block_type.shape[1]
+
+#1782832493
+    BLOCK_K: gl.constexpr = p.b_desc.block_type.shape[0]
+
+#1782832493
+    K = p.b_desc.shape[0]
+
+#1782832493
+    dtype: gl.constexpr = p.a_pruned_desc.dtype
+
+#1782832493
+
+
+#1782832493
+    state_comp = Counter.create(0, p.a_comp_empty_bars.shape[0])
+
+#1782832493
+    state_b = Counter.create(0, p.b_empty_bars.shape[0])
+
+#1782832493
+    acc_state = Counter.create(1, p.acc_empty_bars.shape[0])
+
+#1782832493
+
+
+#1782832493
+    release_comp = Counter.create(0, p.a_comp_empty_bars.shape[0])
+
+#1782832493
+    release_b = Counter.create(0, p.b_empty_bars.shape[0])
+
+#1782832493
+
+
+#1782832493
+    scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
+
+#1782832493
+
+
+#1782832493
+    outstanding_mmas: gl.constexpr = 0
+
+#1782832493
+    global_k_iter = 0
+
+#1782832493
+
+
+#1782832493
+    for _ in range(scheduler.get_num_tiles()):
+
+#1782832493
+        mma = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps_compute, sparse=True)
+
+#1782832493
+
+
+#1782832493
+        for _ in range(0, K, BLOCK_K):
+
+#1782832493
+            mbarrier.wait(p.a_comp_ready_bars.index(state_comp.index), state_comp.phase)
+
+#1782832493
+            mbarrier.wait(p.b_ready_bars.index(state_b.index), state_b.phase)
+
+#1782832493
+
+
+#1782832493
+            mma = mma.wait_num_outstanding(outstanding_mmas)
+
+#1782832493
+            mma = mma.issue_async_sparse_mma(p.a_comp_bufs.index(state_comp.index), p.e_bufs.index(state_comp.index), p.b_bufs.index(state_b.index))
+
+#1782832493
+
+
+#1782832493
+            if global_k_iter >= outstanding_mmas + 1:
+
+#1782832493
+                mbarrier.arrive(p.a_comp_empty_bars.index(release_comp.index), count=1)
+
+#1782832493
+                mbarrier.arrive(p.b_empty_bars.index(release_b.index), count=1)
+
+#1782832493
+                release_comp = release_comp.next()
+
+#1782832493
+                release_b = release_b.next()
+
+#1782832493
+
+
+#1782832493
+            state_comp = state_comp.next()
+
+#1782832493
+            state_b = state_b.next()
+
+#1782832493
+            global_k_iter += 1
+
+#1782832493
+
+
+#1782832493
+        acc_state = store_acc_to_smem_subtile(p, mma, acc_state)
+
+#1782832493
+
+
+#1782832493
+@gluon.jit
+
+#1782832493
+def sparse_matmul_store_partition(p, SchedulerImpl: gl.constexpr):
+
+#1782832493
+    BLOCK_M: gl.constexpr = p.c_desc.block_type.shape[0]
+
+#1782832493
+    SPLIT_N: gl.constexpr = p.c_desc.block_type.shape[1]
+
+#1782832493
+    BLOCK_N: gl.constexpr = SPLIT_N * p.SUBTILE_FACTOR
+
+#1782832493
+
+
+#1782832493
+    state = Counter.create(0, p.acc_empty_bars.shape[0])
+
+#1782832493
+    scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
+
+#1782832493
+
+
+#1782832493
+    num_buffers: gl.constexpr = 2
+
+#1782832493
+    outstanding_stores: gl.constexpr = 1
+
+#1782832493
+    store_iter = 0
+
+#1782832493
+
+
+#1782832493
+    for idx in range(scheduler.get_num_tiles()):
+
+#1782832493
+        pid_m, pid_n = scheduler.get_tile(idx)
+
+#1782832493
+        off_m, off_n = pid_m * BLOCK_M, pid_n * BLOCK_N
+
+#1782832493
+
+
+#1782832493
+        for i in gl.static_range(p.SUBTILE_FACTOR):
+
+#1782832493
+            mbarrier.wait(p.acc_ready_bars.index(state.index), state.phase)
+
+#1782832493
+            c_buf = p.acc_bufs.index(state.index)
+
+#1782832493
+
+
+#1782832493
+            tma.async_copy_shared_to_global(p.c_desc, [off_m, off_n + i * SPLIT_N], c_buf)
+
+#1782832493
+
+
+#1782832493
+            if store_iter >= outstanding_stores:
+
+#1782832493
+                tma.store_wait(outstanding_stores)
+
+#1782832493
+                empty_idx = (store_iter - outstanding_stores) % num_buffers
+
+#1782832493
+                mbarrier.arrive(p.acc_empty_bars.index(empty_idx), count=1)
+
+#1782832493
+
+
+#1782832493
+            state = state.next()
+
+#1782832493
+            store_iter += 1
+
+#1782832493
+
+
+#1782832493
+    tma.store_wait(0)
+
+#1782832493
+
+
+#1782832493
+@gluon.jit
+
+#1782832493
+def sparse_matmul_warp_specialized_kernel(
+
+#1782832493
+    a_pruned_desc, b_desc, c_desc, SchedulerImpl: gl.constexpr,
+
+#1782832493
+    M, N, K, BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K,
+
+#1782832493
+    num_buffers: gl.constexpr, SUBTILE_FACTOR: gl.constexpr,
+
+#1782832493
+    num_warps_compute: gl.constexpr, num_warps_compress: gl.constexpr):
+
+#1782832493
+    
+
+#1782832493
+    dtype: gl.constexpr = a_pruned_desc.dtype
+
+#1782832493
+
+
+#1782832493
+    a_pruned_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + a_pruned_desc.block_type.shape, a_pruned_desc.layout)
+
+#1782832493
+    
+
+#1782832493
+    a_comp_shape = [a_pruned_desc.block_type.shape[0], a_pruned_desc.block_type.shape[1] // 2]
+
+#1782832493
+    a_comp_layout = gl.NVMMASharedLayout.get_default_for(a_comp_shape, dtype)
+
+#1782832493
+    a_comp_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + a_comp_shape, a_comp_layout)
+
+#1782832493
+    
+
+#1782832493
+    e_shape = [a_pruned_desc.block_type.shape[0] // 16, a_pruned_desc.block_type.shape[1]]
+
+#1782832493
+    e_layout = gl.NVMMASharedLayout.get_default_for(e_shape, gl.int16)
+
+#1782832493
+    e_bufs = gl.allocate_shared_memory(gl.int16, [num_buffers] + e_shape, e_layout)
+
+#1782832493
+    
+
+#1782832493
+    b_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + b_desc.block_type.shape, b_desc.layout)
+
+#1782832493
+
+
+#1782832493
+    a_pruned_empty_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
+
+#1782832493
+    a_pruned_ready_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
+
+#1782832493
+    
+
+#1782832493
+    a_comp_empty_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
+
+#1782832493
+    a_comp_ready_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
+
+#1782832493
+    
+
+#1782832493
+    b_empty_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
+
+#1782832493
+    b_ready_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
+
+#1782832493
+    
+
+#1782832493
+    for i in gl.static_range(num_buffers):
+
+#1782832493
+        mbarrier.init(a_pruned_empty_bars.index(i), count=1)
+
+#1782832493
+        mbarrier.init(a_pruned_ready_bars.index(i), count=1)
+
+#1782832493
+        mbarrier.init(a_comp_empty_bars.index(i), count=1)
+
+#1782832493
+        mbarrier.init(a_comp_ready_bars.index(i), count=1)
+
+#1782832493
+        mbarrier.init(b_empty_bars.index(i), count=1)
+
+#1782832493
+        mbarrier.init(b_ready_bars.index(i), count=1)
+
+#1782832493
+
+
+#1782832493
+    acc_bufs = gl.allocate_shared_memory(dtype, [2] + c_desc.block_type.shape, c_desc.layout)
+
+#1782832493
+    acc_empty_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
+
+#1782832493
+    acc_ready_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
+
+#1782832493
+
+
+#1782832493
+    for i in gl.static_range(2):
+
+#1782832493
+        mbarrier.init(acc_empty_bars.index(i), count=1)
+
+#1782832493
+        mbarrier.init(acc_ready_bars.index(i), count=1)
+
+#1782832493
+
+
+#1782832493
+    p = SparsePartitionArgs(a_pruned_desc, b_desc, c_desc,
+
+#1782832493
+                            a_pruned_bufs, a_comp_bufs, e_bufs, b_bufs,
+
+#1782832493
+                            a_pruned_empty_bars, a_pruned_ready_bars,
+
+#1782832493
+                            a_comp_empty_bars, a_comp_ready_bars,
+
+#1782832493
+                            b_empty_bars, b_ready_bars,
+
+#1782832493
+                            acc_bufs, acc_empty_bars, acc_ready_bars,
+
+#1782832493
+                            SUBTILE_FACTOR, num_warps_compute, num_warps_compress)
+
+#1782832493
+
+
+#1782832493
+    gl.warp_specialize([
+
+#1782832493
+        (sparse_matmul_compute_partition, (p, SchedulerImpl)),
+
+#1782832493
+        (sparse_matmul_compress_partition, (p, SchedulerImpl)),
+
+#1782832493
+        (sparse_matmul_load_partition, (p, SchedulerImpl)),
+
+#1782832493
+        (sparse_matmul_store_partition, (p, SchedulerImpl)),
+
+#1782832493
+    ], [num_warps_compress, 1, 1], [64, 64, 24, 24])
+
+#1782832493
+
+
+#1782832493
+def sparse_matmul_get_configs(pre_hook=None):
+
+#1782832493
+    def valid(BM, BN, BK, warps_compute, warps_compress, buffers, SF):
+
+#1782832493
+        if (BN // SF) < 16: return False
+
+#1782832493
+        return True
+
+#1782832493
+    
+
+#1782832493
+    return [
+
+#1782832493
+        triton.Config(
+
+#1782832493
+            {
+
+#1782832493
+                "BLOCK_SIZE_M": BM,
+
+#1782832493
+                "BLOCK_SIZE_N": BN,
+
+#1782832493
+                "BLOCK_SIZE_K": BK,
+
+#1782832493
+                "num_buffers": buffers,
+
+#1782832493
+                "SUBTILE_FACTOR": SF,
+
+#1782832493
+                "num_warps_compress": warps_compress,
+
+#1782832494
+                "num_warps_compute": warps_compute,
+
+#1782832494
+            },
+
+#1782832494
+            num_warps=warps_compute + warps_compress + 1 + 1,
+
+#1782832494
+            pre_hook=pre_hook,
+
+#1782832494
+        )
+
+#1782832494
+        for BM in (128, 256)
+
+#1782832494
+        for BN in (128, 256)
+
+#1782832494
+        for BK in (64, 128)
+
+#1782832494
+        for warps_compute in (4, 8)
+
+#1782832494
+        for warps_compress in (4, 8)
+
+#1782832494
+        for buffers in (3, 4)
+
+#1782832494
+        for SF in (1, 2)
+
+#1782832494
+        if valid(BM, BN, BK, warps_compute, warps_compress, buffers, SF)
+
+#1782832494
+    ]
+
+#1782832494
+
+
+#1782832494
+def sparse_matmul_tma_set_block_size_hook(nargs):
+
+#1782832494
+    block_m = nargs["BLOCK_SIZE_M"]
+
+#1782832494
+    block_n = nargs["BLOCK_SIZE_N"]
+
+#1782832494
+    block_k = nargs["BLOCK_SIZE_K"]
+
+#1782832494
+    split_n = nargs["BLOCK_SIZE_N"] // nargs["SUBTILE_FACTOR"]
+
+#1782832494
+
+
+#1782832494
+    nargs["a_pruned_desc"].block_shape = [block_m, block_k]
+
+#1782832494
+    nargs["b_desc"].block_shape = [block_k, block_n]
+
+#1782832494
+    nargs["c_desc"].block_shape = [block_m, split_n]
+
+#1782832494
+
+
+#1782832494
+    nargs["a_pruned_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["a_pruned_desc"].block_shape, gl.float16)
+
+#1782832494
+    nargs["b_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["b_desc"].block_shape, gl.float16)
+
+#1782832494
+    nargs["c_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["c_desc"].block_shape, gl.float16)
+
+#1782832494
+
+
+#1782832494
+sparse_ws_kernel = triton.autotune(
+
+#1782832494
+    configs=sparse_matmul_get_configs(pre_hook=sparse_matmul_tma_set_block_size_hook),
+
+#1782832494
+    key=["M", "N", "K"],
+
+#1782832494
+)(sparse_matmul_warp_specialized_kernel)
+
+#1782832494
+
+
+#1782832494
+def run_sparse_ws_matmul(A_pruned, B):
+
+#1782832494
+    M, K = A_pruned.shape[0], A_pruned.shape[1]
+
+#1782832494
+    N = B.shape[1]
+
+#1782832494
+
+
+#1782832494
+    c = torch.empty((M, N), device=A_pruned.device, dtype=torch.float16)
+
+#1782832494
+    dummy_block = [1, 1]
+
+#1782832494
+    dummy_layout_f16 = gl.NVMMASharedLayout.get_default_for(dummy_block, gl.float16)
+
+#1782832494
+    
+
+#1782832494
+    a_pruned_desc = TensorDescriptor.from_tensor(A_pruned, dummy_block, dummy_layout_f16)
+
+#1782832494
+    b_desc = TensorDescriptor.from_tensor(B, dummy_block, dummy_layout_f16)
+
+#1782832494
+    c_desc = TensorDescriptor.from_tensor(c, dummy_block, dummy_layout_f16)
+
+#1782832494
+
+
+#1782832494
+    def grid(meta):
+
+#1782832494
+        num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
+
+#1782832494
+        num_pid = triton.cdiv(M, meta["BLOCK_SIZE_M"]) * triton.cdiv(N, meta["BLOCK_SIZE_N"])
+
+#1782832494
+        return (min(num_sms, num_pid), )
+
+#1782832494
+    
+
+#1782832494
+    sparse_ws_kernel[grid](a_pruned_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
+
+#1782832494
+
+
+#1782832494
+    return c
+
+#1782832494
+
+
+#1782832494
+if __name__ == "__main__":
+
+#1782832494
+    os.environ["MLIR_ENABLE_DUMP"]="1"
+
+#1782832494
+    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.6"
+
+#1782832494
+    os.environ["TRITON_ALWAYS_COMPILE"]="1"
+
+#1782832494
+
+
+#1782832494
+    M, N, K = 16384, 4096, 49152
+
+#1782832494
+
+
+#1782832494
+    print(f"Testing 7.6_compression_ws: M={M}, N={N}, K={K}...", end=" ", flush=True)
+
+#1782832494
+
+
+#1782832494
+    A = torch.randn(M, K, device="cuda", dtype=torch.float16)
+
+#1782832494
+    B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+
+#1782832494
+
+
+#1782832494
+    A_pruned = prune_2_4(A)
+
+#1782832494
+
+
+#1782832494
+    C = run_sparse_ws_matmul(A_pruned, B)
+
+#1782832494
+    C_ref = A_pruned @ B
+
+#1782832494
+
+
+#1782832494
+    torch.testing.assert_close(C_ref, C, rtol=1e-3, atol=1e-1)
+
+#1782832494
+    print("PASSED")
+
+#1782832494
+
+
+#1782832494
+EOF
+
+#1782832544
+load_module && start_gluon && tpython 7.6_compression_ws.py
+#1782832622
+cd /home/notming/links/scratch/compression
+#1782832623
+load_module && start_gluon && tpython 7.6_compression_ws.py
+#1782832698
+cd /home/notming/links/scratch/compression
+#1782832700
+load_module && start_gluon && tpython 7.6_compression_ws.py
+#1782832756
+cd /home/notming/links/scratch/compression
+#1782832758
+load_module && start_gluon && tpython 7.6_compression_ws.py
+#1782832811
+cd /home/notming/links/scratch/compression
+#1782832812
+load_module && start_gluon && tpython 7.6_compression_ws.py
+#1782832904
+cd /home/notming/links/scratch/compression
+#1782832905
+load_module && start_gluon && tpython 7.6_compression_ws.py
+#1782833002
+cd /home/notming/links/scratch/compression
+#1782833003
+load_module && start_gluon && tpython 7.6_compression_ws.py
+#1782833058
+cd /home/notming/links/scratch/compression
+#1782833060
+load_module && start_gluon && tpython 7.6_compression_ws.py
+#1782833101
+cd /home/notming/links/scratch/compression
+#1782833103
+load_module && start_gluon && tpython 7.6_compression_ws.py
