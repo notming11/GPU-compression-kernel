@@ -236,7 +236,7 @@ def plot_benchmark_results(df_raw, N, version):
 
     # Polish layouts
     plt.tight_layout()
-    output_image = f"Benchmark/v{version}_{N}_rorqual.png"
+    output_image = f"Benchmark/v{version}_{N}.png"
     plt.savefig(output_image, dpi=300, bbox_inches="tight")
     print(
         f"\n[INFO] Optimization charts successfully compiled and saved to '{output_image}'"
