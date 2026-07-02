@@ -1,0 +1,5 @@
+look at new version of gluon ws if available
+
+continue on fixing gluon ws compression
+
+enable triton kernel dump

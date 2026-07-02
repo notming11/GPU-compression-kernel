@@ -1,0 +1,108 @@
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+Testing 7.6_compression_ws: M=49152, N=4096, K=49152... int32[]
+triton.compiler.errors.CompilationError: at 49:42:
+            block_bases=[], 
+            shape=[64, 64]
+        )
+
+
+    for _ in range(scheduler.get_num_tiles()):
+        for _ in range(0, K, BLOCK_K):
+            mbarrier.wait(p.a_pruned_ready_bars.index(state_a.index), state_a.phase)
+            mbarrier.wait(p.a_comp_empty_bars.index(state_comp.index), state_comp.phase)
+
+            a_pruned_smem = p.a_pruned_bufs.index(state_a.index)
+            a_pruned = a_pruned_smem.load(a_pruned_reg_layout)
+                                          ^
+NameError('a_pruned_reg_layout is not defined')
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/stoicc/python/triton/experimental/gluon/language/_core.py", line 96, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/stoicc/python/triton/experimental/gluon/language/_core.py", line 557, in warp_specialize
+    return _semantic.warp_specialize(functions_and_args, worker_num_warps, worker_num_regs, _generator)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/stoicc/python/triton/experimental/gluon/language/_semantic.py", line 592, in warp_specialize
+    generator.call_JitFunction(func, block_args, kwargs={}, caller_context=caller_context)
+triton.compiler.errors.CompilationError: at 52:4:
+        mbarrier.init(acc_empty_bars.index(i), count=1)
+        mbarrier.init(acc_ready_bars.index(i), count=1)
+
+    p = SparsePartitionArgs(a_pruned_desc, b_desc, c_desc,
+                            a_pruned_bufs, a_comp_bufs, e_bufs, b_bufs,
+                            a_pruned_empty_bars, a_pruned_ready_bars,
+                            a_comp_empty_bars, a_comp_ready_bars,
+                            b_empty_bars, b_ready_bars,
+                            acc_bufs, acc_empty_bars, acc_ready_bars,
+                            SUBTILE_FACTOR, num_warps, num_warps_compress)
+
+    gl.warp_specialize([
+    ^
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/scratch/notming/GPU-compression-kernel/compression/7.6_compression_ws.py", line 492, in <module>
+    C = run_sparse_ws_matmul(A_pruned, B)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/notming/GPU-compression-kernel/compression/7.6_compression_ws.py", line 474, in run_sparse_ws_matmul
+    sparse_ws_kernel[grid](a_pruned_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
+  File "/opt/stoicc/python/triton/runtime/jit.py", line 370, in <lambda>
+    return lambda *args, **kwargs: self.run(grid=grid, warmup=False, *args, **kwargs)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/stoicc/python/triton/runtime/autotuner.py", line 240, in run
+    benchmark()
+  File "/opt/stoicc/python/triton/runtime/autotuner.py", line 229, in benchmark
+    timings = {config: self._bench(*args, config=config, **kwargs) for config in pruned_configs}
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/stoicc/python/triton/runtime/autotuner.py", line 164, in _bench
+    return self.do_bench(kernel_call, quantiles=(0.5, 0.2, 0.8))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/stoicc/python/triton/testing.py", line 149, in do_bench
+    fn()
+  File "/opt/stoicc/python/triton/runtime/autotuner.py", line 150, in kernel_call
+    self.fn.run(
+  File "/opt/stoicc/python/triton/runtime/jit.py", line 739, in run
+    kernel = self._do_compile(key, signature, device, constexprs, options, attrs, warmup)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/stoicc/python/triton/runtime/jit.py", line 884, in _do_compile
+    kernel = self.compile(src, target=target, options=options.__dict__)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/stoicc/python/triton/compiler/compiler.py", line 307, in compile
+    module = src.make_ir(target, options, codegen_fns, module_map, context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/stoicc/python/triton/experimental/gluon/_runtime.py", line 40, in make_ir
+    module = ast_to_ttir(self.fn, self, context=context, options=options, codegen_fns=codegen_fns,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+triton.compiler.errors.CompilationError: at 52:4:
+        mbarrier.init(acc_empty_bars.index(i), count=1)
+        mbarrier.init(acc_ready_bars.index(i), count=1)
+
+    p = SparsePartitionArgs(a_pruned_desc, b_desc, c_desc,
+                            a_pruned_bufs, a_comp_bufs, e_bufs, b_bufs,
+                            a_pruned_empty_bars, a_pruned_ready_bars,
+                            a_comp_empty_bars, a_comp_ready_bars,
+                            b_empty_bars, b_ready_bars,
+                            acc_bufs, acc_empty_bars, acc_ready_bars,
+                            SUBTILE_FACTOR, num_warps, num_warps_compress)
+
+    gl.warp_specialize([
+    ^
+at 52:4:
+        mbarrier.init(acc_empty_bars.index(i), count=1)
+        mbarrier.init(acc_ready_bars.index(i), count=1)
+
+    p = SparsePartitionArgs(a_pruned_desc, b_desc, c_desc,
+                            a_pruned_bufs, a_comp_bufs, e_bufs, b_bufs,
+                            a_pruned_empty_bars, a_pruned_ready_bars,
+                            a_comp_empty_bars, a_comp_ready_bars,
+                            b_empty_bars, b_ready_bars,
+                            acc_bufs, acc_empty_bars, acc_ready_bars,
+                            SUBTILE_FACTOR, num_warps, num_warps_compress)
+
+    gl.warp_specialize([
+    ^
