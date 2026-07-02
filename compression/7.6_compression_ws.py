@@ -47,7 +47,7 @@ class SparsePartitionArgs:
     acc_ready_bars: gl.shared_memory_descriptor
     
     SUBTILE_FACTOR: gl.constexpr
-    num_warps_compute: gl.constexpr
+    num_warps: gl.constexpr
     num_warps_compress: gl.constexpr
 
     @gluon.constexpr_function
@@ -57,7 +57,7 @@ class SparsePartitionArgs:
                  a_comp_empty_bars, a_comp_ready_bars,
                  b_empty_bars, b_ready_bars,
                  acc_bufs, acc_empty_bars, acc_ready_bars, 
-                 SUBTILE_FACTOR, num_warps_compute, num_warps_compress):
+                 SUBTILE_FACTOR, num_warps, num_warps_compress):
         self.a_pruned_desc = a_pruned_desc
         self.b_desc = b_desc
         self.c_desc = c_desc
@@ -75,7 +75,7 @@ class SparsePartitionArgs:
         self.acc_empty_bars = acc_empty_bars
         self.acc_ready_bars = acc_ready_bars
         self.SUBTILE_FACTOR = gl.constexpr(SUBTILE_FACTOR)
-        self.num_warps_compute = gl.constexpr(num_warps_compute)
+        self.num_warps = gl.constexpr(num_warps)
         self.num_warps_compress = gl.constexpr(num_warps_compress)
 
 @aggregate
@@ -153,22 +153,41 @@ def sparse_matmul_compress_partition(p, SchedulerImpl: gl.constexpr):
     BLOCK_K: gl.constexpr = p.b_desc.block_type.shape[0]
     K = p.b_desc.shape[0]
 
-    num_warps = p.num_warps_compress
+    num_warps = p.num_warps
 
     state_a = Counter.create(0, p.a_pruned_empty_bars.shape[0])
     state_comp = Counter.create(1, p.a_comp_empty_bars.shape[0])
     
     scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
 
-    a_warp_bases: gl.constexpr = [[16, 0], [32, 0]] if num_warps == 4 else ([[16, 0], [32, 0], [0, 0]] if num_warps == 8 else [[16, 0], [32, 0], [0, 0], [0, 0]])
-    a_shape: gl.constexpr = [64, 64]
-    a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
-        lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
-        warp_bases=a_warp_bases, 
-        block_bases=[], 
-        shape=a_shape
-    )
+    # a_warp_bases: gl.constexpr = [[16, 0], [32, 0]] if num_warps == 4 else ([[16, 0], [32, 0], [0, 0]] if num_warps == 8 else [[16, 0], [32, 0], [0, 0], [0, 0]])
+    # a_shape: gl.constexpr = [64, 64]
+    gl.static_print(num_warps)
+    if num_warps == 4:
+        a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
+            reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
+            lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
+            warp_bases=[[16, 0], [32, 0]], 
+            block_bases=[], 
+            shape=[64, 64]
+        )
+    elif num_warps == 8:
+        a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
+            reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
+            lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
+            warp_bases=[[16, 0], [32, 0], [0, 0]], 
+            block_bases=[], 
+            shape=[64, 64]
+        )
+    elif num_warps == 16:
+        a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
+            reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
+            lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
+            warp_bases=[[16, 0], [32, 0], [0, 0], [0, 0]], 
+            block_bases=[], 
+            shape=[64, 64]
+        )
+
 
     for _ in range(scheduler.get_num_tiles()):
         for _ in range(0, K, BLOCK_K):
@@ -184,8 +203,14 @@ def sparse_matmul_compress_partition(p, SchedulerImpl: gl.constexpr):
             a0, a2 = a_even.split()
             a1, a3 = a_odd.split()
 
-            idx0 = (~(a0 != 0) & (a1 != 0)) | ((~(a0 != 0) & ~(a1 != 0)) << 1)
-            idx1 = (((a0 != 0) & (a1 != 0)) | (~(a0 != 0) & ~(a1 != 0)) | (a3 != 0)) | (((~(a0 != 0) & (a1 != 0)) | ~(a1 != 0)) << 1)
+            m0 = (a0 != 0).to(gl.int32)
+            m1 = (a1 != 0).to(gl.int32)
+            m3 = (a3 != 0).to(gl.int32)
+            not_m0 = 1 - m0
+            not_m1 = 1 - m1
+
+            idx0 = (not_m0 & m1) | ((not_m0 & not_m1) << 1)
+            idx1 = ((m0 & m1) | (not_m0 & not_m1) | m3) | (((not_m0 & m1) | not_m1) << 1)
 
             nz0 = gl.where(idx0 == 0, a0, gl.where(idx0 == 1, a1, gl.where(idx0 == 2, a2, a3)))
             nz1 = gl.where(idx1 == 0, a0, gl.where(idx1 == 1, a1, gl.where(idx1 == 2, a2, a3)))
@@ -262,7 +287,7 @@ def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
     global_k_iter = 0
 
     for _ in range(scheduler.get_num_tiles()):
-        mma = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps_compute, sparse=True)
+        mma = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps, sparse=True)
 
         for _ in range(0, K, BLOCK_K):
             mbarrier.wait(p.a_comp_ready_bars.index(state_comp.index), state_comp.phase)
@@ -317,16 +342,11 @@ def sparse_matmul_store_partition(p, SchedulerImpl: gl.constexpr):
     tma.store_wait(0)
 
 @gluon.jit
-def idle_partition(p, SchedulerImpl: gl.constexpr):
-    # Dummy partition to absorb unused warps
-    pass
-
-@gluon.jit
 def sparse_matmul_warp_specialized_kernel(
     a_pruned_desc, b_desc, c_desc, SchedulerImpl: gl.constexpr,
     M, N, K, BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
     num_buffers: gl.constexpr, SUBTILE_FACTOR: gl.constexpr,
-    num_warps_compute: gl.constexpr, num_warps_compress: gl.constexpr,
+    num_warps: gl.constexpr, num_warps_compress: gl.constexpr,
     a_comp_layout: gl.constexpr, e_layout: gl.constexpr,
     a_comp_shape_0: gl.constexpr, a_comp_shape_1: gl.constexpr,
     e_shape_0: gl.constexpr, e_shape_1: gl.constexpr):
@@ -371,22 +391,19 @@ def sparse_matmul_warp_specialized_kernel(
                             a_comp_empty_bars, a_comp_ready_bars,
                             b_empty_bars, b_ready_bars,
                             acc_bufs, acc_empty_bars, acc_ready_bars,
-                            SUBTILE_FACTOR, num_warps_compute, num_warps_compress)
+                            SUBTILE_FACTOR, num_warps, num_warps_compress)
 
-    num_warps_total = gl.num_programs(axis=1) # Triton models warps in axis 1 or num_warps builtin?
-    # Actually we just pass fixed list
-    idle_warps: gl.constexpr = 16 - num_warps_compute - num_warps_compress - 1 - 1
     gl.warp_specialize([
         (sparse_matmul_compute_partition, (p, SchedulerImpl)),
         (sparse_matmul_compress_partition, (p, SchedulerImpl)),
         (sparse_matmul_load_partition, (p, SchedulerImpl)),
         (sparse_matmul_store_partition, (p, SchedulerImpl)),
-        (idle_partition, (p, SchedulerImpl)),
-    ], [num_warps_compress, 1, 1, idle_warps], [64, 64, 24, 24, 24])
+    ], [num_warps_compress, 1, 1], [64, 24, 24])
 
 def sparse_matmul_get_configs(pre_hook=None):
-    def valid(BM, BN, BK, warps_compute, warps_compress, buffers, SF):
+    def valid(BM, BN, BK, num_warps, warps_compress, buffers, SF):
         if (BN // SF) < 16: return False
+        if warps_compress + 3 > num_warps: return False
         return True
     
     return [
@@ -398,7 +415,6 @@ def sparse_matmul_get_configs(pre_hook=None):
                 "num_buffers": buffers,
                 "SUBTILE_FACTOR": SF,
                 "num_warps_compress": warps_compress,
-                "num_warps_compute": warps_compute,
                 "a_comp_layout": gl.NVMMASharedLayout.get_default_for([BM, BK // 2], gl.float16),
                 "e_layout": gl.NVMMASharedLayout.get_default_for([BM // 16, BK], gl.int16),
                 "a_comp_shape_0": BM,
@@ -409,14 +425,14 @@ def sparse_matmul_get_configs(pre_hook=None):
             num_warps=16, # Fixed to 16
             pre_hook=pre_hook,
         )
-        for BM in (128,)
-        for BN in (128,)
-        for BK in (64,)
-        for warps_compute in (8,)
-        for warps_compress in (4,)
-        for buffers in (3,)
-        for SF in (1,)
-        if valid(BM, BN, BK, warps_compute, warps_compress, buffers, SF)
+        for BM in (64, 128, 256)
+        for BN in (64, 128, 256)
+        for BK in (64, 128, 256)
+        for num_warps in (4, 8, 16)
+        for warps_compress in (1, 2, 3, 4)
+        for buffers in (3, 4, 5, 6)
+        for SF in (1, 2, 4, 8)
+        if valid(BM, BN, BK, num_warps, warps_compress, buffers, SF)
     ]
 
 def sparse_matmul_tma_set_block_size_hook(nargs):
@@ -464,7 +480,7 @@ if __name__ == "__main__":
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.6"
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
 
-    M, N, K = 128, 128, 128
+    M, N, K = 49152, 4096, 49152
 
     print(f"Testing 7.6_compression_ws: M={M}, N={N}, K={K}...", end=" ", flush=True)
 

@@ -7,6 +7,9 @@ from triton.experimental.gluon import language as gl
 from triton.experimental.gluon.nvidia.hopper import TensorDescriptor
 from triton.language.core import _aggregate as aggregate
 
+from prune import prune_2_4
+from compress_2_4 import compress_dense_to_sparse
+
 from triton.experimental.gluon.language.nvidia.hopper import (
     tma,
     mbarrier,
@@ -387,3 +390,42 @@ def run_sparse_ws_matmul(A, E, B):
     sparse_ws_kernel[grid](a_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
 
     return c
+
+if __name__ == "__main__":
+    # 1. Setup dimensions
+    M, N, K = 4096, 4096, 4096
+    
+    torch.manual_seed(0)
+    # Initialize matrices
+    A = torch.randn((M, K), device="cuda", dtype=torch.float16)
+    B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+
+    A_pruned = prune_2_4(A)
+    A, E = compress_dense_to_sparse(A_pruned)
+    E = E.view(M // 16, K)
+
+    print(f"Running dense warp-specialized matmul for shape M={M}, N={N}, K={K}...")
+
+    # 2. Correctness check
+    c_out = run_sparse_ws_matmul(A, E, B)
+    c_ref = torch.matmul(A_pruned, B)
+
+    max_diff = torch.max(torch.abs(c_out - c_ref))
+    print(f"Max difference between PyTorch and Triton: {max_diff:.4f}")
+    
+    if max_diff < 1.0:
+        print("✅ Correctness check passed!")
+    else:
+        print("❌ Correctness check failed!")
+
+    # 3. Performance Benchmark
+    print("Benchmarking performance...")
+    def perf():
+        run_sparse_ws_matmul(A, E, B)
+        
+    # Using triton's built-in benchmark utility
+    ms = triton.testing.do_bench(perf)
+    
+    # Calculate TFLOPS: 2 * M * N * K operations per matrix multiplication
+    tflops = 2 * M * N * K / (ms * 1e-3) / 1e12
+    print(f"⚡ Performance: {tflops:.2f} TFLOPS ({ms:.3f} ms)")

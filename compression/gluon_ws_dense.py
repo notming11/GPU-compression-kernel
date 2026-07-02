@@ -384,7 +384,7 @@ def run_ws_matmul(A, B):
 
 if __name__ == "__main__":
     # 1. Setup dimensions
-    M, N, K = 128, 128, 128
+    M, N, K = 4096, 4096, 4096
     
     torch.manual_seed(0)
     # Initialize matrices
