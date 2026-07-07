@@ -220,7 +220,7 @@ def sparse_matmul_store_partition(p, SchedulerImpl: gl.constexpr):
 # ---------------------------------------------------------------------------
 @gluon.jit
 def sparse_matmul_warp_specialized_kernel(a_desc, e_desc, b_desc, c_desc, SchedulerImpl: gl.constexpr,
-                                   M, N, K, BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K,
+                                   M, N, K, BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
                                    num_buffers: gl.constexpr, SUBTILE_FACTOR: gl.constexpr,
                                    num_warps: gl.constexpr):
     dtype: gl.constexpr = a_desc.dtype
@@ -242,6 +242,9 @@ def sparse_matmul_warp_specialized_kernel(a_desc, e_desc, b_desc, c_desc, Schedu
     for i in gl.static_range(2):
         mbarrier.init(acc_empty_bars.index(i), count=1)
         mbarrier.init(acc_ready_bars.index(i), count=1)
+
+    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, num_warps: {num_warps}, buf: {num_buffers}, SF: {SUBTILE_FACTOR}")
+
 
     # Pass num_warps straight into the arguments so the layout generator gets it
     p = SparsePartitionArgs(a_desc, e_desc, b_desc, c_desc, a_bufs, e_bufs, b_bufs,

@@ -87,6 +87,7 @@ def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
             x = xs[j]
             # Reshape to (M, 2, N//2) then permute so that tensor elements
             # remain contiguous along N.
+            # gl.static_print(x.type.layout)
             next_xs += x.reshape(x.shape[0], 2, x.shape[1] // 2).permute(0, 2, 1).split()
         xs = next_xs
     return xs

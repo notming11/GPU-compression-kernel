@@ -327,6 +327,9 @@ if __name__ == "__main__":
     for M, N, K in shapes:
         shape_str = f"{M}-{N}-{K}"
         print(f"start {shape_str}")
+        max_dense = None
+        max_precomp = None
+        max_runtime = None
         for config in configs:
             bm = config.kwargs["BLOCK_SIZE_M"]
             bn = config.kwargs["BLOCK_SIZE_N"]
@@ -351,12 +354,12 @@ if __name__ == "__main__":
                 and metrics["precomp_tflops"] is not None
             ):
 
-                # tile_str = f"{bm}x{bn}x{bk}"
-
-                # print(row_fmt.format(
-                #     shape_str, tile_str, num_warps, num_buffers,
-                #     metrics["dense_tflops"], metrics["runtime_tflops"], metrics["precomp_tflops"], metrics["overhead_pct"]
-                # ))
+                if max_dense is None or metrics["dense_tflops"] > max_dense:
+                    max_dense = metrics["dense_tflops"]
+                if max_precomp is None or metrics["precomp_tflops"] > max_precomp:
+                    max_precomp = metrics["precomp_tflops"]
+                if max_runtime is None or metrics["runtime_tflops"] > max_runtime:
+                    max_runtime = metrics["runtime_tflops"]
 
                 # Append payload to our plotting list
                 data_log.append(
@@ -368,7 +371,7 @@ if __name__ == "__main__":
                     }
                 )
 
-        print(f"finish {shape_str}, ({i+1}/{len(shapes)})")
+        print(f"finish {shape_str}, ({i+1}/{len(shapes)}) -> Max Dense: {max_dense:.2f}, Max Precomp: {max_precomp:.2f}, Max Runtime: {max_runtime:.2f}")
         i += 1
 
     # Convert logged metrics into a DataFrame and visualize
