@@ -107,9 +107,9 @@ def small_mma_kernel(
         block_bases=[], 
         shape=a_shape
     )
-    gl.static_print(gl.to_linear_layout(a_pruned_reg_layout, [BLOCK_M, BLOCK_K]))
-    a_pruned = a_pruned_smem.load(a_compressed_layout)
-    a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
+    # gl.static_print(gl.to_linear_layout(a_pruned_reg_layout, [BLOCK_M, BLOCK_K]))
+    a_pruned = a_pruned_smem.load(a_pruned_reg_layout)
+    # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
 
     # --- Extract groups of 4 consecutive columns using reshape + split ---
     # a_pruned shape: (BLOCK_M, BLOCK_K) = (64, 128)
@@ -271,6 +271,8 @@ if __name__ == "__main__":
     os.environ["MLIR_ENABLE_DUMP"]="1"
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/3H"
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
+    os.environ["TRITON_KERNEL_DUMP"] = "1"
+    os.environ["TRITON_DUMP_DIR"]="./count_cycle"
     print("Benchmarking WGMMA (no gather)")
     print("===============================")
 
