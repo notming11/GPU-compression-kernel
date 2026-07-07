@@ -29,6 +29,8 @@ os.environ["TEMP"] = SCRATCH_WORKSPACE
 os.environ["CUDA_CACHE_PATH"] = os.path.join(SCRATCH_WORKSPACE, "cuda_cache")
 os.environ["TORCH_HOME"] = os.path.join(SCRATCH_WORKSPACE, "cuda_cache")
 
+os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+
 from prune import prune_2_4
 from compress_2_4 import compress_dense_to_sparse
 
@@ -36,39 +38,10 @@ from compress_2_4 import compress_dense_to_sparse
 import gluon_ws_dense
 import gluon_ws_sparse
 
-spec_75 = importlib.util.spec_from_file_location("comp_75", "7.5_compression_pipeline_no_ldmatrix.py")
-comp_75 = importlib.util.module_from_spec(spec_75)
-sys.modules["comp_75"] = comp_75
-spec_75.loader.exec_module(comp_75)
-
 spec_76 = importlib.util.spec_from_file_location("comp_76", "7.6_compression_ws.py")
 comp_76 = importlib.util.module_from_spec(spec_76)
 sys.modules["comp_76"] = comp_76
 spec_76.loader.exec_module(comp_76)
-
-def get_75_configs():
-    return [
-        triton.Config(
-            {
-                "BLOCK_SIZE_M": BM,
-                "BLOCK_SIZE_N": BN,
-                "BLOCK_SIZE_K": BK,
-                "num_buffers": buffers,
-            },
-            num_warps=warps,
-        )
-        for BM, BN, BK in [
-            [64, 64, 128],
-            [64, 64, 256],
-            [64, 128, 128],
-            [128, 64, 128],
-            [64, 64, 64],
-            [64, 128, 64],
-            [128, 128, 64],
-        ]
-        for buffers in (3, 4, 5, 6, 7)
-        for warps in (4, 8, 16)
-    ]
 
 def to_tflops(ms, M, N, K):
     return (2 * M * N * K) / (ms * 1e-3 * 1e12) if ms else 0.0
@@ -89,12 +62,16 @@ def benchmark_kernels_ws(M, N, K):
     except Exception as e:
         tflops_dense_ws = None
 
+    print("finish dense ws")
+
     # 2. Sparse Pre-compressed WS
     try:
         ms_sparse_ws = triton.testing.do_bench(lambda: gluon_ws_sparse.run_sparse_ws_matmul(A_comp, E, B))
         tflops_sparse_ws = to_tflops(ms_sparse_ws, M, N, K)
     except Exception as e:
         tflops_sparse_ws = None
+
+    print("finish sparse ws")
 
     # 3. Sparse Runtime Compression WS (7.6)
     try:
@@ -103,31 +80,11 @@ def benchmark_kernels_ws(M, N, K):
     except Exception as e:
         tflops_runtime_ws = None
 
-    # 4. Sparse Runtime Compression Pipeline No LDMatrix (7.5)
-    tflops_75 = 0.0
-    configs_75 = get_75_configs()
-    for config in configs_75:
-        bm = config.kwargs["BLOCK_SIZE_M"]
-        bn = config.kwargs["BLOCK_SIZE_N"]
-        bk = config.kwargs["BLOCK_SIZE_K"]
-        num_buffers = config.kwargs["num_buffers"]
-        num_warps = config.num_warps
-        try:
-            ms = triton.testing.do_bench(
-                lambda: comp_75.sparse_persistent_matmul_pipelined(
-                    A_pruned, B, C, bm, bn, bk, num_buffers, num_warps, comp_75.PersistentTileScheduler
-                )
-            )
-            tflops = to_tflops(ms, M, N, K)
-            tflops_75 = max(tflops_75, tflops)
-        except Exception:
-            pass
-
+    print("finish compression ws")
     return {
         "Dense_WS_TFLOPS": tflops_dense_ws,
         "Sparse_Precomp_WS_TFLOPS": tflops_sparse_ws,
         "Runtime_WS_TFLOPS": tflops_runtime_ws,
-        "Runtime_75_TFLOPS": tflops_75 if tflops_75 > 0.0 else None
     }
 
 
@@ -145,7 +102,6 @@ def plot_benchmark_results(df_raw, N):
     ax1.plot(df_peak["Shape"], df_peak["Dense_WS_TFLOPS"], marker="o", linewidth=2, label="Dense WS Baseline", color="#2b5c8f")
     ax1.plot(df_peak["Shape"], df_peak["Sparse_Precomp_WS_TFLOPS"], marker="^", linewidth=2, label="Precomp Sparse WS", color="#2ca02c")
     ax1.plot(df_peak["Shape"], df_peak["Runtime_WS_TFLOPS"], marker="s", linewidth=2, label="Runtime WS (7.6)", color="#d95f02")
-    ax1.plot(df_peak["Shape"], df_peak["Runtime_75_TFLOPS"], marker="d", linewidth=2, label="Runtime Non-WS (7.5)", color="#9467bd")
 
     ax1.set_ylabel("TFLOPS", fontsize=12, fontweight="bold")
     ax1.set_title(f"Warp-Specialized vs Non-WS Compression Performance (N={N})", fontsize=14, fontweight="bold", pad=15)
@@ -159,9 +115,7 @@ def plot_benchmark_results(df_raw, N):
     # Speedup relative to Dense WS
     df_peak["Speedup_Precomp_WS"] = df_peak["Sparse_Precomp_WS_TFLOPS"] / df_peak["Dense_WS_TFLOPS"]
     df_peak["Speedup_Runtime_WS"] = df_peak["Runtime_WS_TFLOPS"] / df_peak["Dense_WS_TFLOPS"]
-    df_peak["Speedup_Runtime_75"] = df_peak["Runtime_75_TFLOPS"] / df_peak["Dense_WS_TFLOPS"]
 
-    ax2.bar(x - width, df_peak["Speedup_Runtime_75"], width, label="7.5 Non-WS vs Dense WS", color="#c5b0d5")
     ax2.bar(x, df_peak["Speedup_Runtime_WS"], width, label="7.6 Runtime WS vs Dense WS", color="#ffbb78")
     ax2.bar(x + width, df_peak["Speedup_Precomp_WS"], width, label="Precomp WS vs Dense WS", color="#98df8a")
 
@@ -175,7 +129,7 @@ def plot_benchmark_results(df_raw, N):
     ax2.grid(True, linestyle="--", alpha=0.3)
 
     plt.tight_layout()
-    output_image = f"Benchmark/v7.6_WS_vs_7.5_{N}.png"
+    output_image = f"Benchmark/v7.6_Benchmark_{N}.png"
     os.makedirs("Benchmark", exist_ok=True)
     plt.savefig(output_image, dpi=300, bbox_inches="tight")
     print(f"\n[INFO] Optimization charts successfully compiled and saved to '{output_image}'")
@@ -201,12 +155,12 @@ if __name__ == "__main__":
     data_log = []
     
     print("="*80)
-    print(f"Benchmarking WS and non-WS Kernels for N={N}")
+    print(f"Benchmarking WS Kernels for N={N}")
     print("="*80)
     
     for idx, (M, N, K) in enumerate(shapes):
         shape_str = f"{M}-{N}-{K}"
-        print(f"start {shape_str} ({idx+1}/{len(shapes)})")
+        print(f"start {shape_str} ({idx+1}/{len(shapes)})", flush=True)
         
         metrics = benchmark_kernels_ws(M, N, K)
         
@@ -214,7 +168,14 @@ if __name__ == "__main__":
             "Shape": shape_str,
             **metrics
         })
-        print(f"finish {shape_str} -> Dense: {metrics['Dense_WS_TFLOPS']}, Precomp WS: {metrics['Sparse_Precomp_WS_TFLOPS']}, 7.6 WS: {metrics['Runtime_WS_TFLOPS']}, 7.5: {metrics['Runtime_75_TFLOPS']}")
+        print(f"finish {shape_str} -> Dense: {metrics['Dense_WS_TFLOPS']}, Precomp WS: {metrics['Sparse_Precomp_WS_TFLOPS']}, 7.6 WS: {metrics['Runtime_WS_TFLOPS']}")
+
+        best_dense = gluon_ws_dense.ws_kernel.best_config
+        best_sparse = gluon_ws_sparse.sparse_ws_kernel.best_config
+        best_runtime = comp_76.sparse_ws_kernel.best_config
+        print(f"  Dense   best config: {best_dense.kwargs}, num_warps={best_dense.num_warps}")
+        print(f"  Sparse  best config: {best_sparse.kwargs}, num_warps={best_sparse.num_warps}")
+        print(f"  Runtime best config: {best_runtime.kwargs}, num_warps={best_runtime.num_warps}")
 
     df_raw = pd.DataFrame(data_log)
     plot_benchmark_results(df_raw, N)

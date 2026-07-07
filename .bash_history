@@ -4620,3 +4620,67 @@ load_module && start_gluon && tpython 7.6_compression_ws.py
 cd /home/notming/links/scratch/compression
 #1782833103
 load_module && start_gluon && tpython 7.6_compression_ws.py
+#1783030956
+cd compression/
+#1783030964
+sbatch sbatch_sh/trillium/7.6_benchmark_ws.sh 
+#1783030969
+sq
+#1783031685
+sbatch sbatch_sh/trillium/7.6_benchmark_ws.sh 
+#1783031841
+sq
+#1783031850
+scancel 629376
+#1783031852
+sq
+#1783042327
+sbatch sbatch_sh/trillium/7.6_benchmark_ws.sh 
+#1783042331
+sq
+#1783020522
+debugjob
+#1783024444
+cd /home/notming/links/scratch/compression
+#1783024445
+tpython 7.6_compression_ws.py
+#1783099619
+cd compression/
+#1783099624
+sbatch sbatch_sh/
+#1783099631
+sbatch sbatch_sh/trillium/7.6_benchmark_ws.sh 
+#1783099650
+scancel 631572
+#1783099652
+sq
+#1783101440
+scancel 631571
+#1783101448
+sbatch sbatch_sh/trillium/7.6_benchmark_ws.sh 
+#1783101451
+sq
+#1783096224
+debugjobD
+#1783137225
+cd compression/
+#1783137235
+sbatch sbatch_sh/trillium/Profile.sh 
+#1783263962
+sq
+#1783263996
+scancel 635001
+#1783264001
+scancel 635002
+#1783264099
+sq
+#1783273219
+git reset --soft HEAD~1
+#1783273566
+git config --global http.postBuffer 1572864000
+#1783273572
+git push origin main
+#1783263919
+cd compression/
+#1783263951
+sbatch sbatch_sh/trillium/Profile.sh 

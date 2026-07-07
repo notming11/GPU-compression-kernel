@@ -153,7 +153,8 @@ def sparse_matmul_compress_partition(p, SchedulerImpl: gl.constexpr):
     BLOCK_K: gl.constexpr = p.b_desc.block_type.shape[0]
     K = p.b_desc.shape[0]
 
-    num_warps = p.num_warps
+    num_warps: gl.constexpr = p.num_warps
+    warps_compress: gl.constexpr = p.num_warps_compress
 
     state_a = Counter.create(0, p.a_pruned_empty_bars.shape[0])
     state_comp = Counter.create(1, p.a_comp_empty_bars.shape[0])
@@ -162,8 +163,9 @@ def sparse_matmul_compress_partition(p, SchedulerImpl: gl.constexpr):
 
     # a_warp_bases: gl.constexpr = [[16, 0], [32, 0]] if num_warps == 4 else ([[16, 0], [32, 0], [0, 0]] if num_warps == 8 else [[16, 0], [32, 0], [0, 0], [0, 0]])
     # a_shape: gl.constexpr = [64, 64]
-    gl.static_print(num_warps)
-    if num_warps == 4:
+    # gl.static_print(num_warps)
+    # gl.static_print(warps_compress)
+    if warps_compress == 4:
         a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
             reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
             lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
@@ -171,19 +173,11 @@ def sparse_matmul_compress_partition(p, SchedulerImpl: gl.constexpr):
             block_bases=[], 
             shape=[64, 64]
         )
-    elif num_warps == 8:
+    elif warps_compress == 8:
         a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
             reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
             lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
             warp_bases=[[16, 0], [32, 0], [0, 0]], 
-            block_bases=[], 
-            shape=[64, 64]
-        )
-    elif num_warps == 16:
-        a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-            reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
-            lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
-            warp_bases=[[16, 0], [32, 0], [0, 0], [0, 0]], 
             block_bases=[], 
             shape=[64, 64]
         )
@@ -393,6 +387,8 @@ def sparse_matmul_warp_specialized_kernel(
                             acc_bufs, acc_empty_bars, acc_ready_bars,
                             SUBTILE_FACTOR, num_warps, num_warps_compress)
 
+    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, num_warps: {num_warps}, num_warps_compress: {num_warps_compress}, buf: {num_buffers}, SF: {SUBTILE_FACTOR}")
+
     gl.warp_specialize([
         (sparse_matmul_compute_partition, (p, SchedulerImpl)),
         (sparse_matmul_compress_partition, (p, SchedulerImpl)),
@@ -401,9 +397,77 @@ def sparse_matmul_warp_specialized_kernel(
     ], [num_warps_compress, 1, 1], [64, 24, 24])
 
 def sparse_matmul_get_configs(pre_hook=None):
-    def valid(BM, BN, BK, num_warps, warps_compress, buffers, SF):
-        if (BN // SF) < 16: return False
-        if warps_compress + 3 > num_warps: return False
+    def valid(BM, BN, BK, warps, warps_compress, buffers, SF):
+        if BM == 128 and BN == 256 and BK == 64 and warps == 8 and warps_compress == 4 and buffers == 3:
+            return False
+        
+        if BM == 256 and BN == 128 and BK == 64 and warps == 16 and warps_compress == 4 and buffers == 3 and SF == 8:
+            return False
+
+        if BM == 256 and BN == 128 and BK == 64 and warps == 16 and warps_compress == 8 and buffers == 3 and SF == 8:
+            return False
+        
+        # Shared Memory
+        smem_bytes = (
+                 (buffers * BM * BK * 2) +           # Pruned A
+                 (buffers * BM * BK) +               # Compressed A
+                 (buffers * BM * BK // 8) +          # Metadata E
+                 (buffers * BK * BN * 2) +           # Dense B
+                 (4 * BM * (BN // SF))               # Accumulator C (2 buffers * 2 bytes)
+         ) + (16 * buffers) + 32                     # MBarriers
+
+        if smem_bytes > 232448: return False
+
+        # Simulate get_warps_per_cta to find the physical N-axis distribution
+        warps_m = 4
+        warps_n = 1
+        m = 16
+        while (warps_m * warps_n) != warps:
+            if BM > m * warps_m:
+                warps_m *= 2
+            else:
+                warps_n *= 2
+
+        # Prevent SPMD splitting across physical Warp Group boundaries.
+        if SF > 1 and warps_n > 1:
+            return False
+
+        # Ensure the subtile is physically large enough to split
+        if (BN // SF) < 16:
+            return False
+
+        if (BM * BN) >= 65536 and warps < 12:
+            return False
+        if (BM * BN) <= 4096 and warps > 8:
+            return False
+
+        elements_per_thread = (BM * BN) / (warps * 32)
+        if elements_per_thread > 256:
+            return False
+
+        if BM < warps_m * 16 or BN < warps_n * 16:
+            return False
+
+        elements_per_thread = (BM * BN) / (warps * 32)
+
+        # Add a safe buffer (~48) for TMA pointers, loop state, and layout logic
+        required_regs = elements_per_thread + 48
+
+        # H100 absolute physical limits:
+        # 65,536 registers per SM, divided evenly among block threads
+        max_regs_per_thread = 65536 // (warps * 32)
+
+        # Hardware caps any single thread to 255 registers
+        max_regs_per_thread = min(255, max_regs_per_thread)
+
+        if required_regs > max_regs_per_thread:
+            return False
+
+        # WARP STARVATION:
+        if elements_per_thread < 16:
+            return False
+
+        if warps_compress + 3 > warps: return False
         return True
     
     return [
@@ -422,14 +486,14 @@ def sparse_matmul_get_configs(pre_hook=None):
                 "e_shape_0": BM // 16,
                 "e_shape_1": BK,
             },
-            num_warps=16, # Fixed to 16
+            num_warps=num_warps,
             pre_hook=pre_hook,
         )
         for BM in (64, 128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
         for num_warps in (4, 8, 16)
-        for warps_compress in (1, 2, 3, 4)
+        for warps_compress in (4, 8)
         for buffers in (3, 4, 5, 6)
         for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, num_warps, warps_compress, buffers, SF)
@@ -479,10 +543,11 @@ if __name__ == "__main__":
     os.environ["MLIR_ENABLE_DUMP"]="1"
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.6"
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
+    os.environ["TRITON_CACHE_DIR"]="./compiler_scratch/.triton_cache"
 
     M, N, K = 49152, 4096, 49152
 
-    print(f"Testing 7.6_compression_ws: M={M}, N={N}, K={K}...", end=" ", flush=True)
+    print(f"Testing 7.6_compression_ws: M={M}, N={N}, K={K}...", end="\n", flush=True)
 
     A = torch.randn(M, K, device="cuda", dtype=torch.float16)
     B = torch.randn((K, N), device="cuda", dtype=torch.float16)
