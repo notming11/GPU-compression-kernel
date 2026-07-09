@@ -104,15 +104,18 @@ def small_mma_kernel(
     #     block_bases=[], 
     #     shape=[64, 128]
     # )
-    a_pruned_reg_layout: gl.constexpr = gl.BlockedLayout(
-        [1, 16],
-        [8, 4],
-        [num_warps, 1],
-        [1, 0]
+    a_warp_bases: gl.constexpr = [[16, 0], [32, 0]] if num_warps == 4 else ([[16, 0], [32, 0], [0, 0]] if num_warps == 8 else [[16, 0], [32, 0], [0, 0], [0, 0]])
+    a_shape: gl.constexpr = [64, 64]
+    a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
+        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 16], [0, 32]], 
+        lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]], 
+        warp_bases=a_warp_bases, 
+        block_bases=[], 
+        shape=a_shape
     )
     # gl.static_print(gl.to_linear_layout(a_pruned_reg_layout, [BLOCK_M, BLOCK_K]))
-    a_pruned = a_pruned_smem.load(a_compressed_layout)
-    a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
+    a_pruned = a_pruned_smem.load(a_pruned_reg_layout)
+    # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
 
     # --- Extract groups of 4 consecutive columns using reshape + split ---
     # a_pruned shape: (BLOCK_M, BLOCK_K) = (64, 128)
@@ -168,6 +171,9 @@ def small_mma_kernel(
     # try using reduction
     meta = gl.reduce(gl.reduce(meta_grouped, 3, create_metadata), 2, create_metadata_8)
 
+    # gl.static_print(gl.to_linear_layout(meta.type.layout, [BLOCK_M, BLOCK_K // 16]))
+    # gl.static_print(meta.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 16]))
+
     # split last dim: even = [m,g,j,0], odd = [m,g,j,1]
     # meta_even, meta_odd = meta_grouped.split()
 
@@ -201,7 +207,7 @@ def small_mma_kernel(
 
     # convert a_compressed to DotOperandLayout
 
-    a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
+    a_compressed = gl.convert_layout(a_compressed, a_compressed_layout, assert_trivial = True)
     # gl.static_print(a_compressed.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 2]))
     e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = False)
     c = c_smem.load(c_layout)
@@ -249,12 +255,12 @@ def small_mma(A_pruned, B, C, D, INSTR_SHAPE_N, num_warps=4):
 
 if __name__ == "__main__":
     os.environ["MLIR_ENABLE_DUMP"]="1"
-    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/3D"
+    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/3F"
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
     print("Benchmarking WGMMA (no gather)")
     print("===============================")
 
-    M, N, K = 64, 16, 256
+    M, N, K = 64, 16, 64
     num_warps = 4
     A = torch.randn(M, K, device="cuda", dtype=torch.float16)
     B = torch.randn(K, N, device="cuda", dtype=torch.float16)

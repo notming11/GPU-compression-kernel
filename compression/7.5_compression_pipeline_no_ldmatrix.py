@@ -182,6 +182,7 @@ class SparseWGMMA:
         BLOCK_K: gl.constexpr
     ):
         # 1. Compress A tile in shared memory & Generate and Pack Metadata
+        gl.static_print(gl.to_linear_layout(a.layout, [BLOCK_M, BLOCK_K]).format_tensor_view([BLOCK_M, BLOCK_K]))
         a_pruned = a.load(a_pruned_reg_layout)
         # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
 

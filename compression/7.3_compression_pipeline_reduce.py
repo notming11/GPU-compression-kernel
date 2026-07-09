@@ -116,8 +116,8 @@ class SparseWGMMA:
         BLOCK_K: gl.constexpr
     ):
         # 1. Compress A tile in shared memory & Generate and Pack Metadata
-        a_pruned = a.load(a_compressed_layout)
-        a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
+        a_pruned = a.load(a_pruned_reg_layout)
+        # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
 
         # --- Extract groups of 4 consecutive columns using reshape + split ---
         a_grouped = a_pruned.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
@@ -188,7 +188,7 @@ class SparseWGMMA:
             meta=1
         )
 
-        a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
+        a_compressed = gl.convert_layout(a_compressed, a_compressed_layout, assert_trivial = False)
         e = gl.convert_layout(meta_reordered, e_layout)
 
         acc = warpgroup_mma(
@@ -373,11 +373,21 @@ def sparse_persistent_matmul_pipelined_kernel(
     # Initializing layouts and index for wgmma #
     ############################################
 
-    a_pruned_reg_layout: gl.constexpr = gl.BlockedLayout(
-        [2, 16],
-        [4, 8],
-        [num_warps, 1],
-        [1, 0]
+    # a_pruned_reg_layout: gl.constexpr = gl.BlockedLayout(
+    #     [2, 16],
+    #     [4, 8],
+    #     [num_warps, 1],
+    #     [1, 0]
+    # )
+
+    a_warp_bases: gl.constexpr = [[16, 0], [32, 0]] if num_warps == 4 else ([[16, 0], [32, 0], [0, 0]] if num_warps == 8 else [[16, 0], [32, 0], [0, 0], [0, 0]])
+    a_shape: gl.constexpr = [64, 64]
+    a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
+        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 16], [0, 32]], 
+        lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]], 
+        warp_bases=a_warp_bases, 
+        block_bases=[], 
+        shape=a_shape
     )
 
     # trivially convert a_compressed layout to DotOpreandLayout

@@ -8,3 +8,5 @@ triton_env/
 ondemand/
 
 *.sif
+
+compression/count_cycle/
