@@ -4746,3 +4746,15 @@ sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh
 sq
 #1783571111
 tpython 3F_single_tile_reduce.py 
+#1783572311
+load_module && start_gluon
+#1783572395
+apptainer exec --nvccli $SCRATCH.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.3 python 7.3_compression_pipeline_reduce.py 
+#1783572407
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.3 python 7.3_compression_pipeline_reduce.py 
+#1783572447
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.5 python 7.5_compression_pipeline_no_ldmatrix.py 
+#1783572489
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/sparse python gluon_pipeline.py 
+#1783572533
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k persistent_matmul_pipelined_kernel -o Profiling/max_shape/dense python gluon_pipeline.py 

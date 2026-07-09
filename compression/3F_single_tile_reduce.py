@@ -162,54 +162,19 @@ def small_mma_kernel(
     # 4-bit nibbles per group-of-4, shape (BLOCK_M, BLOCK_K//4)
     meta_4 = idx0 | (idx1 << 2)
 
-    # --- Pack 4 consecutive nibbles using reshape + split (no gather) ---
-    # meta_4 shape: (BLOCK_M, BLOCK_K//4) = (64, 32)
-    # Reshape to (BLOCK_M, BLOCK_K//16, 2, 2) to group 4 consecutive nibbles
-    # Element [m, g, j, i] = meta_4[m, 4*g + 2*j + i]
-    meta_grouped = meta_4.reshape(BLOCK_M, BLOCK_K // 16, 2, 2).to(gl.int16)
-
-    # try using reduction
-    meta = gl.reduce(gl.reduce(meta_grouped, 3, create_metadata), 2, create_metadata_8)
-
-    # gl.static_print(gl.to_linear_layout(meta.type.layout, [BLOCK_M, BLOCK_K // 16]))
-    # gl.static_print(meta.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 16]))
-
-    # split last dim: even = [m,g,j,0], odd = [m,g,j,1]
-    # meta_even, meta_odd = meta_grouped.split()
-
-    # mn0, mn2 = meta_even.split()  # mn0 = nibble 4g+0, mn2 = nibble 4g+2
-    # mn1, mn3 = meta_odd.split()   # mn1 = nibble 4g+1, mn3 = nibble 4g+3
-
-    # mn0 = mn0.to(gl.int16)
-    # mn1 = mn1.to(gl.int16)
-    # mn2 = mn2.to(gl.int16)
-    # mn3 = mn3.to(gl.int16)
-
-    # # Pack nibbles: matches compress_2_4.py's meta_n[:,:,0] | (meta_n[:,:,1]<<4) | ...
-    # meta = mn0 | (mn1 << 4) | (mn2 << 8) | (mn3 << 12)
-    # meta shape: (BLOCK_M, BLOCK_K//16) = (64, 8)
-
-    # --- Reorder metadata using reshape + permute (no gather) ---
-    # The original code reshapes to (BLOCK_M//16, BLOCK_K) = (4, 128) then gathers
-    # with a bit-swapped index pattern that permutes column bit positions:
-    #   source[c6,c5,c4,c3,c2,c1,c0] -> dest[c0,c5,c4,c3,c6,c2,c1]
-    #
-    # We achieve this by decomposing 128 into individual bit dimensions,
-    # permuting, and reshaping back.
-
-    # meta_reshaped = meta.reshape((BLOCK_M // 16, BLOCK_K))
-
-    # Generalized permutation for any BLOCK_K (64, 128, 256)
-    # This replaces the bit-level permute by swapping the M and K components directly
-    meta_reshaped = meta.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4)
-    meta_reordered = meta_reshaped.permute(0, 3, 2, 4, 1).reshape(BLOCK_M // 16, BLOCK_K)
+    # To lower register usage, we do the reshape and permute BEFORE the reduction!
+    # This prevents permuting a replicated layout, which causes massive register spills.
+    meta_4_reshaped = meta_4.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4, 2, 2)
+    meta_4_permuted = meta_4_reshaped.permute(0, 3, 2, 4, 1, 5, 6)
+    meta_4_ready = meta_4_permuted.reshape(BLOCK_M // 16, BLOCK_K, 2, 2)
+    meta_reordered = gl.reduce(gl.reduce(meta_4_ready, 3, create_metadata), 2, create_metadata_8)
     #######################################################################################
 
     # convert a_compressed to DotOperandLayout
 
     a_compressed = gl.convert_layout(a_compressed, a_compressed_layout, assert_trivial = True)
-    # gl.static_print(a_compressed.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 2]))
     e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = False)
+    gl.static_print(e.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 2]))
     c = c_smem.load(c_layout)
 
     d = warpgroup_mma(
@@ -260,7 +225,7 @@ if __name__ == "__main__":
     print("Benchmarking WGMMA (no gather)")
     print("===============================")
 
-    M, N, K = 64, 16, 64
+    M, N, K = 128, 16, 64
     num_warps = 4
     A = torch.randn(M, K, device="cuda", dtype=torch.float16)
     B = torch.randn(K, N, device="cuda", dtype=torch.float16)
