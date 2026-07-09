@@ -72,13 +72,16 @@ def pick_sparse_wgmma_layout(dtype, BLOCK_M, BLOCK_N, num_warps):
         instr_shape=[m, n, k],
     )
 
+
 @gluon.jit
 def create_metadata(meta_1, meta_2):
     return meta_1 | (meta_2 << 4)
 
+
 @gluon.jit
 def create_metadata_8(meta_1, meta_2):
     return meta_1 | (meta_2 << 8)
+
 
 @aggregate
 class SparseWGMMA:
@@ -113,7 +116,7 @@ class SparseWGMMA:
         a_pruned_reg_layout: gl.constexpr,
         a_compressed_layout: gl.constexpr,
         BLOCK_M: gl.constexpr,
-        BLOCK_K: gl.constexpr
+        BLOCK_K: gl.constexpr,
     ):
         # 1. Compress A tile in shared memory & Generate and Pack Metadata
         a_pruned = a.load(a_pruned_reg_layout)
@@ -125,7 +128,7 @@ class SparseWGMMA:
 
         # split again to separate the pairs
         a0, a2 = a_even.split()  # a0 = col 4g+0, a2 = col 4g+2
-        a1, a3 = a_odd.split()   # a1 = col 4g+1, a3 = col 4g+3
+        a1, a3 = a_odd.split()  # a1 = col 4g+1, a3 = col 4g+3
 
         m0 = a0 != 0
         m1 = a1 != 0
@@ -139,57 +142,41 @@ class SparseWGMMA:
         idx0 = bit0 | (bit1.to(gl.int16) << 1)
         idx1 = bit2 | (bit3.to(gl.int16) << 1)
 
-        nz0 = gl.where(idx0 == 0, a0, gl.where(idx0 == 1, a1, gl.where(idx0 == 2, a2, a3)))
-        nz1 = gl.where(idx1 == 0, a0, gl.where(idx1 == 1, a1, gl.where(idx1 == 2, a2, a3)))
+        nz0 = gl.where(
+            idx0 == 0, a0, gl.where(idx0 == 1, a1, gl.where(idx0 == 2, a2, a3))
+        )
+        nz1 = gl.where(
+            idx1 == 0, a0, gl.where(idx1 == 1, a1, gl.where(idx1 == 2, a2, a3))
+        )
 
         a_compressed = gl.join(nz0, nz1)
         a_compressed = a_compressed.reshape(BLOCK_M, BLOCK_K // 2)
 
         meta_4 = idx0 | (idx1 << 2)
 
-        # --- Pack 4 consecutive nibbles using reshape + split (no gather) ---
-        meta_grouped = meta_4.reshape(BLOCK_M, BLOCK_K // 16, 2, 2)
-        meta = gl.reduce(gl.reduce(meta_grouped, 3, create_metadata), 2, create_metadata_8)
-
-        # meta_even, meta_odd = meta_grouped.split()
-
-        # mn0, mn2 = meta_even.split()  # mn0 = nibble 4g+0, mn2 = nibble 4g+2
-        # mn1, mn3 = meta_odd.split()   # mn1 = nibble 4g+1, mn3 = nibble 4g+3
-
-        # mn0 = mn0.to(gl.int16)
-        # mn1 = mn1.to(gl.int16)
-        # mn2 = mn2.to(gl.int16)
-        # mn3 = mn3.to(gl.int16)
-
-        # meta = mn0 | (mn1 << 4) | (mn2 << 8) | (mn3 << 12)
-        meta_reshaped = meta.reshape((BLOCK_M // 16, BLOCK_K))
-
-        # if BLOCK_K == 128: 
-        #     # Decompose columns into 7 binary dimensions (MSB to LSB):
-        #     meta_bits = meta_reshaped.reshape(BLOCK_M // 16, 2, 2, 2, 2, 2, 2, 2)
-        #     # Permute to target bit ordering:
-        #     meta_perm = meta_bits.permute(0, 5, 2, 3, 4, 6, 7, 1)
-        # elif BLOCK_K == 64:
-        #     meta_bits = meta_reshaped.reshape(BLOCK_M // 16, 2, 2, 2, 2, 2, 2)
-        #     meta_perm = meta_bits.permute(0, 2, 3, 4, 5, 6, 1)
-        # elif BLOCK_K == 256:
-        #     meta_bits = meta_reshaped.reshape(BLOCK_M // 16, 2, 2, 2, 2, 2, 2, 2, 2)
-        #     meta_perm = meta_bits.permute(0, 5, 6, 2, 3, 4, 7, 8, 1)
-
-        # # Reshape back to (BLOCK_M // 16, BLOCK_K)
-        # meta_reordered = meta_perm.reshape(BLOCK_M // 16, BLOCK_K)
-        meta_reshaped = meta.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4)
-        meta_reordered = meta_reshaped.permute(0, 3, 2, 4, 1).reshape(BLOCK_M // 16, BLOCK_K)
+        # To lower register usage, we do the reshape and permute BEFORE the reduction!
+        # This prevents permuting a replicated layout, which causes massive register spills.
+        meta_4_reshaped = meta_4.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4, 2, 2)
+        meta_4_permuted = meta_4_reshaped.permute(0, 3, 2, 4, 1, 5, 6)
+        meta_4_ready = meta_4_permuted.reshape(BLOCK_M // 16, BLOCK_K, 2, 2)
+        meta_reordered = gl.reduce(
+            gl.reduce(meta_4_ready, 3, create_metadata), 2, create_metadata_8
+        )
+        #######################################################################################
 
         e_layout: gl.constexpr = gl.DotOperandLayout(
             operand_index=0,
             parent=self.layout,
             k_width=32 // gl.int16.primitive_bitwidth,
-            meta=1
+            meta=1,
         )
 
-        a_compressed = gl.convert_layout(a_compressed, a_compressed_layout, assert_trivial = False)
+        a_compressed = gl.convert_layout(
+            a_compressed, a_compressed_layout, assert_trivial=False
+        )
         e = gl.convert_layout(meta_reordered, e_layout)
+
+        # gl.static_print(e.type.layout.format_tensor_view((BLOCK_M // 16, BLOCK_K)))
 
         acc = warpgroup_mma(
             a_compressed,
@@ -210,14 +197,13 @@ class SparseWGMMA:
 
     @gluon.jit
     def flush_num_outstanding(self):
-        acc = warpgroup_mma_wait(0, (self.acc, ))
+        acc = warpgroup_mma_wait(0, (self.acc,))
         return SparseWGMMA(acc, self.use_acc, self.layout)
 
     # Take the result and reset the accumulator.
     @gluon.jit
     def take_result(self):
         return self.acc, SparseWGMMA(self.acc, gl.to_tensor(False), self.layout)
-
 
 
 @aggregate
@@ -255,6 +241,7 @@ class PersistentTileScheduler:
         pid_m = pid % self.num_pid_m
         pid_n = pid // self.num_pid_m
         return pid_m, pid_n
+
 
 @gluon.jit
 def issue_sparse_loads_stealb(
@@ -380,14 +367,22 @@ def sparse_persistent_matmul_pipelined_kernel(
     #     [1, 0]
     # )
 
-    a_warp_bases: gl.constexpr = [[16, 0], [32, 0]] if num_warps == 4 else ([[16, 0], [32, 0], [0, 0]] if num_warps == 8 else [[16, 0], [32, 0], [0, 0], [0, 0]])
+    a_warp_bases: gl.constexpr = (
+        [[16, 0], [32, 0]]
+        if num_warps == 4
+        else (
+            [[16, 0], [32, 0], [0, 0]]
+            if num_warps == 8
+            else [[16, 0], [32, 0], [0, 0], [0, 0]]
+        )
+    )
     a_shape: gl.constexpr = [64, 64]
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 16], [0, 32]], 
-        lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]], 
-        warp_bases=a_warp_bases, 
-        block_bases=[], 
-        shape=a_shape
+        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 16], [0, 32]],
+        lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]],
+        warp_bases=a_warp_bases,
+        block_bases=[],
+        shape=a_shape,
     )
 
     # trivially convert a_compressed layout to DotOpreandLayout
@@ -558,7 +553,9 @@ def sparse_persistent_matmul_pipelined(
     b_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_K, BLOCK_N], gl.float16)
     c_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_M, BLOCK_N], gl.float16)
 
-    a_pruned_desc = TensorDescriptor.from_tensor(A_pruned, [BLOCK_M, BLOCK_K], a_pruned_layout)
+    a_pruned_desc = TensorDescriptor.from_tensor(
+        A_pruned, [BLOCK_M, BLOCK_K], a_pruned_layout
+    )
     b_desc = TensorDescriptor.from_tensor(B, [BLOCK_K, BLOCK_N], b_layout)
     c_desc = TensorDescriptor.from_tensor(C, [BLOCK_M, BLOCK_N], c_layout)
 
@@ -581,9 +578,9 @@ def sparse_persistent_matmul_pipelined(
 
 
 if __name__ == "__main__":
-    os.environ["MLIR_ENABLE_DUMP"]="1"
+    os.environ["MLIR_ENABLE_DUMP"] = "1"
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.3"
-    os.environ["TRITON_ALWAYS_COMPILE"]="1"
+    os.environ["TRITON_ALWAYS_COMPILE"] = "1"
     for M, N, K in [(49152, 16, 49152)]:
         for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
             for num_warps in [4]:
@@ -610,4 +607,3 @@ if __name__ == "__main__":
                 C_ref = A_pruned @ B
                 torch.testing.assert_close(C_ref, C, rtol=1e-3, atol=1e-1)
                 print("PASSED")
-
