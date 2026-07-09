@@ -4684,3 +4684,37 @@ git push origin main
 cd compression/
 #1783263951
 sbatch sbatch_sh/trillium/Profile.sh 
+#1783386410
+git reset --soft HEAD~1
+#1783386463
+git pull
+#1783386473
+git fetch
+#1783386474
+git pull
+#1783386510
+git reset --soft HEAD~1
+#1783386691
+debugjob
+#1783388271
+git reset --soft HEAD~1
+#1783388372
+git lfs install
+#1783388380
+git lfs track "*ncu-rep"
+#1783391290
+sq
+#1783392240
+git reset --soft HEAD~1
+#1783392244
+git lfs track "*ncu-rep"
+#1783392251
+git lfs install
+#1783392254
+git lfs track "*ncu-rep"
+#1783392294
+sq
+#1783392298
+git reset --soft HEAD~1
+#1783443470
+debugjob
