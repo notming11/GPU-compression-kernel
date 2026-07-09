@@ -4718,3 +4718,31 @@ sq
 git reset --soft HEAD~1
 #1783443470
 debugjob
+#1783561619
+load_module && start_gluon
+#1783561625
+tpython 3F_single_tile_reduce.py 
+#1783563568
+sq
+#1783571336
+git --reset HEAD
+#1783571347
+git reset --soft HEAD~1
+#1783571485
+debugjob
+#1783538493
+load_module && start_gluon
+#1783538502
+tpython 3K_single_tile_4_registers.py 
+#1783538509
+tpython 3K_single_tile_4_registers.py > layout.txt
+#1783556322
+tpython 3F_single_tile_reduce.py 
+#1783556471
+debugjob
+#1783564259
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783564408
+sq
+#1783571111
+tpython 3F_single_tile_reduce.py 

@@ -182,7 +182,7 @@ class SparseWGMMA:
         BLOCK_K: gl.constexpr
     ):
         # 1. Compress A tile in shared memory & Generate and Pack Metadata
-        gl.static_print(gl.to_linear_layout(a.layout, [BLOCK_M, BLOCK_K]).format_tensor_view([BLOCK_M, BLOCK_K]))
+        # gl.static_print(gl.to_linear_layout(a.layout, [BLOCK_M, BLOCK_K]).format_tensor_view([BLOCK_M, BLOCK_K]))
         a_pruned = a.load(a_pruned_reg_layout)
         # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
 
@@ -574,7 +574,7 @@ if __name__ == "__main__":
     os.environ["MLIR_ENABLE_DUMP"]="1"
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.5"
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
-    for M, N, K in [(16384, 16, 49152)]:
+    for M, N, K in [(49152, 16, 49152)]:
         for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 128, 64)]:
             for num_warps in [4]:
                 # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
@@ -593,7 +593,7 @@ if __name__ == "__main__":
                     BLOCK_M,
                     BLOCK_N,
                     BLOCK_K,
-                    3,
+                    6,
                     num_warps,
                     PersistentTileScheduler,
                 )
