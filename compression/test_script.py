@@ -1,56 +1,105 @@
 import torch
+import os
 from triton.experimental import gluon
 from triton.experimental.gluon import language as gl
-
-a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
-a_shape: gl.constexpr = [64, 64]
-a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-    reg_bases=[[0, 1], [0, 2], [8, 0], [0, 4], [0, 8]], 
-    lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
-    warp_bases=a_warp_bases, 
-    block_bases=[], 
-    shape=a_shape
+from triton.experimental.gluon.nvidia.hopper import TensorDescriptor
+from triton.experimental.gluon.language.nvidia.hopper import (
+    tma,
+    mbarrier,
+    fence_async_shared,
 )
 
-@gluon.jit
-def create_metadata(meta_1, meta_2):
-    return meta_1 | (meta_2 << 4)
+os.environ["MLIR_ENABLE_DUMP"] = "1"
+os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/test"
+os.environ["TRITON_ALWAYS_COMPILE"] = "1"
+
+num_warps = 4
+
+m: gl.constexpr = 16
+k: gl.constexpr = 32
+n: gl.constexpr = 16
+
+warps_per_cta: gl.constexpr = [num_warps, 1]
+
+c_layout: gl.constexpr = gl.NVMMADistributedLayout(
+    version=[3, 0],
+    warps_per_cta=warps_per_cta,
+    instr_shape=[m, n, k],
+)
+
+e_warp_bases: gl.constexpr = (
+    [[1, 0], [2, 0]]
+    if num_warps == 4
+    else (
+        [[1, 0], [2, 0], [0, 0]] if num_warps == 8 else [[1, 0], [2, 0], [0, 0], [0, 0]]
+    )
+)
+e_intermediate_layout: gl.constexpr = gl.DistributedLinearLayout(
+    reg_bases=[[0, 1], [0, 2], [0, 64], [4, 0]],
+    lane_bases=[[0, 0], [0, 4], [0, 8], [0, 16], [0, 32]],
+    warp_bases=e_warp_bases,
+    block_bases=[],
+    shape=[8, 128],
+)
+
+e_begin_layout: gl.constexpr = gl.DistributedLinearLayout(
+    reg_bases=[[0, 1], [0, 2], [0, 4]],
+    lane_bases=[[0, 0], [0, 0], [0, 8], [0, 16], [0, 32]],
+    warp_bases=[[1, 0], [2, 0]],
+    block_bases=[],
+    shape=[4, 64],
+)
+
+e_end_layout: gl.constexpr = gl.DistributedLinearLayout(
+    reg_bases=[[0, 1], [0, 2], [0, 4]],
+    lane_bases=[[0, 0], [0, 0], [0, 8], [0, 16], [0, 32]],
+    warp_bases=[[1, 0], [2, 0]],
+    block_bases=[],
+    shape=[4, 64],
+)
+
+BLOCK_M = 64
+BLOCK_K = 64
+block_shape = [BLOCK_M // 16, BLOCK_K]  # [4, 64]
+
+smem_layout = gl.NVMMASharedLayout.get_default_for(block_shape, gl.int16)
+
 
 @gluon.jit
-def create_metadata_8(meta_1, meta_2):
-    return meta_1 | (meta_2 << 8)
+def test_kernel(a_desc, c_desc, BLOCK_M: gl.constexpr, BLOCK_K: gl.constexpr):
+    # Allocate shared memory for input and output tiles
+    a_smem = gl.allocate_shared_memory(gl.int16, a_desc.block_type.shape, a_desc.layout)
+    c_smem = gl.allocate_shared_memory(gl.int16, c_desc.block_type.shape, c_desc.layout)
 
-@gluon.jit
-def test_kernel(a_ptr, BLOCK_M: gl.constexpr, BLOCK_K: gl.constexpr):
-    # Dummy load
-    a_pruned = gl.zeros((BLOCK_M, BLOCK_K), dtype=gl.int8, layout=a_pruned_reg_layout)
-    
-    a_grouped = a_pruned.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
-    a_even, a_odd = a_grouped.split()
+    # Allocate and initialize mbarrier
+    bars = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
+    bar = bars.index(0)
+    mbarrier.init(bar, count=1)
 
-    a0, a2 = a_even.split()
-    a1, a3 = a_odd.split()
+    # TMA load: global -> shared
+    mbarrier.expect(bar, a_desc.block_type.nbytes)
+    tma.async_copy_global_to_shared(a_desc, [0, 0], bar, a_smem)
+    mbarrier.wait(bar, 0)
 
-    m0 = a0 != 0
-    m1 = a1 != 0
-    m3 = a3 != 0
+    # Load from shared memory to registers with e_begin_layout
+    e = a_smem.load(e_begin_layout)
 
-    bit0 = ~m0 & m1
-    bit1 = ~m0 & ~m1
-    bit2 = (m0 & m1) | (~m0 & ~m1) | m3
-    bit3 = (~m0 & m1) | ~m1
+    # Layout conversions to observe in MLIR
+    e = gl.convert_layout(e, e_intermediate_layout)
+    e = gl.convert_layout(e, e_end_layout)
 
-    idx0 = bit0 | (bit1.to(gl.int16) << 1)
-    idx1 = bit2 | (bit3.to(gl.int16) << 1)
+    # Store result to shared memory, then TMA store: shared -> global
+    c_smem.store(e)
+    fence_async_shared()
+    tma.async_copy_shared_to_global(c_desc, [0, 0], c_smem)
+    tma.store_wait(pendings=0)
 
-    meta_4 = idx0 | (idx1 << 2)
 
-    meta_grouped = meta_4.reshape(BLOCK_M, BLOCK_K // 16, 2, 2)
-    meta = gl.reduce(gl.reduce(meta_grouped, 3, create_metadata), 2, create_metadata_8)
-    meta_reshaped = meta.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4)
-    meta_reordered = meta_reshaped.permute(0, 3, 2, 4, 1).reshape(BLOCK_M // 16, BLOCK_K)
+a_tensor = torch.randn(block_shape[0], block_shape[1], device="cuda", dtype=torch.float16).to(torch.int16)
+c_tensor = torch.zeros(block_shape[0], block_shape[1], device="cuda", dtype=torch.int16)
 
-    gl.static_print(meta_reordered.type.layout.format_tensor_view((BLOCK_M // 16, BLOCK_K)))
-    
-test_kernel[(1,)](None, 128, 128)
+a_desc = TensorDescriptor.from_tensor(a_tensor, block_shape, smem_layout)
+c_desc = TensorDescriptor.from_tensor(c_tensor, block_shape, smem_layout)
+
+test_kernel[(1,)](a_desc, c_desc, BLOCK_M, BLOCK_K)
 print("done")

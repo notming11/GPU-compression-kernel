@@ -167,7 +167,7 @@ class SparseWGMMA:
         )
 
         a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
-        e = gl.convert_layout(meta_reordered, e_layout)
+        e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = True)
 
         return a_compressed, e
 
@@ -370,14 +370,19 @@ def sparse_persistent_matmul_pipelined_kernel(
     # Initializing layouts and index for wgmma #
     ############################################
 
-    a_warp_bases: gl.constexpr = [[16, 0], [32, 0]] if num_warps == 4 else ([[16, 0], [32, 0], [0, 0]] if num_warps == 8 else [[16, 0], [32, 0], [0, 0], [0, 0]])
-    a_shape: gl.constexpr = [64, 64]
+    if num_warps == 4:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
+    elif num_warps == 8:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0]]
+    elif num_warps == 16:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
+    
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
-        lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
-        warp_bases=a_warp_bases, 
-        block_bases=[], 
-        shape=a_shape
+        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 4], [0, 8]],
+        lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]],
+        warp_bases=a_warp_bases,
+        block_bases=[],
+        shape=[16 * num_warps, 64],
     )
 
     # trivially convert a_compressed layout to DotOpreandLayout

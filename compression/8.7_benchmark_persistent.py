@@ -33,6 +33,32 @@ from compress_2_4 import compress_dense_to_sparse
 
 
 def matmul_get_configs():
+    def valid(BM, BN, BK, warps, buffers):
+        SB = buffers == 4
+        # Shared Memory
+        smem_bytes = 2 * (
+                (buffers * BM * BK) +
+                ((buffers + SB) * BK * BN) +
+                ((1 - SB) * BM * BN)
+        ) + (8 * buffers)
+
+        if smem_bytes > 232448: return False
+
+        # STEALB
+        if SB and 2 * BN * BK < BM * BN: return False
+        if SB and BM > BK: return False
+
+        if (BM * BN) >= 65536 and warps < 12:  # 256x256 blocks require at least 3 warp groups
+            return False
+        if (BM * BN) <= 4096 and warps > 8:    # Tiny blocks will starve 12 or 16 warps
+            return False
+
+        elements_per_thread = (BM * BN) / (warps * 32)
+        if elements_per_thread > 256:
+            return False
+
+        return True
+
     return [
         triton.Config(
             {
@@ -43,18 +69,29 @@ def matmul_get_configs():
             },
             num_warps=warps,
         )
-        for BM, BN, BK in [
-            [64, 64, 128],
-            [64, 64, 256],
-            [64, 128, 128],
-            [128, 64, 128],
-            [64, 64, 64],
-            [64, 128, 64],
-            [128, 128, 64],
-        ]
+        for BM in (64, 128, 256)
+        for BN in (64, 128, 256)
+        for BK in (64, 128, 256)
         for buffers in (3, 4, 5, 6, 7)
         for warps in (4, 8, 16)
+        if valid(BM, BN, BK, warps, buffers)
     ]
+
+# def matmul_get_configs():
+#     return [
+#         triton.Config(
+#             {
+#                 "BLOCK_SIZE_M": BM,
+#                 "BLOCK_SIZE_N": BN,
+#                 "BLOCK_SIZE_K": BK,
+#                 "num_buffers": buffers,
+#             },
+#             num_warps=warps,
+#         )
+#         for BM, BN, BK in [[64, 64, 128], [64, 64, 256], [64, 128, 128], [128, 64, 128], [64, 64, 64], [64, 128, 64], [128, 128, 64]] 
+#         for buffers in (3, 4, 5, 6, 7)
+#         for warps in (4, 8, 16)
+#     ]
 
 
 def benchmark_kernels(M, N, K, BLOCK_M, BLOCK_N, BLOCK_K, num_buffers, num_warps):
@@ -270,7 +307,6 @@ if __name__ == "__main__":
         (i, N, j)
         for i in dim
         for j in dim
-        if [i, j] not in [[49152, 32768], [32768, 49152]]
     ]
 
     paths = {
@@ -278,6 +314,7 @@ if __name__ == "__main__":
         "7.1" : "./7.1_compression_pipeline_with_convert.py", 
         "7.2" : "./7.2_compression_pipeline_no_gather.py", 
         "7.3" : "./7.3_compression_pipeline_reduce.py",
+        "7.3.1": "./7.3.1_compression_pipeline_reduce_interlayout.py",
         "7.4" : "./7.4_compression_pipeline_ptx_prototype.py",
         "7.5" : "./7.5_compression_pipeline_no_ldmatrix.py"
     }
@@ -330,12 +367,17 @@ if __name__ == "__main__":
         max_dense = None
         max_precomp = None
         max_runtime = None
+        dense_config = None
+        precomp_config = None
+        runtime_config = None
         for config in configs:
             bm = config.kwargs["BLOCK_SIZE_M"]
             bn = config.kwargs["BLOCK_SIZE_N"]
             bk = config.kwargs["BLOCK_SIZE_K"]
             num_buffers = config.kwargs["num_buffers"]
             num_warps = config.num_warps
+
+            # print(config)
 
             metrics = benchmark_kernels(
                 M=M,
@@ -356,10 +398,13 @@ if __name__ == "__main__":
 
                 if max_dense is None or metrics["dense_tflops"] > max_dense:
                     max_dense = metrics["dense_tflops"]
+                    dense_config = config
                 if max_precomp is None or metrics["precomp_tflops"] > max_precomp:
                     max_precomp = metrics["precomp_tflops"]
+                    precomp_config = config
                 if max_runtime is None or metrics["runtime_tflops"] > max_runtime:
                     max_runtime = metrics["runtime_tflops"]
+                    runtime_config = config
 
                 # Append payload to our plotting list
                 data_log.append(
@@ -372,6 +417,9 @@ if __name__ == "__main__":
                 )
 
         print(f"finish {shape_str}, ({i+1}/{len(shapes)}) -> Max Dense: {max_dense:.2f}, Max Precomp: {max_precomp:.2f}, Max Runtime: {max_runtime:.2f}")
+        print(f"dense config: {dense_config}")
+        print(f"precomp config: {precomp_config}")
+        print(f"runtime config: {runtime_config}", flush = True)
         i += 1
 
     # Convert logged metrics into a DataFrame and visualize

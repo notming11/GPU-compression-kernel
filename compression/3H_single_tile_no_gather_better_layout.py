@@ -98,14 +98,19 @@ def small_mma_kernel(
     #     block_bases=[], 
     #     shape=[64, 128]
     # )
-    a_warp_bases: gl.constexpr = [[16, 0], [32, 0]] if num_warps == 4 else ([[16, 0], [32, 0], [0, 0]] if num_warps == 8 else [[16, 0], [32, 0], [0, 0], [0, 0]])
-    a_shape: gl.constexpr = [64, 64]
+    if num_warps == 4:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
+    elif num_warps == 8:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0]]
+    elif num_warps == 16:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
+    
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [0, 4], [0, 8], [8, 0]], 
-        lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]], 
-        warp_bases=a_warp_bases, 
-        block_bases=[], 
-        shape=a_shape
+        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 4], [0, 8]],
+        lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]],
+        warp_bases=a_warp_bases,
+        block_bases=[],
+        shape=[16 * num_warps, 64],
     )
     # gl.static_print(gl.to_linear_layout(a_pruned_reg_layout, [BLOCK_M, BLOCK_K]))
     a_pruned = a_pruned_smem.load(a_pruned_reg_layout)
@@ -221,9 +226,10 @@ def small_mma_kernel(
 
     a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
     # gl.static_print("After convert layout:")
-    # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
     # gl.static_print(a_compressed.type.layout.format_tensor_view([BLOCK_M, BLOCK_K // 2]))
-    e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = False)
+    # gl.static_print(gl.to_linear_layout(meta_reordered.type.layout, [BLOCK_M // 16, BLOCK_K]))
+    e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = True)
+    # gl.static_print(gl.to_linear_layout(e.type.layout, [BLOCK_M // 16, BLOCK_K]))
     c = c_smem.load(c_layout)
 
     d = warpgroup_mma(
