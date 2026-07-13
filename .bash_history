@@ -4758,3 +4758,91 @@ apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persiste
 apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/sparse python gluon_pipeline.py 
 #1783572533
 apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k persistent_matmul_pipelined_kernel -o Profiling/max_shape/dense python gluon_pipeline.py 
+#1783618746
+load_module && start_gluon
+#1783618753
+tpython 7.3_compression_pipeline_reduce.py 
+#1783618760
+tpython 7.3_compression_pipeline_reduce.py > layout.txt
+#1783619510
+tpython 3F_single_tile_reduce.py 
+#1783620776
+tpython 7.3_compression_pipeline_reduce.py 
+#1783624087
+tpython 3F_single_tile_reduce.py 
+#1783624131
+tpython 7.3_compression_pipeline_reduce.py > layout.txt
+#1783624341
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783624344
+sq
+#1783624442
+debugjob
+#1783647898
+tpython 7.3_compression_pipeline_reduce.py 
+#1783648010
+tpython 7.3_compression_pipeline_reduce.py > per_thread.txt
+#1783648412
+tpython 7.3_compression_pipeline_reduce.py
+#1783648493
+tpython 8.7_benchmark_persistent.py 7.3 16
+#1783650956
+debugjob
+#1783619192
+cd /home/notming/links/scratch/compression
+#1783619193
+load_module && start_gluon && tpython test_script.py
+#1783619226
+cd /home/notming/links/scratch/compression
+#1783619227
+load_module && start_gluon && tpython test_script.py
+#1783619277
+cd /home/notming/links/scratch/compression
+#1783619278
+load_module && start_gluon && tpython 7.3_compression_pipeline_reduce.py
+#1783623508
+cd /home/notming/links/scratch/compression
+#1783623509
+load_module && start_gluon && tpython test_script2.py
+#1783623555
+cd /home/notming/links/scratch/compression
+#1783623556
+load_module && start_gluon && tpython test_script2.py
+#1783623601
+cd /home/notming/links/scratch/compression
+#1783623602
+load_module && start_gluon && tpython test_script3.py
+#1783623702
+cd /home/notming/links/scratch/compression
+#1783623703
+load_module && start_gluon && tpython 3F_single_tile_reduce.py
+#1783623871
+cd /home/notming/links/scratch/compression
+#1783623872
+load_module && start_gluon && tpython test_script4.py
+#1783623969
+cd /home/notming/links/scratch/compression
+#1783623971
+grep -n "meta_4 =" 7.3_compression_pipeline_reduce.py
+#1783625611
+load_module && start_gluon
+#1783625620
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783625913
+sq
+#1783825537
+load_module && start_gluon
+#1783825551
+tpython 7.3_compression_pipeline_reduce.py 
+#1783825982
+debugjob --exclude=trig0001
+#1783833556
+load_module && start_gluon
+#1783833576
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783833589
+scancel 658718
+#1783833595
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783833597
+sq

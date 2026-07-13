@@ -159,6 +159,7 @@ class SparseWGMMA:
         meta_4_reshaped = meta_4.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4, 2, 2)
         meta_4_permuted = meta_4_reshaped.permute(0, 3, 2, 4, 1, 5, 6)
         meta_4_ready = meta_4_permuted.reshape(BLOCK_M // 16, BLOCK_K, 2, 2)
+        # gl.static_print(gl.to_linear_layout(meta_4_ready.type.layout, (BLOCK_M // 16, BLOCK_K, 2, 2)))
         meta_reordered = gl.reduce(
             gl.reduce(meta_4_ready, 3, create_metadata), 2, create_metadata_8
         )
@@ -172,11 +173,9 @@ class SparseWGMMA:
         )
 
         a_compressed = gl.convert_layout(
-            a_compressed, a_compressed_layout, assert_trivial=False
+            a_compressed, a_compressed_layout, assert_trivial=True
         )
         e = gl.convert_layout(meta_reordered, e_layout)
-
-        # gl.static_print(e.type.layout.format_tensor_view((BLOCK_M // 16, BLOCK_K)))
 
         acc = warpgroup_mma(
             a_compressed,
@@ -367,22 +366,19 @@ def sparse_persistent_matmul_pipelined_kernel(
     #     [1, 0]
     # )
 
-    a_warp_bases: gl.constexpr = (
-        [[16, 0], [32, 0]]
-        if num_warps == 4
-        else (
-            [[16, 0], [32, 0], [0, 0]]
-            if num_warps == 8
-            else [[16, 0], [32, 0], [0, 0], [0, 0]]
-        )
-    )
-    a_shape: gl.constexpr = [64, 64]
+    if num_warps == 4:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
+    elif num_warps == 8:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0]]
+    elif num_warps == 16:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
+    
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
         reg_bases=[[0, 1], [0, 2], [8, 0], [0, 16], [0, 32]],
         lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]],
         warp_bases=a_warp_bases,
         block_bases=[],
-        shape=a_shape,
+        shape=[16 * num_warps, 64],
     )
 
     # trivially convert a_compressed layout to DotOpreandLayout
@@ -582,8 +578,8 @@ if __name__ == "__main__":
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.3"
     os.environ["TRITON_ALWAYS_COMPILE"] = "1"
     for M, N, K in [(49152, 16, 49152)]:
-        for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
-            for num_warps in [4]:
+        for BLOCK_M, BLOCK_N, BLOCK_K in [(256, 64, 64), (128, 64, 64), (64, 64, 64)]:
+            for num_warps in [4, 8, 16]:
                 # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
 
                 A = torch.randn(M, K, device="cuda", dtype=torch.float16)
