@@ -447,19 +447,19 @@ def sparse_persistent_matmul_pipelined(A, E, B, C, BLOCK_M, BLOCK_N, BLOCK_K, nu
 
 if __name__ == "__main__":
     for M, N, K in [(49152, 16, 49152)]:
-        for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 64)]:
+        for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
             for num_warps in [8]:
                 A = torch.randn(M, K, device="cuda", dtype=torch.float16)
                 B = torch.randn((K, N), device="cuda", dtype=torch.float16)
                 C = torch.empty(M, N, device="cuda", dtype=torch.float16)
 
-                persistent_matmul_pipelined(A, B, C, BLOCK_M, BLOCK_N, BLOCK_K, 4, num_warps, PersistentTileScheduler)
+                persistent_matmul_pipelined(A, B, C, BLOCK_M, BLOCK_N, BLOCK_K, 3, 8, PersistentTileScheduler)
 
                 A_pruned = prune_2_4(A)
                 A, E = compress_dense_to_sparse(A_pruned)
                 E = E.view(M // 16, K)
 
-                sparse_persistent_matmul_pipelined(A, E, B, C, BLOCK_M, BLOCK_N, BLOCK_K, 5, num_warps, PersistentTileScheduler)
+                sparse_persistent_matmul_pipelined(A, E, B, C, BLOCK_M, BLOCK_N, BLOCK_K, 4, 4, PersistentTileScheduler)
 
                 C_ref = A_pruned @ B
                 torch.testing.assert_close(C_ref, C, rtol=1e-3, atol=1e-1)
