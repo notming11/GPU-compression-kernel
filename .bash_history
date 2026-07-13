@@ -4846,3 +4846,63 @@ scancel 658718
 sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
 #1783833597
 sq
+#1783871957
+load_module && start_gluon
+#1783871999
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783874034
+sq
+#1783913696
+scancel 662452
+#1783913794
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783914968
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.3.1 python 7.3.1_compression_pipeline_reduce_interlayout.py 
+#1783915095
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.5 python 7.5_compression_pipeline_no_ldmatrix.py 
+#1783915446
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.3.1 python 7.3.1_compression_pipeline_reduce_interlayout.py 
+#1783915476
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.5 python 7.5_compression_pipeline_no_ldmatrix.py 
+#1783915520
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/sparse python gluon_pipeline.py 
+#1783915581
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k persistent_matmul_pipelined_kernel -o Profiling/max_shape/dense python gluon_pipeline.py 
+#1783915857
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.3 python 7.3_compression_pipeline_reduce.py 
+#1783916962
+sq
+#1783917711
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_persistent_matmul_pipelined_kernel -o Profiling/max_shape/7.5.1 python 7.5.1_compression_pipeline_ldmatrix.py 
+#1783917785
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783918640
+sq
+#1783869656
+load_module && start_gluon
+#1783869670
+sbatch sbatch_sh/trillium/7.3
+#1783869673
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783870149
+scancel 660333
+#1783870230
+debugjob
+#1783878494
+tpython 7.3_temp.py 
+#1783878619
+debugjob
+#1783909999
+tpython test_script.py 
+#1783911382
+tpython 3F.1_single_tile_reduce_interlayout.py 
+#1783911492
+tpython 7.3.1_compression_pipeline_reduce_interlayout.py 
+#1783911670
+sbatch sbatch_sh/trillium/7.4_sbatch_benchmark.sh 
+#1783912782
+tpython 3H_single_tile_no_gather_better_layout.py 
+#1783913064
+tpython 7.5_compression_pipeline_no_ldmatrix.py 
+#1783913147
+debugjob

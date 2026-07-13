@@ -1,0 +1,880 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+start 49152-16-49152
+finish 49152-16-49152, (1/167) -> Max Dense: 49.59, Max Precomp: 91.64, Max Runtime: 40.46
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-49152
+finish 24576-16-49152, (2/167) -> Max Dense: 48.39, Max Precomp: 77.46, Max Runtime: 32.89
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-24576
+finish 49152-16-24576, (3/167) -> Max Dense: 48.79, Max Precomp: 89.02, Max Runtime: 39.69
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-32768
+finish 32768-16-32768, (4/167) -> Max Dense: 49.03, Max Precomp: 90.25, Max Runtime: 39.86
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 256, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-49152
+finish 16384-16-49152, (5/167) -> Max Dense: 48.50, Max Precomp: 87.88, Max Runtime: 39.60
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-32768
+finish 24576-16-32768, (6/167) -> Max Dense: 48.02, Max Precomp: 76.58, Max Runtime: 32.67
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-24576
+finish 32768-16-24576, (7/167) -> Max Dense: 48.17, Max Precomp: 87.47, Max Runtime: 39.80
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 256, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-16384
+finish 49152-16-16384, (8/167) -> Max Dense: 48.49, Max Precomp: 88.47, Max Runtime: 39.44
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-49152
+finish 12288-16-49152, (9/167) -> Max Dense: 47.56, Max Precomp: 81.70, Max Runtime: 30.07
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-24576
+finish 24576-16-24576, (10/167) -> Max Dense: 46.96, Max Precomp: 75.01, Max Runtime: 32.36
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-12288
+finish 49152-16-12288, (11/167) -> Max Dense: 47.23, Max Precomp: 84.96, Max Runtime: 38.93
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-32768
+finish 16384-16-32768, (12/167) -> Max Dense: 47.92, Max Precomp: 85.87, Max Runtime: 39.14
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-16384
+finish 32768-16-16384, (13/167) -> Max Dense: 47.82, Max Precomp: 84.68, Max Runtime: 39.26
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 256, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-49152
+finish 8192-16-49152, (14/167) -> Max Dense: 46.40, Max Precomp: 68.96, Max Runtime: 32.24
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-32768
+finish 12288-16-32768, (15/167) -> Max Dense: 46.47, Max Precomp: 80.77, Max Runtime: 29.73
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-24576
+finish 16384-16-24576, (16/167) -> Max Dense: 46.76, Max Precomp: 82.62, Max Runtime: 38.56
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-16384
+finish 24576-16-16384, (17/167) -> Max Dense: 46.17, Max Precomp: 72.58, Max Runtime: 31.85
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-12288
+finish 32768-16-12288, (18/167) -> Max Dense: 46.36, Max Precomp: 82.71, Max Runtime: 38.38
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-8192
+finish 49152-16-8192, (19/167) -> Max Dense: 46.53, Max Precomp: 83.11, Max Runtime: 38.45
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-49152
+finish 6144-16-49152, (20/167) -> Max Dense: 44.69, Max Precomp: 62.32, Max Runtime: 24.35
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-24576
+finish 12288-16-24576, (21/167) -> Max Dense: 45.19, Max Precomp: 76.22, Max Runtime: 29.41
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-12288
+finish 24576-16-12288, (22/167) -> Max Dense: 44.76, Max Precomp: 70.78, Max Runtime: 31.51
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-6144
+finish 49152-16-6144, (23/167) -> Max Dense: 45.35, Max Precomp: 79.47, Max Runtime: 37.69
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-32768
+finish 8192-16-32768, (24/167) -> Max Dense: 45.43, Max Precomp: 66.90, Max Runtime: 31.69
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-16384
+finish 16384-16-16384, (25/167) -> Max Dense: 45.50, Max Precomp: 79.59, Max Runtime: 37.57
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-8192
+finish 32768-16-8192, (26/167) -> Max Dense: 44.38, Max Precomp: 78.79, Max Runtime: 37.24
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-49152
+finish 4096-16-49152, (27/167) -> Max Dense: 41.75, Max Precomp: 55.41, Max Runtime: 16.38
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-32768
+finish 6144-16-32768, (28/167) -> Max Dense: 43.54, Max Precomp: 59.81, Max Runtime: 23.94
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-24576
+finish 8192-16-24576, (29/167) -> Max Dense: 43.55, Max Precomp: 62.95, Max Runtime: 31.29
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-16384
+finish 12288-16-16384, (30/167) -> Max Dense: 43.58, Max Precomp: 73.34, Max Runtime: 28.77
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-12288
+finish 16384-16-12288, (31/167) -> Max Dense: 43.74, Max Precomp: 74.74, Max Runtime: 36.77
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-8192
+finish 24576-16-8192, (32/167) -> Max Dense: 43.30, Max Precomp: 67.29, Max Runtime: 30.77
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-6144
+finish 32768-16-6144, (33/167) -> Max Dense: 43.58, Max Precomp: 74.46, Max Runtime: 36.72
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 256, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-4096
+finish 49152-16-4096, (34/167) -> Max Dense: 43.56, Max Precomp: 74.11, Max Runtime: 36.60
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-49152
+finish 3072-16-49152, (35/167) -> Max Dense: 37.64, Max Precomp: 45.26, Max Runtime: 12.29
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-24576
+finish 6144-16-24576, (36/167) -> Max Dense: 41.47, Max Precomp: 57.53, Max Runtime: 23.58
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-12288
+finish 12288-16-12288, (37/167) -> Max Dense: 41.58, Max Precomp: 67.76, Max Runtime: 28.34
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-6144
+finish 24576-16-6144, (38/167) -> Max Dense: 41.17, Max Precomp: 64.18, Max Runtime: 29.94
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-3072
+finish 49152-16-3072, (39/167) -> Max Dense: 41.51, Max Precomp: 69.28, Max Runtime: 35.48
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-32768
+finish 4096-16-32768, (40/167) -> Max Dense: 40.07, Max Precomp: 51.86, Max Runtime: 16.18
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-16384
+finish 8192-16-16384, (41/167) -> Max Dense: 41.32, Max Precomp: 59.87, Max Runtime: 30.25
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-8192
+finish 16384-16-8192, (42/167) -> Max Dense: 41.49, Max Precomp: 68.68, Max Runtime: 35.30
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-4096
+finish 32768-16-4096, (43/167) -> Max Dense: 41.06, Max Precomp: 68.18, Max Runtime: 35.32
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-49152
+finish 2048-16-49152, (44/167) -> Max Dense: 27.89, Max Precomp: 31.87, Max Runtime: 8.03
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-32768
+finish 3072-16-32768, (45/167) -> Max Dense: 35.32, Max Precomp: 42.48, Max Runtime: 12.14
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-24576
+finish 4096-16-24576, (46/167) -> Max Dense: 37.42, Max Precomp: 48.80, Max Runtime: 16.00
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-16384
+finish 6144-16-16384, (47/167) -> Max Dense: 38.71, Max Precomp: 54.39, Max Runtime: 22.92
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-12288
+finish 8192-16-12288, (48/167) -> Max Dense: 38.99, Max Precomp: 57.01, Max Runtime: 29.32
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-8192
+finish 12288-16-8192, (49/167) -> Max Dense: 38.88, Max Precomp: 60.97, Max Runtime: 27.39
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-6144
+finish 16384-16-6144, (50/167) -> Max Dense: 39.14, Max Precomp: 62.95, Max Runtime: 33.82
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-4096
+finish 24576-16-4096, (51/167) -> Max Dense: 38.27, Max Precomp: 58.50, Max Runtime: 28.69
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-3072
+finish 32768-16-3072, (52/167) -> Max Dense: 38.82, Max Precomp: 62.13, Max Runtime: 33.83
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-2048
+finish 49152-16-2048, (53/167) -> Max Dense: 38.74, Max Precomp: 62.72, Max Runtime: 33.87
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-49152
+finish 1536-16-49152, (54/167) -> Max Dense: 21.68, Max Precomp: 24.43, Max Runtime: 6.25
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-24576
+finish 3072-16-24576, (55/167) -> Max Dense: 32.82, Max Precomp: 39.58, Max Runtime: 12.01
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-12288
+finish 6144-16-12288, (56/167) -> Max Dense: 35.92, Max Precomp: 50.85, Max Runtime: 22.43
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-6144
+finish 12288-16-6144, (57/167) -> Max Dense: 36.16, Max Precomp: 55.48, Max Runtime: 26.46
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-3072
+finish 24576-16-3072, (58/167) -> Max Dense: 35.88, Max Precomp: 54.45, Max Runtime: 27.58
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-1536
+finish 49152-16-1536, (59/167) -> Max Dense: 35.96, Max Precomp: 55.99, Max Runtime: 32.03
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-32768
+finish 2048-16-32768, (60/167) -> Max Dense: 26.13, Max Precomp: 30.34, Max Runtime: 7.96
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-16384
+finish 4096-16-16384, (61/167) -> Max Dense: 34.34, Max Precomp: 43.71, Max Runtime: 15.65
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-8192
+finish 8192-16-8192, (62/167) -> Max Dense: 35.11, Max Precomp: 51.50, Max Runtime: 28.05
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-4096
+finish 16384-16-4096, (63/167) -> Max Dense: 35.22, Max Precomp: 55.28, Max Runtime: 31.48
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-2048
+finish 32768-16-2048, (64/167) -> Max Dense: 35.34, Max Precomp: 55.32, Max Runtime: 31.73
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-49152
+finish 1024-16-49152, (65/167) -> Max Dense: 14.56, Max Precomp: 16.57, Max Runtime: 4.20
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-32768
+finish 1536-16-32768, (66/167) -> Max Dense: 20.66, Max Precomp: 23.45, Max Runtime: 6.19
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-24576
+finish 2048-16-24576, (67/167) -> Max Dense: 24.67, Max Precomp: 28.83, Max Runtime: 7.90
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-16384
+finish 3072-16-16384, (68/167) -> Max Dense: 29.53, Max Precomp: 35.85, Max Runtime: 11.78
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-12288
+finish 4096-16-12288, (69/167) -> Max Dense: 31.27, Max Precomp: 39.57, Max Runtime: 15.26
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-8192
+finish 6144-16-8192, (70/167) -> Max Dense: 31.96, Max Precomp: 44.64, Max Runtime: 21.40
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-6144
+finish 8192-16-6144, (71/167) -> Max Dense: 32.15, Max Precomp: 47.14, Max Runtime: 26.60
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-4096
+finish 12288-16-4096, (72/167) -> Max Dense: 32.34, Max Precomp: 48.06, Max Runtime: 24.80
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-3072
+finish 16384-16-3072, (73/167) -> Max Dense: 32.40, Max Precomp: 50.37, Max Runtime: 29.31
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-2048
+finish 24576-16-2048, (74/167) -> Max Dense: 32.23, Max Precomp: 48.54, Max Runtime: 25.71
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-1536
+finish 32768-16-1536, (75/167) -> Max Dense: 32.24, Max Precomp: 49.51, Max Runtime: 29.29
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-1024
+finish 49152-16-1024, (76/167) -> Max Dense: 32.48, Max Precomp: 49.22, Max Runtime: 29.28
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-49152
+finish 768-16-49152, (77/167) -> Max Dense: 10.80, Max Precomp: 12.47, Max Runtime: 3.16
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-24576
+finish 1536-16-24576, (78/167) -> Max Dense: 19.65, Max Precomp: 22.55, Max Runtime: 6.16
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-12288
+finish 3072-16-12288, (79/167) -> Max Dense: 26.48, Max Precomp: 32.93, Max Runtime: 11.54
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-6144
+finish 6144-16-6144, (80/167) -> Max Dense: 28.97, Max Precomp: 41.23, Max Runtime: 20.71
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-3072
+finish 12288-16-3072, (81/167) -> Max Dense: 29.17, Max Precomp: 44.53, Max Runtime: 23.65
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-1536
+finish 24576-16-1536, (82/167) -> Max Dense: 29.05, Max Precomp: 43.66, Max Runtime: 24.16
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 49152-16-768
+finish 49152-16-768, (83/167) -> Max Dense: 29.48, Max Precomp: 45.18, Max Runtime: 26.94
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-32768
+finish 1024-16-32768, (84/167) -> Max Dense: 14.05, Max Precomp: 16.04, Max Runtime: 4.17
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-16384
+finish 2048-16-16384, (85/167) -> Max Dense: 22.25, Max Precomp: 26.94, Max Runtime: 7.78
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-8192
+finish 4096-16-8192, (86/167) -> Max Dense: 27.26, Max Precomp: 36.17, Max Runtime: 14.59
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-4096
+finish 8192-16-4096, (87/167) -> Max Dense: 28.21, Max Precomp: 41.97, Max Runtime: 24.65
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-2048
+finish 16384-16-2048, (88/167) -> Max Dense: 28.76, Max Precomp: 45.14, Max Runtime: 26.19
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-1024
+finish 32768-16-1024, (89/167) -> Max Dense: 29.00, Max Precomp: 43.68, Max Runtime: 26.40
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-32768
+finish 768-16-32768, (90/167) -> Max Dense: 10.46, Max Precomp: 12.09, Max Runtime: 3.14
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-24576
+finish 1024-16-24576, (91/167) -> Max Dense: 13.54, Max Precomp: 15.55, Max Runtime: 4.14
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-16384
+finish 1536-16-16384, (92/167) -> Max Dense: 18.04, Max Precomp: 21.26, Max Runtime: 6.06
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-12288
+finish 2048-16-12288, (93/167) -> Max Dense: 20.21, Max Precomp: 25.49, Max Runtime: 7.64
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-8192
+finish 3072-16-8192, (94/167) -> Max Dense: 22.96, Max Precomp: 30.55, Max Runtime: 11.09
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-6144
+finish 4096-16-6144, (95/167) -> Max Dense: 25.08, Max Precomp: 33.74, Max Runtime: 14.01
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-4096
+finish 6144-16-4096, (96/167) -> Max Dense: 25.38, Max Precomp: 36.61, Max Runtime: 19.19
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-3072
+finish 8192-16-3072, (97/167) -> Max Dense: 25.89, Max Precomp: 38.02, Max Runtime: 22.54
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-2048
+finish 12288-16-2048, (98/167) -> Max Dense: 25.97, Max Precomp: 40.35, Max Runtime: 21.47
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-1536
+finish 16384-16-1536, (99/167) -> Max Dense: 26.56, Max Precomp: 40.83, Max Runtime: 23.96
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-1024
+finish 24576-16-1024, (100/167) -> Max Dense: 26.48, Max Precomp: 38.06, Max Runtime: 21.67
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 32768-16-768
+finish 32768-16-768, (101/167) -> Max Dense: 26.56, Max Precomp: 40.02, Max Runtime: 23.94
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-24576
+finish 768-16-24576, (102/167) -> Max Dense: 10.09, Max Precomp: 11.73, Max Runtime: 3.12
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-12288
+finish 1536-16-12288, (103/167) -> Max Dense: 16.90, Max Precomp: 20.22, Max Runtime: 5.96
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-6144
+finish 3072-16-6144, (104/167) -> Max Dense: 21.33, Max Precomp: 28.65, Max Runtime: 10.68
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-3072
+finish 6144-16-3072, (105/167) -> Max Dense: 23.51, Max Precomp: 33.46, Max Runtime: 17.79
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-1536
+finish 12288-16-1536, (106/167) -> Max Dense: 24.14, Max Precomp: 35.56, Max Runtime: 19.71
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 24576-16-768
+finish 24576-16-768, (107/167) -> Max Dense: 23.97, Max Precomp: 34.52, Max Runtime: 19.60
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 256, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-16384
+finish 1024-16-16384, (108/167) -> Max Dense: 12.73, Max Precomp: 14.73, Max Runtime: 4.07
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-8192
+finish 2048-16-8192, (109/167) -> Max Dense: 18.65, Max Precomp: 23.38, Max Runtime: 7.40
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-4096
+finish 4096-16-4096, (110/167) -> Max Dense: 22.55, Max Precomp: 30.05, Max Runtime: 13.00
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-2048
+finish 8192-16-2048, (111/167) -> Max Dense: 23.37, Max Precomp: 32.63, Max Runtime: 19.92
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-1024
+finish 16384-16-1024, (112/167) -> Max Dense: 24.00, Max Precomp: 35.12, Max Runtime: 21.16
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-16384
+finish 768-16-16384, (113/167) -> Max Dense: 9.55, Max Precomp: 11.11, Max Runtime: 3.07
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-12288
+finish 1024-16-12288, (114/167) -> Max Dense: 12.11, Max Precomp: 13.91, Max Runtime: 4.02
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-8192
+finish 1536-16-8192, (115/167) -> Max Dense: 15.73, Max Precomp: 18.36, Max Runtime: 5.75
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-6144
+finish 2048-16-6144, (116/167) -> Max Dense: 17.29, Max Precomp: 21.54, Max Runtime: 7.17
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-4096
+finish 3072-16-4096, (117/167) -> Max Dense: 19.24, Max Precomp: 25.17, Max Runtime: 10.01
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-3072
+finish 4096-16-3072, (118/167) -> Max Dense: 20.55, Max Precomp: 27.17, Max Runtime: 12.22
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-2048
+finish 6144-16-2048, (119/167) -> Max Dense: 20.84, Max Precomp: 27.99, Max Runtime: 15.81
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-1536
+finish 8192-16-1536, (120/167) -> Max Dense: 21.06, Max Precomp: 29.01, Max Runtime: 17.84
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-1024
+finish 12288-16-1024, (121/167) -> Max Dense: 21.43, Max Precomp: 30.25, Max Runtime: 17.15
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 16384-16-768
+finish 16384-16-768, (122/167) -> Max Dense: 21.47, Max Precomp: 30.21, Max Runtime: 19.06
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-12288
+finish 768-16-12288, (123/167) -> Max Dense: 9.19, Max Precomp: 10.55, Max Runtime: 3.02
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-6144
+finish 1536-16-6144, (124/167) -> Max Dense: 14.63, Max Precomp: 16.69, Max Runtime: 5.58
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-3072
+finish 3072-16-3072, (125/167) -> Max Dense: 17.61, Max Precomp: 21.85, Max Runtime: 9.43
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-1536
+finish 6144-16-1536, (126/167) -> Max Dense: 18.91, Max Precomp: 24.00, Max Runtime: 14.30
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 12288-16-768
+finish 12288-16-768, (127/167) -> Max Dense: 18.94, Max Precomp: 25.65, Max Runtime: 15.41
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 6, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 8, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-8192
+finish 1024-16-8192, (128/167) -> Max Dense: 11.29, Max Precomp: 12.62, Max Runtime: 3.89
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-4096
+finish 2048-16-4096, (129/167) -> Max Dense: 15.53, Max Precomp: 18.21, Max Runtime: 6.75
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-2048
+finish 4096-16-2048, (130/167) -> Max Dense: 17.89, Max Precomp: 21.81, Max Runtime: 10.99
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-1024
+finish 8192-16-1024, (131/167) -> Max Dense: 18.43, Max Precomp: 23.21, Max Runtime: 15.11
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 7, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-8192
+finish 768-16-8192, (132/167) -> Max Dense: 8.50, Max Precomp: 9.51, Max Runtime: 2.94
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-6144
+finish 1024-16-6144, (133/167) -> Max Dense: 10.45, Max Precomp: 11.48, Max Runtime: 3.76
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-4096
+finish 1536-16-4096, (134/167) -> Max Dense: 12.56, Max Precomp: 14.10, Max Runtime: 5.28
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-3072
+finish 2048-16-3072, (135/167) -> Max Dense: 14.02, Max Precomp: 15.70, Max Runtime: 6.38
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 128, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-2048
+finish 3072-16-2048, (136/167) -> Max Dense: 14.82, Max Precomp: 17.19, Max Runtime: 8.41
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-1536
+finish 4096-16-1536, (137/167) -> Max Dense: 15.66, Max Precomp: 18.19, Max Runtime: 9.94
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-1024
+finish 6144-16-1024, (138/167) -> Max Dense: 15.95, Max Precomp: 18.37, Max Runtime: 11.96
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 8192-16-768
+finish 8192-16-768, (139/167) -> Max Dense: 16.03, Max Precomp: 19.25, Max Runtime: 13.29
+dense config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-6144
+finish 768-16-6144, (140/167) -> Max Dense: 7.89, Max Precomp: 8.67, Max Runtime: 2.85
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-3072
+finish 1536-16-3072, (141/167) -> Max Dense: 11.26, Max Precomp: 12.23, Max Runtime: 4.96
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-1536
+finish 3072-16-1536, (142/167) -> Max Dense: 12.64, Max Precomp: 14.32, Max Runtime: 7.66
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 6144-16-768
+finish 6144-16-768, (143/167) -> Max Dense: 13.10, Max Precomp: 15.01, Max Runtime: 10.39
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-4096
+finish 1024-16-4096, (144/167) -> Max Dense: 9.11, Max Precomp: 9.76, Max Runtime: 3.57
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-2048
+finish 2048-16-2048, (145/167) -> Max Dense: 11.24, Max Precomp: 12.34, Max Runtime: 5.74
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-1024
+finish 4096-16-1024, (146/167) -> Max Dense: 12.52, Max Precomp: 13.62, Max Runtime: 8.28
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-4096
+finish 768-16-4096, (147/167) -> Max Dense: 6.82, Max Precomp: 7.44, Max Runtime: 2.69
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-3072
+finish 1024-16-3072, (148/167) -> Max Dense: 7.87, Max Precomp: 8.49, Max Runtime: 3.37
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-2048
+finish 1536-16-2048, (149/167) -> Max Dense: 8.91, Max Precomp: 9.71, Max Runtime: 4.47
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-1536
+finish 2048-16-1536, (150/167) -> Max Dense: 9.43, Max Precomp: 10.26, Max Runtime: 5.22
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-1024
+finish 3072-16-1024, (151/167) -> Max Dense: 9.73, Max Precomp: 10.73, Max Runtime: 6.45
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 4096-16-768
+finish 4096-16-768, (152/167) -> Max Dense: 9.99, Max Precomp: 11.04, Max Runtime: 7.23
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 64, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-3072
+finish 768-16-3072, (153/167) -> Max Dense: 6.00, Max Precomp: 6.47, Max Runtime: 2.55
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-1536
+finish 1536-16-1536, (154/167) -> Max Dense: 7.40, Max Precomp: 8.09, Max Runtime: 4.07
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 3072-16-768
+finish 3072-16-768, (155/167) -> Max Dense: 7.81, Max Precomp: 8.80, Max Runtime: 5.55
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 128, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 4, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-2048
+finish 1024-16-2048, (156/167) -> Max Dense: 6.33, Max Precomp: 6.76, Max Runtime: 3.06
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-1024
+finish 2048-16-1024, (157/167) -> Max Dense: 7.17, Max Precomp: 7.70, Max Runtime: 4.43
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-2048
+finish 768-16-2048, (158/167) -> Max Dense: 4.86, Max Precomp: 5.12, Max Runtime: 2.32
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-1536
+finish 1024-16-1536, (159/167) -> Max Dense: 5.29, Max Precomp: 5.64, Max Runtime: 2.78
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-1024
+finish 1536-16-1024, (160/167) -> Max Dense: 5.65, Max Precomp: 6.04, Max Runtime: 3.50
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 2048-16-768
+finish 2048-16-768, (161/167) -> Max Dense: 5.76, Max Precomp: 6.25, Max Runtime: 3.84
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-1536
+finish 768-16-1536, (162/167) -> Max Dense: 4.04, Max Precomp: 4.28, Max Runtime: 2.11
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1536-16-768
+finish 1536-16-768, (163/167) -> Max Dense: 4.52, Max Precomp: 4.87, Max Runtime: 3.06
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-1024
+finish 1024-16-1024, (164/167) -> Max Dense: 3.99, Max Precomp: 4.21, Max Runtime: 2.37
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-1024
+finish 768-16-1024, (165/167) -> Max Dense: 3.08, Max Precomp: 3.23, Max Runtime: 1.80
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 1024-16-768
+finish 1024-16-768, (166/167) -> Max Dense: 3.26, Max Precomp: 3.42, Max Runtime: 2.08
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+start 768-16-768
+finish 768-16-768, (167/167) -> Max Dense: 2.49, Max Precomp: 2.60, Max Runtime: 1.59
+dense config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 5, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+precomp config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 128, num_buffers: 6, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+runtime config: BLOCK_SIZE_M: 64, BLOCK_SIZE_N: 64, BLOCK_SIZE_K: 256, num_buffers: 3, num_warps: 4, num_ctas: 1, num_stages: 3, maxnreg: None
+0.6314585159890412
+
+[INFO] Optimization charts successfully compiled and saved to 'Benchmark/v7.3_16.png'
+
+scontrol show job 660378
+JobId=660378 JobName=7.4_benchmark
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=1400703 Nice=0 Account=rrg-mmehride QOS=normal
+   JobState=COMPLETING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=01:39:50 TimeLimit=04:00:00 TimeMin=N/A
+   SubmitTime=2026-07-12T12:02:59 EligibleTime=2026-07-12T12:02:59
+   AccrueTime=2026-07-12T12:02:59
+   StartTime=2026-07-12T12:03:19 EndTime=2026-07-12T13:43:09 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-07-12T12:03:19 Scheduler=Main
+   Partition=compute AllocNode:Sid=trig-login01:1048384
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0037
+   BatchHost=trig0037
+   NumNodes=1 NumCPUs=24 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=1,mem=192500M,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=192500M,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=192500M MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/scratch/notming/compression/sbatch_sh/trillium/7.4_sbatch_benchmark.sh
+   SubmitLine=SBATCH --comment /opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/trillium/7.4_sbatch_benchmark.sh --export=NONE --get-user-env sbatch_sh/trillium/7.4_sbatch_benchmark.sh
+   WorkDir=/scratch/notming/compression
+   Comment=/opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/trillium/7.4_sbatch_benchmark.sh
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/scratch/notming/compression/7.4_benchmark_660378.out
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 660378
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+660378       7.4_bench+ rrg-mmehr+   01:39:51                         00:00:00   00:00:00      0:0 
+660378.batch      batch rrg-mmehr+   01:39:51                         00:00:00   00:00:00      0:0 
+660378.exte+     extern rrg-mmehr+   01:39:51                         00:00:00   00:00:00      0:0 
+

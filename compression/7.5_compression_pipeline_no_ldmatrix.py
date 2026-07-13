@@ -165,7 +165,7 @@ class SparseWGMMA:
             k_width=32 // gl.int16.primitive_bitwidth,
             meta=1
         )
-
+        gl.static_print(gl.to_linear_layout(a_compressed.type.layout, (BLOCK_M, BLOCK_K // 2)))
         a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
         e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = True)
 
