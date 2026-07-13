@@ -578,8 +578,8 @@ if __name__ == "__main__":
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.3"
     os.environ["TRITON_ALWAYS_COMPILE"] = "1"
     for M, N, K in [(49152, 16, 49152)]:
-        for BLOCK_M, BLOCK_N, BLOCK_K in [(256, 64, 64), (128, 64, 64), (64, 64, 64)]:
-            for num_warps in [4, 8, 16]:
+        for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
+            for num_warps in [8]:
                 # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
 
                 A = torch.randn(M, K, device="cuda", dtype=torch.float16)
