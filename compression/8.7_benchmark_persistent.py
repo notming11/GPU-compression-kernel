@@ -316,7 +316,8 @@ if __name__ == "__main__":
         "7.3" : "./7.3_compression_pipeline_reduce.py",
         "7.3.1": "./7.3.1_compression_pipeline_reduce_interlayout.py",
         "7.4" : "./7.4_compression_pipeline_ptx_prototype.py",
-        "7.5" : "./7.5_compression_pipeline_no_ldmatrix.py"
+        "7.5" : "./7.5_compression_pipeline_no_ldmatrix.py",
+        "7.5.1" : "./7.5.1_compression_pipeline_ldmatrix.py"
     }
     try:
         v7_path = paths[version]
