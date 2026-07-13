@@ -98,7 +98,7 @@ class SparseWGMMA:
         return SparseWGMMA(acc, gl.to_tensor(False), mma_layout)
 
     @gluon.jit
-    def generate_compressed_and_meta(self, a_pruned, BLOCK_M : gl.constexpr, BLOCK_K: gl.constexpr, a_compressed_layout: gl.constexpr):
+    def generate_compressed_and_meta(self, a_pruned, BLOCK_M : gl.constexpr, BLOCK_K: gl.constexpr, a_intermediate_layout: gl.constexpr, a_compressed_layout: gl.constexpr):
         # --- Extract groups of 4 consecutive columns using reshape + split ---
         a_grouped = a_pruned.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
         a_even, a_odd = a_grouped.split()
@@ -106,15 +106,6 @@ class SparseWGMMA:
         # split again to separate the pairs
         a0, a2 = a_even.split()  # a0 = col 4g+0, a2 = col 4g+2
         a1, a3 = a_odd.split()   # a1 = col 4g+1, a3 = col 4g+3
-
-        # m0 = a0 != 0
-        # m1 = a1 != 0
-        # m3 = a3 != 0
-
-        # bit0 = ~m0 & m1
-        # bit1 = ~m0 & ~m1
-        # bit2 = (m0 & m1) | (~m0 & ~m1) | m3
-        # bit3 = (~m0 & m1) | ~m1
 
         idx0 = (~(a0 != 0) & (a1 != 0)) | ((~(a0 != 0) & ~(a1 != 0)) << 1)
         idx1 = (((a0 != 0) & (a1 != 0)) | (~(a0 != 0) & ~(a1 != 0)) | (a3 != 0)) | (((~(a0 != 0) & (a1 != 0)) | ~(a1 != 0)) << 1)
@@ -140,22 +131,6 @@ class SparseWGMMA:
         mn3 = mn3.to(gl.int16)
 
         meta = mn0 | (mn1 << 4) | (mn2 << 8) | (mn3 << 12)
-        # meta_reshaped = meta.reshape((BLOCK_M // 16, BLOCK_K))
-
-        # if BLOCK_K == 128: 
-        #     # Decompose columns into 7 binary dimensions (MSB to LSB):
-        #     meta_bits = meta_reshaped.reshape(BLOCK_M // 16, 2, 2, 2, 2, 2, 2, 2)
-        #     # Permute to target bit ordering:
-        #     meta_perm = meta_bits.permute(0, 5, 2, 3, 4, 6, 7, 1)
-        # elif BLOCK_K == 64:
-        #     meta_bits = meta_reshaped.reshape(BLOCK_M // 16, 2, 2, 2, 2, 2, 2)
-        #     meta_perm = meta_bits.permute(0, 2, 3, 4, 5, 6, 1)
-        # elif BLOCK_K == 256:
-        #     meta_bits = meta_reshaped.reshape(BLOCK_M // 16, 2, 2, 2, 2, 2, 2, 2, 2)
-        #     meta_perm = meta_bits.permute(0, 5, 6, 2, 3, 4, 7, 8, 1)
-
-        # # Reshape back to (BLOCK_M // 16, BLOCK_K)
-        # meta_reordered = meta_perm.reshape(BLOCK_M // 16, BLOCK_K)
         meta_reshaped = meta.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4)
         meta_reordered = meta_reshaped.permute(0, 3, 2, 4, 1).reshape(BLOCK_M // 16, BLOCK_K)
 
@@ -166,7 +141,9 @@ class SparseWGMMA:
             meta=1
         )
 
-        a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
+        a_intermediate = gl.convert_layout(a_compressed, a_intermediate_layout)
+
+        a_compressed = gl.convert_layout(a_intermediate, a_compressed_layout)
         e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = True)
 
         return a_compressed, e
@@ -177,16 +154,16 @@ class SparseWGMMA:
         a,
         b,
         a_pruned_reg_layout: gl.constexpr,
+        a_intermediate_layout: gl.constexpr,
         a_compressed_layout: gl.constexpr,
         BLOCK_M: gl.constexpr,
         BLOCK_K: gl.constexpr
     ):
         # 1. Compress A tile in shared memory & Generate and Pack Metadata
-        # gl.static_print(gl.to_linear_layout(a.layout, [BLOCK_M, BLOCK_K]).format_tensor_view([BLOCK_M, BLOCK_K]))
         a_pruned = a.load(a_compressed_layout)
         a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
 
-        a_compressed, e = self.generate_compressed_and_meta(a_pruned, BLOCK_M, BLOCK_K, a_compressed_layout)
+        a_compressed, e = self.generate_compressed_and_meta(a_pruned, BLOCK_M, BLOCK_K, a_intermediate_layout, a_compressed_layout)
 
         acc = warpgroup_mma(
             a_compressed,
@@ -294,6 +271,7 @@ def issue_sparse_mma_stealb(
     a_pruned_bufs,
     b_bufs,
     a_pruned_reg_layout: gl.constexpr,
+    a_intermediate_layout: gl.constexpr,
     stealb: gl.constexpr,
     num_buffers: gl.constexpr,
     a_compressed_layout: gl.constexpr,
@@ -310,6 +288,7 @@ def issue_sparse_mma_stealb(
         a_pruned_bufs.index(index),
         b_bufs.index(b_index),
         a_pruned_reg_layout,
+        a_intermediate_layout,
         a_compressed_layout,
         BLOCK_M,
         BLOCK_K,
@@ -385,6 +364,14 @@ def sparse_persistent_matmul_pipelined_kernel(
         shape=[16 * num_warps, 64],
     )
 
+    a_intermediate_layout: gl.constexpr = gl.DistributedLinearLayout(
+        reg_bases=[[0, 1], [0, 2], [0, 4], [8, 0], [0, 32]],
+        lane_bases=[[0, 8], [0, 16], [1, 0], [2, 0], [4, 0]],
+        warp_bases=a_warp_bases,
+        block_bases=[],
+        shape=[16*num_warps, 64]
+    )
+
     # trivially convert a_compressed layout to DotOpreandLayout
     a_compressed_layout: gl.constexpr = gl.DotOperandLayout(
         operand_index=0,
@@ -435,6 +422,7 @@ def sparse_persistent_matmul_pipelined_kernel(
             a_pruned_bufs,
             b_bufs,
             a_pruned_reg_layout,
+            a_intermediate_layout,
             STEALB,
             num_buffers,
             a_compressed_layout,
@@ -465,6 +453,7 @@ def sparse_persistent_matmul_pipelined_kernel(
                 a_pruned_bufs,
                 b_bufs,
                 a_pruned_reg_layout,
+                a_intermediate_layout,
                 STEALB,
                 num_buffers,
                 a_compressed_layout,
@@ -504,6 +493,7 @@ def sparse_persistent_matmul_pipelined_kernel(
                 a_pruned_bufs,
                 b_bufs,
                 a_pruned_reg_layout,
+                a_intermediate_layout,
                 STEALB,
                 num_buffers,
                 a_compressed_layout,
