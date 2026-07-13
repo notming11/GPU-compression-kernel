@@ -107,16 +107,42 @@ class SparseWGMMA:
         a0, a2 = a_even.split()  # a0 = col 4g+0, a2 = col 4g+2
         a1, a3 = a_odd.split()   # a1 = col 4g+1, a3 = col 4g+3
 
-        idx0 = (~(a0 != 0) & (a1 != 0)) | ((~(a0 != 0) & ~(a1 != 0)) << 1)
-        idx1 = (((a0 != 0) & (a1 != 0)) | (~(a0 != 0) & ~(a1 != 0)) | (a3 != 0)) | (((~(a0 != 0) & (a1 != 0)) | ~(a1 != 0)) << 1)
+        # --- Compute pairwise absolute sums for pruning ---
+        m0, m1 = gl.abs(a0), gl.abs(a1)
+        m2, m3 = gl.abs(a2), gl.abs(a3)
 
-        nz0 = gl.where(idx0 == 0, a0, gl.where(idx0 == 1, a1, gl.where(idx0 == 2, a2, a3)))
-        nz1 = gl.where(idx1 == 0, a0, gl.where(idx1 == 1, a1, gl.where(idx1 == 2, a2, a3)))
+        s01 = m0 + m1
+        s02 = m0 + m2
+        s03 = m0 + m3
+        s12 = m1 + m2
+        s13 = m1 + m3
+        s23 = m2 + m3
+
+        # Find the maximum sum among all 6 pairs
+        max_s = gl.maximum(s01, gl.maximum(s02, gl.maximum(s03, gl.maximum(s12, gl.maximum(s13, s23)))))
+
+        # --- Branchless tie-breaking masks ---
+        # Ensures only one pair is selected even if multiple pairs share the same max sum
+        is_01 = s01 == max_s
+        is_02 = (s02 == max_s) & ~is_01
+        is_03 = (s03 == max_s) & ~(is_01 | is_02)
+        is_12 = (s12 == max_s) & ~(is_01 | is_02 | is_03)
+        is_13 = (s13 == max_s) & ~(is_01 | is_02 | is_03 | is_12)
+        # is_23 is the implicit fallback if none of the above are true
+
+        # --- Synchronously extract values (nz0, nz1) ---
+        nz0 = gl.where(is_01 | is_02 | is_03, a0, gl.where(is_12 | is_13, a1, a2))
+
+        nz1 = gl.where(is_01, a1, gl.where(is_02 | is_12, a2, a3))
 
         a_compressed = gl.join(nz0, nz1)
         a_compressed = a_compressed.reshape(BLOCK_M, BLOCK_K // 2)
 
-        meta_4 = idx0 | (idx1 << 2)
+        meta_4 = gl.where(is_01, 4,
+         gl.where(is_02, 8,
+         gl.where(is_03, 12,
+         gl.where(is_12, 9,
+         gl.where(is_13, 13, 14)))))
 
         # --- Pack 4 consecutive nibbles using reshape + split (no gather) ---
         meta_grouped = meta_4.reshape(BLOCK_M, BLOCK_K // 16, 2, 2)
@@ -567,7 +593,7 @@ def sparse_persistent_matmul_pipelined(
 
 if __name__ == "__main__":
     os.environ["MLIR_ENABLE_DUMP"]="1"
-    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.5"
+    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.5.2"
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
     for M, N, K in [(49152, 16, 49152)]:
         for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
@@ -588,7 +614,7 @@ if __name__ == "__main__":
                     BLOCK_M,
                     BLOCK_N,
                     BLOCK_K,
-                    4,
+                    3,
                     num_warps,
                     PersistentTileScheduler,
                 )
