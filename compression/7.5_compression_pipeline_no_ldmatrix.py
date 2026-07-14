@@ -139,12 +139,8 @@ class SparseWGMMA:
         mn0, mn2 = meta_even.split()  # mn0 = nibble 4g+0, mn2 = nibble 4g+2
         mn1, mn3 = meta_odd.split()   # mn1 = nibble 4g+1, mn3 = nibble 4g+3
 
-        mn0 = mn0.to(gl.int16)
-        mn1 = mn1.to(gl.int16)
-        mn2 = mn2.to(gl.int16)
-        mn3 = mn3.to(gl.int16)
-
         meta = mn0 | (mn1 << 4) | (mn2 << 8) | (mn3 << 12)
+        meta = meta.to(gl.int16)
         meta_reshaped = meta.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4)
         meta_reordered = meta_reshaped.permute(0, 3, 2, 4, 1).reshape(BLOCK_M // 16, BLOCK_K)
 
