@@ -107,16 +107,30 @@ class SparseWGMMA:
         a0, a2 = a_even.split()  # a0 = col 4g+0, a2 = col 4g+2
         a1, a3 = a_odd.split()   # a1 = col 4g+1, a3 = col 4g+3
 
-        idx0 = (~(a0 != 0) & (a1 != 0)) | ((~(a0 != 0) & ~(a1 != 0)) << 1)
-        idx1 = (((a0 != 0) & (a1 != 0)) | (~(a0 != 0) & ~(a1 != 0)) | (a3 != 0)) | (((~(a0 != 0) & (a1 != 0)) | ~(a1 != 0)) << 1)
+        # OPTIMIZATION 1: Cache the non-zero checks.
+        # This stops the compiler from redundantly executing `!= 0` over and over.
+        # We don't need b3 because in a strict 2:4 matrix, if it's not the first 3, it must be b3.
+        b0 = a0 != 0
+        b1 = a1 != 0
+        b2 = a2 != 0
 
-        nz0 = gl.where(idx0 == 0, a0, gl.where(idx0 == 1, a1, gl.where(idx0 == 2, a2, a3)))
-        nz1 = gl.where(idx1 == 0, a0, gl.where(idx1 == 1, a1, gl.where(idx1 == 2, a2, a3)))
+        # OPTIMIZATION 2: Streamlined value extraction.
+        # We bypass idx0/idx1 entirely and route the values directly based on the booleans.
+        nz0 = gl.where(b0, a0, gl.where(b1, a1, a2))
+
+        # a1 is the second value only if b0 is also true.
+        # a2 is the second value if b2 is true AND either b0 or b1 was the first non-zero.
+        nz1 = gl.where(b0 & b1, a1, gl.where(b2 & (b0 | b1), a2, a3))
 
         a_compressed = gl.join(nz0, nz1)
         a_compressed = a_compressed.reshape(BLOCK_M, BLOCK_K // 2)
 
-        meta_4 = idx0 | (idx1 << 2)
+        # OPTIMIZATION 3: Direct metadata generation.
+        # Instead of bitwise index math (idx0 | idx1 << 2), we use a minimal decision tree 
+        # to directly yield the exact 2:4 metadata hex values.
+        meta_4 = gl.where(b0,
+             gl.where(b1, 4, gl.where(b2, 8, 12)),
+             gl.where(b1, gl.where(b2, 9, 13), 14))
 
         # --- Pack 4 consecutive nibbles using reshape + split (no gather) ---
         meta_grouped = meta_4.reshape(BLOCK_M, BLOCK_K // 16, 2, 2)
