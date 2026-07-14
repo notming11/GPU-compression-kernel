@@ -129,31 +129,31 @@ class SparseWGMMA:
 
         # split again to separate the pairs
         a0, a2 = a_even.split()  # a0 = col 4g+0, a2 = col 4g+2
-        a1, a3 = a_odd.split()  # a1 = col 4g+1, a3 = col 4g+3
+        a1, a3 = a_odd.split()   # a1 = col 4g+1, a3 = col 4g+3
 
-        m0 = a0 != 0
-        m1 = a1 != 0
-        m3 = a3 != 0
+        # OPTIMIZATION 1: Cache the non-zero checks.
+        # This stops the compiler from redundantly executing `!= 0` over and over.
+        # We don't need b3 because in a strict 2:4 matrix, if it's not the first 3, it must be b3.
+        b0 = a0 != 0
+        b1 = a1 != 0
+        b2 = a2 != 0
+        # OPTIMIZATION 2: Streamlined value extraction.
+        # We bypass idx0/idx1 entirely and route the values directly based on the booleans.
+        nz0 = gl.where(b0, a0, gl.where(b1, a1, a2))
 
-        bit0 = ~m0 & m1
-        bit1 = ~m0 & ~m1
-        bit2 = (m0 & m1) | (~m0 & ~m1) | m3
-        bit3 = (~m0 & m1) | ~m1
-
-        idx0 = bit0 | (bit1.to(gl.int16) << 1)
-        idx1 = bit2 | (bit3.to(gl.int16) << 1)
-
-        nz0 = gl.where(
-            idx0 == 0, a0, gl.where(idx0 == 1, a1, gl.where(idx0 == 2, a2, a3))
-        )
-        nz1 = gl.where(
-            idx1 == 0, a0, gl.where(idx1 == 1, a1, gl.where(idx1 == 2, a2, a3))
-        )
+        # a1 is the second value only if b0 is also true.
+        # a2 is the second value if b2 is true AND either b0 or b1 was the first non-zero.
+        nz1 = gl.where(b0 & b1, a1, gl.where(b2 & (b0 | b1), a2, a3))
 
         a_compressed = gl.join(nz0, nz1)
         a_compressed = a_compressed.reshape(BLOCK_M, BLOCK_K // 2)
 
-        meta_4 = idx0 | (idx1 << 2)
+        # OPTIMIZATION 3: Direct metadata generation.
+        # Instead of bitwise index math (idx0 | idx1 << 2), we use a minimal decision tree 
+        # to directly yield the exact 2:4 metadata hex values.
+        meta_4 = gl.where(b0,
+             gl.where(b1, 4, gl.where(b2, 8, 12)),
+             gl.where(b1, gl.where(b2, 9, 13), 14))
 
         # To lower register usage, we do the reshape and permute BEFORE the reduction!
         # This prevents permuting a replicated layout, which causes massive register spills.
@@ -163,7 +163,7 @@ class SparseWGMMA:
         # gl.static_print(gl.to_linear_layout(meta_4_ready.type.layout, (BLOCK_M // 16, BLOCK_K, 2, 2)))
         meta_reordered = gl.reduce(
             gl.reduce(meta_4_ready, 3, create_metadata), 2, create_metadata_8
-        )
+        ).to(gl.int16)
         # gl.static_print(gl.to_linear_layout(meta_reordered.type.layout, (BLOCK_M // 16, BLOCK_K)))
         
         meta_intermediate = gl.convert_layout(meta_reordered, e_intermediate_layout)
