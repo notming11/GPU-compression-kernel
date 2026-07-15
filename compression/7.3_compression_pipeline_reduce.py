@@ -122,9 +122,8 @@ class SparseWGMMA:
         a_pruned = a.load(a_pruned_reg_layout)
         
         # test bank conflicts
-        a_dis_type = gl.distributed_type(gl.float16, [BLOCK_M, BLOCK_K], a_pruned_reg_layout)
-        # a_smem_type = gl.shared_memory_descriptor_type(gl.float16, [BLOCK_M, BLOCK_K], a.layout, [BLOCK_M, BLOCK_K])
-        gl.static_print(gl.bank_conflicts(a_dis_type, a.type))
+        # a_dis_type = gl.distributed_type(gl.float16, [BLOCK_M, BLOCK_K], a_pruned_reg_layout)
+        # gl.static_print(gl.bank_conflicts(a_dis_type, a.type))
         
         # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
 
@@ -179,7 +178,7 @@ class SparseWGMMA:
         )
 
         a_compressed = gl.convert_layout(
-            a_compressed, a_compressed_layout, assert_trivial=True
+            a_compressed, a_compressed_layout, assert_trivial=False
         )
         e = gl.convert_layout(meta_reordered, e_layout)
 
@@ -380,8 +379,8 @@ def sparse_persistent_matmul_pipelined_kernel(
         a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
     
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 16], [0, 32]],
-        lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]],
+        reg_bases=[[0, 1], [0, 2], [1, 0], [0, 16], [0, 32]],
+        lane_bases=[[0, 4], [0, 8], [2, 0], [4, 0], [8, 0]],
         warp_bases=a_warp_bases,
         block_bases=[],
         shape=[16 * num_warps, 64],
