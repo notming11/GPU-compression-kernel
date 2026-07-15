@@ -120,6 +120,12 @@ class SparseWGMMA:
     ):
         # 1. Compress A tile in shared memory & Generate and Pack Metadata
         a_pruned = a.load(a_pruned_reg_layout)
+        
+        # test bank conflicts
+        a_dis_type = gl.distributed_type(gl.float16, [BLOCK_M, BLOCK_K], a_pruned_reg_layout)
+        # a_smem_type = gl.shared_memory_descriptor_type(gl.float16, [BLOCK_M, BLOCK_K], a.layout, [BLOCK_M, BLOCK_K])
+        gl.static_print(gl.bank_conflicts(a_dis_type, a.type))
+        
         # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
 
         # --- Extract groups of 4 consecutive columns using reshape + split ---
