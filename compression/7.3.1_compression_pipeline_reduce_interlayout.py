@@ -171,6 +171,7 @@ class SparseWGMMA:
         # gl.static_print(gl.to_linear_layout(meta_reordered.type.layout, (BLOCK_M // 16, BLOCK_K)))
         
         meta_intermediate = gl.convert_layout(meta_reordered, e_intermediate_layout)
+        # gl.static_print(gl.to_linear_layout(meta_intermediate.type.layout, (BLOCK_M // 16, BLOCK_K)))
         #######################################################################################
 
         e_layout: gl.constexpr = gl.DotOperandLayout(
@@ -186,7 +187,7 @@ class SparseWGMMA:
         )
         # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
         e = gl.convert_layout(meta_intermediate, e_layout)
-        # gl.static_print(gl.to_linear_layout(e_layout, (BLOCK_M, BLOCK_K // 2)))
+        # gl.static_print(gl.to_linear_layout(e_layout, (BLOCK_M // 16, BLOCK_K)))
 
 
         acc = warpgroup_mma(
@@ -399,13 +400,13 @@ def sparse_persistent_matmul_pipelined_kernel(
         [[1, 0], [2, 0]]
         if num_warps == 4
         else (
-            [[1, 0], [2, 0], [0, 0]]
+            [[1, 0], [2, 0], [4, 0]]
             if num_warps == 8
-            else [[1, 0], [2, 0], [0, 0], [0, 0]]
+            else [[1, 0], [2, 0], [4, 0], [8, 0]]
         )
     )
     e_intermediate_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [0, 64], [4, 0]], lane_bases=[[0, 0], [0, 4], [0, 8], [0, 16], [0, 32]], warp_bases= e_warp_bases, block_bases=[], shape=[8, 128]
+        reg_bases=[[0, 1], [0, 2]], lane_bases=[[0, 0], [0, 4], [0, 8], [0, 16], [0, 32]], warp_bases= e_warp_bases, block_bases=[], shape=[num_warps, 64]
     )
 
     # trivially convert a_compressed layout to DotOpreandLayout
@@ -608,7 +609,7 @@ if __name__ == "__main__":
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.3.1"
     os.environ["TRITON_ALWAYS_COMPILE"] = "1"
     for M, N, K in [(49152, 16, 49152)]:
-        for BLOCK_M, BLOCK_N, BLOCK_K in [(64, 64, 128)]:
+        for BLOCK_M, BLOCK_N, BLOCK_K in [(64, 64, 128), (64, 64, 64)]:
             for num_warps in [4]:
                 # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
 
