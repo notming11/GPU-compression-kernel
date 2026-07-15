@@ -608,7 +608,7 @@ if __name__ == "__main__":
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.3.1"
     os.environ["TRITON_ALWAYS_COMPILE"] = "1"
     for M, N, K in [(49152, 16, 49152)]:
-        for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
+        for BLOCK_M, BLOCK_N, BLOCK_K in [(64, 64, 128)]:
             for num_warps in [4]:
                 # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
 
@@ -626,7 +626,7 @@ if __name__ == "__main__":
                     BLOCK_M,
                     BLOCK_N,
                     BLOCK_K,
-                    3,
+                    5,
                     num_warps,
                     PersistentTileScheduler,
                 )
