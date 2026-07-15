@@ -107,26 +107,9 @@ class SparseWGMMA:
         )
         acc = gl.zeros((BLOCK_M, BLOCK_N), dtype=gl.float32, layout=mma_layout)
         return SparseWGMMA(acc, gl.to_tensor(False), mma_layout)
-
+    
     @gluon.jit
-    def issue_async_mma(
-        self,
-        a,
-        b,
-        a_pruned_reg_layout: gl.constexpr,
-        a_compressed_layout: gl.constexpr,
-        BLOCK_M: gl.constexpr,
-        BLOCK_K: gl.constexpr,
-    ):
-        # 1. Compress A tile in shared memory & Generate and Pack Metadata
-        a_pruned = a.load(a_pruned_reg_layout)
-        
-        # test bank conflicts
-        # a_dis_type = gl.distributed_type(gl.float16, [BLOCK_M, BLOCK_K], a_pruned_reg_layout)
-        # gl.static_print(gl.bank_conflicts(a_dis_type, a.type))
-        
-        # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
-
+    def generate_compressed_and_meta(self, a_pruned, BLOCK_M : gl.constexpr, BLOCK_K: gl.constexpr, a_compressed_layout: gl.constexpr):
         # --- Extract groups of 4 consecutive columns using reshape + split ---
         a_grouped = a_pruned.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
         a_even, a_odd = a_grouped.split()
@@ -181,6 +164,29 @@ class SparseWGMMA:
             a_compressed, a_compressed_layout, assert_trivial=False
         )
         e = gl.convert_layout(meta_reordered, e_layout)
+        
+        return a_compressed, e
+
+    @gluon.jit
+    def issue_async_mma(
+        self,
+        a,
+        b,
+        a_pruned_reg_layout: gl.constexpr,
+        a_compressed_layout: gl.constexpr,
+        BLOCK_M: gl.constexpr,
+        BLOCK_K: gl.constexpr,
+    ):
+        # 1. Compress A tile in shared memory & Generate and Pack Metadata
+        a_pruned = a.load(a_pruned_reg_layout)
+        
+        # test bank conflicts
+        # a_dis_type = gl.distributed_type(gl.float16, [BLOCK_M, BLOCK_K], a_pruned_reg_layout)
+        # gl.static_print(gl.bank_conflicts(a_dis_type, a.type))
+        
+        # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
+
+        a_compressed, e = self.generate_compressed_and_meta(a_pruned, BLOCK_M, BLOCK_K, a_compressed_layout)
 
         acc = warpgroup_mma(
             a_compressed,
@@ -379,8 +385,8 @@ def sparse_persistent_matmul_pipelined_kernel(
         a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
     
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [1, 0], [0, 16], [0, 32]],
-        lane_bases=[[0, 4], [0, 8], [2, 0], [4, 0], [8, 0]],
+        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 8], [0, 16]],
+        lane_bases=[[0, 4], [0, 32], [1, 0], [2, 0], [4, 0]],
         warp_bases=a_warp_bases,
         block_bases=[],
         shape=[16 * num_warps, 64],
@@ -583,7 +589,7 @@ if __name__ == "__main__":
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.3"
     os.environ["TRITON_ALWAYS_COMPILE"] = "1"
     for M, N, K in [(49152, 16, 49152)]:
-        for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
+        for BLOCK_M, BLOCK_N, BLOCK_K in [(64, 64, 128)]:
             for num_warps in [4]:
                 # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
 
@@ -601,7 +607,7 @@ if __name__ == "__main__":
                     BLOCK_M,
                     BLOCK_N,
                     BLOCK_K,
-                    4,
+                    5,
                     num_warps,
                     PersistentTileScheduler,
                 )
