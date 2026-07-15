@@ -172,6 +172,9 @@ class SparseWGMMA:
         # 1. Compress A tile in shared memory & Generate and Pack Metadata
         a_pruned = a.load(a_pruned_reg_layout)
         # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
+        
+        # a_dis_type = gl.distributed_type(gl.float16, [BLOCK_M, BLOCK_K], a_pruned_reg_layout)
+        # gl.static_print(gl.bank_conflicts(a_dis_type, a.type))
 
         a_compressed, e = self.generate_compressed_and_meta(a_pruned, BLOCK_M, BLOCK_K, a_intermediate_layout, a_compressed_layout)
 
