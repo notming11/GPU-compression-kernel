@@ -28,79 +28,19 @@ os.environ["TEMP"] = SCRATCH_WORKSPACE
 os.environ["CUDA_CACHE_PATH"] = os.path.join(SCRATCH_WORKSPACE, "cuda_cache")
 os.environ["TORCH_HOME"] = os.path.join(SCRATCH_WORKSPACE, "cuda_cache")
 
+os.environ["CUDA_LAUNCH_BLOCKING"] = '1'
+
 from prune import prune_2_4
 from compress_2_4 import compress_dense_to_sparse
 
-
-def matmul_get_configs():
-    def valid(BM, BN, BK, warps, buffers):
-        SB = buffers == 4
-        # Shared Memory
-        smem_bytes = 2 * (
-                (buffers * BM * BK) +
-                ((buffers + SB) * BK * BN) +
-                ((1 - SB) * BM * BN)
-        ) + (8 * buffers)
-
-        if smem_bytes > 232448: return False
-
-        # STEALB
-        if SB and 2 * BN * BK < BM * BN: return False
-        if SB and BM > BK: return False
-
-        if (BM * BN) >= 65536 and warps < 12:  # 256x256 blocks require at least 3 warp groups
-            return False
-        if (BM * BN) <= 4096 and warps > 8:    # Tiny blocks will starve 12 or 16 warps
-            return False
-
-        elements_per_thread = (BM * BN) / (warps * 32)
-        if elements_per_thread > 256:
-            return False
-
-        return True
-
-    return [
-        triton.Config(
-            {
-                "BLOCK_SIZE_M": BM,
-                "BLOCK_SIZE_N": BN,
-                "BLOCK_SIZE_K": BK,
-                "num_buffers": buffers,
-            },
-            num_warps=warps,
-        )
-        for BM in (64, 128, 256)
-        for BN in (64, 128, 256)
-        for BK in (64, 128, 256)
-        for buffers in (3, 4, 5, 6, 7)
-        for warps in (4, 8, 16)
-        if valid(BM, BN, BK, warps, buffers)
-    ]
-
-# def matmul_get_configs():
-#     return [
-#         triton.Config(
-#             {
-#                 "BLOCK_SIZE_M": BM,
-#                 "BLOCK_SIZE_N": BN,
-#                 "BLOCK_SIZE_K": BK,
-#                 "num_buffers": buffers,
-#             },
-#             num_warps=warps,
-#         )
-#         for BM, BN, BK in [[64, 64, 128], [64, 64, 256], [64, 128, 128], [128, 64, 128], [64, 64, 64], [64, 128, 64], [128, 128, 64]] 
-#         for buffers in (3, 4, 5, 6, 7)
-#         for warps in (4, 8, 16)
-#     ]
-
-
-def benchmark_kernels(M, N, K, BLOCK_M, BLOCK_N, BLOCK_K, num_buffers, num_warps):
+def benchmark_kernels(M, N, K):
     A = torch.randn((M, K), device="cuda", dtype=torch.float16)
     B = torch.randn((K, N), device="cuda", dtype=torch.float16)
     C = torch.zeros((M, N), device="cuda", dtype=torch.float16)
 
     A_pruned = prune_2_4(A)
     A_comp, E = compress_dense_to_sparse(A_pruned)
+    E = E.view(M // 16, K)
 
     def to_tflops(ms):
         return (2 * M * N * K) / (ms * 1e-3 * 1e12) if ms else 0.0
@@ -109,61 +49,30 @@ def benchmark_kernels(M, N, K, BLOCK_M, BLOCK_N, BLOCK_K, num_buffers, num_warps
     tflops_dense, tflops_runtime, tflops_precomp = None, None, None
 
     try:
-        ms_dense = triton.testing.do_bench(
-            lambda: dense_matmul(
-                A,
-                B,
-                C,
-                BLOCK_M,
-                BLOCK_N,
-                BLOCK_K,
-                num_buffers,
-                num_warps,
-                PersistentTileScheduler,
-            )
+        ms_dense = triton.testing.do_bench_cudagraph(
+            lambda: dense_matmul(A, B, C)
         )
         tflops_dense = to_tflops(ms_dense)
     except Exception as e:
-        # print(f"dense failed on {BLOCK_M}x{BLOCK_N}x{BLOCK_K}, w:{num_warps}, b:{num_buffers}. Error: {e}")
+        print(f"dense failed, Error: {e}")
         pass
 
     try:
-        ms_precomp = triton.testing.do_bench(
-            lambda: pre_compressed_sparse_matmul(
-                A_comp,
-                E,
-                B,
-                C,
-                BLOCK_M,
-                BLOCK_N,
-                BLOCK_K,
-                num_buffers,
-                num_warps,
-                PersistentTileScheduler,
-            )
+        ms_precomp = triton.testing.do_bench_cudagraph(
+            lambda: pre_compressed_sparse_matmul(A_comp, E, B, C)
         )
         tflops_precomp = to_tflops(ms_precomp)
     except Exception as e:
-        # print(f"Precomp failed on {BLOCK_M}x{BLOCK_N}x{BLOCK_K}, w:{num_warps}, b:{num_buffers}. Error: {e}")
+        print(f"Precomp failed. Error: {e}")
         pass
 
     try:
         ms_runtime = triton.testing.do_bench(
-            lambda: runtime_compression_sparse_matmul(
-                A_pruned,
-                B,
-                C,
-                BLOCK_M,
-                BLOCK_N,
-                BLOCK_K,
-                num_buffers,
-                num_warps,
-                PersistentTileScheduler,
-            )
+            lambda: runtime_compression_sparse_matmul(A_pruned, B, C)
         )
         tflops_runtime = to_tflops(ms_runtime)
     except Exception as e:
-        # print(f"runtime failed on {BLOCK_M}x{BLOCK_N}x{BLOCK_K}, w:{num_warps}, b:{num_buffers}. Error: {e}")
+        print(f"runtime failed. Error: {e}")
         pass
 
     if ms_runtime is not None and ms_precomp is not None and ms_precomp > 0:
@@ -332,14 +241,13 @@ if __name__ == "__main__":
         sys.modules["compression_v7"] = comp_pipeline_7
         spec.loader.exec_module(comp_pipeline_7)
 
-        gluon_pipeline = importlib.import_module("gluon_pipeline")
+        gluon_pipeline_dense = importlib.import_module("gluon_pipeline_dense")
+        gluon_pipeline_sparse = importlib.import_module("gluon_pipeline_sparse")
 
-        dense_matmul = gluon_pipeline.persistent_matmul_pipelined
-        pre_compressed_sparse_matmul = gluon_pipeline.sparse_persistent_matmul_pipelined
-        runtime_compression_sparse_matmul = (
-            comp_pipeline_7.sparse_persistent_matmul_pipelined
-        )
-        PersistentTileScheduler = comp_pipeline_7.PersistentTileScheduler
+        dense_matmul = gluon_pipeline_dense.run_dense_matmul
+        pre_compressed_sparse_matmul = gluon_pipeline_sparse.run_sparse_matmul
+        runtime_compression_sparse_matmul = comp_pipeline_7.run_sparse_runtime_matmul
+        
 
     except ImportError as e:
         print(f"Error importing modules: {e}")
@@ -349,8 +257,7 @@ if __name__ == "__main__":
         exit(1)
 
     shapes = sorted(shapes, key=lambda x: x[0] * x[1] * x[2], reverse=True)
-    configs = matmul_get_configs()
-
+    
     # Array to log structured data points for plotting
     data_log = []
 
@@ -366,62 +273,27 @@ if __name__ == "__main__":
     for M, N, K in shapes:
         shape_str = f"{M}-{N}-{K}"
         print(f"start {shape_str}")
-        max_dense = None
-        max_precomp = None
-        max_runtime = None
-        dense_config = None
-        precomp_config = None
-        runtime_config = None
-        for config in configs:
-            bm = config.kwargs["BLOCK_SIZE_M"]
-            bn = config.kwargs["BLOCK_SIZE_N"]
-            bk = config.kwargs["BLOCK_SIZE_K"]
-            num_buffers = config.kwargs["num_buffers"]
-            num_warps = config.num_warps
 
-            # print(config)
+        metrics = benchmark_kernels(M, N, K)
 
-            metrics = benchmark_kernels(
-                M=M,
-                N=N,
-                K=K,
-                BLOCK_M=bm,
-                BLOCK_N=bn,
-                BLOCK_K=bk,
-                num_buffers=num_buffers,
-                num_warps=num_warps,
+        if metrics["dense_tflops"] is not None and metrics["runtime_tflops"] is not None and metrics["precomp_tflops"] is not None:
+            data_log.append(
+                {
+                    "Shape": shape_str,
+                    "Dense_TFLOPS": metrics["dense_tflops"],
+                    "Runtime_TFLOPS": metrics["runtime_tflops"],
+                    "Precomp_TFLOPS": metrics["precomp_tflops"],
+                }
             )
 
-            if (
-                metrics["dense_tflops"] is not None
-                and metrics["runtime_tflops"] is not None
-                and metrics["precomp_tflops"] is not None
-            ):
+        best_dense = gluon_pipeline_dense.dense_kernel.best_config
+        best_sparse = gluon_pipeline_sparse.sparse_kernel.best_config
+        best_runtime = comp_pipeline_7.sparse_runtime_kernel.best_config
 
-                if max_dense is None or metrics["dense_tflops"] > max_dense:
-                    max_dense = metrics["dense_tflops"]
-                    dense_config = config
-                if max_precomp is None or metrics["precomp_tflops"] > max_precomp:
-                    max_precomp = metrics["precomp_tflops"]
-                    precomp_config = config
-                if max_runtime is None or metrics["runtime_tflops"] > max_runtime:
-                    max_runtime = metrics["runtime_tflops"]
-                    runtime_config = config
-
-                # Append payload to our plotting list
-                data_log.append(
-                    {
-                        "Shape": shape_str,
-                        "Dense_TFLOPS": metrics["dense_tflops"],
-                        "Runtime_TFLOPS": metrics["runtime_tflops"],
-                        "Precomp_TFLOPS": metrics["precomp_tflops"],
-                    }
-                )
-
-        print(f"finish {shape_str}, ({i+1}/{len(shapes)}) -> Max Dense: {max_dense:.2f}, Max Precomp: {max_precomp:.2f}, Max Runtime: {max_runtime:.2f}")
-        print(f"dense config: {dense_config}")
-        print(f"precomp config: {precomp_config}")
-        print(f"runtime config: {runtime_config}", flush = True)
+        print(f"finish {shape_str}, ({i+1}/{len(shapes)}) -> Dense: {metrics['dense_tflops']}, Precomp: {metrics['precomp_tflops']}, Runtime: {metrics['runtime_tflops']}")
+        print(f"  Dense   best config: {best_dense.kwargs if best_dense else None}, num_warps={best_dense.num_warps if best_dense else None}")
+        print(f"  Sparse  best config: {best_sparse.kwargs if best_sparse else None}, num_warps={best_sparse.num_warps if best_sparse else None}")
+        print(f"  Runtime best config: {best_runtime.kwargs if best_runtime else None}, num_warps={best_runtime.num_warps if best_runtime else None}", flush=True)
         i += 1
 
     # Convert logged metrics into a DataFrame and visualize
