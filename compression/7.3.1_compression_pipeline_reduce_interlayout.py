@@ -389,8 +389,8 @@ def sparse_persistent_matmul_pipelined_kernel(
         a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
     
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [1, 0], [0, 16], [0, 32]],
-        lane_bases=[[0, 4], [0, 8], [2, 0], [4, 0], [8, 0]],
+        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 8], [0, 16]],
+        lane_bases=[[0, 4], [0, 32], [1, 0], [2, 0], [4, 0]],
         warp_bases=a_warp_bases,
         block_bases=[],
         shape=[16 * num_warps, 64],
@@ -406,7 +406,7 @@ def sparse_persistent_matmul_pipelined_kernel(
         )
     )
     e_intermediate_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2]], lane_bases=[[0, 0], [0, 4], [0, 8], [0, 16], [0, 32]], warp_bases= e_warp_bases, block_bases=[], shape=[num_warps, 64]
+        reg_bases=[[0, 1], [0, 8]], lane_bases=[[0, 0], [0, 2], [0, 4], [0, 16], [0, 32]], warp_bases= e_warp_bases, block_bases=[], shape=[num_warps, 64]
     )
 
     # trivially convert a_compressed layout to DotOpreandLayout
@@ -609,7 +609,7 @@ if __name__ == "__main__":
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.3.1"
     os.environ["TRITON_ALWAYS_COMPILE"] = "1"
     for M, N, K in [(49152, 16, 49152)]:
-        for BLOCK_M, BLOCK_N, BLOCK_K in [(64, 64, 128), (64, 64, 64)]:
+        for BLOCK_M, BLOCK_N, BLOCK_K in [(64, 64, 128)]:
             for num_warps in [4]:
                 # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
 
