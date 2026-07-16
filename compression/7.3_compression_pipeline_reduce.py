@@ -147,7 +147,9 @@ class SparseWGMMA:
         meta_4_reshaped = meta_4.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4, 2, 2)
         meta_4_permuted = meta_4_reshaped.permute(0, 3, 2, 4, 1, 5, 6)
         meta_4_ready = meta_4_permuted.reshape(BLOCK_M // 16, BLOCK_K, 2, 2)
+        
         # gl.static_print(gl.to_linear_layout(meta_4_ready.type.layout, (BLOCK_M // 16, BLOCK_K, 2, 2)))
+        
         meta_reordered = gl.reduce(
             gl.reduce(meta_4_ready, 3, create_metadata), 2, create_metadata_8
         ).to(gl.int16)
@@ -160,9 +162,11 @@ class SparseWGMMA:
             meta=1,
         )
 
+        # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, (BLOCK_M, BLOCK_K // 2)))
         a_compressed = gl.convert_layout(
             a_compressed, a_compressed_layout, assert_trivial=False
         )
+        # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, (BLOCK_M, BLOCK_K // 2)))
         e = gl.convert_layout(meta_reordered, e_layout)
         
         return a_compressed, e
@@ -369,13 +373,6 @@ def sparse_persistent_matmul_pipelined_kernel(
     ############################################
     # Initializing layouts and index for wgmma #
     ############################################
-
-    # a_pruned_reg_layout: gl.constexpr = gl.BlockedLayout(
-    #     [2, 16],
-    #     [4, 8],
-    #     [num_warps, 1],
-    #     [1, 0]
-    # )
 
     if num_warps == 4:
         a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
