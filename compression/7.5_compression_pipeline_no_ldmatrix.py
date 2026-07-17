@@ -138,8 +138,11 @@ class SparseWGMMA:
         )
 
         # a_intermediate = gl.convert_layout(a_compressed, a_intermediate_layout)
-
+        
+        gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
         a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
+        gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
+        
         e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = True)
 
         return a_compressed, e
@@ -310,6 +313,8 @@ def sparse_persistent_matmul_pipelined_kernel(
     STEALB: gl.constexpr,
     num_warps: gl.constexpr,
 ):
+    
+    gl.static_print(f"\nBLOCK_M: {BLOCK_M}, BLOCK_K: {BLOCK_K}, num_warps: {num_warps}")
     dtype: gl.constexpr = a_pruned_desc.dtype
     K = a_pruned_desc.shape[1]
 
@@ -642,7 +647,7 @@ if __name__ == "__main__":
                 A_pruned = prune_2_4(A)
                 C_ref = A_pruned @ B
                 
-                # D = run_sparse_runtime_matmul(A_pruned, B, C)
+                D = run_sparse_runtime_matmul(A_pruned, B, C)
                 # torch.testing.assert_close(C_ref, D, rtol=1e-3, atol=1e-1)
                 # C = torch.empty(M, N, device="cuda", dtype=torch.float16)
 
