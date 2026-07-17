@@ -46,20 +46,6 @@ def get_instr_shape_n(BLOCK_M, BLOCK_N, num_warps):
     assert n >= 8, "expected to find a valid n"
     return n
 
-
-@gluon.constexpr_function
-def pick_wgmma_layout(dtype, BLOCK_M, BLOCK_N, num_warps):
-    m = 16
-    k = 256 // dtype.primitive_bitwidth
-    n = get_instr_shape_n(BLOCK_M, BLOCK_N, num_warps)
-    warps_per_cta = get_warps_per_cta(BLOCK_M, BLOCK_N, num_warps)
-    return gl.NVMMADistributedLayout(
-        version=[3, 0],
-        warps_per_cta=warps_per_cta,
-        instr_shape=[m, n, k],
-    )
-
-
 @gluon.constexpr_function
 def pick_sparse_wgmma_layout(dtype, BLOCK_M, BLOCK_N, num_warps):
     m = 16
@@ -141,7 +127,6 @@ class SparseWGMMA:
 
         meta = mn0 | (mn1 << 4) | (mn2 << 8) | (mn3 << 12)
         meta = meta.to(gl.int16)
-        
         meta_reshaped = meta.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4)
         meta_reordered = meta_reshaped.permute(0, 3, 2, 4, 1).reshape(BLOCK_M // 16, BLOCK_K)
 
@@ -153,8 +138,11 @@ class SparseWGMMA:
         )
 
         a_intermediate = gl.convert_layout(a_compressed, a_intermediate_layout)
-
-        a_compressed = gl.convert_layout(a_intermediate, a_compressed_layout)
+        
+        gl.static_print(gl.to_linear_layout(a_intermediate.type.layout, [BLOCK_M, BLOCK_K // 2]))
+        a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
+        gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
+        
         e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = True)
 
         return a_compressed, e
@@ -171,8 +159,11 @@ class SparseWGMMA:
         BLOCK_K: gl.constexpr
     ):
         # 1. Compress A tile in shared memory & Generate and Pack Metadata
-        a_pruned = a.load(a_compressed_layout)
-        a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
+        a_pruned = a.load(a_pruned_reg_layout)
+        # a_pruned = gl.convert_layout(a_pruned, a_pruned_reg_layout)
+        
+        # a_dis_type = gl.distributed_type(gl.float16, [BLOCK_M, BLOCK_K], a_pruned_reg_layout)
+        # gl.static_print(gl.bank_conflicts(a_dis_type, a.type))
 
         a_compressed, e = self.generate_compressed_and_meta(a_pruned, BLOCK_M, BLOCK_K, a_intermediate_layout, a_compressed_layout)
 
@@ -312,11 +303,12 @@ def sparse_persistent_matmul_pipelined_kernel(
     a_pruned_desc,
     b_desc,
     c_desc,
+    MMAImpl: gl.constexpr,
+    SchedulerImpl: gl.constexpr,
+    M, N, K,
     BLOCK_M: gl.constexpr,
     BLOCK_N: gl.constexpr,
     BLOCK_K: gl.constexpr,
-    MMAImpl: gl.constexpr,
-    SchedulerImpl: gl.constexpr,
     num_buffers: gl.constexpr,
     STEALB: gl.constexpr,
     num_warps: gl.constexpr,
@@ -376,8 +368,8 @@ def sparse_persistent_matmul_pipelined_kernel(
     )
 
     a_intermediate_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [0, 4], [8, 0], [0, 32]],
-        lane_bases=[[0, 8], [0, 16], [1, 0], [2, 0], [4, 0]],
+        reg_bases=[[0, 1], [8, 0], [0, 8], [0, 4], [0, 32]],
+        lane_bases=[[0, 2], [0, 16], [1, 0], [2, 0], [4, 0]],
         warp_bases=a_warp_bases,
         block_bases=[],
         shape=[16*num_warps, 64]
@@ -543,46 +535,107 @@ def sparse_persistent_matmul_pipelined_kernel(
     tma.store_wait(pendings=0)
 
 
-def sparse_persistent_matmul_pipelined(
-    A_pruned, B, C, BLOCK_M, BLOCK_N, BLOCK_K, num_buffers, num_warps, SchedulerImpl
-):
-    M, N = C.shape
 
-    a_pruned_layout = gl.NVMMASharedLayout.get_default_for(
-        [BLOCK_M, BLOCK_K], gl.float16
-    )
-    b_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_K, BLOCK_N], gl.float16)
-    c_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_M, BLOCK_N], gl.float16)
+def matmul_get_configs(pre_hook=None):
+    def valid(BM, BN, BK, warps, buffers, SB):
+        # Shared Memory
+        smem_bytes = 2 * (
+                (buffers * BM * BK) +
+                ((buffers + SB) * BK * BN) +
+                ((1 - SB) * BM * BN)
+        ) + (8 * buffers)
 
-    a_pruned_desc = TensorDescriptor.from_tensor(A_pruned, [BLOCK_M, BLOCK_K], a_pruned_layout)
-    b_desc = TensorDescriptor.from_tensor(B, [BLOCK_K, BLOCK_N], b_layout)
-    c_desc = TensorDescriptor.from_tensor(C, [BLOCK_M, BLOCK_N], c_layout)
+        if smem_bytes > 232448: return False
 
-    num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
-    num_pid = triton.cdiv(M, BLOCK_M) * triton.cdiv(N, BLOCK_N)
-    grid = (min(num_sms, num_pid),)
-    sparse_persistent_matmul_pipelined_kernel[grid](
-        a_pruned_desc,
-        b_desc,
-        c_desc,
-        BLOCK_M,
-        BLOCK_N,
-        BLOCK_K,
-        SparseWGMMA,
-        SchedulerImpl,
-        num_buffers,
-        STEALB=num_buffers == 4,
-        num_warps=num_warps,
-    )
+        # STEALB
+        if SB and 2 * BN * BK < BM * BN: return False
+        if SB and BM > BK: return False
+
+        if (BM * BN) >= 65536 and warps < 12:  # 256x256 blocks require at least 3 warp groups
+            return False
+        if (BM * BN) <= 4096 and warps > 8:    # Tiny blocks will starve 12 or 16 warps
+            return False
+
+        elements_per_thread = (BM * BN) / (warps * 32)
+        if elements_per_thread > 256:
+            return False
+
+        return True
+
+    return [
+        triton.Config(
+            {
+                "BLOCK_M": BM,
+                "BLOCK_N": BN,
+                "BLOCK_K": BK,
+                "num_buffers": buffers,
+                "STEALB": SB,
+            },
+            num_warps=warps,
+            pre_hook=pre_hook,
+        )
+        for BM in (64, 128, 256)
+        for BN in (64, 128, 256)
+        for BK in (64, 128, 256)
+        for warps in (4, 8, 16)
+        for buffers in (3, 4, 5, 6, 7)
+        for SB in (True, False)
+        if valid(BM, BN, BK, warps, buffers, SB)
+    ]
+
+def sparse_runtime_matmul_tma_set_block_size_hook(nargs):
+    block_m = nargs["BLOCK_M"]
+    block_n = nargs["BLOCK_N"]
+    block_k = nargs["BLOCK_K"]
+
+    nargs["a_pruned_desc"].block_shape = [block_m, block_k]
+    nargs["b_desc"].block_shape = [block_k, block_n]
+    nargs["c_desc"].block_shape = [block_m, block_n]
+
+    nargs["a_pruned_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["a_pruned_desc"].block_shape, gl.float16)
+    nargs["b_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["b_desc"].block_shape, gl.float16)
+    nargs["c_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["c_desc"].block_shape, gl.float16)
+
+sparse_runtime_kernel = triton.autotune(
+    configs=matmul_get_configs(pre_hook=sparse_runtime_matmul_tma_set_block_size_hook),
+    key=["M", "N", "K"],
+    do_bench = lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
+        kernel_call, quantiles=quantiles),
+)(sparse_persistent_matmul_pipelined_kernel)
+
+def run_sparse_runtime_matmul(A_pruned, B, C=None):
+    M, N, K = A_pruned.shape[0], B.shape[1], B.shape[0]
+    
+    if C is None:
+        c = torch.empty((M, N), device=A_pruned.device, dtype=torch.float16)
+    else:
+        c = C
+    dummy_block = [1, 1]
+    dummy_layout_f16 = gl.NVMMASharedLayout.get_default_for(dummy_block, gl.float16)
+    a_desc = TensorDescriptor.from_tensor(A_pruned, dummy_block, dummy_layout_f16)
+    b_desc = TensorDescriptor.from_tensor(B, dummy_block, dummy_layout_f16)
+    c_desc = TensorDescriptor.from_tensor(c, dummy_block, dummy_layout_f16)
+
+    def grid(meta):
+        num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
+        num_pid = triton.cdiv(M, meta["BLOCK_M"]) * triton.cdiv(N, meta["BLOCK_N"])
+
+        return (min(num_sms, num_pid), )
+    sparse_runtime_kernel[grid](a_desc, b_desc, c_desc, SparseWGMMA, PersistentTileScheduler, M, N, K)
+
+    return c
 
 
 if __name__ == "__main__":
     os.environ["MLIR_ENABLE_DUMP"]="1"
     os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.5.1"
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
+    # os.environ["TRITON_KERNEL_DUMP"] = "1"
+    # os.environ["TRITON_DUMP_DIR"] = "./count_cycle/7.3/"
+    
     for M, N, K in [(49152, 16, 49152)]:
         for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
-            for num_warps in [8]:
+            for num_warps, num_buffers, SB in [(4, 4, False)]:
                 # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
 
                 A = torch.randn(M, K, device="cuda", dtype=torch.float16)
@@ -590,20 +643,40 @@ if __name__ == "__main__":
                 C = torch.empty(M, N, device="cuda", dtype=torch.float16)
 
                 A_pruned = prune_2_4(A)
+                C_ref = A_pruned @ B
+                
+                # D = run_sparse_runtime_matmul(A_pruned, B, C)
+                # torch.testing.assert_close(C_ref, D, rtol=1e-3, atol=1e-1)
+                # C = torch.empty(M, N, device="cuda", dtype=torch.float16)
 
                 # sparse_persistent_matmul(A, E, B, C, BLOCK_M, BLOCK_N, BLOCK_K, 3, num_warps, PersistentTileScheduler)
-                sparse_persistent_matmul_pipelined(
-                    A_pruned,
-                    B,
-                    C,
-                    BLOCK_M,
+                a_pruned_layout = gl.NVMMASharedLayout.get_default_for(
+                    [BLOCK_M, BLOCK_K], gl.float16
+                )
+                b_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_K, BLOCK_N], gl.float16)
+                c_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_M, BLOCK_N], gl.float16)
+
+                a_pruned_desc = TensorDescriptor.from_tensor(A_pruned, [BLOCK_M, BLOCK_K], a_pruned_layout)
+                b_desc = TensorDescriptor.from_tensor(B, [BLOCK_K, BLOCK_N], b_layout)
+                c_desc = TensorDescriptor.from_tensor(C, [BLOCK_M, BLOCK_N], c_layout)
+
+                num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
+                num_pid = triton.cdiv(M, BLOCK_M) * triton.cdiv(N, BLOCK_N)
+                grid = (min(num_sms, num_pid),)
+                sparse_persistent_matmul_pipelined_kernel[grid](
+                    a_pruned_desc,
+                    b_desc,
+                    c_desc,
+                    SparseWGMMA,
+                    PersistentTileScheduler,
+                    M, N, K, 
+                    BLOCK_M,    
                     BLOCK_N,
                     BLOCK_K,
-                    4,
-                    num_warps,
-                    PersistentTileScheduler,
+                    num_buffers,            
+                    STEALB=False,
+                    num_warps=num_warps,
                 )
-                C_ref = A_pruned @ B
+                
                 torch.testing.assert_close(C_ref, C, rtol=1e-3, atol=1e-1)
                 print("PASSED")
-
