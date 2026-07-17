@@ -148,10 +148,7 @@ def issue_sparse_mma_stealb(consumer, mma, bars, a_bufs, e_bufs, b_bufs, stealb:
 
 @gluon.jit
 def sparse_persistent_matmul_pipelined_kernel(a_desc, e_desc, b_desc, c_desc, MMAImpl: gl.constexpr, SchedulerImpl: gl.constexpr,
-                                              M, N, K, BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K, num_buffers: gl.constexpr, STEALB: gl.constexpr, num_warps: gl.constexpr):
-    BLOCK_M: gl.constexpr = c_desc.block_type.shape[0]
-    BLOCK_N: gl.constexpr = c_desc.block_type.shape[1]
-    BLOCK_K: gl.constexpr = a_desc.block_type.shape[1] * 2
+                                              M, N, K, BLOCK_M: gl.constexpr, BLOCK_N: gl.constexpr, BLOCK_K: gl.constexpr, num_buffers: gl.constexpr, STEALB: gl.constexpr, num_warps: gl.constexpr):
     dtype: gl.constexpr = a_desc.dtype
     K = a_desc.shape[1] * 2
 
@@ -267,9 +264,9 @@ def sparse_matmul_get_configs(pre_hook=None):
     return [
         triton.Config(
             {
-                "BLOCK_SIZE_M": BM,
-                "BLOCK_SIZE_N": BN,
-                "BLOCK_SIZE_K": BK,
+                "BLOCK_M": BM,
+                "BLOCK_N": BN,
+                "BLOCK_K": BK,
                 "num_buffers": buffers,
                 "STEALB": SB,
             },
@@ -286,9 +283,9 @@ def sparse_matmul_get_configs(pre_hook=None):
     ]
 
 def sparse_matmul_tma_set_block_size_hook(nargs):
-    block_m = nargs["BLOCK_SIZE_M"]
-    block_n = nargs["BLOCK_SIZE_N"]
-    block_k = nargs["BLOCK_SIZE_K"]
+    block_m = nargs["BLOCK_M"]
+    block_n = nargs["BLOCK_N"]
+    block_k = nargs["BLOCK_K"]
 
     nargs["a_desc"].block_shape = [block_m, block_k // 2]
     nargs["e_desc"].block_shape = [block_m // 16, block_k]
@@ -324,24 +321,77 @@ def run_sparse_matmul(A, E, B, C=None):
 
     def grid(meta):
         num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
-        num_pid = triton.cdiv(M, meta["BLOCK_SIZE_M"]) * triton.cdiv(N, meta["BLOCK_SIZE_N"])
+        num_pid = triton.cdiv(M, meta["BLOCK_M"]) * triton.cdiv(N, meta["BLOCK_N"])
         return (min(num_sms, num_pid), )
         
     sparse_kernel[grid](a_desc, e_desc, b_desc, c_desc, WGMMA, PersistentTileScheduler, M, N, K)
     return c
 
 if __name__ == "__main__":
-    sizes = [(768, 768, 768), (2048, 1024, 2048)]
+    # sizes = [(768, 768, 768), (2048, 1024, 2048)]
 
-    for M, N, K in sizes:
-        A = torch.randn(M, K, device="cuda", dtype=torch.float16)
-        B = torch.randn((K, N), device="cuda", dtype=torch.float16)
-        C = torch.empty(M, N, device="cuda", dtype=torch.float16)
+    # for M, N, K in sizes:
+    #     A = torch.randn(M, K, device="cuda", dtype=torch.float16)
+    #     B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+    #     C = torch.empty(M, N, device="cuda", dtype=torch.float16)
         
-        A_pruned = prune_2_4(A)
-        A_compressed, E = compress_dense_to_sparse(A_pruned)
-        E = E.view(M // 16, K)
+    #     A_pruned = prune_2_4(A)
+    #     A_compressed, E = compress_dense_to_sparse(A_pruned)
+    #     E = E.view(M // 16, K)
         
-        D = run_sparse_matmul(A_compressed, E, B)
-        torch.testing.assert_close(A_pruned @ B, D, rtol=1e-3, atol=1e-1)
-    print("Done sparse.")
+    #     D = run_sparse_matmul(A_compressed, E, B)
+    #     torch.testing.assert_close(A_pruned @ B, D, rtol=1e-3, atol=1e-1)
+    # print("Done sparse.")
+    
+    for M, N, K in [(49152, 16, 49152)]:
+        for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 256)]:
+            for num_warps, num_buffers, SB in [(8, 3, False)]:
+                # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
+
+                A = torch.randn(M, K, device="cuda", dtype=torch.float16)
+                B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+                C = torch.empty(M, N, device="cuda", dtype=torch.float16)
+
+                A_pruned = prune_2_4(A)
+                A_compressed, E = compress_dense_to_sparse(A_pruned)
+                E = E.view(M // 16, K)
+                C_ref = A_pruned @ B
+                
+                # D = run_sparse_runtime_matmul(A_pruned, B, C)
+                # torch.testing.assert_close(C_ref, D, rtol=1e-3, atol=1e-1)
+                # C = torch.empty(M, N, device="cuda", dtype=torch.float16)
+
+                # sparse_persistent_matmul(A, E, B, C, BLOCK_M, BLOCK_N, BLOCK_K, 3, num_warps, PersistentTileScheduler)
+                a_pruned_layout = gl.NVMMASharedLayout.get_default_for(
+                    [BLOCK_M, BLOCK_K // 2], gl.float16
+                )
+                b_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_K, BLOCK_N], gl.float16)
+                c_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_M, BLOCK_N], gl.float16)
+                e_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_M // 16, BLOCK_K], gl.float16)
+
+                a_compressed_desc = TensorDescriptor.from_tensor(A_compressed, [BLOCK_M, BLOCK_K // 2], a_pruned_layout)
+                b_desc = TensorDescriptor.from_tensor(B, [BLOCK_K, BLOCK_N], b_layout)
+                c_desc = TensorDescriptor.from_tensor(C, [BLOCK_M, BLOCK_N], c_layout)
+                e_desc = TensorDescriptor.from_tensor(E, [BLOCK_M // 16, BLOCK_K], e_layout)
+
+                num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
+                num_pid = triton.cdiv(M, BLOCK_M) * triton.cdiv(N, BLOCK_N)
+                grid = (min(num_sms, num_pid),)
+                sparse_persistent_matmul_pipelined_kernel[grid](
+                    a_compressed_desc,
+                    e_desc,
+                    b_desc,
+                    c_desc,
+                    WGMMA,
+                    PersistentTileScheduler,
+                    M, N, K, 
+                    BLOCK_M,    
+                    BLOCK_N,
+                    BLOCK_K,
+                    num_buffers=num_buffers,            
+                    STEALB=False,
+                    num_warps=num_warps,
+                )
+                
+                torch.testing.assert_close(C_ref, C, rtol=1e-3, atol=1e-1)
+                print("PASSED")
