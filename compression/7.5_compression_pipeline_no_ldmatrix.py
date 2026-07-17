@@ -625,7 +625,7 @@ def run_sparse_runtime_matmul(A_pruned, B, C=None):
 
 if __name__ == "__main__":
     os.environ["MLIR_ENABLE_DUMP"]="1"
-    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.3"
+    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.5"
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
     # os.environ["TRITON_KERNEL_DUMP"] = "1"
     # os.environ["TRITON_DUMP_DIR"] = "./count_cycle/7.3/"

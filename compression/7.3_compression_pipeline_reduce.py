@@ -383,8 +383,8 @@ def sparse_persistent_matmul_pipelined_kernel(
         a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
     
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 8], [0, 16]],
-        lane_bases=[[0, 4], [0, 32], [1, 0], [2, 0], [4, 0]],
+        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 16], [0, 32]],
+        lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]],
         warp_bases=a_warp_bases,
         block_bases=[],
         shape=[16 * num_warps, 64],
