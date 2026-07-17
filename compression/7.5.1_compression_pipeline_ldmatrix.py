@@ -137,11 +137,13 @@ class SparseWGMMA:
             meta=1
         )
 
+        # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
+        # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]).format_tensor_view([BLOCK_M, BLOCK_K // 2]))
         a_intermediate = gl.convert_layout(a_compressed, a_intermediate_layout)
         
-        gl.static_print(gl.to_linear_layout(a_intermediate.type.layout, [BLOCK_M, BLOCK_K // 2]))
+        # gl.static_print(gl.to_linear_layout(a_intermediate.type.layout, [BLOCK_M, BLOCK_K // 2]).format_tensor_view([BLOCK_M, BLOCK_K // 2]))
         a_compressed = gl.convert_layout(a_compressed, a_compressed_layout)
-        gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
+        # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]).format_tensor_view([BLOCK_M, BLOCK_K // 2]))
         
         e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = True)
 
@@ -313,6 +315,7 @@ def sparse_persistent_matmul_pipelined_kernel(
     STEALB: gl.constexpr,
     num_warps: gl.constexpr,
 ):
+    # gl.static_print(f"\nBLOCK_M: {BLOCK_M}, BLOCK_K: {BLOCK_K}, num_warps: {num_warps}")
     dtype: gl.constexpr = a_pruned_desc.dtype
     K = a_pruned_desc.shape[1]
 
@@ -368,11 +371,11 @@ def sparse_persistent_matmul_pipelined_kernel(
     )
 
     a_intermediate_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [8, 0], [0, 8], [0, 4], [0, 32]],
-        lane_bases=[[0, 2], [0, 16], [1, 0], [2, 0], [4, 0]],
+        reg_bases=[[0, 1], [8, 0], [0, 2], [0, 16]],
+        lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]],
         warp_bases=a_warp_bases,
         block_bases=[],
-        shape=[16*num_warps, 64]
+        shape=[16*num_warps, 32]
     )
 
     # trivially convert a_compressed layout to DotOpreandLayout
