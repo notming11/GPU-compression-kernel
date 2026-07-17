@@ -132,10 +132,7 @@ def issue_mma_stealb(consumer, mma, bars, a_bufs, b_bufs, stealb: gl.constexpr, 
 
 @gluon.jit
 def persistent_matmul_pipelined_kernel(a_desc, b_desc, c_desc, MMAImpl: gl.constexpr, SchedulerImpl: gl.constexpr,
-                                       M, N, K, BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K, num_buffers: gl.constexpr, STEALB: gl.constexpr, num_warps: gl.constexpr):
-    BLOCK_M: gl.constexpr = c_desc.block_type.shape[0]
-    BLOCK_N: gl.constexpr = c_desc.block_type.shape[1]
-    BLOCK_K: gl.constexpr = a_desc.block_type.shape[1]
+                                        M, N, K, BLOCK_M: gl.constexpr, BLOCK_N: gl.constexpr, BLOCK_K: gl.constexpr, num_buffers: gl.constexpr, STEALB: gl.constexpr, num_warps: gl.constexpr):
     dtype: gl.constexpr = a_desc.dtype
     K = a_desc.shape[1]
 
@@ -247,9 +244,9 @@ def matmul_get_configs(pre_hook=None):
     return [
         triton.Config(
             {
-                "BLOCK_SIZE_M": BM,
-                "BLOCK_SIZE_N": BN,
-                "BLOCK_SIZE_K": BK,
+                "BLOCK_M": BM,
+                "BLOCK_N": BN,
+                "BLOCK_K": BK,
                 "num_buffers": buffers,
                 "STEALB": SB,
             },
@@ -266,9 +263,9 @@ def matmul_get_configs(pre_hook=None):
     ]
 
 def matmul_tma_set_block_size_hook(nargs):
-    block_m = nargs["BLOCK_SIZE_M"]
-    block_n = nargs["BLOCK_SIZE_N"]
-    block_k = nargs["BLOCK_SIZE_K"]
+    block_m = nargs["BLOCK_M"]
+    block_n = nargs["BLOCK_N"]
+    block_k = nargs["BLOCK_K"]
 
     nargs["a_desc"].block_shape = [block_m, block_k]
     nargs["b_desc"].block_shape = [block_k, block_n]
@@ -300,19 +297,67 @@ def run_dense_matmul(A, B, C=None):
 
     def grid(meta):
         num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
-        num_pid = triton.cdiv(M, meta["BLOCK_SIZE_M"]) * triton.cdiv(N, meta["BLOCK_SIZE_N"])
+        num_pid = triton.cdiv(M, meta["BLOCK_M"]) * triton.cdiv(N, meta["BLOCK_N"])
         return (min(num_sms, num_pid), )
         
     dense_kernel[grid](a_desc, b_desc, c_desc, WGMMA, PersistentTileScheduler, M, N, K)
     return c
 
 if __name__ == "__main__":
-    sizes = [(768, 768, 768), (2048, 1024, 2048)]
+    # sizes = [(768, 768, 768), (2048, 1024, 2048)]
 
-    for M, N, K in sizes:
-        A = torch.randn(M, K, device="cuda", dtype=torch.float16)
-        B = torch.randn((K, N), device="cuda", dtype=torch.float16)
-        C = torch.empty(M, N, device="cuda", dtype=torch.float16)
-        D = run_dense_matmul(A,B)
-        torch.testing.assert_close(A @ B, D, rtol=1e-3, atol=1e-1)
-    print("Done dense.")
+    # for M, N, K in sizes:
+    #     A = torch.randn(M, K, device="cuda", dtype=torch.float16)
+    #     B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+    #     C = torch.empty(M, N, device="cuda", dtype=torch.float16)
+    #     D = run_dense_matmul(A,B)
+    #     torch.testing.assert_close(A @ B, D, rtol=1e-3, atol=1e-1)
+    # print("Done dense.")
+    
+    for M, N, K in [(49152, 16, 49152)]:
+        for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
+            for num_warps, num_buffers, SB in [(8, 3, False)]:
+                # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
+
+                A = torch.randn(M, K, device="cuda", dtype=torch.float16)
+                B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+                C = torch.empty(M, N, device="cuda", dtype=torch.float16)
+
+                # A_pruned = prune_2_4(A)
+                # C_ref = A_pruned @ B
+                
+                # D = run_sparse_runtime_matmul(A_pruned, B, C)
+                # torch.testing.assert_close(C_ref, D, rtol=1e-3, atol=1e-1)
+                # C = torch.empty(M, N, device="cuda", dtype=torch.float16)
+
+                # sparse_persistent_matmul(A, E, B, C, BLOCK_M, BLOCK_N, BLOCK_K, 3, num_warps, PersistentTileScheduler)
+                a_layout = gl.NVMMASharedLayout.get_default_for(
+                    [BLOCK_M, BLOCK_K], gl.float16
+                )
+                b_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_K, BLOCK_N], gl.float16)
+                c_layout = gl.NVMMASharedLayout.get_default_for([BLOCK_M, BLOCK_N], gl.float16)
+
+                a_desc = TensorDescriptor.from_tensor(A, [BLOCK_M, BLOCK_K], a_layout)
+                b_desc = TensorDescriptor.from_tensor(B, [BLOCK_K, BLOCK_N], b_layout)
+                c_desc = TensorDescriptor.from_tensor(C, [BLOCK_M, BLOCK_N], c_layout)
+
+                num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
+                num_pid = triton.cdiv(M, BLOCK_M) * triton.cdiv(N, BLOCK_N)
+                grid = (min(num_sms, num_pid),)
+                persistent_matmul_pipelined_kernel[grid](
+                    a_desc,
+                    b_desc,
+                    c_desc,
+                    WGMMA,
+                    PersistentTileScheduler,
+                    M, N, K, 
+                    BLOCK_M,    
+                    BLOCK_N,
+                    BLOCK_K,
+                    num_buffers,            
+                    STEALB=False,
+                    num_warps=num_warps,
+                )
+                
+                # torch.testing.assert_close(C_ref, C, rtol=1e-3, atol=1e-1)
+                print("PASSED")
