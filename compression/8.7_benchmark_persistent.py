@@ -11,13 +11,15 @@ import matplotlib.pyplot as plt
 # 1. Choose a high-capacity path on your storage cluster
 SCRATCH_WORKSPACE = "compiler_scratch"
 
+JOB_ID = str(os.getpid())
+
 # 2. Force create the workspace structures
 os.makedirs(SCRATCH_WORKSPACE, exist_ok=True)
-os.makedirs(os.path.join(SCRATCH_WORKSPACE, "triton_cache"), exist_ok=True)
-os.makedirs(os.path.join(SCRATCH_WORKSPACE, "cuda_cache"), exist_ok=True)
+os.makedirs(os.path.join(SCRATCH_WORKSPACE, f"triton_cache_{JOB_ID}"), exist_ok=True)
+os.makedirs(os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}"), exist_ok=True)
 
 # 3. OVERRIDE TRITON (Must happen before 'import triton')
-os.environ["TRITON_CACHE_DIR"] = os.path.join(SCRATCH_WORKSPACE, "triton_cache")
+os.environ["TRITON_CACHE_DIR"] = os.path.join(SCRATCH_WORKSPACE, f"triton_cache_{JOB_ID}")
 
 # 4. OVERRIDE NVIDIA PTXAS TEMPORARY FILE DUMPS
 os.environ["TMPDIR"] = SCRATCH_WORKSPACE
@@ -25,8 +27,8 @@ os.environ["TMP"] = SCRATCH_WORKSPACE
 os.environ["TEMP"] = SCRATCH_WORKSPACE
 
 # 5. OVERRIDE PYTORCH / CUDA JIT BINARY PAYLOAD CACHES
-os.environ["CUDA_CACHE_PATH"] = os.path.join(SCRATCH_WORKSPACE, "cuda_cache")
-os.environ["TORCH_HOME"] = os.path.join(SCRATCH_WORKSPACE, "cuda_cache")
+os.environ["CUDA_CACHE_PATH"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
+os.environ["TORCH_HOME"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
 
 os.environ["CUDA_LAUNCH_BLOCKING"] = '1'
 
@@ -48,32 +50,35 @@ def benchmark_kernels(M, N, K):
     ms_dense, ms_runtime, ms_precomp = None, None, None
     tflops_dense, tflops_runtime, tflops_precomp = None, None, None
 
-    try:
-        ms_dense = triton.testing.do_bench_cudagraph(
-            lambda: dense_matmul(A, B, C)
-        )
-        tflops_dense = to_tflops(ms_dense)
-    except Exception as e:
-        print(f"dense failed, Error: {e}")
-        pass
+    # 1. DENSE
+    ms_dense = triton.testing.do_bench_cudagraph(
+        lambda: dense_matmul(A, B, C),
+        rep=1000
+    )
+    tflops_dense = to_tflops(ms_dense)
+    
+    torch.cuda.synchronize()
+    torch.cuda.empty_cache()
 
-    try:
-        ms_precomp = triton.testing.do_bench_cudagraph(
-            lambda: pre_compressed_sparse_matmul(A_comp, E, B, C)
-        )
-        tflops_precomp = to_tflops(ms_precomp)
-    except Exception as e:
-        print(f"Precomp failed. Error: {e}")
-        pass
+    # 2. PRECOMP
+    ms_precomp = triton.testing.do_bench_cudagraph(
+        lambda: pre_compressed_sparse_matmul(A_comp, E, B, C),
+        rep=1000
+    )
+    tflops_precomp = to_tflops(ms_precomp)
+    
+    torch.cuda.synchronize()
+    torch.cuda.empty_cache()
 
-    try:
-        ms_runtime = triton.testing.do_bench(
-            lambda: runtime_compression_sparse_matmul(A_pruned, B, C)
-        )
-        tflops_runtime = to_tflops(ms_runtime)
-    except Exception as e:
-        print(f"runtime failed. Error: {e}")
-        pass
+    # 3. RUNTIME
+    ms_runtime = triton.testing.do_bench_cudagraph(
+        lambda: runtime_compression_sparse_matmul(A_pruned, B, C),
+        rep=1000
+    )
+    tflops_runtime = to_tflops(ms_runtime)
+    
+    torch.cuda.synchronize()
+    torch.cuda.empty_cache()
 
     if ms_runtime is not None and ms_precomp is not None and ms_precomp > 0:
         overhead = (ms_runtime / ms_precomp - 1.0) * 100.0
@@ -227,7 +232,8 @@ if __name__ == "__main__":
         "7.4" : "./7.4_compression_pipeline_ptx_prototype.py",
         "7.5" : "./7.5_compression_pipeline_no_ldmatrix.py",
         "7.5.1" : "./7.5.1_compression_pipeline_ldmatrix.py",
-        "7.5.2" : "./7.5.2_compression_pipeline_different_compression.py"
+        "7.5.2" : "./7.5.2_compression_pipeline_different_compression.py",
+        "sanity_check" : "./sanity_check.py"
     }
     try:
         v7_path = paths[version]
