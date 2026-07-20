@@ -7,9 +7,6 @@ from triton.experimental.gluon import language as gl
 from triton.experimental.gluon.nvidia.hopper import TensorDescriptor
 from triton.language.core import _aggregate as aggregate
 
-from prune import prune_2_4
-from compress_2_4 import compress_dense_to_sparse
-
 from triton.experimental.gluon.language.nvidia.hopper import (
     tma,
     mbarrier,
@@ -20,6 +17,8 @@ from common import (
     WGMMA,
     GroupedPersistentTileScheduler
 )
+
+# Warp-Specialization
 
 @aggregate
 class SparsePartitionArgs:
@@ -80,6 +79,7 @@ class Counter:
         index = gl.where(rollover, 0, incr)
         phase = gl.where(rollover, self.phase ^ 1, self.phase)
         return Counter(index, phase, self.num_barriers)
+
 
 # ---------------------------------------------------------------------------
 # HELPER: Slices the accumulator registers along the N dimension
@@ -144,6 +144,31 @@ def store_acc_to_smem_subtile(p, mma, acc_state):
     return acc_state
 
 @gluon.jit
+def sparse_matmul_compute_iteration(p, load_state, mma, k_iter, outstanding_mmas: gl.constexpr):
+    mbarrier.wait(p.load_ready_bars.index(load_state.index), load_state.phase)
+
+    e_reg = mma.issue_metadata_load(p.e_bufs.index(load_state.index))
+    mma = mma.issue_async_sparse_mma(p.a_bufs.index(load_state.index), e_reg, p.b_bufs.index(load_state.index))
+
+    load_state = load_state.next()
+
+    mma = mma.wait_num_outstanding(outstanding_mmas)
+
+    mbarrier.arrive(p.load_empty_bars.index((k_iter - outstanding_mmas) % p.load_empty_bars.shape[0]),
+                    count=1, pred=k_iter>=outstanding_mmas)
+
+    return load_state, mma, k_iter + 1
+
+@gluon.jit
+def sparse_matmul_compute_drain(p, load_state, mma, k_iter, limit, current_mma: gl.constexpr, num_mmas: gl.constexpr):
+    if current_mma >= num_mmas: return load_state, mma, k_iter
+    else:
+        if k_iter >= limit: return load_state, mma, k_iter
+        else:
+            load_state, mma, k_iter = sparse_matmul_compute_iteration(p, load_state, mma, k_iter, num_mmas)
+            return sparse_matmul_compute_drain(p, load_state, mma, k_iter, limit, gl.constexpr(current_mma + 1), num_mmas)
+
+@gluon.jit
 def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
     BLOCK_M: gl.constexpr = p.a_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.b_desc.block_type.shape[1]
@@ -153,31 +178,28 @@ def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
 
     load_state = Counter.create(0, p.load_empty_bars.shape[0])
     acc_state = Counter.create(1, p.acc_empty_bars.shape[0])
-    release_state = Counter.create(0, p.load_empty_bars.shape[0])
 
     scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
 
-    outstanding_mmas: gl.constexpr = 0
-    global_k_iter = 0
+    num_mmas: gl.constexpr = 2
+    k_iter = 0
 
     for _ in range(scheduler.get_num_tiles()):
         mma = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps, sparse=True)
 
-        for _ in range(0, K, BLOCK_K):
-            mbarrier.wait(p.load_ready_bars.index(load_state.index), load_state.phase)
+        total_k_iters = (K + BLOCK_K - 1) // BLOCK_K
 
-            # Keep a shallow async pipeline instead of fully serializing each k-step.
-            mma = mma.wait_num_outstanding(outstanding_mmas)
-            mma = mma.issue_async_sparse_mma(p.a_bufs.index(load_state.index), p.e_bufs.index(load_state.index), p.b_bufs.index(load_state.index))
+        # Statically Unrolled
+        for _ in range(total_k_iters // num_mmas):
+            for _ in gl.static_range(num_mmas):
+                load_state, mma, k_iter = sparse_matmul_compute_iteration(p, load_state, mma, k_iter, num_mmas - 1)
 
-            # If we've passed the outstanding limit, the WGMMA instruction from
-            # (outstanding_mmas + 1) iterations ago is guaranteed to have finished.
-            if global_k_iter >= outstanding_mmas + 1:
-                mbarrier.arrive(p.load_empty_bars.index(release_state.index), count=1)
-                release_state = release_state.next()
-
-            load_state = load_state.next()
-            global_k_iter += 1
+        # Drain
+        load_state, mma, k_iter = sparse_matmul_compute_drain(
+            p, load_state, mma, k_iter,
+            (total_k_iters % num_mmas) + k_iter,
+            0, num_mmas - 1
+        )
 
         acc_state = store_acc_to_smem_subtile(p, mma, acc_state)
 
@@ -220,9 +242,9 @@ def sparse_matmul_store_partition(p, SchedulerImpl: gl.constexpr):
 # ---------------------------------------------------------------------------
 @gluon.jit
 def sparse_matmul_warp_specialized_kernel(a_desc, e_desc, b_desc, c_desc, SchedulerImpl: gl.constexpr,
-                                   M, N, K, BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
-                                   num_buffers: gl.constexpr, SUBTILE_FACTOR: gl.constexpr,
-                                   num_warps: gl.constexpr):
+                                          M, N, K, BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K,
+                                          num_buffers: gl.constexpr, SUBTILE_FACTOR: gl.constexpr,
+                                          num_warps: gl.constexpr):
     dtype: gl.constexpr = a_desc.dtype
 
     a_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + a_desc.block_type.shape, a_desc.layout)
@@ -243,13 +265,10 @@ def sparse_matmul_warp_specialized_kernel(a_desc, e_desc, b_desc, c_desc, Schedu
         mbarrier.init(acc_empty_bars.index(i), count=1)
         mbarrier.init(acc_ready_bars.index(i), count=1)
 
-    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, num_warps: {num_warps}, buf: {num_buffers}, SF: {SUBTILE_FACTOR}")
-
-
     # Pass num_warps straight into the arguments so the layout generator gets it
     p = SparsePartitionArgs(a_desc, e_desc, b_desc, c_desc, a_bufs, e_bufs, b_bufs,
-                      load_empty_bars, load_ready_bars,
-                      acc_bufs, acc_empty_bars, acc_ready_bars, SUBTILE_FACTOR, num_warps)
+                            load_empty_bars, load_ready_bars,
+                            acc_bufs, acc_empty_bars, acc_ready_bars, SUBTILE_FACTOR, num_warps)
 
     gl.warp_specialize([
         (sparse_matmul_compute_partition, (p, SchedulerImpl)),
@@ -261,11 +280,11 @@ def sparse_matmul_get_configs(pre_hook=None): # TODO: Fix the guards
     def valid(BM, BN, BK, warps, buffers, SF):
         # Shared Memory
         smem_bytes = (
-                 (buffers * BM * BK) +               # Compressed A
-                 (buffers * BM * BK // 8) +          # Metadata E
-                 (buffers * BK * BN * 2) +           # Dense B
-                 (4 * BM * (BN // SF))               # Accumulator C (2 buffers * 2 bytes)
-         ) + (16 * buffers) + 32                     # MBarriers
+                             (buffers * BM * BK) +               # Compressed A
+                             (buffers * BM * BK // 8) +          # Metadata E
+                             (buffers * BK * BN * 2) +           # Dense B
+                             (4 * BM * (BN // SF))               # Accumulator C (2 buffers * 2 bytes)
+                     ) + (16 * buffers) + 32                     # MBarriers
 
         if smem_bytes > 232448: return False
 
@@ -367,12 +386,14 @@ def sparse_matmul_tma_set_block_size_hook(nargs):
     nargs["b_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["b_desc"].block_shape, gl.float16)
     nargs["c_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["c_desc"].block_shape, gl.float16)
 
+
 sparse_ws_kernel = triton.autotune(
     configs=sparse_matmul_get_configs(pre_hook=sparse_matmul_tma_set_block_size_hook),
     key=["M", "N", "K"],
     do_bench = lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
         kernel_call, quantiles=quantiles),
 )(sparse_matmul_warp_specialized_kernel)
+
 
 def run_sparse_ws_matmul(A, E, B):
     M, N, K = A.shape[0], B.shape[1], B.shape[0]
@@ -395,40 +416,22 @@ def run_sparse_ws_matmul(A, E, B):
     return c
 
 if __name__ == "__main__":
-    # 1. Setup dimensions
-    M, N, K = 4096, 4096, 4096
-    
-    torch.manual_seed(0)
-    # Initialize matrices
-    A = torch.randn((M, K), device="cuda", dtype=torch.float16)
-    B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+    sizes = [
+        (768, 768, 768),
+        (768, 768, 896),
+        (2048, 1024, 2048)
+    ]
 
-    A_pruned = prune_2_4(A)
-    A, E = compress_dense_to_sparse(A_pruned)
-    E = E.view(M // 16, K)
+    from compress_2_4 import *
+    from prune import *
 
-    print(f"Running dense warp-specialized matmul for shape M={M}, N={N}, K={K}...")
-
-    # 2. Correctness check
-    c_out = run_sparse_ws_matmul(A, E, B)
-    c_ref = torch.matmul(A_pruned, B)
-
-    max_diff = torch.max(torch.abs(c_out - c_ref))
-    print(f"Max difference between PyTorch and Triton: {max_diff:.4f}")
-    
-    if max_diff < 1.0:
-        print("✅ Correctness check passed!")
-    else:
-        print("❌ Correctness check failed!")
-
-    # 3. Performance Benchmark
-    print("Benchmarking performance...")
-    def perf():
-        run_sparse_ws_matmul(A, E, B)
-        
-    # Using triton's built-in benchmark utility
-    ms = triton.testing.do_bench(perf)
-    
-    # Calculate TFLOPS: 2 * M * N * K operations per matrix multiplication
-    tflops = 2 * M * N * K / (ms * 1e-3) / 1e12
-    print(f"⚡ Performance: {tflops:.2f} TFLOPS ({ms:.3f} ms)")
+    for M, N, K in sizes:
+        A = torch.randn(M, K, device="cuda", dtype=torch.float16)
+        B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+        C = torch.empty(M, N, device="cuda", dtype=torch.float16)
+        A_pruned = prune_2_4(A)
+        A, E = compress_dense_to_sparse(A_pruned)
+        E = E.view(M // 16, K)
+        D = run_sparse_ws_matmul(A, E, B)
+        torch.testing.assert_close(A_pruned @ B, D, rtol=1e-3, atol=1e-1)
+    print("Done sparse.")
