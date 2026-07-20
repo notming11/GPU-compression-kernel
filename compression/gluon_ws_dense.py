@@ -18,6 +18,10 @@ from common import (
     GroupedPersistentTileScheduler
 )
 
+# ---------------------------------------------------------------------------
+# SHARED HELPERS & ARGS
+# ---------------------------------------------------------------------------
+
 @aggregate
 class PartitionArgs:
     a_desc: tma.tensor_descriptor
@@ -74,9 +78,6 @@ class Counter:
         phase = gl.where(rollover, self.phase ^ 1, self.phase)
         return Counter(index, phase, self.num_barriers)
 
-# ---------------------------------------------------------------------------
-# HELPER: Slices the accumulator registers along the N dimension
-# ---------------------------------------------------------------------------
 @gluon.jit
 def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
     split_count: gl.constexpr = SUBTILE_FACTOR.bit_length() - 1  # log2
@@ -85,16 +86,31 @@ def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
         next_xs = ()
         for j in gl.static_range(len(xs)):
             x = xs[j]
-            # Reshape to (M, 2, N//2) then permute so that tensor elements
-            # remain contiguous along N.
-            # gl.static_print(x.type.layout)
             next_xs += x.reshape(x.shape[0], 2, x.shape[1] // 2).permute(0, 2, 1).split()
         xs = next_xs
     return xs
 
+@gluon.jit
+def store_acc_to_smem_subtile(p, mma, acc_state):
+    mma = mma.wait_num_outstanding(0)
+    acc, mma = mma.take_result()
+    accs = _split_n(acc, p.SUBTILE_FACTOR)
+
+    for i in gl.static_range(p.SUBTILE_FACTOR):
+        mbarrier.wait(p.acc_empty_bars.index(acc_state.index), acc_state.phase)
+        c_buf = p.acc_bufs.index(acc_state.index)
+
+        c_buf.store(accs[i].to(p.c_desc.dtype))
+        fence_async_shared()
+        mbarrier.arrive(p.acc_ready_bars.index(acc_state.index), count=1)
+        acc_state = acc_state.next()
+
+    return acc_state
+
 # ---------------------------------------------------------------------------
-# PARTITIONS
+# DENSE PARTITIONS
 # ---------------------------------------------------------------------------
+
 @gluon.jit
 def matmul_load_partition(p, SchedulerImpl: gl.constexpr):
     BLOCK_M: gl.constexpr = p.a_desc.block_type.shape[0]
@@ -120,23 +136,6 @@ def matmul_load_partition(p, SchedulerImpl: gl.constexpr):
             state = state.next()
 
 @gluon.jit
-def store_acc_to_smem_subtile(p, mma, acc_state):
-    mma = mma.wait_num_outstanding(0)
-    acc, mma = mma.take_result()
-    accs = _split_n(acc, p.SUBTILE_FACTOR)
-
-    for i in gl.static_range(p.SUBTILE_FACTOR):
-        mbarrier.wait(p.acc_empty_bars.index(acc_state.index), acc_state.phase)
-        c_buf = p.acc_bufs.index(acc_state.index)
-
-        c_buf.store(accs[i].to(p.c_desc.dtype))
-        fence_async_shared()
-        mbarrier.arrive(p.acc_ready_bars.index(acc_state.index), count=1)
-        acc_state = acc_state.next()
-
-    return acc_state
-
-@gluon.jit
 def matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
     BLOCK_M: gl.constexpr = p.a_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.b_desc.block_type.shape[1]
@@ -157,16 +156,10 @@ def matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
 
         for _ in range(0, K, BLOCK_K):
             mbarrier.wait(p.load_ready_bars.index(load_state.index), load_state.phase)
-
-            # Keep a shallow async pipeline instead of fully serializing each k-step.
-
             mma = mma.issue_async_mma(p.a_bufs.index(load_state.index), p.b_bufs.index(load_state.index))
-
             load_state = load_state.next()
             mma = mma.wait_num_outstanding(outstanding_mmas)
 
-            # If we've passed the outstanding limit, the WGMMA instruction from
-            # (outstanding_mmas + 1) iterations ago is guaranteed to have finished.
             mbarrier.arrive(p.load_empty_bars.index((k_iter - outstanding_mmas) % p.load_empty_bars.shape[0]),
                             count=1, pred=k_iter>=outstanding_mmas)
 
@@ -197,7 +190,6 @@ def matmul_store_partition(p, SchedulerImpl: gl.constexpr):
 
             tma.async_copy_shared_to_global(p.c_desc, [off_m, off_n + i * SPLIT_N], c_buf)
 
-            # Do not stall on the warmup iterations; release buffers once stores age out.
             if store_iter >= outstanding_stores:
                 tma.store_wait(outstanding_stores)
                 empty_idx = (store_iter - outstanding_stores) % num_buffers
@@ -235,7 +227,6 @@ def matmul_warp_specialized_kernel(a_desc, b_desc, c_desc, SchedulerImpl: gl.con
         mbarrier.init(acc_empty_bars.index(i), count=1)
         mbarrier.init(acc_ready_bars.index(i), count=1)
 
-    # Pass num_warps straight into the arguments so the layout generator gets it
     p = PartitionArgs(a_desc, b_desc, c_desc, a_bufs, b_bufs,
                       load_empty_bars, load_ready_bars,
                       acc_bufs, acc_empty_bars, acc_ready_bars, SUBTILE_FACTOR, num_warps)
@@ -246,21 +237,16 @@ def matmul_warp_specialized_kernel(a_desc, b_desc, c_desc, SchedulerImpl: gl.con
         (matmul_store_partition, (p, SchedulerImpl)),
     ], [1, 1], [24, 24])
 
+
 def matmul_get_configs(pre_hook=None):
     def valid(BM, BN, BK, warps, buffers, SF):
-        # Shared Memory
         smem_bytes = 2 * (
                 (buffers * BM * BK) +
                 (buffers * BK * BN) +
                 (2 * BM * (BN // SF))
         ) + (16 * buffers) + 32
-
         if smem_bytes > 232448: return False
 
-        # if (BN // SF) < 32:
-        #     return False
-
-        # 1. Simulate get_warps_per_cta to find the physical N-axis distribution
         warps_m = 4
         warps_n = 1
         m = 16
@@ -270,57 +256,16 @@ def matmul_get_configs(pre_hook=None):
             else:
                 warps_n *= 2
 
-        # Prevent SPMD splitting across physical Warp Group boundaries.
-        # If warps_n > 1, WG0 owns the left half and WG1 owns the right half.
-        # Triton's split() cannot divide a tensor where the halves belong to different warps.
-        if SF > 1 and warps_n > 1:
-            return False
-
-        # Ensure the subtile is physically large enough to split
-        # Hopper WGMMA registers require at least 16 columns to give 2 elements per thread
-        if (BN // SF) < 16:
-            return False
-
-        # STEALB
-        # if SB and 2 * BN * BK < BM * BN: return False
-        # if SB and BM > BK: return False
-        #
-        # if (BM * BN) >= 65536 and warps < 12:  # 256x256 blocks require at least 3 warp groups
-        #     return False
-        # if (BM * BN) <= 4096 and warps > 8:    # Tiny blocks will starve 12 or 16 warps
-        #     return False
-        #
-        # elements_per_thread = (BM * BN) / (warps * 32)
-        # if elements_per_thread > 256:
-        #     return False
-
-        if BM < warps_m * 16 or BN < warps_n * 16:
-            return False
-
-        # REGISTER EXHAUSTION:
-        # elements_per_thread = (BM * BN) / (warps * 32)
-        # if elements_per_thread > 256:
-        #     return False
+        if SF > 1 and warps_n > 1: return False
+        if (BN // SF) < 16: return False
+        if BM < warps_m * 16 or BN < warps_n * 16: return False
 
         elements_per_thread = (BM * BN) / (warps * 32)
-
-        # Add a safe buffer (~48) for TMA pointers, loop state, and layout logic
         required_regs = elements_per_thread + 48
-
-        # H100 absolute physical limits:
-        # 65,536 registers per SM, divided evenly among block threads
         max_regs_per_thread = 65536 // (warps * 32)
-
-        # Hardware caps any single thread to 255 registers
         max_regs_per_thread = min(255, max_regs_per_thread)
-
-        if required_regs > max_regs_per_thread:
-            return False
-
-        # WARP STARVATION:
-        if elements_per_thread < 16:
-            return False
-
+        if required_regs > max_regs_per_thread: return False
+        if elements_per_thread < 16: return False
         return True
 
     return [
@@ -336,11 +281,11 @@ def matmul_get_configs(pre_hook=None):
             pre_hook=pre_hook,
         )
         for BM in (64, 128, 256,)
-        for BN in (64, 128, 256,)#(64, 128, 256)
-        for BK in (64, 128, 256,)#(64, 128, 256)
-        for warps in (4, 8, 16)#(4, 8, 16)
-        for buffers in (3, 4, 5, 6, 7)#(3, 4, 5, 6)
-        for SF in (1, 2, 4, 8)#(2, 4, 8)
+        for BN in (64, 128, 256,)
+        for BK in (64, 128, 256,)
+        for warps in (4, 8, 16)
+        for buffers in (3, 4, 5, 6, 7)
+        for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, buffers, SF)
     ]
 
@@ -365,6 +310,7 @@ ws_kernel = triton.autotune(
         kernel_call, quantiles=quantiles),
 )(matmul_warp_specialized_kernel)
 
+
 def run_ws_matmul(A, B):
     M, N, K = A.shape[0], B.shape[1], B.shape[0]
 
@@ -384,36 +330,15 @@ def run_ws_matmul(A, B):
     return c
 
 if __name__ == "__main__":
-    # 1. Setup dimensions
-    M, N, K = 4096, 4096, 4096
-    
-    torch.manual_seed(0)
-    # Initialize matrices
-    A = torch.randn((M, K), device="cuda", dtype=torch.float16)
-    B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+    sizes = [
+        (768, 768, 768),
+        (768, 768, 896),
+        (2048, 1024, 2048)
+    ]
 
-    print(f"Running dense warp-specialized matmul for shape M={M}, N={N}, K={K}...")
-
-    # 2. Correctness check
-    c_out = run_ws_matmul(A, B)
-    c_ref = torch.matmul(A, B)
-
-    max_diff = torch.max(torch.abs(c_out - c_ref))
-    print(f"Max difference between PyTorch and Triton: {max_diff:.4f}")
-    
-    if max_diff < 1.0:
-        print("✅ Correctness check passed!")
-    else:
-        print("❌ Correctness check failed!")
-
-    # 3. Performance Benchmark
-    print("Benchmarking performance...")
-    def perf():
-        run_ws_matmul(A, B)
-        
-    # Using triton's built-in benchmark utility
-    ms = triton.testing.do_bench(perf)
-    
-    # Calculate TFLOPS: 2 * M * N * K operations per matrix multiplication
-    tflops = 2 * M * N * K / (ms * 1e-3) / 1e12
-    print(f"⚡ Performance: {tflops:.2f} TFLOPS ({ms:.3f} ms)")
+    for M, N, K in sizes:
+        A = torch.randn(M, K, device="cuda", dtype=torch.float16)
+        B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+        D = run_ws_matmul(A,B)
+        torch.testing.assert_close(A @ B, D, rtol=1e-3, atol=1e-1)
+    print("Done dense.")

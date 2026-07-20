@@ -143,7 +143,8 @@ def issue_sparse_mma_stealb(consumer, mma, bars, a_bufs, e_bufs, b_bufs, stealb:
     consumer += 1
     mbarrier.wait(bars.index(index), phase)
     mma = mma.wait_num_outstanding(0)
-    mma = mma.issue_async_sparse_mma(a_bufs.index(index), e_bufs.index(index), b_bufs.index(b_index))
+    e_reg = mma.issue_metadata_load(e_bufs.index(index))
+    mma = mma.issue_async_sparse_mma(a_bufs.index(index), e_reg, b_bufs.index(b_index))
     return consumer, mma
 
 @gluon.jit
