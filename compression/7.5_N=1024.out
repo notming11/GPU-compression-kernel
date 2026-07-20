@@ -1,0 +1,874 @@
+Sun Jul 19 22:43:19 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.159.04             Driver Version: 580.159.04     CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 80GB HBM3          Off |   00000000:CB:00.0 Off |                    0 |
+| N/A   42C    P0             73W /  700W |       0MiB /  81559MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+CUDA Available: True
+Device Count: 1
+/usr/bin/rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+rm: cannot remove '/usr/local/cuda/compat/lib': Read-only file system
+start 49152-1024-49152
+finish 49152-1024-49152, (1/169) -> Dense: 634.2399189774756, Precomp: 919.1694991026704, Runtime: 628.7358243914008
+  Dense   best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-49152
+finish 32768-1024-49152, (2/169) -> Dense: 607.9868578753858, Precomp: 920.0781840453433, Runtime: 629.8296993929268
+  Dense   best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-32768
+finish 49152-1024-32768, (3/169) -> Dense: 616.0653987004413, Precomp: 931.4062488143247, Runtime: 635.0915185862455
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-49152
+finish 24576-1024-49152, (4/169) -> Dense: 620.8482033674197, Precomp: 922.4382580755465, Runtime: 633.6967018982713
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-24576
+finish 49152-1024-24576, (5/169) -> Dense: 614.4952059691087, Precomp: 898.9505037180379, Runtime: 634.1263735492324
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-32768
+finish 32768-1024-32768, (6/169) -> Dense: 617.7264326527907, Precomp: 929.369386879983, Runtime: 634.0305376314619
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-49152
+finish 16384-1024-49152, (7/169) -> Dense: 623.6290141300658, Precomp: 928.9611959835272, Runtime: 638.8933483509876
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-32768
+finish 24576-1024-32768, (8/169) -> Dense: 619.0719330096401, Precomp: 924.3438576204436, Runtime: 639.2435462322544
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-24576
+finish 32768-1024-24576, (9/169) -> Dense: 616.942040989184, Precomp: 915.6753911710291, Runtime: 636.1181443693789
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-16384
+finish 49152-1024-16384, (10/169) -> Dense: 614.3392091586825, Precomp: 913.0014044668555, Runtime: 636.9868947142836
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-49152
+finish 12288-1024-49152, (11/169) -> Dense: 603.4816609992206, Precomp: 923.9414613254091, Runtime: 638.6392795584653
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-24576
+finish 24576-1024-24576, (12/169) -> Dense: 617.8284485961665, Precomp: 918.1146112657498, Runtime: 638.4441456166444
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-12288
+finish 49152-1024-12288, (13/169) -> Dense: 615.4042098812271, Precomp: 911.6635678285951, Runtime: 637.2063517691619
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-32768
+finish 16384-1024-32768, (14/169) -> Dense: 622.0202085526901, Precomp: 922.9049419451468, Runtime: 640.816857857623
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-16384
+finish 32768-1024-16384, (15/169) -> Dense: 614.6531785514261, Precomp: 911.4465786723975, Runtime: 634.9237215442892
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 8192-1024-49152
+finish 8192-1024-49152, (16/169) -> Dense: 620.7212326413483, Precomp: 923.0748733081479, Runtime: 640.7024633832611
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-32768
+finish 12288-1024-32768, (17/169) -> Dense: 621.421014691217, Precomp: 920.234562671793, Runtime: 638.8551269237223
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-24576
+finish 16384-1024-24576, (18/169) -> Dense: 600.8591224907957, Precomp: 918.4115112776561, Runtime: 640.0609971635059
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-16384
+finish 24576-1024-16384, (19/169) -> Dense: 616.0922527887857, Precomp: 913.8877072281032, Runtime: 637.4003839115765
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-12288
+finish 32768-1024-12288, (20/169) -> Dense: 614.5501257541105, Precomp: 907.0894756686807, Runtime: 633.952578185575
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-8192
+finish 49152-1024-8192, (21/169) -> Dense: 609.9320145775283, Precomp: 901.0651240643084, Runtime: 632.2290707354169
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-49152
+finish 6144-1024-49152, (22/169) -> Dense: 578.2482571921128, Precomp: 888.1452414658269, Runtime: 529.0602771218101
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-24576
+finish 12288-1024-24576, (23/169) -> Dense: 609.5980558602715, Precomp: 918.3348688600313, Runtime: 636.8941080615912
+  Dense   best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-12288
+finish 24576-1024-12288, (24/169) -> Dense: 600.3582892993927, Precomp: 908.5331834085893, Runtime: 635.9371878575769
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-6144
+finish 49152-1024-6144, (25/169) -> Dense: 606.906552843763, Precomp: 889.4114328715202, Runtime: 629.2690928497854
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 8192-1024-32768
+finish 8192-1024-32768, (26/169) -> Dense: 604.1170430954036, Precomp: 924.7881059076057, Runtime: 639.6319076489298
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-16384
+finish 16384-1024-16384, (27/169) -> Dense: 613.4607719464148, Precomp: 908.4066284334374, Runtime: 633.0423077232523
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-8192
+finish 32768-1024-8192, (28/169) -> Dense: 606.2147542631249, Precomp: 898.5014556271602, Runtime: 629.0234858294751
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 4096-1024-49152
+finish 4096-1024-49152, (29/169) -> Dense: 623.6943975689351, Precomp: 926.6479397372495, Runtime: 641.3493970212822
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-32768
+finish 6144-1024-32768, (30/169) -> Dense: 576.1976204817092, Precomp: 883.3486533684454, Runtime: 574.9640982296254
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 8192-1024-24576
+finish 8192-1024-24576, (31/169) -> Dense: 608.3104336974229, Precomp: 919.570552215362, Runtime: 639.5169792225097
+  Dense   best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-16384
+finish 12288-1024-16384, (32/169) -> Dense: 600.4493484676925, Precomp: 914.233014756198, Runtime: 636.555288994312
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-12288
+finish 16384-1024-12288, (33/169) -> Dense: 616.451648193966, Precomp: 910.6727919517618, Runtime: 635.9314697023198
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-8192
+finish 24576-1024-8192, (34/169) -> Dense: 610.9491126371192, Precomp: 900.9274777640549, Runtime: 630.1278178025284
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-6144
+finish 32768-1024-6144, (35/169) -> Dense: 590.4620435304245, Precomp: 894.3192861350147, Runtime: 625.7727616860253
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-4096
+finish 49152-1024-4096, (36/169) -> Dense: 602.2310809540508, Precomp: 880.3839250776293, Runtime: 619.6806867178653
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 3072-1024-49152
+finish 3072-1024-49152, (37/169) -> Dense: 520.3877219723798, Precomp: 768.1940382003106, Runtime: 530.1701598897013
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-24576
+finish 6144-1024-24576, (38/169) -> Dense: 575.8295642179623, Precomp: 869.1994962107802, Runtime: 526.6161650691248
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-12288
+finish 12288-1024-12288, (39/169) -> Dense: 614.1613265941862, Precomp: 908.8602409729476, Runtime: 636.6675002689178
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-6144
+finish 24576-1024-6144, (40/169) -> Dense: 607.6157596986583, Precomp: 864.8116108374774, Runtime: 626.7211170463137
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-3072
+finish 49152-1024-3072, (41/169) -> Dense: 590.4216372027249, Precomp: 865.1509743176662, Runtime: 611.181965124995
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 4096-1024-32768
+finish 4096-1024-32768, (42/169) -> Dense: 621.2977981283715, Precomp: 924.1488250723069, Runtime: 640.3663974255754
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 8192-1024-16384
+finish 8192-1024-16384, (43/169) -> Dense: 618.7051449978039, Precomp: 916.2777098678131, Runtime: 637.4074774985149
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-8192
+finish 16384-1024-8192, (44/169) -> Dense: 610.8177147648162, Precomp: 901.6515409905428, Runtime: 631.2878050892789
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-4096
+finish 32768-1024-4096, (45/169) -> Dense: 598.8956289510957, Precomp: 879.6788804292274, Runtime: 617.863247506213
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 2048-1024-49152
+finish 2048-1024-49152, (46/169) -> Dense: 578.6258640674718, Precomp: 885.675177077885, Runtime: 582.9070936837697
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-32768
+finish 3072-1024-32768, (47/169) -> Dense: 518.8013807583015, Precomp: 767.4068788254638, Runtime: 529.2546312422235
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 4096-1024-24576
+finish 4096-1024-24576, (48/169) -> Dense: 603.2137296804545, Precomp: 905.5773278346852, Runtime: 640.5751947688289
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-16384
+finish 6144-1024-16384, (49/169) -> Dense: 571.0145027932084, Precomp: 870.0062916766248, Runtime: 526.7054763620607
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 8192-1024-12288
+finish 8192-1024-12288, (50/169) -> Dense: 615.1308561991143, Precomp: 909.1015966102367, Runtime: 632.0105739142782
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-8192
+finish 12288-1024-8192, (51/169) -> Dense: 611.7575091004694, Precomp: 902.8888041371844, Runtime: 629.2880732747695
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-6144
+finish 16384-1024-6144, (52/169) -> Dense: 591.8371449775595, Precomp: 896.0935878466029, Runtime: 628.7594826269442
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-4096
+finish 24576-1024-4096, (53/169) -> Dense: 600.5035540756923, Precomp: 878.7720328687486, Runtime: 620.3140807410788
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-3072
+finish 32768-1024-3072, (54/169) -> Dense: 592.0180342324783, Precomp: 866.8718629397673, Runtime: 613.2073659277887
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-2048
+finish 49152-1024-2048, (55/169) -> Dense: 580.0873057492418, Precomp: 841.9160108848087, Runtime: 599.611807721025
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 1536-1024-49152
+finish 1536-1024-49152, (56/169) -> Dense: 499.2125901535163, Precomp: 726.3656096754523, Runtime: 469.64904656451245
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': True}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-24576
+finish 3072-1024-24576, (57/169) -> Dense: 515.9729806939818, Precomp: 760.7776773534149, Runtime: 527.2485400822333
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-12288
+finish 6144-1024-12288, (58/169) -> Dense: 568.2558668070673, Precomp: 813.7162406678815, Runtime: 524.416456902498
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-6144
+finish 12288-1024-6144, (59/169) -> Dense: 588.4078835283768, Precomp: 892.6120566238301, Runtime: 624.9326078783079
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-3072
+finish 24576-1024-3072, (60/169) -> Dense: 592.5107214639274, Precomp: 864.2072472011586, Runtime: 611.460097421013
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-1536
+finish 49152-1024-1536, (61/169) -> Dense: 566.3708138107897, Precomp: 814.5589621648579, Runtime: 585.1139902573104
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 2048-1024-32768
+finish 2048-1024-32768, (62/169) -> Dense: 574.4044560411731, Precomp: 880.2132844521583, Runtime: 540.0158902305731
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+start 4096-1024-16384
+finish 4096-1024-16384, (63/169) -> Dense: 618.5418462370451, Precomp: 915.4537334754257, Runtime: 633.4426798927118
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 8192-1024-8192
+finish 8192-1024-8192, (64/169) -> Dense: 592.4039137437318, Precomp: 897.9232298108242, Runtime: 631.3407411651442
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-4096
+finish 16384-1024-4096, (65/169) -> Dense: 579.8175135924299, Precomp: 877.9098811805393, Runtime: 616.5539902119993
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-2048
+finish 32768-1024-2048, (66/169) -> Dense: 562.5323073099585, Precomp: 837.732195434974, Runtime: 597.645268655247
+  Dense   best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 1024-1024-49152
+finish 1024-1024-49152, (67/169) -> Dense: 522.7007714933417, Precomp: 745.0039114578773, Runtime: 429.5019978225857
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 6, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-32768
+finish 1536-1024-32768, (68/169) -> Dense: 497.1179151235428, Precomp: 729.3020869779313, Runtime: 471.2401331935969
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-24576
+finish 2048-1024-24576, (69/169) -> Dense: 568.1527055351796, Precomp: 870.6626768268171, Runtime: 579.0839319966401
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-16384
+finish 3072-1024-16384, (70/169) -> Dense: 515.3774806577206, Precomp: 758.951208281753, Runtime: 526.8084966636306
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 4096-1024-12288
+finish 4096-1024-12288, (71/169) -> Dense: 595.2013481816908, Precomp: 909.5312231336419, Runtime: 631.7632452650864
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-8192
+finish 6144-1024-8192, (72/169) -> Dense: 564.4830054961036, Precomp: 843.3636045098025, Runtime: 565.2351028721755
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 8192-1024-6144
+finish 8192-1024-6144, (73/169) -> Dense: 608.5752540989145, Precomp: 891.946852893426, Runtime: 626.5196456907173
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-4096
+finish 12288-1024-4096, (74/169) -> Dense: 581.7410951453884, Precomp: 875.4002274038119, Runtime: 618.8181083989966
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-3072
+finish 16384-1024-3072, (75/169) -> Dense: 591.1849123314096, Precomp: 861.9955168478763, Runtime: 610.3022980379643
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-2048
+finish 24576-1024-2048, (76/169) -> Dense: 557.2899289987016, Precomp: 829.0947557003357, Runtime: 599.1449293705972
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-1536
+finish 32768-1024-1536, (77/169) -> Dense: 543.3012427483459, Precomp: 759.2698764003228, Runtime: 585.1986090425677
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=16
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-1024
+finish 49152-1024-1024, (78/169) -> Dense: 542.0501917953197, Precomp: 764.4084519861773, Runtime: 557.9323243310808
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 768-1024-49152
+finish 768-1024-49152, (79/169) -> Dense: 455.4908010642754, Precomp: 659.721615943864, Runtime: 353.75559752675184
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-24576
+finish 1536-1024-24576, (80/169) -> Dense: 494.0158788152858, Precomp: 721.2021517372119, Runtime: 468.88831157957844
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-12288
+finish 3072-1024-12288, (81/169) -> Dense: 512.4952611629705, Precomp: 731.5513508555628, Runtime: 523.7341312609511
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 6, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-6144
+finish 6144-1024-6144, (82/169) -> Dense: 560.9481494907902, Precomp: 832.3316307309422, Runtime: 561.5550544017071
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 12288-1024-3072
+finish 12288-1024-3072, (83/169) -> Dense: 589.4398409223643, Precomp: 829.4137981932842, Runtime: 610.9083533951633
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-1536
+finish 24576-1024-1536, (84/169) -> Dense: 532.8106003479687, Precomp: 805.0181948124829, Runtime: 584.7269780994274
+  Dense   best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 49152-1024-768
+finish 49152-1024-768, (85/169) -> Dense: 517.9717144689419, Precomp: 715.7286484276516, Runtime: 533.9445042919415
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 1024-1024-32768
+finish 1024-1024-32768, (86/169) -> Dense: 523.4366922322382, Precomp: 766.6800258342909, Runtime: 428.20621939522175
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-16384
+finish 2048-1024-16384, (87/169) -> Dense: 551.1708380376491, Precomp: 856.3438967300043, Runtime: 572.1200459892578
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 4096-1024-8192
+finish 4096-1024-8192, (88/169) -> Dense: 607.59827973318, Precomp: 869.2349166248749, Runtime: 624.2385652671197
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 8192-1024-4096
+finish 8192-1024-4096, (89/169) -> Dense: 594.7003463569995, Precomp: 867.7887100837478, Runtime: 614.9226477001496
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-2048
+finish 16384-1024-2048, (90/169) -> Dense: 574.30400265776, Precomp: 831.5731511010204, Runtime: 595.828146463851
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-1024
+finish 32768-1024-1024, (91/169) -> Dense: 538.2133977597616, Precomp: 754.1073904719238, Runtime: 554.0082951341737
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 768-1024-32768
+finish 768-1024-32768, (92/169) -> Dense: 451.1197935761975, Precomp: 641.9855582726598, Runtime: 351.5385549617682
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1024-1024-24576
+finish 1024-1024-24576, (93/169) -> Dense: 500.8816061671146, Precomp: 760.7247777143575, Runtime: 423.5579116757371
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-16384
+finish 1536-1024-16384, (94/169) -> Dense: 489.53957635514274, Precomp: 690.0255279456683, Runtime: 469.08421869550006
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 6, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-12288
+finish 2048-1024-12288, (95/169) -> Dense: 554.5067197930051, Precomp: 845.0332517179125, Runtime: 565.868253900463
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-8192
+finish 3072-1024-8192, (96/169) -> Dense: 507.115320242123, Precomp: 738.5571000257555, Runtime: 518.5159922591313
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 4096-1024-6144
+finish 4096-1024-6144, (97/169) -> Dense: 580.2166639785783, Precomp: 835.6692662818559, Runtime: 619.8657298505723
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-4096
+finish 6144-1024-4096, (98/169) -> Dense: 550.0335143725861, Precomp: 824.8381166550612, Runtime: 550.538157994818
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 8192-1024-3072
+finish 8192-1024-3072, (99/169) -> Dense: 586.2243006358033, Precomp: 842.5194550874176, Runtime: 606.4099481130198
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-2048
+finish 12288-1024-2048, (100/169) -> Dense: 552.2333186408359, Precomp: 812.5854528123011, Runtime: 594.7615781898978
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-1536
+finish 16384-1024-1536, (101/169) -> Dense: 538.0879772342444, Precomp: 796.3390724797755, Runtime: 579.9032325171509
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=16
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-1024
+finish 24576-1024-1024, (102/169) -> Dense: 537.2085870508674, Precomp: 748.9331459171669, Runtime: 556.4333341526047
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 32768-1024-768
+finish 32768-1024-768, (103/169) -> Dense: 511.5189447130193, Precomp: 706.8793649650115, Runtime: 483.2145239224684
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 768-1024-24576
+finish 768-1024-24576, (104/169) -> Dense: 438.7732714232643, Precomp: 617.1951074971267, Runtime: 348.9859946592578
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-12288
+finish 1536-1024-12288, (105/169) -> Dense: 455.79160647278167, Precomp: 696.9342166541912, Runtime: 465.83332989918966
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-6144
+finish 3072-1024-6144, (106/169) -> Dense: 502.63690335680866, Precomp: 729.5532595195095, Runtime: 514.9494515736633
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-3072
+finish 6144-1024-3072, (107/169) -> Dense: 538.5195857323778, Precomp: 783.9134391402473, Runtime: 538.7824989969129
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 7, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 12288-1024-1536
+finish 12288-1024-1536, (108/169) -> Dense: 534.5258367028586, Precomp: 788.309876175734, Runtime: 575.9192585725741
+  Dense   best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 24576-1024-768
+finish 24576-1024-768, (109/169) -> Dense: 508.83351374970755, Precomp: 698.7439583966255, Runtime: 526.8145821343842
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 1024-1024-16384
+finish 1024-1024-16384, (110/169) -> Dense: 491.9660757373878, Precomp: 751.0934453801719, Runtime: 424.650538118855
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-8192
+finish 2048-1024-8192, (111/169) -> Dense: 555.1271429088791, Precomp: 828.2488382790887, Runtime: 561.796276596199
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 4096-1024-4096
+finish 4096-1024-4096, (112/169) -> Dense: 588.4146543533907, Precomp: 849.9640709857523, Runtime: 611.5113149870147
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 8192-1024-2048
+finish 8192-1024-2048, (113/169) -> Dense: 568.1827590690518, Precomp: 813.3100302855687, Runtime: 589.4494672200376
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-1024
+finish 16384-1024-1024, (114/169) -> Dense: 512.6888113207266, Precomp: 741.9889711483432, Runtime: 550.6568838664793
+  Dense   best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 768-1024-16384
+finish 768-1024-16384, (115/169) -> Dense: 443.8199822062275, Precomp: 630.797574616031, Runtime: 345.82649040002156
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1024-1024-12288
+finish 1024-1024-12288, (116/169) -> Dense: 503.2330583491934, Precomp: 722.8623872447262, Runtime: 420.16017366224037
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-8192
+finish 1536-1024-8192, (117/169) -> Dense: 457.1082573307774, Precomp: 686.516657788544, Runtime: 459.9456657604569
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-6144
+finish 2048-1024-6144, (118/169) -> Dense: 546.0413835946956, Precomp: 802.2666959061148, Runtime: 516.8445001316381
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 7, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+start 3072-1024-4096
+finish 3072-1024-4096, (119/169) -> Dense: 492.1050555537318, Precomp: 726.2162025866409, Runtime: 505.43746218455505
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 4096-1024-3072
+finish 4096-1024-3072, (120/169) -> Dense: 576.5827230438434, Precomp: 880.3818176280377, Runtime: 599.0836976849747
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-2048
+finish 6144-1024-2048, (121/169) -> Dense: 523.658719531482, Precomp: 776.0520844996514, Runtime: 523.317258954789
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 6, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 8192-1024-1536
+finish 8192-1024-1536, (122/169) -> Dense: 546.8968115577253, Precomp: 794.0957964823692, Runtime: 568.2111234210762
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 12288-1024-1024
+finish 12288-1024-1024, (123/169) -> Dense: 523.5686583919512, Precomp: 710.6204343103066, Runtime: 543.049750205069
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 16384-1024-768
+finish 16384-1024-768, (124/169) -> Dense: 501.43391369848655, Precomp: 685.3059248831981, Runtime: 519.0400822097755
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 768-1024-12288
+finish 768-1024-12288, (125/169) -> Dense: 432.34248690869555, Precomp: 583.222693665629, Runtime: 341.1772551960083
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 6, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-6144
+finish 1536-1024-6144, (126/169) -> Dense: 467.4552825996655, Precomp: 737.2993767725382, Runtime: 452.29204861462125
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-3072
+finish 3072-1024-3072, (127/169) -> Dense: 484.0423634836134, Precomp: 769.6157448011622, Runtime: 502.59884104232657
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-1536
+finish 6144-1024-1536, (128/169) -> Dense: 513.2917055668715, Precomp: 763.7533076299387, Runtime: 512.4695631198364
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 12288-1024-768
+finish 12288-1024-768, (129/169) -> Dense: 495.99876436677886, Precomp: 687.3000744271033, Runtime: 511.64412046440424
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 1024-1024-8192
+finish 1024-1024-8192, (130/169) -> Dense: 501.32865423793567, Precomp: 755.3592277799063, Runtime: 412.3037315870737
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-4096
+finish 2048-1024-4096, (131/169) -> Dense: 554.043395430109, Precomp: 842.128313749374, Runtime: 546.9627327060373
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 4096-1024-2048
+finish 4096-1024-2048, (132/169) -> Dense: 568.4682271541343, Precomp: 870.1371510492181, Runtime: 598.8263380016907
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 8192-1024-1024
+finish 8192-1024-1024, (133/169) -> Dense: 519.6203035719469, Precomp: 768.250829372383, Runtime: 542.9437081866351
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 768-1024-8192
+finish 768-1024-8192, (134/169) -> Dense: 437.20689089679286, Precomp: 647.055006332198, Runtime: 333.57758801875826
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1024-1024-6144
+finish 1024-1024-6144, (135/169) -> Dense: 519.4415737893733, Precomp: 708.2603580932476, Runtime: 432.35050453466687
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 6, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-4096
+finish 1536-1024-4096, (136/169) -> Dense: 485.9141772181321, Precomp: 725.7935438679656, Runtime: 449.8486181466962
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-3072
+finish 2048-1024-3072, (137/169) -> Dense: 559.5512633315547, Precomp: 798.4612870843622, Runtime: 559.7221310079682
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-2048
+finish 3072-1024-2048, (138/169) -> Dense: 487.51981809910325, Precomp: 686.3308725510674, Runtime: 500.6184961368174
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 4096-1024-1536
+finish 4096-1024-1536, (139/169) -> Dense: 565.856449662902, Precomp: 817.136154083948, Runtime: 603.4061651639619
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-1024
+finish 6144-1024-1024, (140/169) -> Dense: 502.382927757969, Precomp: 724.5534492157975, Runtime: 509.20942825298926
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 8192-1024-768
+finish 8192-1024-768, (141/169) -> Dense: 507.60161824983777, Precomp: 714.9566082682813, Runtime: 540.0602223302241
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 768-1024-6144
+finish 768-1024-6144, (142/169) -> Dense: 442.87580515965493, Precomp: 581.391761441183, Runtime: 334.0882997727826
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-3072
+finish 1536-1024-3072, (143/169) -> Dense: 458.98003223106605, Precomp: 695.1562933304903, Runtime: 445.82484223716193
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-1536
+finish 3072-1024-1536, (144/169) -> Dense: 474.5496161560151, Precomp: 648.1249438257207, Runtime: 475.9666387403987
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 6, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 6144-1024-768
+finish 6144-1024-768, (145/169) -> Dense: 479.34470541115275, Precomp: 661.457982758807, Runtime: 483.5206442332604
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'num_buffers': 6, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1024-1024-4096
+finish 1024-1024-4096, (146/169) -> Dense: 505.03676990823124, Precomp: 680.4919994583929, Runtime: 415.30539331574835
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+start 2048-1024-2048
+finish 2048-1024-2048, (147/169) -> Dense: 522.89735267439, Precomp: 761.9424223613292, Runtime: 528.1921996721915
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 4096-1024-1024
+finish 4096-1024-1024, (148/169) -> Dense: 520.4557242758162, Precomp: 752.7897294399792, Runtime: 549.7118933298688
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 768-1024-4096
+finish 768-1024-4096, (149/169) -> Dense: 428.5694585527507, Precomp: 562.3263253681704, Runtime: 324.6900938879966
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+start 1024-1024-3072
+finish 1024-1024-3072, (150/169) -> Dense: 484.3779909398085, Precomp: 661.3613973761785, Runtime: 400.8588560898016
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-2048
+finish 1536-1024-2048, (151/169) -> Dense: 442.9293849064929, Precomp: 651.7543465415304, Runtime: 419.63840916140674
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-1536
+finish 2048-1024-1536, (152/169) -> Dense: 501.21391154500145, Precomp: 721.0709055654581, Runtime: 500.48662897220913
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-1024
+finish 3072-1024-1024, (153/169) -> Dense: 457.4927992522419, Precomp: 612.97481871952, Runtime: 426.52710633224046
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 4096-1024-768
+finish 4096-1024-768, (154/169) -> Dense: 481.26669342258776, Precomp: 678.5021500591172, Runtime: 502.9559898878799
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 768-1024-3072
+finish 768-1024-3072, (155/169) -> Dense: 400.90036020256616, Precomp: 525.8722145298416, Runtime: 310.93134081892777
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-1536
+finish 1536-1024-1536, (156/169) -> Dense: 407.40372920008457, Precomp: 590.3521173257539, Runtime: 392.1713949552012
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 6, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 3072-1024-768
+finish 3072-1024-768, (157/169) -> Dense: 427.5378318856329, Precomp: 569.1411566553353, Runtime: 390.0903203924644
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 128, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 3, 'STEALB': False}, num_warps=8
+start 1024-1024-2048
+finish 1024-1024-2048, (158/169) -> Dense: 463.3915853947834, Precomp: 596.9358356582832, Runtime: 375.29278552935176
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-1024
+finish 2048-1024-1024, (159/169) -> Dense: 469.47906938590614, Precomp: 632.8731895659058, Runtime: 451.5965143182515
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 768-1024-2048
+finish 768-1024-2048, (160/169) -> Dense: 381.0519229458641, Precomp: 458.16841891503987, Runtime: 285.4218562693837
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+start 1024-1024-1536
+finish 1024-1024-1536, (161/169) -> Dense: 424.1610785807849, Precomp: 536.024658078537, Runtime: 347.4852084829369
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1536-1024-1024
+finish 1536-1024-1024, (162/169) -> Dense: 375.51394869267864, Precomp: 497.07064419367356, Runtime: 345.10553172546065
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 6, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 2048-1024-768
+finish 2048-1024-768, (163/169) -> Dense: 429.29050856444377, Precomp: 544.670398770895, Runtime: 404.4341704805154
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 768-1024-1536
+finish 768-1024-1536, (164/169) -> Dense: 359.47236517644063, Precomp: 429.02411474045044, Runtime: 266.4659159014054
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+start 1536-1024-768
+finish 1536-1024-768, (165/169) -> Dense: 344.6227021139248, Precomp: 430.7268480187948, Runtime: 314.57466361528077
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 64, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+start 1024-1024-1024
+finish 1024-1024-1024, (166/169) -> Dense: 371.14925215879066, Precomp: 442.89717952195576, Runtime: 303.22193529966006
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+start 768-1024-1024
+finish 768-1024-1024, (167/169) -> Dense: 297.08085141953603, Precomp: 348.04458935930967, Runtime: 235.42047703007137
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 5, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+start 1024-1024-768
+finish 1024-1024-768, (168/169) -> Dense: 322.66372606222643, Precomp: 372.4357238463902, Runtime: 268.37592826232856
+  Dense   best config: {'BLOCK_M': 128, 'BLOCK_N': 64, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': True}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+start 768-1024-768
+finish 768-1024-768, (169/169) -> Dense: 254.4668947501357, Precomp: 291.3171747575256, Runtime: 204.64991636811007
+  Dense   best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Sparse  best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 4, 'STEALB': False}, num_warps=4
+  Runtime best config: {'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'num_buffers': 3, 'STEALB': False}, num_warps=4
+0.9863743141865774
+
+[INFO] Optimization charts successfully compiled and saved to 'Benchmark/v7.5/v7.5_1024.png'
