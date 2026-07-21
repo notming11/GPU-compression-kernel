@@ -606,7 +606,7 @@ if __name__ == "__main__":
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
     os.environ["TRITON_CACHE_DIR"]="./compiler_scratch/.triton_cache"
 
-    M, N, K = 49152, 1024, 49152
+    M, N, K = 49152, 4096, 49152
 
     if args.tune:
         print(f"Testing 7.6_compression_ws (AUTOTUNE ON): M={M}, N={N}, K={K}...", end="\n", flush=True)
