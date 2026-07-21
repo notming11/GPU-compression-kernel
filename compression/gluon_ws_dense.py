@@ -238,7 +238,6 @@ def matmul_warp_specialized_kernel(a_desc, b_desc, c_desc, SchedulerImpl: gl.con
         (matmul_store_partition, (p, SchedulerImpl)),
     ], [1, 1], [24, 24])
 
-
 def matmul_get_configs(pre_hook=None, tune=True):
     def valid(BM, BN, BK, warps, buffers, SF):
         smem_bytes = 2 * (
@@ -392,7 +391,6 @@ if __name__ == "__main__":
         print("Running dense matmul. Autotuning enabled.")
     else:
         print(f"Running dense matmul with manual config: {manual_config}")
-
     sizes = [
         (768, 768, 768),
         (768, 768, 896),
