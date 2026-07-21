@@ -1,3 +1,4 @@
+import argparse
 import torch
 import triton
 
@@ -6,9 +7,6 @@ from triton.experimental.gluon import language as gl
 
 from triton.experimental.gluon.nvidia.hopper import TensorDescriptor
 from triton.language.core import _aggregate as aggregate
-
-from prune import prune_2_4
-from compress_2_4 import compress_dense_to_sparse
 
 from triton.experimental.gluon.language.nvidia.hopper import (
     tma,
@@ -20,6 +18,8 @@ from common import (
     WGMMA,
     GroupedPersistentTileScheduler
 )
+
+# Warp-Specialization
 
 @aggregate
 class SparsePartitionArgs:
@@ -80,6 +80,7 @@ class Counter:
         index = gl.where(rollover, 0, incr)
         phase = gl.where(rollover, self.phase ^ 1, self.phase)
         return Counter(index, phase, self.num_barriers)
+
 
 # ---------------------------------------------------------------------------
 # HELPER: Slices the accumulator registers along the N dimension
@@ -144,6 +145,31 @@ def store_acc_to_smem_subtile(p, mma, acc_state):
     return acc_state
 
 @gluon.jit
+def sparse_matmul_compute_iteration(p, load_state, mma, k_iter, outstanding_mmas: gl.constexpr):
+    mbarrier.wait(p.load_ready_bars.index(load_state.index), load_state.phase)
+
+    e_reg = mma.issue_metadata_load(p.e_bufs.index(load_state.index))
+    mma = mma.issue_async_sparse_mma(p.a_bufs.index(load_state.index), e_reg, p.b_bufs.index(load_state.index))
+
+    load_state = load_state.next()
+
+    mma = mma.wait_num_outstanding(outstanding_mmas)
+
+    mbarrier.arrive(p.load_empty_bars.index((k_iter - outstanding_mmas) % p.load_empty_bars.shape[0]),
+                    count=1, pred=k_iter>=outstanding_mmas)
+
+    return load_state, mma, k_iter + 1
+
+@gluon.jit
+def sparse_matmul_compute_drain(p, load_state, mma, k_iter, limit, current_mma: gl.constexpr, num_mmas: gl.constexpr):
+    if current_mma >= num_mmas: return load_state, mma, k_iter
+    else:
+        if k_iter >= limit: return load_state, mma, k_iter
+        else:
+            load_state, mma, k_iter = sparse_matmul_compute_iteration(p, load_state, mma, k_iter, num_mmas)
+            return sparse_matmul_compute_drain(p, load_state, mma, k_iter, limit, gl.constexpr(current_mma + 1), num_mmas)
+
+@gluon.jit
 def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
     BLOCK_M: gl.constexpr = p.a_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.b_desc.block_type.shape[1]
@@ -153,31 +179,28 @@ def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
 
     load_state = Counter.create(0, p.load_empty_bars.shape[0])
     acc_state = Counter.create(1, p.acc_empty_bars.shape[0])
-    release_state = Counter.create(0, p.load_empty_bars.shape[0])
 
     scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
 
-    outstanding_mmas: gl.constexpr = 0
-    global_k_iter = 0
+    num_mmas: gl.constexpr = 2
+    k_iter = 0
 
     for _ in range(scheduler.get_num_tiles()):
         mma = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps, sparse=True)
 
-        for _ in range(0, K, BLOCK_K):
-            mbarrier.wait(p.load_ready_bars.index(load_state.index), load_state.phase)
+        total_k_iters = (K + BLOCK_K - 1) // BLOCK_K
 
-            # Keep a shallow async pipeline instead of fully serializing each k-step.
-            mma = mma.wait_num_outstanding(outstanding_mmas)
-            mma = mma.issue_async_sparse_mma(p.a_bufs.index(load_state.index), p.e_bufs.index(load_state.index), p.b_bufs.index(load_state.index))
+        # Statically Unrolled
+        for _ in range(total_k_iters // num_mmas):
+            for _ in gl.static_range(num_mmas):
+                load_state, mma, k_iter = sparse_matmul_compute_iteration(p, load_state, mma, k_iter, num_mmas - 1)
 
-            # If we've passed the outstanding limit, the WGMMA instruction from
-            # (outstanding_mmas + 1) iterations ago is guaranteed to have finished.
-            if global_k_iter >= outstanding_mmas + 1:
-                mbarrier.arrive(p.load_empty_bars.index(release_state.index), count=1)
-                release_state = release_state.next()
-
-            load_state = load_state.next()
-            global_k_iter += 1
+        # Drain
+        load_state, mma, k_iter = sparse_matmul_compute_drain(
+            p, load_state, mma, k_iter,
+            (total_k_iters % num_mmas) + k_iter,
+            0, num_mmas - 1
+        )
 
         acc_state = store_acc_to_smem_subtile(p, mma, acc_state)
 
@@ -220,9 +243,9 @@ def sparse_matmul_store_partition(p, SchedulerImpl: gl.constexpr):
 # ---------------------------------------------------------------------------
 @gluon.jit
 def sparse_matmul_warp_specialized_kernel(a_desc, e_desc, b_desc, c_desc, SchedulerImpl: gl.constexpr,
-                                   M, N, K, BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
-                                   num_buffers: gl.constexpr, SUBTILE_FACTOR: gl.constexpr,
-                                   num_warps: gl.constexpr):
+                                          M, N, K, BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K,
+                                          num_buffers: gl.constexpr, SUBTILE_FACTOR: gl.constexpr,
+                                          num_warps: gl.constexpr):
     dtype: gl.constexpr = a_desc.dtype
 
     a_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + a_desc.block_type.shape, a_desc.layout)
@@ -243,13 +266,10 @@ def sparse_matmul_warp_specialized_kernel(a_desc, e_desc, b_desc, c_desc, Schedu
         mbarrier.init(acc_empty_bars.index(i), count=1)
         mbarrier.init(acc_ready_bars.index(i), count=1)
 
-    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, num_warps: {num_warps}, buf: {num_buffers}, SF: {SUBTILE_FACTOR}")
-
-
     # Pass num_warps straight into the arguments so the layout generator gets it
     p = SparsePartitionArgs(a_desc, e_desc, b_desc, c_desc, a_bufs, e_bufs, b_bufs,
-                      load_empty_bars, load_ready_bars,
-                      acc_bufs, acc_empty_bars, acc_ready_bars, SUBTILE_FACTOR, num_warps)
+                            load_empty_bars, load_ready_bars,
+                            acc_bufs, acc_empty_bars, acc_ready_bars, SUBTILE_FACTOR, num_warps)
 
     gl.warp_specialize([
         (sparse_matmul_compute_partition, (p, SchedulerImpl)),
@@ -257,20 +277,17 @@ def sparse_matmul_warp_specialized_kernel(a_desc, e_desc, b_desc, c_desc, Schedu
         (sparse_matmul_store_partition, (p, SchedulerImpl)),
     ], [1, 1], [24, 24])
 
-def sparse_matmul_get_configs(pre_hook=None): # TODO: Fix the guards
+def sparse_matmul_get_configs(pre_hook=None, tune=True): # TODO: Fix the guards
     def valid(BM, BN, BK, warps, buffers, SF):
         # Shared Memory
         smem_bytes = (
-                 (buffers * BM * BK) +               # Compressed A
-                 (buffers * BM * BK // 8) +          # Metadata E
-                 (buffers * BK * BN * 2) +           # Dense B
-                 (4 * BM * (BN // SF))               # Accumulator C (2 buffers * 2 bytes)
-         ) + (16 * buffers) + 32                     # MBarriers
+                             (buffers * BM * BK) +               # Compressed A
+                             (buffers * BM * BK // 8) +          # Metadata E
+                             (buffers * BK * BN * 2) +           # Dense B
+                             (4 * BM * (BN // SF))               # Accumulator C (2 buffers * 2 bytes)
+                     ) + (16 * buffers) + 32                     # MBarriers
 
         if smem_bytes > 232448: return False
-
-        # if (BN // SF) < 32:
-        #     return False
 
         # Simulate get_warps_per_cta to find the physical N-axis distribution
         warps_m = 4
@@ -283,28 +300,12 @@ def sparse_matmul_get_configs(pre_hook=None): # TODO: Fix the guards
                 warps_n *= 2
 
         # Prevent SPMD splitting across physical Warp Group boundaries.
-        # If warps_n > 1, WG0 owns the left half and WG1 owns the right half.
-        # Triton's split() cannot divide a tensor where the halves belong to different warps.
         if SF > 1 and warps_n > 1:
             return False
 
         # Ensure the subtile is physically large enough to split
-        # Hopper WGMMA registers require at least 16 columns to give 2 elements per thread
         if (BN // SF) < 16:
             return False
-
-        # STEALB
-        # if SB and 2 * BN * BK < BM * BN: return False
-        # if SB and BM > BK: return False
-        #
-        # if (BM * BN) >= 65536 and warps < 12:  # 256x256 blocks require at least 3 warp groups
-        #     return False
-        # if (BM * BN) <= 4096 and warps > 8:    # Tiny blocks will starve 12 or 16 warps
-        #     return False
-        #
-        # elements_per_thread = (BM * BN) / (warps * 32)
-        # if elements_per_thread > 256:
-        #     return False
 
         if BM < warps_m * 16 or BN < warps_n * 16:
             return False
@@ -314,11 +315,8 @@ def sparse_matmul_get_configs(pre_hook=None): # TODO: Fix the guards
         # Add a safe buffer (~48) for TMA pointers, loop state, and layout logic
         required_regs = elements_per_thread + 48
 
-        # H100 absolute physical limits:
-        # 65,536 registers per SM, divided evenly among block threads
+        # H100 absolute physical limits
         max_regs_per_thread = 65536 // (warps * 32)
-
-        # Hardware caps any single thread to 255 registers
         max_regs_per_thread = min(255, max_regs_per_thread)
 
         if required_regs > max_regs_per_thread:
@@ -330,7 +328,7 @@ def sparse_matmul_get_configs(pre_hook=None): # TODO: Fix the guards
 
         return True
 
-    return [
+    configs = [
         triton.Config(
             {
                 "BLOCK_SIZE_M": BM,
@@ -343,13 +341,16 @@ def sparse_matmul_get_configs(pre_hook=None): # TODO: Fix the guards
             pre_hook=pre_hook,
         )
         for BM in (64, 128, 256,)
-        for BN in (64, 128, 256,)#(64, 128, 256)
-        for BK in (64, 128, 256,)#(64, 128, 256)
-        for warps in (4, 8, 16)#(4, 8, 16)
-        for buffers in (3, 4, 5, 6, 7)#(3, 4, 5, 6)
-        for SF in (1, 2, 4, 8)#(2, 4, 8)
+        for BN in (64, 128, 256,)
+        for BK in (64, 128, 256,)
+        for warps in (4, 8, 16)
+        for buffers in (3, 4, 5, 6, 7)
+        for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, buffers, SF)
     ]
+    
+    # Return full search space if autotuning, else return just the first valid config
+    return configs if tune else configs[:1]
 
 def sparse_matmul_tma_set_block_size_hook(nargs):
     block_m = nargs["BLOCK_SIZE_M"]
@@ -367,14 +368,20 @@ def sparse_matmul_tma_set_block_size_hook(nargs):
     nargs["b_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["b_desc"].block_shape, gl.float16)
     nargs["c_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["c_desc"].block_shape, gl.float16)
 
-sparse_ws_kernel = triton.autotune(
+# Create two versions of the kernel launcher: one with full autotuning, one for a single static run
+sparse_ws_kernel_autotune = triton.autotune(
     configs=sparse_matmul_get_configs(pre_hook=sparse_matmul_tma_set_block_size_hook),
     key=["M", "N", "K"],
     do_bench = lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
         kernel_call, quantiles=quantiles),
 )(sparse_matmul_warp_specialized_kernel)
 
-def run_sparse_ws_matmul(A, E, B):
+sparse_ws_kernel_single = triton.autotune(
+    configs=sparse_matmul_get_configs(pre_hook=sparse_matmul_tma_set_block_size_hook, tune=False),
+    key=["M", "N", "K"],
+)(sparse_matmul_warp_specialized_kernel)
+
+def run_sparse_ws_matmul(A, E, B, tune=True, manual_config=None):
     M, N, K = A.shape[0], B.shape[1], B.shape[0]
 
     c = torch.empty((M, N), device=A.device, dtype=torch.float16)
@@ -386,49 +393,91 @@ def run_sparse_ws_matmul(A, E, B):
     b_desc = TensorDescriptor.from_tensor(B, dummy_block, dummy_layout_f16)
     c_desc = TensorDescriptor.from_tensor(c, dummy_block, dummy_layout_f16)
 
-    def grid(meta):
+    if tune:
+        # Let the autotuner handle everything
+        def grid(meta):
+            num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
+            num_pid = triton.cdiv(M, meta["BLOCK_SIZE_M"]) * triton.cdiv(N, meta["BLOCK_SIZE_N"])
+            return (min(num_sms, num_pid), )
+            
+        sparse_ws_kernel_autotune[grid](a_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
+    else:
+        # 1. Prepare kwargs for the TMA hook
+        hook_kwargs = {
+            "BLOCK_SIZE_M": manual_config["BM"],
+            "BLOCK_SIZE_N": manual_config["BN"],
+            "BLOCK_SIZE_K": manual_config["BK"],
+            "SUBTILE_FACTOR": manual_config["SF"],
+            "a_desc": a_desc, "e_desc": e_desc, "b_desc": b_desc, "c_desc": c_desc
+        }
+        
+        # 2. Mutate the descriptors manually
+        sparse_matmul_tma_set_block_size_hook(hook_kwargs)
+        
+        # 3. Calculate grid using manual config
         num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
-        num_pid = triton.cdiv(M, meta["BLOCK_SIZE_M"]) * triton.cdiv(N, meta["BLOCK_SIZE_N"])
-        return (min(num_sms, num_pid), )
-    sparse_ws_kernel[grid](a_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
+        num_pid = triton.cdiv(M, manual_config["BM"]) * triton.cdiv(N, manual_config["BN"])
+        grid = (min(num_sms, num_pid), )
+        
+        # 4. Launch the base kernel directly (bypassing autotune)
+        sparse_matmul_warp_specialized_kernel[grid](
+            a_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8),
+            M, N, K,
+            BLOCK_SIZE_M=manual_config["BM"], 
+            BLOCK_SIZE_N=manual_config["BN"], 
+            BLOCK_SIZE_K=manual_config["BK"],
+            num_buffers=manual_config["buffers"], 
+            SUBTILE_FACTOR=manual_config["SF"], 
+            num_warps=manual_config["warps"]
+        )
 
     return c
 
 if __name__ == "__main__":
-    # 1. Setup dimensions
-    M, N, K = 4096, 4096, 4096
+    parser = argparse.ArgumentParser(description="Run Sparse Warp-Specialized Matmul")
+    parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
-    torch.manual_seed(0)
-    # Initialize matrices
-    A = torch.randn((M, K), device="cuda", dtype=torch.float16)
-    B = torch.randn((K, N), device="cuda", dtype=torch.float16)
-
-    A_pruned = prune_2_4(A)
-    A, E = compress_dense_to_sparse(A_pruned)
-    E = E.view(M // 16, K)
-
-    print(f"Running dense warp-specialized matmul for shape M={M}, N={N}, K={K}...")
-
-    # 2. Correctness check
-    c_out = run_sparse_ws_matmul(A, E, B)
-    c_ref = torch.matmul(A_pruned, B)
-
-    max_diff = torch.max(torch.abs(c_out - c_ref))
-    print(f"Max difference between PyTorch and Triton: {max_diff:.4f}")
+    # Manual config arguments (ignored if --tune is passed)
+    parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
+    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
+    parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_K")
+    parser.add_argument("--warps", type=int, default=4, help="Number of warps")
+    parser.add_argument("--buffers", type=int, default=4, help="Number of buffers")
+    parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")
     
-    if max_diff < 1.0:
-        print("✅ Correctness check passed!")
+    args = parser.parse_args()
+
+    manual_config = {
+        "BM": args.bm,
+        "BN": args.bn,
+        "BK": args.bk,
+        "warps": args.warps,
+        "buffers": args.buffers,
+        "SF": args.sf
+    }
+
+    if args.tune:
+        print("Running sparse matmul. Autotuning enabled.")
     else:
-        print("❌ Correctness check failed!")
+        print(f"Running sparse matmul with manual config: {manual_config}")
 
-    # 3. Performance Benchmark
-    print("Benchmarking performance...")
-    def perf():
-        run_sparse_ws_matmul(A, E, B)
+    sizes = [
+        (49152, 4096, 49152)
+    ]
+
+    from compress_2_4 import *
+    from prune import *
+
+    for M, N, K in sizes:
+        A = torch.randn(M, K, device="cuda", dtype=torch.float16)
+        B = torch.randn((K, N), device="cuda", dtype=torch.float16)
+        C = torch.empty(M, N, device="cuda", dtype=torch.float16)
+        A_pruned = prune_2_4(A)
+        A, E = compress_dense_to_sparse(A_pruned)
+        E = E.view(M // 16, K)
         
-    # Using triton's built-in benchmark utility
-    ms = triton.testing.do_bench(perf)
+        D = run_sparse_ws_matmul(A, E, B, tune=args.tune, manual_config=manual_config)
+        
+        torch.testing.assert_close(A_pruned @ B, D, rtol=1e-3, atol=1e-1)
     
-    # Calculate TFLOPS: 2 * M * N * K operations per matrix multiplication
-    tflops = 2 * M * N * K / (ms * 1e-3) / 1e12
-    print(f"⚡ Performance: {tflops:.2f} TFLOPS ({ms:.3f} ms)")
+    print("Done sparse.")
