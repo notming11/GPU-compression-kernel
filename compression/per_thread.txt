@@ -1,2 +1,43 @@
-DistributedLinearLayout(reg_bases=[[0, 1, 0, 0], [0, 2, 0, 0], [0, 4, 0, 0], [0, 64, 0, 0], [4, 0, 0, 0]], lane_bases=[[0, 0, 0, 1], [0, 0, 1, 0], [0, 8, 0, 0], [0, 16, 0, 0], [0, 32, 0, 0]], warp_bases=[[1, 0, 0, 0], [2, 0, 0, 0]], block_bases=[], shape=[8, 128, 2, 2])
-DistributedLinearLayout(reg_bases=[[0, 1, 0, 0], [0, 8, 0, 0], [0, 4, 0, 0], [0, 64, 0, 0], [4, 0, 0, 0]], lane_bases=[[0, 0, 0, 1], [0, 0, 1, 0], [0, 2, 0, 0], [0, 16, 0, 0], [0, 32, 0, 0]], warp_bases=[[1, 0, 0, 0], [2, 0, 0, 0]], block_bases=[], shape=[8, 128, 2, 2])
+1 2 3 4 5 6 7 8       1 2
+3 3 1 6 2 3 5 3       2 4
+4 4 1 2 6 7 3 1       5 3
+2 5 7 3 1 4 7 4       5 3
+                      4 2
+                      4 2
+                      4 2
+                      4 2
+
+
+0 0 3 4 0 0 7 8
+3 0 0 6 0 3 5 0
+4 4 0 0 6 7 0 0 
+0 5 7 0 0 4 7 0
+
+3 4 7 8   1100 1100
+3 6 3 5   1001 0110
+4 4 6 7   0011 0011
+5 7 4 7   0110 0110
+
+QKV
+
+dense baseline: QK
+sparse baseline: compress in CPU -> Q_sparse K
+compression kernel: compress in GPU -> Q_sparse K
+
+memory transfer: transfer Q, K to GPU
+matmul: QK
+
+Q: MxK
+Q_sparse: Mx(K/2 + K/16)
+K: KxN
+QK: MxN
+
+dense baseline: memory transfer = MK + KN + MN
+                matmul = MNK
+
+compression kernel: memory transfer = MK + KN + MN
+                    pruning and compression ~< MNK/2
+                    matmul ~ MNK/2
+
+sparse baseline: memory transfer ~ MK/2 + KN + MN 
+                 matmul ~ MNK/2

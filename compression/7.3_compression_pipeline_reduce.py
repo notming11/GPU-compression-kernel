@@ -645,7 +645,7 @@ if __name__ == "__main__":
     # os.environ["TRITON_KERNEL_DUMP"] = "1"
     # os.environ["TRITON_DUMP_DIR"] = "./count_cycle/7.3/"
     
-    for M, N, K in [(49152, 16, 49152)]:
+    for M, N, K in [(49152, 8192, 49152)]:
         for BLOCK_M, BLOCK_N, BLOCK_K in [(128, 64, 128)]:
             for num_warps, num_buffers, SB in [(4, 4, False)]:
                 # print(f"Testing dense persistent: M={M}, N={N}, K={K}, BLOCK_M={BLOCK_M}, BLOCK_N={BLOCK_N}, BLOCK_K={BLOCK_K}, num_warps={num_warps}...", end=" ", flush=True)
@@ -657,9 +657,9 @@ if __name__ == "__main__":
                 A_pruned = prune_2_4(A)
                 C_ref = A_pruned @ B
                 
-                # D = run_sparse_runtime_matmul(A_pruned, B, C)
-                # torch.testing.assert_close(C_ref, D, rtol=1e-3, atol=1e-1)
-                # C = torch.empty(M, N, device="cuda", dtype=torch.float16)
+                D = run_sparse_runtime_matmul(A_pruned, B, C)
+                torch.testing.assert_close(C_ref, D, rtol=1e-3, atol=1e-1)
+                C = torch.empty(M, N, device="cuda", dtype=torch.float16)
 
                 # sparse_persistent_matmul(A, E, B, C, BLOCK_M, BLOCK_N, BLOCK_K, 3, num_warps, PersistentTileScheduler)
                 a_pruned_layout = gl.NVMMASharedLayout.get_default_for(
