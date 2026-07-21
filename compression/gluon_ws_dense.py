@@ -392,9 +392,7 @@ if __name__ == "__main__":
     else:
         print(f"Running dense matmul with manual config: {manual_config}")
     sizes = [
-        (768, 768, 768),
-        (768, 768, 896),
-        (2048, 1024, 2048)
+        (49152, 4096, 49152)
     ]
 
     for M, N, K in sizes:
