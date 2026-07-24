@@ -1,0 +1,22 @@
+1 load dense and prune and compress, compare to dense matmul and seperate kernel
+start at global
+smem-register
+
+2 prune and compress the mma result for another sparse matmul
+alr in register
+register-register ????
+layout not compatible
+
+3 compress matrix
+alr in register, store compressed
+register-smem
+
+need to able to prune
+
+maybe prune weight instead of activation
+weight is more dense tho than activation
+
+seperate warp for compression:
+    1. have a_compress and e buf 
+    2. use the same a buffer, might be "compression-bounded"
+    3. load full a into compute, only have e go through smem ???

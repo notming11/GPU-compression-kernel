@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=7.6_N=4096        # Job name
-#SBATCH --output=7.6_N=4096_%j.out    # Output file (%j = job ID)
+#SBATCH --job-name=7.6.1_N=8192        # Job name
+#SBATCH --output=7.6.1_N=8192_%j.out    # Output file (%j = job ID)
 #SBATCH --nodes=1                         # Request 1 node
 #SBATCH --gpus-per-node=h100:1                 # Request 1 GPU
 #SBATCH --time=24:00:00                   # Max runtime (2hr)
@@ -12,4 +12,4 @@ cd $SCRATCH/ && source .venv/bin/activate && export TRITON_HOME=$SCRATCH/.triton
 nvidia-smi
 apptainer exec --nv $SCRATCH/sparse.sif python -c "import torch; print('CUDA Available:', torch.cuda.is_available()); print('Device Count:', torch.cuda.device_count()); torch.cuda.init()"
 # run benchmark
-apptainer exec --nv $SCRATCH/sparse.sif python 8.7.1_benchmark_ws.py 7.6 4096
+apptainer exec --nv $SCRATCH/sparse.sif python 8.7.1_benchmark_ws.py 7.6.1 8192

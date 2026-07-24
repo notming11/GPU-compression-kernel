@@ -352,6 +352,162 @@ def sparse_matmul_get_configs(pre_hook=None, tune=True): # TODO: Fix the guards
     # Return full search space if autotuning, else return just the first valid config
     return configs if tune else configs[:1]
 
+def sparse_matmul_get_trimmed_configs(pre_hook=None):
+    def valid(BM, BN, BK, warps, buffers, SF):
+        # Shared Memory
+        smem_bytes = (
+                             (buffers * BM * BK) +               # Compressed A
+                             (buffers * BM * BK // 8) +          # Metadata E
+                             (buffers * BK * BN * 2) +           # Dense B
+                             (4 * BM * (BN // SF))               # Accumulator C (2 buffers * 2 bytes)
+                     ) + (16 * buffers) + 32                     # MBarriers
+
+        if smem_bytes > 232448: return False
+
+        # Simulate get_warps_per_cta to find the physical N-axis distribution
+        warps_m = 4
+        warps_n = 1
+        m = 16
+        while (warps_m * warps_n) != warps:
+            if BM > m * warps_m:
+                warps_m *= 2
+            else:
+                warps_n *= 2
+
+        # Prevent SPMD splitting across physical Warp Group boundaries.
+        if SF > 1 and warps_n > 1:
+            return False
+
+        # Ensure the subtile is physically large enough to split
+        if (BN // SF) < 16:
+            return False
+
+        if BM < warps_m * 16 or BN < warps_n * 16:
+            return False
+
+        elements_per_thread = (BM * BN) / (warps * 32)
+
+        # Add a safe buffer (~48) for TMA pointers, loop state, and layout logic
+        required_regs = elements_per_thread + 48
+
+        # H100 absolute physical limits
+        max_regs_per_thread = 65536 // (warps * 32)
+        max_regs_per_thread = min(255, max_regs_per_thread)
+
+        if required_regs > max_regs_per_thread:
+            return False
+
+        # WARP STARVATION:
+        if elements_per_thread < 16:
+            return False
+
+        return True
+
+    configs = [
+        triton.Config(
+            {
+                "BLOCK_SIZE_M": BM,
+                "BLOCK_SIZE_N": BN,
+                "BLOCK_SIZE_K": BK,
+                "num_buffers": buffers,
+                "SUBTILE_FACTOR": SF,
+            },
+            num_warps=warps,
+            pre_hook=pre_hook,
+        )
+        for BM in (128, 256)
+        for BN in (128, 256)
+        for BK in (64,)
+        for warps in (8, 16, )
+        for buffers in (3, 4, 5,)
+        for SF in (2, 4, 8)
+        if valid(BM, BN, BK, warps, buffers, SF)
+    ]
+    
+    if not configs:
+        raise ValueError(f"No valid configurations found for BM={BM}, BN={BN}, BK={BK}, warps={warps}. Adjust your fixed sizes.")
+        
+    return configs
+
+def sparse_matmul_get_768_configs(pre_hook=None):
+    def valid(BM, BN, BK, warps, buffers, SF):
+        # Calculate shared memory usage
+        smem_bytes = (
+                             (buffers * BM * BK) +               # Compressed A
+                             (buffers * BM * BK // 8) +          # Metadata E
+                             (buffers * BK * BN * 2) +           # Dense B
+                             (4 * BM * (BN // SF))               # Accumulator C (2 buffers * 2 bytes)
+                     ) + (16 * buffers) + 32                     # MBarriers
+
+        if smem_bytes > 232448: return False
+
+        # Simulate get_warps_per_cta to find the physical N-axis distribution
+        warps_m = 4
+        warps_n = 1
+        m = 16
+        while (warps_m * warps_n) != warps:
+            if BM > m * warps_m:
+                warps_m *= 2
+            else:
+                warps_n *= 2
+
+        # Prevent SPMD splitting across physical Warp Group boundaries.
+        if SF > 1 and warps_n > 1:
+            return False
+
+        # Ensure the subtile is physically large enough to split
+        if (BN // SF) < 16:
+            return False
+
+        if BM < warps_m * 16 or BN < warps_n * 16:
+            return False
+
+        elements_per_thread = (BM * BN) / (warps * 32)
+
+        # Add a safe buffer (~48) for TMA pointers, loop state, and layout logic
+        required_regs = elements_per_thread + 48
+
+        # H100 absolute physical limits
+        max_regs_per_thread = 65536 // (warps * 32)
+        max_regs_per_thread = min(255, max_regs_per_thread)
+
+        if required_regs > max_regs_per_thread:
+            return False
+
+        # WARP STARVATION:
+        if elements_per_thread < 16:
+            return False
+
+        return True
+
+    configs = [
+        triton.Config(
+            {
+                "BLOCK_SIZE_M": BM,
+                "BLOCK_SIZE_N": BN,
+                "BLOCK_SIZE_K": BK,
+                "num_buffers": buffers,
+                "SUBTILE_FACTOR": SF,
+            },
+            num_warps=warps,
+            pre_hook=pre_hook,
+        )
+        
+        for BM in (128, )
+        for BN in (128, )
+        for BK in (64, 128, )
+        for warps in (4, )
+        for buffers in (4, 5, 6, )
+        for SF in (2, 4, 8)
+        if valid(BM, BN, BK, warps, buffers, SF)
+    ]
+    
+    if not configs:
+        raise ValueError(f"No valid configurations found for BM={BM}, BN={BN}, BK={BK}, warps={warps}. Adjust your fixed sizes.")
+        
+    return configs
+
+
 def sparse_matmul_tma_set_block_size_hook(nargs):
     block_m = nargs["BLOCK_SIZE_M"]
     block_n = nargs["BLOCK_SIZE_N"]
@@ -368,12 +524,32 @@ def sparse_matmul_tma_set_block_size_hook(nargs):
     nargs["b_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["b_desc"].block_shape, gl.float16)
     nargs["c_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["c_desc"].block_shape, gl.float16)
 
+# reduce search space to save time benchmarking
+sparse_ws_kernel_autotune_trimmed = triton.autotune(
+    configs=sparse_matmul_get_trimmed_configs(
+        pre_hook=sparse_matmul_tma_set_block_size_hook
+    ),
+    key=["M", "N", "K"],
+    do_bench = lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
+        kernel_call, rep=100, quantiles=quantiles),
+)(sparse_matmul_warp_specialized_kernel)
+
+# special case for M=768
+sparse_ws_kernel_autotune_768 = triton.autotune(
+    configs=sparse_matmul_get_768_configs(
+        pre_hook=sparse_matmul_tma_set_block_size_hook
+    ),
+    key=["M", "N", "K"],
+    do_bench = lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
+        kernel_call, rep=100, quantiles=quantiles),
+)(sparse_matmul_warp_specialized_kernel)
+
 # Create two versions of the kernel launcher: one with full autotuning, one for a single static run
 sparse_ws_kernel_autotune = triton.autotune(
     configs=sparse_matmul_get_configs(pre_hook=sparse_matmul_tma_set_block_size_hook),
     key=["M", "N", "K"],
     do_bench = lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
-        kernel_call, quantiles=quantiles),
+        kernel_call, rep=100, quantiles=quantiles),
 )(sparse_matmul_warp_specialized_kernel)
 
 sparse_ws_kernel_single = triton.autotune(
@@ -399,8 +575,11 @@ def run_sparse_ws_matmul(A, E, B, tune=True, manual_config=None):
             num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
             num_pid = triton.cdiv(M, meta["BLOCK_SIZE_M"]) * triton.cdiv(N, meta["BLOCK_SIZE_N"])
             return (min(num_sms, num_pid), )
-            
-        sparse_ws_kernel_autotune[grid](a_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
+        
+        if M <= 768:
+            sparse_ws_kernel_autotune_768[grid](a_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
+        else:
+            sparse_ws_kernel_autotune_trimmed[grid](a_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
     else:
         # 1. Prepare kwargs for the TMA hook
         hook_kwargs = {
