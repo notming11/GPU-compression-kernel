@@ -524,7 +524,7 @@ if __name__ == "__main__":
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
     parser.add_argument("--bn", type=int, default=256, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=64, help="BLOCK_SIZE_K")
-    parser.add_argument("--warps", type=int, default=4, help="Number of warps")
+    parser.add_argument("--warps", type=int, default=8, help="Number of warps")
     parser.add_argument("--buffers", type=int, default=3, help="Number of buffers")
     parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     
@@ -544,7 +544,7 @@ if __name__ == "__main__":
     else:
         print(f"Running dense matmul with manual config: {manual_config}")
     sizes = [
-        (49152, 4096, 49152)
+        (49152, 8192, 49152)
     ]
 
     for M, N, K in sizes:
