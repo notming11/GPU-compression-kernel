@@ -1,64 +1,123 @@
-Testing 7.6_compression_ws: M=4096, N=4096, K=4096...
-BM: 64, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 1
-BM: 64, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 4, SF: 1
-BM: 64, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 5, SF: 1
-BM: 64, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 6, SF: 1
-BM: 64, BN: 64, BK: 128, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 1
-BM: 64, BN: 64, BK: 128, num_warps: 8, num_warps_compress: 4, buf: 4, SF: 1
-BM: 64, BN: 64, BK: 128, num_warps: 8, num_warps_compress: 4, buf: 5, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 4, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 5, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 6, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 3, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 4, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 5, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 6, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 3, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 4, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 5, SF: 1
-BM: 64, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 6, SF: 1
-BM: 64, BN: 128, BK: 128, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 1
-BM: 64, BN: 128, BK: 128, num_warps: 16, num_warps_compress: 4, buf: 3, SF: 1
-BM: 64, BN: 128, BK: 128, num_warps: 16, num_warps_compress: 8, buf: 3, SF: 1
-BM: 64, BN: 256, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 1
-BM: 64, BN: 256, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 3, SF: 1
-BM: 64, BN: 256, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 3, SF: 1
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 1
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 2
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 4
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 4, SF: 1
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 4, SF: 2
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 4, SF: 4
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 5, SF: 1
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 5, SF: 2
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 5, SF: 4
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 6, SF: 2
-BM: 128, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 6, SF: 4
-BM: 128, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 3, SF: 1
-BM: 128, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 4, SF: 1
-BM: 128, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 5, SF: 1
-BM: 128, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 3, SF: 1
-BM: 128, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 4, SF: 1
-BM: 128, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 5, SF: 1
-BM: 128, BN: 64, BK: 128, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 2
-BM: 128, BN: 64, BK: 128, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 4
-BM: 128, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 1
-BM: 128, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 2
-BM: 128, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 4
-BM: 128, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 8
-BM: 128, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 4, SF: 2
-BM: 128, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 4, SF: 4
-BM: 128, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 4, SF: 8
-BM: 128, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 5, SF: 4
-BM: 128, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 5, SF: 8
-BM: 128, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 3, SF: 1
-BM: 128, BN: 128, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 3, SF: 1
-BM: 256, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 2
-BM: 256, BN: 64, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 4
-BM: 256, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 3, SF: 2
-BM: 256, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 4, buf: 3, SF: 4
-BM: 256, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 3, SF: 2
-BM: 256, BN: 64, BK: 64, num_warps: 16, num_warps_compress: 8, buf: 3, SF: 4
-BM: 256, BN: 128, BK: 64, num_warps: 8, num_warps_compress: 4, buf: 3, SF: 8
+Testing 7.6_compression_ws (AUTOTUNE ON): M=24576, N=4096, K=24576...
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 3, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 3, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 3, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 4, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 4, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 4, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 5, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 5, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 5, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 6, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 6, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 6, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 7, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 7, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 7, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 3, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 4, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 5, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 6, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 7, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 3, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 3, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 3, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 4, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 4, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 4, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 5, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 5, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 5, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 8, buf: 3, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 8, buf: 4, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 64, BLOCK_K: 128, warp: 8, buf: 5, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 3, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 3, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 3, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 3, SF:8
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 4, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 4, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 4, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 4, SF:8
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 5, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 5, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 5, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 5, SF:8
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 6, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 6, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 6, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 6, SF:8
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 7, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 7, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 7, SF:8
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 3, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 4, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 5, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 6, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 128, warp: 4, buf: 3, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 128, warp: 4, buf: 3, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 128, warp: 4, buf: 3, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 128, warp: 4, buf: 3, SF:8
+Config: BLOCK_M: 64, BLOCK_N: 128, BLOCK_K: 128, warp: 8, buf: 3, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 256, BLOCK_K: 64, warp: 4, buf: 3, SF:1
+Config: BLOCK_M: 64, BLOCK_N: 256, BLOCK_K: 64, warp: 4, buf: 3, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 256, BLOCK_K: 64, warp: 4, buf: 3, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 256, BLOCK_K: 64, warp: 4, buf: 3, SF:8
+Config: BLOCK_M: 64, BLOCK_N: 256, BLOCK_K: 64, warp: 4, buf: 4, SF:2
+Config: BLOCK_M: 64, BLOCK_N: 256, BLOCK_K: 64, warp: 4, buf: 4, SF:4
+Config: BLOCK_M: 64, BLOCK_N: 256, BLOCK_K: 64, warp: 4, buf: 4, SF:8
+Config: BLOCK_M: 64, BLOCK_N: 256, BLOCK_K: 64, warp: 8, buf: 3, SF:1
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 3, SF:1
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 3, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 3, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 4, SF:1
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 4, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 4, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 5, SF:1
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 5, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 5, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 6, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 6, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 3, SF:1
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 3, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 3, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 4, SF:1
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 4, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 4, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 5, SF:1
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 5, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 5, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 6, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 6, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 3, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 128, warp: 4, buf: 3, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 128, warp: 8, buf: 3, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 64, BLOCK_K: 128, warp: 8, buf: 3, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 3, SF:1
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 3, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 3, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 3, SF:8
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 4, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 4, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 4, SF:8
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 5, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 4, buf: 5, SF:8
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 3, SF:1
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 3, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 3, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 3, SF:8
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 4, SF:2
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 4, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 4, SF:8
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 5, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 5, SF:8
+Config: BLOCK_M: 128, BLOCK_N: 256, BLOCK_K: 64, warp: 8, buf: 3, SF:4
+Config: BLOCK_M: 128, BLOCK_N: 256, BLOCK_K: 64, warp: 8, buf: 3, SF:8
+Config: BLOCK_M: 256, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 3, SF:2
+Config: BLOCK_M: 256, BLOCK_N: 64, BLOCK_K: 64, warp: 4, buf: 3, SF:4
+Config: BLOCK_M: 256, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 3, SF:2
+Config: BLOCK_M: 256, BLOCK_N: 64, BLOCK_K: 64, warp: 8, buf: 3, SF:4
+Config: BLOCK_M: 256, BLOCK_N: 128, BLOCK_K: 64, warp: 8, buf: 3, SF:8
+PASSED
+Testing 7.6_compression_ws (AUTOTUNE ON): M=49152, N=4096, K=12288...
 PASSED

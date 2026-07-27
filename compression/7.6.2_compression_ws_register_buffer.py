@@ -632,11 +632,11 @@ if __name__ == "__main__":
     
     # Manual config arguments (ignored if --tune is passed)
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
-    parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_K")
-    parser.add_argument("--warps", type=int, default=4, help="Number of warps")
+    parser.add_argument("--bn", type=int, default=256, help="BLOCK_SIZE_N")
+    parser.add_argument("--bk", type=int, default=64, help="BLOCK_SIZE_K")
+    parser.add_argument("--warps", type=int, default=8, help="Number of warps")
     parser.add_argument("--buffers", type=int, default=3, help="Number of buffers")
-    parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")
+    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
 
@@ -654,7 +654,7 @@ if __name__ == "__main__":
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
     os.environ["TRITON_CACHE_DIR"]="./compiler_scratch/.triton_cache"
 
-    for M, N, K in [(24576, 4096, 24576), (49152, 4096, 12288)]:
+    for M, N, K in [(49152, 8192, 49152)]:
 
         if args.tune:
             print(f"Testing 7.6_compression_ws (AUTOTUNE ON): M={M}, N={N}, K={K}...", end="\n", flush=True)

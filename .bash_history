@@ -4906,3 +4906,31 @@ tpython 3H_single_tile_no_gather_better_layout.py
 tpython 7.5_compression_pipeline_no_ldmatrix.py 
 #1783913147
 debugjob
+#1783955961
+sq
+#1783955964
+squeue
+#1784954184
+scancel --me
+#1784954205
+load_module && start_gluon
+#1784954227
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1784954293
+sbatch sbatch_sh/trillium/7.6.1_benchmark.sh 
+#1784924750
+load_module && start_gluon
+#1784924769
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1784924779
+sq
+#1784924785
+sq --start
+#1784924831
+sq
+#1784924968
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1784924970
+sq
+#1784925173
+sq -i 60

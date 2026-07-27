@@ -177,7 +177,8 @@ if __name__ == "__main__":
     paths = {
         "7.6": "./7.6_compression_ws.py",
         "7.6.1": "./7.6.1_compression_ws_outstanding_mmas.py",
-        "7.6.2": "./7.6.2_compression_ws_register_buffer.py"
+        "7.6.2": "./7.6.2_compression_ws_register_buffer.py",
+        "7.7.1": "./7.7.1_ws_seperate_warp_4_buf.py",
         # Add future WS iterations here if needed
     }
     
@@ -224,7 +225,10 @@ if __name__ == "__main__":
         
         print(f"  Dense   best config: {best_dense.kwargs}, num_warps={best_dense.num_warps}")
         print(f"  Sparse  best config: {best_sparse.kwargs}, num_warps={best_sparse.num_warps}")
-        print(f"  Runtime best config: {best_runtime.kwargs}, num_warps={best_runtime.num_warps}", flush=True)
+        if isinstance(best_runtime, str):
+            print(f"  Runtime best config: {best_runtime}", flush=True)
+        else:
+            print(f"  Runtime best config: {best_runtime.kwargs}, num_warps={best_runtime.num_warps}", flush=True)
 
     df_raw = pd.DataFrame(data_log)
     plot_benchmark_results(df_raw, N, version)

@@ -618,11 +618,11 @@ if __name__ == "__main__":
     
     # Manual config arguments (ignored if --tune is passed)
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
-    parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_K")
+    parser.add_argument("--bn", type=int, default=256, help="BLOCK_SIZE_N")
+    parser.add_argument("--bk", type=int, default=64, help="BLOCK_SIZE_K")
     parser.add_argument("--warps", type=int, default=4, help="Number of warps")
-    parser.add_argument("--buffers", type=int, default=4, help="Number of buffers")
-    parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")
+    parser.add_argument("--buffers", type=int, default=5, help="Number of buffers")
+    parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
 
