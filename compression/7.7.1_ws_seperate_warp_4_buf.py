@@ -283,13 +283,18 @@ def sparse_matmul_compress_partition(p, SchedulerImpl: gl.constexpr):
     # elif p.num_warps == 16:
     #     a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
     
-    a_warp_bases: gl.constexpr = [[16, 0]]
+    compress_warp: gl.constexpr = 2
+    if compress_warp == 2:
+        a_warp_bases: gl.constexpr = [[16, 0]]
+    elif compress_warp == 4:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
+        
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
         reg_bases=[[0, 1], [0, 2], [8, 0], [0, 4], [0, 8]],
         lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]],
         warp_bases=a_warp_bases,
         block_bases=[],
-        shape=[16 * 2, 64],
+        shape=[16 * compress_warp, 64],
     )
 
     for idx in range(scheduler.get_num_tiles()):
@@ -411,9 +416,12 @@ def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
 
     num_mmas: gl.constexpr = 2
     k_iter = 0
+    
+    # compute_warps: gl.constexpr = 8
+    compute_warps: gl.constexpr = p.num_warps
 
     for _ in range(scheduler.get_num_tiles()):
-        mma = SparseWGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
+        mma = SparseWGMMA.initialize(dtype, BLOCK_M, BLOCK_N, compute_warps)
 
         # Meta descriptor matching the required alignment for WGMMA
         e_layout: gl.constexpr = gl.DotOperandLayout(
@@ -533,7 +541,7 @@ def sparse_matmul_warp_specialized_kernel(a_pruned_desc, a_comp_desc, e_desc, b_
         (sparse_matmul_load_partition, (p, SchedulerImpl)),
         (sparse_matmul_store_partition, (p, SchedulerImpl)),
         (sparse_matmul_compress_partition, (p, SchedulerImpl)),
-    ], [1, 1, 2], [24, 24, 256])
+    ], [1, 1, 2], [24, 24, 255])
 
 
 def sparse_matmul_get_configs(pre_hook=None, tune=True):
@@ -584,12 +592,13 @@ def sparse_matmul_get_configs(pre_hook=None, tune=True):
             },
             num_warps=warps,
             pre_hook=pre_hook,
+            # maxnreg=155,
         )
         for BM in (64, 128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
-        for warps in (4, 8, 16)
-        for buffers in (3, 4, 5, 6, 7)
+        for warps in (8,)
+        for buffers in (3, 4, 5, 6)
         for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, buffers, SF)
     ]
@@ -658,6 +667,8 @@ def run_sparse_ws_matmul(A_pruned, B, tune=True, manual_config=None):
         num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
         num_pid = triton.cdiv(M, manual_config["BM"]) * triton.cdiv(N, manual_config["BN"])
         grid = (min(num_sms, num_pid), )
+        # print(num_sms)
+        # exit(0)
         
         sparse_matmul_warp_specialized_kernel[grid](
             a_pruned_desc, a_comp_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8),
@@ -667,7 +678,8 @@ def run_sparse_ws_matmul(A_pruned, B, tune=True, manual_config=None):
             BLOCK_SIZE_K=manual_config["BK"],
             num_buffers=manual_config["buffers"], 
             SUBTILE_FACTOR=manual_config["SF"], 
-            num_warps=manual_config["warps"]
+            num_warps=manual_config["warps"],
+            # maxnreg=155,
         )
 
     return c
@@ -678,11 +690,11 @@ if __name__ == "__main__":
     
     # Manual config arguments (ignored if --tune is passed)
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=256, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=64, help="BLOCK_SIZE_K")
-    parser.add_argument("--warps", type=int, default=4, help="Number of warps")
+    parser.add_argument("--warps", type=int, default=8, help="Number of warps")
     parser.add_argument("--buffers", type=int, default=3, help="Number of buffers")
-    parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")
+    parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
 
@@ -700,7 +712,7 @@ if __name__ == "__main__":
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
     os.environ["TRITON_CACHE_DIR"]="./compiler_scratch/.triton_cache"
 
-    for M, N, K in [(24576, 4096, 24576), (49152, 4096, 12288)]:
+    for M, N, K in [(49152, 8192, 49152)]:
 
         if args.tune:
             print(f"Testing 7.6_compression_ws (AUTOTUNE ON): M={M}, N={N}, K={K}...", end="\n", flush=True)

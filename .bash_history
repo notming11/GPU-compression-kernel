@@ -4934,3 +4934,177 @@ sbatch sbatch_sh/trillium/7.6.2_benchmark.sh
 sq
 #1784925173
 sq -i 60
+#1785080254
+sq
+#1785081619
+scancel --me
+#1785081671
+load_module && start_gluon
+#1785081739
+sbatch sbatch_sh/trillium/7.7.1_benchmark.sh 
+#1785081747
+sq
+#1785117787
+git reset --soft HEAD~1
+#1785127329
+sq
+#1785131745
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1785074873
+debugjob
+#1785125185
+sq -i 60
+#1785125188
+debugjob
+#1785168421
+load_module && start_gluon
+#1785168436
+tpython 7.6.2_compression_ws_register_buffer.py --tune
+#1785168453
+tpython 7.6.2_compression_ws_register_buffer.py 8192
+#1785168467
+tpython 8.7.1_benchmark_ws.py 7.6.2 8192
+#1785170452
+load_module && start_gluon
+#1785170470
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1785170550
+sq
+#1785172428
+scancel 680226
+#1785172431
+cancel 680227
+#1785172435
+scancel 680227
+#1785173921
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1785173946
+sq
+#1785175432
+scancel --me
+#1785179426
+sq
+#1785167342
+sq
+#1785167353
+scancle --me
+#1785167367
+scancel --me
+#1785168395
+debugjob
+#1785180683
+cd /home/notming/links/scratch/compression
+#1785180684
+tpython 7.6.3_compress_ws_load_and_compress.py
+#1785180691
+cd /scratch/notming/compression
+#1785180692
+tpython 7.6.3_compress_ws_load_and_compress.py
+#1785180726
+tpython 7.6.3_compress_ws_load_and_compress.py
+#1785195251
+debugjob
+#1785249715
+load_module && start_gluon
+#1785249748
+tpython 7.6.3_compress_ws_load_and_compress.py 
+#1785251401
+tpython 7.6.2_compression_ws_register_buffer.py 
+#1785251474
+exit
+#1785257786
+clear
+#1785257974
+load_module && start_gluon
+#1785257987
+debugjob
+#1785258709
+
+#1785259159
+debugjob
+#1785259172
+tpython 7.7.1_ws_seperate_warp_4_buf.py 
+#1785259312
+tpython 7.7.1_ws_seperate_warp_4_buf.py --tune
+#1785259437
+nvidia-smi
+#1785259624
+apptainer exec $SCRATCH/sparse.sif python -i 7.7.1_ws_seperate_warp_4_buf.py 
+#1785259666
+apptainer exec $SCRATCH/sparse.sif python -i 7.7.1_ws_seperate_warp_4_buf.py > ptx_dump.txt
+#1785259759
+apptainer exec $SCRATCH/sparse.sif python -i 7.7.1_ws_seperate_warp_4_buf.py --tune > ptx_dump.txt
+#1785259887
+apptainer exec --nvccli $SCRATCH/sparse.sif python -i 7.7.1_ws_seperate_warp_4_buf.py --tune > ptx_dump.txt
+#1785259945
+tpython -i 7.7.1_ws_seperate_warp_4_buf.py --tune
+#1785259965
+tpython 7.7.1_ws_seperate_warp_4_buf.py --tune
+#1785260008
+nvidia-smi
+#1785260062
+tpython 7.7.1_ws_seperate_warp_4_buf.py --tune
+#1785260148
+tpython -i 7.7.1_ws_seperate_warp_4_buf.py --tune
+#1785260951
+tpython 7.7.1_ws_seperate_warp_4_buf.py 
+#1785248546
+sq
+#1785248643
+squeue -O priority
+#1785248656
+squeue -O priority,user,jobid
+#1785248667
+squeue -O sq
+#1785248668
+sq
+#1785248706
+squeue --partition=debug -O jobid,user,priority
+#1785248733
+squeue --sort=p --partition=debug -O jobid,user,priority
+#1785248760
+squeue --sort=p --partition=debug -O jobid,user,priority,status
+#1785248787
+squeue --sort=p --partition=debug -O jobid,username,priority,state
+#1785248810
+sq --start
+#1785250073
+sq
+#1785258213
+sq --start
+#1785258217
+squeue --sort=p --partition=debug -O jobid,username,priority,state
+#1785275433
+load_module && start_gluon
+#1785275613
+tpython 7.6.3_compress_ws_2_partition.py 
+#1785275658
+tpython 8.7.1_benchmark_ws.py 7.6.3 8192
+#1785276171
+tpython 7.7.1_ws_seperate_warp_4_buf.py --tune
+#1785276939
+tpython 8.7.1_benchmark_ws.py 7.7.1 8192
+#1785277826
+tpython 8.7.1_benchmark_ws.py 7.7.1 8192 > ptx_dump.txt
+#1785278361
+tpython 7.7.1_ws_seperate_warp_4_buf.py --tune
+#1785278522
+tpython 8.7.1_benchmark_ws.py 7.7.1 8192
+#1785278951
+tpython 8.7.1_benchmark_ws.py 7.6.2 16384
+#1785279145
+tpytyhon 7.6.2_compression_ws_register_buffer.py 
+#1785279154
+tpython 7.6.2_compression_ws_register_buffer.py 
+#1785279363
+tpython 7.7.1_ws_seperate_warp_4_buf.py 
+#1785279606
+tpython 7.7.1_ws_seperate_warp_4_buf.py --tune
+#1785280221
+tpython 7.7.1_ws_seperate_warp_4_buf.py 
+#1785280471
+tpython 7.7.1_ws_seperate_warp_4_buf.py --tune
+#1785280642
+tpython 7.7.1_ws_seperate_warp_4_buf.py 
+#1785281636
+tpython 8.7.1_benchmark_ws.py 7.7.1 8192
