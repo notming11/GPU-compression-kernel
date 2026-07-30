@@ -24,7 +24,7 @@ from prune import prune_2_4
 from compress_2_4 import compress_dense_to_sparse
 
 # ---------------------------------------------------------------------------
-# COMPRESSION LOGIC & WGMMA WRAPPER
+# COMPRESSION LOGIC (LUT-based metadata lookup optimization)
 # ---------------------------------------------------------------------------
 
 from typing import Union
@@ -58,7 +58,6 @@ def get_instr_shape_n(BLOCK_M, BLOCK_N, num_warps):
         n -= 8
     assert n >= 8, "expected to find a valid n"
     return n
-
 
 
 @gluon.constexpr_function
@@ -110,6 +109,105 @@ class SparseWGMMA:
         return SparseWGMMA(acc, gl.to_tensor(False), mma_layout)
     
     @gluon.jit
+    def generate_compressed_and_meta(self, a_dense, BLOCK_M : gl.constexpr, BLOCK_K: gl.constexpr, a_compressed_layout: gl.constexpr):
+        # 1. Reshape and extract 4 consecutive columns
+        a_grouped = a_dense.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
+        a_even, a_odd = a_grouped.split()
+
+        a0, a2 = a_even.split()  # col 4g+0, col 4g+2
+        a1, a3 = a_odd.split()   # col 4g+1, col 4g+3
+
+        # 2. Prune 2:4 in runtime (select top 2 values out of 4)
+        c01 = a0 > a1
+        c02 = a0 > a2
+        c03 = a0 > a3
+        c12 = a1 > a2
+        c13 = a1 > a3
+        c23 = a2 > a3
+
+        c10 = ~c01
+        c20 = ~c02
+        # c30 = a3 >= a0
+        c21 = ~c12
+        # c31 = a3 >= a1
+        # c32 = a3 >= a2
+
+        b0_bool = (c01 & (c02 | c03)) | (c02 & c03)
+        b1_bool = (c10 & (c12 | c13)) | (c12 & c13)
+        b2_bool = (c20 & (c21 | c23)) | (c21 & c23)
+
+        # 3. Extract non-zero values (nz0, nz1)
+        nz0 = gl.where(b0_bool, a0, gl.where(b1_bool, a1, a2))
+        nz1 = gl.where(b0_bool & b1_bool, a1, gl.where(b2_bool & (b0_bool | b1_bool), a2, a3))
+
+        a_compressed = gl.join(nz0, nz1).reshape(BLOCK_M, BLOCK_K // 2)
+
+        meta_4 = gl.where(b0_bool,
+             gl.where(b1_bool, 4, gl.where(b2_bool, 8, 12)),
+             gl.where(b1_bool, gl.where(b2_bool, 9, 13), 14))
+
+        # 4. Pack metadata (reshape & permute for DotOperandLayout)
+        meta_4_reshaped = meta_4.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4, 2, 2)
+        meta_4_permuted = meta_4_reshaped.permute(0, 3, 2, 4, 1, 5, 6)
+        meta_4_ready = meta_4_permuted.reshape(BLOCK_M // 16, BLOCK_K, 2, 2)
+
+        # 4. Pack metadata using inline PTX assembly instead of gl.reduce
+        meta_even, meta_odd = meta_4_ready.split()
+        mn0, mn2 = meta_even.split()
+        mn1, mn3 = meta_odd.split()
+
+        # Pack 4 local nibbles into 1 16-bit word per thread via PTX assembly
+        meta_reordered = gl.inline_asm_elementwise(
+            asm="""
+            {
+            .reg .b32 t1, t2, t3;
+            shl.b32 t1, $2, 4;
+            shl.b32 t2, $3, 8;
+            shl.b32 t3, $4, 12;
+            or.b32 $0, $1, t1;
+            or.b32 $0, $0, t2;
+            or.b32 $0, $0, t3;
+            }
+            """,
+            constraints="=r,r,r,r,r",
+            args=[mn0, mn1, mn2, mn3],
+            dtype=gl.int16,
+            is_pure=True,
+            pack=1,
+        )
+
+        e_layout: gl.constexpr = gl.DotOperandLayout(
+            operand_index=0,
+            parent=self.layout,
+            k_width=32 // gl.int16.primitive_bitwidth,
+            meta=1,
+        )
+
+        a_compressed = gl.convert_layout(
+            a_compressed, a_compressed_layout
+        )
+        e = gl.convert_layout(meta_reordered, e_layout)
+        
+        return a_compressed, e
+
+    @gluon.jit
+    def issue_precompressed_async_mma(
+        self,
+        a_compressed,
+        e,
+        b
+    ):
+        acc = warpgroup_mma(
+            a_compressed,
+            b,
+            self.acc,
+            e=e,
+            is_async=True,
+            use_acc=self.use_acc,
+        )
+        return SparseWGMMA(acc, gl.to_tensor(True), self.layout)
+
+    @gluon.jit
     def wait_num_outstanding(self, num_outstanding: gl.constexpr):
         acc = warpgroup_mma_wait(num_outstanding, (self.acc,))
         return SparseWGMMA(acc, self.use_acc, self.layout)
@@ -119,6 +217,7 @@ class SparseWGMMA:
         acc = warpgroup_mma_wait(0, (self.acc,))
         return SparseWGMMA(acc, self.use_acc, self.layout)
 
+    # Take the result and reset the accumulator.
     @gluon.jit
     def take_result(self):
         return self.acc, SparseWGMMA(self.acc, gl.to_tensor(False), self.layout)
@@ -129,21 +228,13 @@ class SparseWGMMA:
 
 @aggregate
 class SparsePartitionArgs:
-    a_pruned_desc: tma.tensor_descriptor
+    a_desc: tma.tensor_descriptor
     b_desc: tma.tensor_descriptor
     c_desc: tma.tensor_descriptor
-    a_pruned_bufs: gl.shared_memory_descriptor
+    a_bufs: gl.shared_memory_descriptor
     b_bufs: gl.shared_memory_descriptor
-    a_comp_bufs: gl.shared_memory_descriptor
-    e_bufs: gl.shared_memory_descriptor
-    
-    a_empty_bars: gl.shared_memory_descriptor
-    a_ready_bars: gl.shared_memory_descriptor
-    b_empty_bars: gl.shared_memory_descriptor
-    b_ready_bars: gl.shared_memory_descriptor
-    comp_empty_bars: gl.shared_memory_descriptor
-    comp_ready_bars: gl.shared_memory_descriptor
-    
+    load_empty_bars: gl.shared_memory_descriptor
+    load_ready_bars: gl.shared_memory_descriptor
     acc_bufs: gl.shared_memory_descriptor
     acc_empty_bars: gl.shared_memory_descriptor
     acc_ready_bars: gl.shared_memory_descriptor
@@ -151,25 +242,17 @@ class SparsePartitionArgs:
     num_warps: gl.constexpr
 
     @gluon.constexpr_function
-    def __init__(self, a_pruned_desc, b_desc, c_desc, 
-                 a_pruned_bufs, b_bufs, a_comp_bufs, e_bufs,
-                 a_empty_bars, a_ready_bars, b_empty_bars, b_ready_bars,
-                 comp_empty_bars, comp_ready_bars,
+    def __init__(self, a_desc, b_desc, c_desc, a_bufs, b_bufs,
+                 load_empty_bars, load_ready_bars,
                  acc_bufs, acc_empty_bars, acc_ready_bars,
                  SUBTILE_FACTOR, num_warps):
-        self.a_pruned_desc = a_pruned_desc
+        self.a_desc = a_desc
         self.b_desc = b_desc
         self.c_desc = c_desc
-        self.a_pruned_bufs = a_pruned_bufs
+        self.a_bufs = a_bufs
         self.b_bufs = b_bufs
-        self.a_comp_bufs = a_comp_bufs
-        self.e_bufs = e_bufs
-        self.a_empty_bars = a_empty_bars
-        self.a_ready_bars = a_ready_bars
-        self.b_empty_bars = b_empty_bars
-        self.b_ready_bars = b_ready_bars
-        self.comp_empty_bars = comp_empty_bars
-        self.comp_ready_bars = comp_ready_bars
+        self.load_empty_bars = load_empty_bars
+        self.load_ready_bars = load_ready_bars
         self.acc_bufs = acc_bufs
         self.acc_empty_bars = acc_empty_bars
         self.acc_ready_bars = acc_ready_bars
@@ -203,7 +286,7 @@ class Counter:
 
 @gluon.jit
 def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
-    split_count: gl.constexpr = SUBTILE_FACTOR.bit_length() - 1
+    split_count: gl.constexpr = SUBTILE_FACTOR.bit_length() - 1  # log2
     xs = (x, )
     for _ in gl.static_range(split_count):
         next_xs = ()
@@ -231,17 +314,17 @@ def store_acc_to_smem_subtile(p, mma, acc_state):
     return acc_state
 
 # ---------------------------------------------------------------------------
-# SPARSE PARTITIONS (DECOUPLED)
+# SPARSE PARTITIONS
 # ---------------------------------------------------------------------------
 
 @gluon.jit
 def sparse_matmul_load_partition(p, SchedulerImpl: gl.constexpr):
-    BLOCK_M: gl.constexpr = p.a_pruned_desc.block_type.shape[0]
+    BLOCK_M: gl.constexpr = p.a_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.b_desc.block_type.shape[1]
-    BLOCK_K: gl.constexpr = p.a_pruned_desc.block_type.shape[1]
-    K = p.a_pruned_desc.shape[1]
+    BLOCK_K: gl.constexpr = p.a_desc.block_type.shape[1]
+    K = p.a_desc.shape[1]
 
-    state = Counter.create(1, p.a_empty_bars.shape[0])
+    state = Counter.create(1, p.load_empty_bars.shape[0])
     scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
 
     for idx in range(scheduler.get_num_tiles()):
@@ -250,185 +333,106 @@ def sparse_matmul_load_partition(p, SchedulerImpl: gl.constexpr):
         off_n = pid_n * BLOCK_N
 
         for k in range(0, K, BLOCK_K):
-            a_bar = p.a_ready_bars.index(state.index)
-            b_bar = p.b_ready_bars.index(state.index)
-            
-            mbarrier.wait(p.a_empty_bars.index(state.index), state.phase)
-            mbarrier.wait(p.b_empty_bars.index(state.index), state.phase)
+            bar = p.load_ready_bars.index(state.index)
+            mbarrier.wait(p.load_empty_bars.index(state.index), state.phase)
 
-            mbarrier.expect(a_bar, p.a_pruned_desc.block_type.nbytes)
-            tma.async_copy_global_to_shared(p.a_pruned_desc, [off_m, k], a_bar, p.a_pruned_bufs.index(state.index))
-            
-            mbarrier.expect(b_bar, p.b_desc.block_type.nbytes)
-            tma.async_copy_global_to_shared(p.b_desc, [k, off_n], b_bar, p.b_bufs.index(state.index))
-            
+            mbarrier.expect(bar, p.a_desc.block_type.nbytes + p.b_desc.block_type.nbytes)
+            tma.async_copy_global_to_shared(p.a_desc, [off_m, k], bar, p.a_bufs.index(state.index))
+            tma.async_copy_global_to_shared(p.b_desc, [k, off_n], bar, p.b_bufs.index(state.index))
             state = state.next()
-
-
-@gluon.jit
-def sparse_matmul_compress_partition(p, SchedulerImpl: gl.constexpr):
-    BLOCK_M: gl.constexpr = p.a_pruned_desc.block_type.shape[0]
-    BLOCK_N: gl.constexpr = p.b_desc.block_type.shape[1]
-    BLOCK_K: gl.constexpr = p.a_pruned_desc.block_type.shape[1]
-    K = p.a_pruned_desc.shape[1]
-
-    state = Counter.create(0, p.a_empty_bars.shape[0])
-    scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
-
-    # Use same warp layout assumption to cleanly pull from SMEM to registers
-    # if p.num_warps == 4:
-    #     a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
-    # elif p.num_warps == 8:
-    #     a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0]]
-    # elif p.num_warps == 16:
-    #     a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
-    
-    compress_warp: gl.constexpr = 4
-    if compress_warp == 2:
-        a_warp_bases: gl.constexpr = [[16, 0]]
-    elif compress_warp == 4:
-        a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
-        
-    a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 4], [0, 8]],
-        lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]],
-        warp_bases=a_warp_bases,
-        block_bases=[],
-        shape=[16 * compress_warp, 64],
-    )
-
-    for idx in range(scheduler.get_num_tiles()):
-        for k in range(0, K, BLOCK_K):
-            mbarrier.wait(p.a_ready_bars.index(state.index), state.phase)
-            mbarrier.wait(p.comp_empty_bars.index(state.index), state.phase ^ 1)
-
-            # Load pruned tile into registers
-            a_pruned = p.a_pruned_bufs.index(state.index).load(a_pruned_reg_layout)
-
-            # --- Compute Compressed values and Metadata ---
-            a_grouped = a_pruned.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
-            a_even, a_odd = a_grouped.split()
-            a0, a2 = a_even.split()
-            a1, a3 = a_odd.split()
-
-            b0 = a0 != 0
-            b1 = a1 != 0
-            b2 = a2 != 0
-            
-            nz0 = gl.where(b0, a0, gl.where(b1, a1, a2))
-            nz1 = gl.where(b0 & b1, a1, gl.where(b2 & (b0 | b1), a2, a3))
-
-            a_compressed = gl.join(nz0, nz1)
-            a_compressed = a_compressed.reshape(BLOCK_M, BLOCK_K // 2)
-
-            meta_4 = gl.where(b0,
-                 gl.where(b1, 4, gl.where(b2, 8, 12)),
-                 gl.where(b1, gl.where(b2, 9, 13), 14))
-
-            meta_4_reshaped = meta_4.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4, 2, 2)
-            meta_4_permuted = meta_4_reshaped.permute(0, 3, 2, 4, 1, 5, 6)
-            meta_4_ready = meta_4_permuted.reshape(BLOCK_M // 16, BLOCK_K, 2, 2)
-            
-            meta_reordered = gl.reduce(
-                gl.reduce(meta_4_ready, 3, create_metadata), 2, create_metadata_8
-            ).to(gl.int16)
-
-            # Write generated buffers straight into SMEM descriptors
-            p.a_comp_bufs.index(state.index).store(a_compressed)
-            p.e_bufs.index(state.index).store(meta_reordered)
-            fence_async_shared()
-
-            # Signal compute and loader pipelines
-            mbarrier.arrive(p.comp_ready_bars.index(state.index), count=1)
-            mbarrier.arrive(p.a_empty_bars.index(state.index), count=1)
-
-            state = state.next()
-
 
 @gluon.jit
 def sparse_matmul_compute_iteration(
-    p, state, mma, k_iter, outstanding_mmas: gl.constexpr,
-    e_layout: gl.constexpr
+    p, load_state, mma, k_iter, outstanding_mmas: gl.constexpr,
+    a_reg_layout: gl.constexpr, a_compressed_layout: gl.constexpr,
+    BLOCK_M: gl.constexpr, BLOCK_K: gl.constexpr
 ):
-    mbarrier.wait(p.comp_ready_bars.index(state.index), state.phase)
-    mbarrier.wait(p.b_ready_bars.index(state.index), state.phase)
+    mbarrier.wait(p.load_ready_bars.index(load_state.index), load_state.phase)
 
-    # 1. WGMMA requires metadata exactly in registers
-    e = p.e_bufs.index(state.index).load(e_layout)
+    # 1. Load dense tile from SMEM
+    a_dense = p.a_bufs.index(load_state.index).load(a_reg_layout)
     
-    # 2. Both A and B issue straight from Shared Memory via descriptors natively
-    acc = warpgroup_mma(
-        p.a_comp_bufs.index(state.index),
-        p.b_bufs.index(state.index),
-        mma.acc,
-        e=e,
-        is_async=True,
-        use_acc=mma.use_acc,
+    # 2. Prune and compress and pack metadata using LUT table
+    a_comp, e = mma.generate_compressed_and_meta(
+        a_dense, BLOCK_M, BLOCK_K, a_compressed_layout
     )
-    mma = SparseWGMMA(acc, gl.to_tensor(True), mma.layout)
 
-    state = state.next()
+    # 3. Issue the math using the locally scoped registers
+    mma = mma.issue_precompressed_async_mma(
+        a_comp, e, p.b_bufs.index(load_state.index)
+    )
+
+    load_state = load_state.next()
 
     mma = mma.wait_num_outstanding(outstanding_mmas)
 
-    # Signal loader/compress partitions they can clear out the consumed slot
     mbarrier.arrive(
-        p.comp_empty_bars.index((k_iter - outstanding_mmas) % p.comp_empty_bars.shape[0]),
-        count=1, pred=k_iter >= outstanding_mmas
-    )
-    mbarrier.arrive(
-        p.b_empty_bars.index((k_iter - outstanding_mmas) % p.b_empty_bars.shape[0]),
+        p.load_empty_bars.index((k_iter - outstanding_mmas) % p.load_empty_bars.shape[0]),
         count=1, pred=k_iter >= outstanding_mmas
     )
 
-    return state, mma, k_iter + 1
+    return load_state, mma, k_iter + 1
 
 @gluon.jit
 def sparse_matmul_compute_drain(
-    p, state, mma, k_iter, limit, current_mma: gl.constexpr, num_mmas: gl.constexpr,
-    e_layout: gl.constexpr
+    p, load_state, mma, k_iter, limit, current_mma: gl.constexpr, num_mmas: gl.constexpr,
+    a_reg_layout: gl.constexpr, a_compressed_layout: gl.constexpr,
+    BLOCK_M: gl.constexpr, BLOCK_K: gl.constexpr
 ):
     if current_mma >= num_mmas: 
-        return state, mma, k_iter
+        return load_state, mma, k_iter
     else:
         if k_iter >= limit: 
-            return state, mma, k_iter
+            return load_state, mma, k_iter
         else:
-            state, mma, k_iter = sparse_matmul_compute_iteration(
-                p, state, mma, k_iter, num_mmas, e_layout
+            load_state, mma, k_iter = sparse_matmul_compute_iteration(
+                p, load_state, mma, k_iter, num_mmas,
+                a_reg_layout, a_compressed_layout, BLOCK_M, BLOCK_K
             )
             return sparse_matmul_compute_drain(
-                p, state, mma, k_iter, limit, gl.constexpr(current_mma + 1), num_mmas, e_layout
+                p, load_state, mma, k_iter, limit, gl.constexpr(current_mma + 1), num_mmas,
+                a_reg_layout, a_compressed_layout, BLOCK_M, BLOCK_K
             )
 
 @gluon.jit
 def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
-    BLOCK_M: gl.constexpr = p.a_pruned_desc.block_type.shape[0]
+    BLOCK_M: gl.constexpr = p.a_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.b_desc.block_type.shape[1]
-    BLOCK_K: gl.constexpr = p.a_pruned_desc.block_type.shape[1]
-    K = p.a_pruned_desc.shape[1]
-    dtype: gl.constexpr = p.a_pruned_desc.dtype
+    BLOCK_K: gl.constexpr = p.a_desc.block_type.shape[1]
+    K = p.a_desc.shape[1]
+    dtype: gl.constexpr = p.a_desc.dtype
 
-    state = Counter.create(0, p.comp_empty_bars.shape[0])
+    load_state = Counter.create(0, p.load_empty_bars.shape[0])
     acc_state = Counter.create(1, p.acc_empty_bars.shape[0])
 
     scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
 
+    if p.num_warps == 4:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
+    elif p.num_warps == 8:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0]]
+    elif p.num_warps == 16:
+        a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
+    
+    a_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
+        reg_bases=[[0, 1], [0, 2], [8, 0], [0, 4], [0, 8]],
+        lane_bases=[[0, 16], [0, 32], [1, 0], [2, 0], [4, 0]],
+        warp_bases=a_warp_bases,
+        block_bases=[],
+        shape=[16 * p.num_warps, 64],
+    )
+
     num_mmas: gl.constexpr = 2
     k_iter = 0
-    
-    # compute_warps: gl.constexpr = 8
-    compute_warps: gl.constexpr = p.num_warps
 
     for _ in range(scheduler.get_num_tiles()):
-        mma = SparseWGMMA.initialize(dtype, BLOCK_M, BLOCK_N, compute_warps)
+        mma = SparseWGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
 
-        # Meta descriptor matching the required alignment for WGMMA
-        e_layout: gl.constexpr = gl.DotOperandLayout(
+        a_compressed_layout: gl.constexpr = gl.DotOperandLayout(
             operand_index=0,
             parent=mma.layout,
             k_width=32 // dtype.primitive_bitwidth,
-            meta=1,
+            meta=0,
         )
 
         total_k_iters = (K + BLOCK_K - 1) // BLOCK_K
@@ -436,15 +440,17 @@ def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
         # Statically Unrolled Pipeline
         for _ in range(total_k_iters // num_mmas):
             for _ in gl.static_range(num_mmas):
-                state, mma, k_iter = sparse_matmul_compute_iteration(
-                    p, state, mma, k_iter, num_mmas - 1, e_layout
+                load_state, mma, k_iter = sparse_matmul_compute_iteration(
+                    p, load_state, mma, k_iter, num_mmas - 1,
+                    a_reg_layout, a_compressed_layout, BLOCK_M, BLOCK_K
                 )
 
         # Drain Epilogue
-        state, mma, k_iter = sparse_matmul_compute_drain(
-            p, state, mma, k_iter,
+        load_state, mma, k_iter = sparse_matmul_compute_drain(
+            p, load_state, mma, k_iter,
             (total_k_iters % num_mmas) + k_iter,
-            0, num_mmas - 1, e_layout
+            0, num_mmas - 1,
+            a_reg_layout, a_compressed_layout, BLOCK_M, BLOCK_K
         )
 
         acc_state = store_acc_to_smem_subtile(p, mma, acc_state)
@@ -487,40 +493,21 @@ def sparse_matmul_store_partition(p, SchedulerImpl: gl.constexpr):
 # ---------------------------------------------------------------------------
 
 @gluon.jit
-def sparse_matmul_warp_specialized_kernel(a_pruned_desc, a_comp_desc, e_desc, b_desc, c_desc, SchedulerImpl: gl.constexpr,
-                                          M, N, K,
-                                          BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
+def sparse_matmul_warp_specialized_kernel(a_desc, b_desc, c_desc, SchedulerImpl: gl.constexpr,
+                                          M, N, K, BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K,
                                           num_buffers: gl.constexpr, SUBTILE_FACTOR: gl.constexpr,
                                           num_warps: gl.constexpr):
-    dtype: gl.constexpr = a_pruned_desc.dtype
-    
-    gl.static_print(f"Config: BLOCK_M: {BLOCK_SIZE_M}, BLOCK_N: {BLOCK_SIZE_N}, BLOCK_K: {BLOCK_SIZE_K}, warp: {num_warps}, buf: {num_buffers}, SF:{SUBTILE_FACTOR}")
+    dtype: gl.constexpr = a_desc.dtype
 
-    # Base Loaders
-    a_pruned_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + a_pruned_desc.block_type.shape, a_pruned_desc.layout)
+    a_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + a_desc.block_type.shape, a_desc.layout)
     b_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + b_desc.block_type.shape, b_desc.layout)
-    
-    # Compress Loaders
-    a_comp_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + a_comp_desc.block_type.shape, a_comp_desc.layout)
-    e_bufs = gl.allocate_shared_memory(gl.int16, [num_buffers] + e_desc.block_type.shape, e_desc.layout)
-
-    # 3-Stage Pipeline MBARRIERS
-    a_empty_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
-    a_ready_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
-    b_empty_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
-    b_ready_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
-    comp_empty_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
-    comp_ready_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
+    load_empty_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
+    load_ready_bars = gl.allocate_shared_memory(gl.int64, [num_buffers, 1], mbarrier.MBarrierLayout())
 
     for i in gl.static_range(num_buffers):
-        mbarrier.init(a_empty_bars.index(i), count=1)
-        mbarrier.init(a_ready_bars.index(i), count=1)
-        mbarrier.init(b_empty_bars.index(i), count=1)
-        mbarrier.init(b_ready_bars.index(i), count=1)
-        mbarrier.init(comp_empty_bars.index(i), count=1)
-        mbarrier.init(comp_ready_bars.index(i), count=1)
+        mbarrier.init(load_empty_bars.index(i), count=1)
+        mbarrier.init(load_ready_bars.index(i), count=1)
 
-    # Output Acc
     acc_bufs = gl.allocate_shared_memory(dtype, [2] + c_desc.block_type.shape, c_desc.layout)
     acc_empty_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
     acc_ready_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
@@ -529,35 +516,24 @@ def sparse_matmul_warp_specialized_kernel(a_pruned_desc, a_comp_desc, e_desc, b_
         mbarrier.init(acc_empty_bars.index(i), count=1)
         mbarrier.init(acc_ready_bars.index(i), count=1)
 
-    p = SparsePartitionArgs(a_pruned_desc, b_desc, c_desc, 
-                            a_pruned_bufs, b_bufs, a_comp_bufs, e_bufs,
-                            a_empty_bars, a_ready_bars, b_empty_bars, b_ready_bars,
-                            comp_empty_bars, comp_ready_bars,
+    p = SparsePartitionArgs(a_desc, b_desc, c_desc, a_bufs, b_bufs,
+                            load_empty_bars, load_ready_bars,
                             acc_bufs, acc_empty_bars, acc_ready_bars, SUBTILE_FACTOR, num_warps)
 
-    # Spawning the 4 partitions concurrently via warp specialization 
     gl.warp_specialize([
         (sparse_matmul_compute_partition, (p, SchedulerImpl)),
         (sparse_matmul_load_partition, (p, SchedulerImpl)),
         (sparse_matmul_store_partition, (p, SchedulerImpl)),
-        (sparse_matmul_compress_partition, (p, SchedulerImpl)),
-    ], [1, 1, 4], [24, 24, 255])
+    ], [1, 1], [24, 24])
 
 
 def sparse_matmul_get_configs(pre_hook=None, tune=True):
     def valid(BM, BN, BK, warps, buffers, SF):
-        if 2 * warps + 2 > 32: return False
-        
-        # A_pruned + B
-        smem_bytes = 2 * ( (buffers * BM * BK) + (buffers * BK * BN) )
-        # A_comp + E (Compression Buffer Growth)
-        smem_bytes += 2 * (buffers * BM * (BK // 2))
-        smem_bytes += 2 * (buffers * (BM // 16) * BK)
-        # Store Buffer
-        smem_bytes += 2 * (2 * BM * (BN // SF))
-        # Barriers (6 partitions + 2 acc barriers)
-        smem_bytes += 8 * (6 * buffers + 4)
-        
+        smem_bytes = 2 * (
+                (buffers * BM * BK) +
+                (buffers * BK * BN) +
+                (2 * BM * (BN // SF))
+        ) + (16 * buffers) + 32
         if smem_bytes > 232448: return False
 
         warps_m = 4
@@ -592,13 +568,12 @@ def sparse_matmul_get_configs(pre_hook=None, tune=True):
             },
             num_warps=warps,
             pre_hook=pre_hook,
-            # maxnreg=155,
         )
         for BM in (64, 128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
-        for warps in (8,)
-        for buffers in (3, 4, 5, 6)
+        for warps in (4, 8, 16)
+        for buffers in (3, 4, 5, 6, 7)
         for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, buffers, SF)
     ]
@@ -611,15 +586,11 @@ def sparse_matmul_tma_set_block_size_hook(nargs):
     block_k = nargs["BLOCK_SIZE_K"]
     split_n = nargs["BLOCK_SIZE_N"] // nargs["SUBTILE_FACTOR"]
 
-    nargs["a_pruned_desc"].block_shape = [block_m, block_k]
-    nargs["a_comp_desc"].block_shape = [block_m, block_k // 2]
-    nargs["e_desc"].block_shape = [block_m // 16, block_k]
+    nargs["a_desc"].block_shape = [block_m, block_k]
     nargs["b_desc"].block_shape = [block_k, block_n]
     nargs["c_desc"].block_shape = [block_m, split_n]
 
-    nargs["a_pruned_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["a_pruned_desc"].block_shape, gl.float16)
-    nargs["a_comp_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["a_comp_desc"].block_shape, gl.float16)
-    nargs["e_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["e_desc"].block_shape, gl.int16)
+    nargs["a_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["a_desc"].block_shape, gl.float16)
     nargs["b_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["b_desc"].block_shape, gl.float16)
     nargs["c_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["c_desc"].block_shape, gl.float16)
 
@@ -630,18 +601,20 @@ sparse_ws_kernel_autotune = triton.autotune(
         kernel_call, rep=100, quantiles=quantiles),
 )(sparse_matmul_warp_specialized_kernel)
 
-def run_sparse_ws_matmul(A_pruned, B, tune=True, manual_config=None):
-    M, K = A_pruned.shape[0], A_pruned.shape[1]
+sparse_ws_kernel_single = triton.autotune(
+    configs=sparse_matmul_get_configs(pre_hook=sparse_matmul_tma_set_block_size_hook, tune=False),
+    key=["M", "N", "K"],
+)(sparse_matmul_warp_specialized_kernel)
+
+def run_sparse_ws_matmul(A, B, tune=True, manual_config=None):
+    M, K = A.shape[0], A.shape[1]
     N = B.shape[1]
 
-    c = torch.empty((M, N), device=A_pruned.device, dtype=torch.float16)
+    c = torch.empty((M, N), device=A.device, dtype=torch.float16)
     dummy_block = [1, 1]
     dummy_layout_f16 = gl.NVMMASharedLayout.get_default_for(dummy_block, gl.float16)
-    dummy_layout_i16 = gl.NVMMASharedLayout.get_default_for(dummy_block, gl.int16)
     
-    a_pruned_desc = TensorDescriptor.from_tensor(A_pruned, dummy_block, dummy_layout_f16)
-    a_comp_desc = TensorDescriptor.from_tensor(A_pruned, dummy_block, dummy_layout_f16)
-    e_desc = TensorDescriptor.from_tensor(A_pruned.to(torch.int16), dummy_block, dummy_layout_i16)
+    a_desc = TensorDescriptor.from_tensor(A, dummy_block, dummy_layout_f16)
     b_desc = TensorDescriptor.from_tensor(B, dummy_block, dummy_layout_f16)
     c_desc = TensorDescriptor.from_tensor(c, dummy_block, dummy_layout_f16)
 
@@ -651,15 +624,14 @@ def run_sparse_ws_matmul(A_pruned, B, tune=True, manual_config=None):
             num_pid = triton.cdiv(M, meta["BLOCK_SIZE_M"]) * triton.cdiv(N, meta["BLOCK_SIZE_N"])
             return (min(num_sms, num_pid), )
             
-        sparse_ws_kernel_autotune[grid](a_pruned_desc, a_comp_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
+        sparse_ws_kernel_autotune[grid](a_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8), M, N, K)
     else:
         hook_kwargs = {
             "BLOCK_SIZE_M": manual_config["BM"],
             "BLOCK_SIZE_N": manual_config["BN"],
             "BLOCK_SIZE_K": manual_config["BK"],
             "SUBTILE_FACTOR": manual_config["SF"],
-            "a_pruned_desc": a_pruned_desc, "a_comp_desc": a_comp_desc, "e_desc": e_desc,
-            "b_desc": b_desc, "c_desc": c_desc
+            "a_desc": a_desc, "b_desc": b_desc, "c_desc": c_desc
         }
         
         sparse_matmul_tma_set_block_size_hook(hook_kwargs)
@@ -667,25 +639,22 @@ def run_sparse_ws_matmul(A_pruned, B, tune=True, manual_config=None):
         num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
         num_pid = triton.cdiv(M, manual_config["BM"]) * triton.cdiv(N, manual_config["BN"])
         grid = (min(num_sms, num_pid), )
-        # print(num_sms)
-        # exit(0)
         
         sparse_matmul_warp_specialized_kernel[grid](
-            a_pruned_desc, a_comp_desc, e_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8),
+            a_desc, b_desc, c_desc, GroupedPersistentTileScheduler(8),
             M, N, K,
             BLOCK_SIZE_M=manual_config["BM"], 
             BLOCK_SIZE_N=manual_config["BN"], 
             BLOCK_SIZE_K=manual_config["BK"],
             num_buffers=manual_config["buffers"], 
             SUBTILE_FACTOR=manual_config["SF"], 
-            num_warps=manual_config["warps"],
-            maxnreg=155,
+            num_warps=manual_config["warps"]
         )
 
     return c
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run Fused-Compression Sparse Warp-Specialized Matmul")
+    parser = argparse.ArgumentParser(description="Run Fused-Compression Sparse Warp-Specialized Matmul with LUT Optimization")
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     # Manual config arguments (ignored if --tune is passed)
@@ -694,7 +663,7 @@ if __name__ == "__main__":
     parser.add_argument("--bk", type=int, default=64, help="BLOCK_SIZE_K")
     parser.add_argument("--warps", type=int, default=8, help="Number of warps")
     parser.add_argument("--buffers", type=int, default=3, help="Number of buffers")
-    parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
+    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
 
@@ -708,23 +677,22 @@ if __name__ == "__main__":
     }
 
     os.environ["MLIR_ENABLE_DUMP"]="1"
-    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.7.1"
+    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/7.8.1"
     os.environ["TRITON_ALWAYS_COMPILE"]="1"
     os.environ["TRITON_CACHE_DIR"]="./compiler_scratch/.triton_cache"
 
     for M, N, K in [(49152, 8192, 49152)]:
 
         if args.tune:
-            print(f"Testing 7.6_compression_ws (AUTOTUNE ON): M={M}, N={N}, K={K}...", end="\n", flush=True)
+            print(f"Testing 7.6.4_compression_ws_optimization (AUTOTUNE ON): M={M}, N={N}, K={K}...", end="\n", flush=True)
         else:
-            print(f"Testing 7.6_compression_ws with config {manual_config}: M={M}, N={N}, K={K}...", end="\n", flush=True)
+            print(f"Testing 7.6.4_compression_ws_optimization with config {manual_config}: M={M}, N={N}, K={K}...", end="\n", flush=True)
 
         A = torch.randn(M, K, device="cuda", dtype=torch.float16)
         B = torch.randn((K, N), device="cuda", dtype=torch.float16)
 
+        C = run_sparse_ws_matmul(A, B, tune=args.tune, manual_config=manual_config)
         A_pruned = prune_2_4(A)
-
-        C = run_sparse_ws_matmul(A_pruned, B, tune=args.tune, manual_config=manual_config)
         C_ref = A_pruned @ B
 
         torch.testing.assert_close(C_ref, C, rtol=1e-3, atol=1e-1)

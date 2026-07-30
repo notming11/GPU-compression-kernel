@@ -152,7 +152,7 @@ class SparseWGMMA:
         )
 
         a_compressed = gl.convert_layout(
-            a_compressed, a_compressed_layout, assert_trivial=False
+            a_compressed, a_compressed_layout
         )
         e = gl.convert_layout(meta_reordered, e_layout)
         
