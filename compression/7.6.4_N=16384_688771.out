@@ -1,0 +1,893 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+start 49152-16384-49152 (1/169)
+/opt/stoicc/python/triton/language/semantic.py:1680: UserWarning: tl.where with a non-boolean condition is deprecated and will error out in a future triton release. Got int16
+  warnings.warn(
+finish 49152-16384-49152 -> Dense: 683.388451359693, Precomp WS: 1057.9779154142404, 7.6.4 WS: 698.7023406426233
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 32768-16384-49152 (2/169)
+finish 32768-16384-49152 -> Dense: 657.135599562978, Precomp WS: 1061.5526270663493, 7.6.4 WS: 697.9049065995871
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 49152-16384-32768 (3/169)
+finish 49152-16384-32768 -> Dense: 656.367131166005, Precomp WS: 1054.3173578598423, 7.6.4 WS: 698.1210043247979
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 24576-16384-49152 (4/169)
+finish 24576-16384-49152 -> Dense: 658.0413146084542, Precomp WS: 1059.449535551879, 7.6.4 WS: 696.5534552109954
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 49152-16384-24576 (5/169)
+finish 49152-16384-24576 -> Dense: 656.3316339717499, Precomp WS: 1057.8759074228126, 7.6.4 WS: 695.998385925561
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 32768-16384-32768 (6/169)
+finish 32768-16384-32768 -> Dense: 657.9985551114113, Precomp WS: 1060.7357210070031, 7.6.4 WS: 695.6962143600006
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 16384-16384-49152 (7/169)
+finish 16384-16384-49152 -> Dense: 656.8253877954005, Precomp WS: 1058.7974502169925, 7.6.4 WS: 692.1285170343831
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 24576-16384-32768 (8/169)
+finish 24576-16384-32768 -> Dense: 657.465490118586, Precomp WS: 1060.3098583398653, 7.6.4 WS: 694.9340685368669
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 32768-16384-24576 (9/169)
+finish 32768-16384-24576 -> Dense: 657.4445865456847, Precomp WS: 1058.7614242579407, 7.6.4 WS: 694.6793590489516
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 49152-16384-16384 (10/169)
+finish 49152-16384-16384 -> Dense: 655.8659676865587, Precomp WS: 1054.1387470230438, 7.6.4 WS: 693.3373905855026
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 12288-16384-49152 (11/169)
+finish 12288-16384-49152 -> Dense: 661.0197807879, Precomp WS: 1064.1156072414387, 7.6.4 WS: 696.8251138839823
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 24576-16384-24576 (12/169)
+finish 24576-16384-24576 -> Dense: 657.0349358414369, Precomp WS: 1057.3179308986114, 7.6.4 WS: 693.8323837365283
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 49152-16384-12288 (13/169)
+finish 49152-16384-12288 -> Dense: 652.613126615983, Precomp WS: 1045.869453603017, 7.6.4 WS: 688.9558899416656
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 16384-16384-32768 (14/169)
+finish 16384-16384-32768 -> Dense: 657.1455752397302, Precomp WS: 1054.6293802827781, 7.6.4 WS: 691.6222880749465
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 32768-16384-16384 (15/169)
+finish 32768-16384-16384 -> Dense: 655.5279269494698, Precomp WS: 1051.7455059123365, 7.6.4 WS: 690.3234794139639
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 8192-16384-49152 (16/169)
+finish 8192-16384-49152 -> Dense: 653.0917067360572, Precomp WS: 1047.4594301211876, 7.6.4 WS: 684.9471234843353
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 12288-16384-32768 (17/169)
+finish 12288-16384-32768 -> Dense: 659.8762289147791, Precomp WS: 1059.4321882380452, 7.6.4 WS: 695.5492752554251
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 16384-16384-24576 (18/169)
+finish 16384-16384-24576 -> Dense: 655.7782708443884, Precomp WS: 1051.1434326658598, 7.6.4 WS: 691.3428269590177
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 24576-16384-16384 (19/169)
+finish 24576-16384-16384 -> Dense: 656.1042816219627, Precomp WS: 1051.0601471356865, 7.6.4 WS: 690.9563196754614
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 32768-16384-12288 (20/169)
+finish 32768-16384-12288 -> Dense: 653.4935931987867, Precomp WS: 1040.8860718260207, 7.6.4 WS: 684.646922731618
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 49152-16384-8192 (21/169)
+finish 49152-16384-8192 -> Dense: 651.4430201378547, Precomp WS: 1033.7278885229778, 7.6.4 WS: 683.7114602840292
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 6144-16384-49152 (22/169)
+finish 6144-16384-49152 -> Dense: 649.5315587389729, Precomp WS: 1044.7348754494608, 7.6.4 WS: 684.154804046374
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 12288-16384-24576 (23/169)
+finish 12288-16384-24576 -> Dense: 656.5444036707715, Precomp WS: 1050.2574356821997, 7.6.4 WS: 691.094684656999
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 24576-16384-12288 (24/169)
+finish 24576-16384-12288 -> Dense: 653.7930113718975, Precomp WS: 1041.1849758502515, 7.6.4 WS: 687.206528735704
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 49152-16384-6144 (25/169)
+finish 49152-16384-6144 -> Dense: 647.682231758966, Precomp WS: 1022.8890480064234, 7.6.4 WS: 677.6217414383336
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 8192-16384-32768 (26/169)
+finish 8192-16384-32768 -> Dense: 650.4378977582832, Precomp WS: 1041.650182848072, 7.6.4 WS: 683.2196606624909
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 16384-16384-16384 (27/169)
+finish 16384-16384-16384 -> Dense: 651.1850140925618, Precomp WS: 1040.5836027795526, 7.6.4 WS: 686.140076658318
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 32768-16384-8192 (28/169)
+finish 32768-16384-8192 -> Dense: 651.571594774602, Precomp WS: 1033.4833034853684, 7.6.4 WS: 682.2304357603855
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 4096-16384-49152 (29/169)
+finish 4096-16384-49152 -> Dense: 654.130205925135, Precomp WS: 1048.9588735038712, 7.6.4 WS: 685.8523708593141
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 6144-16384-32768 (30/169)
+finish 6144-16384-32768 -> Dense: 653.8895129224732, Precomp WS: 1045.9496770277244, 7.6.4 WS: 684.6159386462344
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 8192-16384-24576 (31/169)
+finish 8192-16384-24576 -> Dense: 651.9678535734336, Precomp WS: 1034.2049111585525, 7.6.4 WS: 682.2667856777796
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 12288-16384-16384 (32/169)
+finish 12288-16384-16384 -> Dense: 655.9275216590219, Precomp WS: 1043.7164304473636, 7.6.4 WS: 688.9578949506476
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 16384-16384-12288 (33/169)
+finish 16384-16384-12288 -> Dense: 654.0222090589643, Precomp WS: 1038.2748206474525, 7.6.4 WS: 684.9027243307669
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 24576-16384-8192 (34/169)
+finish 24576-16384-8192 -> Dense: 651.4037744358027, Precomp WS: 1030.615306467335, 7.6.4 WS: 679.390184513096
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 32768-16384-6144 (35/169)
+finish 32768-16384-6144 -> Dense: 649.2492983129013, Precomp WS: 1020.3042301113434, 7.6.4 WS: 674.5977602922785
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 49152-16384-4096 (36/169)
+finish 49152-16384-4096 -> Dense: 643.4090716694569, Precomp WS: 998.3951846646659, 7.6.4 WS: 666.1458026083552
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 3072-16384-49152 (37/169)
+finish 3072-16384-49152 -> Dense: 656.0228706326969, Precomp WS: 1045.5248743417471, 7.6.4 WS: 686.6748440957699
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 6144-16384-24576 (38/169)
+finish 6144-16384-24576 -> Dense: 653.0358556919232, Precomp WS: 1041.726901938112, 7.6.4 WS: 682.8139693861772
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 12288-16384-12288 (39/169)
+finish 12288-16384-12288 -> Dense: 654.5961059261871, Precomp WS: 1041.2783890784285, 7.6.4 WS: 687.3467032426043
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 24576-16384-6144 (40/169)
+finish 24576-16384-6144 -> Dense: 647.8091713699121, Precomp WS: 1018.328001659967, 7.6.4 WS: 673.7384761733481
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 49152-16384-3072 (41/169)
+finish 49152-16384-3072 -> Dense: 636.7244184999547, Precomp WS: 983.7184766523835, 7.6.4 WS: 657.0963025935282
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 4096-16384-32768 (42/169)
+finish 4096-16384-32768 -> Dense: 653.8741852100762, Precomp WS: 1045.646213396124, 7.6.4 WS: 684.7026248240309
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 8192-16384-16384 (43/169)
+finish 8192-16384-16384 -> Dense: 650.2068525040625, Precomp WS: 1032.2326757218987, 7.6.4 WS: 679.084891278643
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 16384-16384-8192 (44/169)
+finish 16384-16384-8192 -> Dense: 646.3264784509901, Precomp WS: 1021.314418040889, 7.6.4 WS: 674.9403686839635
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 32768-16384-4096 (45/169)
+finish 32768-16384-4096 -> Dense: 642.7744524782624, Precomp WS: 999.1113786998849, 7.6.4 WS: 664.4011703558068
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 2048-16384-49152 (46/169)
+finish 2048-16384-49152 -> Dense: 649.0937926092985, Precomp WS: 1048.9361568645759, 7.6.4 WS: 686.3227953256642
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 3072-16384-32768 (47/169)
+finish 3072-16384-32768 -> Dense: 650.6681949132546, Precomp WS: 1040.0238548087293, 7.6.4 WS: 682.318327798617
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 4096-16384-24576 (48/169)
+finish 4096-16384-24576 -> Dense: 652.7302320790614, Precomp WS: 1041.3829729348859, 7.6.4 WS: 681.5580384781102
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 6144-16384-16384 (49/169)
+finish 6144-16384-16384 -> Dense: 650.0987315421843, Precomp WS: 1035.2033674769204, 7.6.4 WS: 678.8403903526189
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 8192-16384-12288 (50/169)
+finish 8192-16384-12288 -> Dense: 648.1090099493675, Precomp WS: 1027.2673064093121, 7.6.4 WS: 675.9679048669665
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 12288-16384-8192 (51/169)
+finish 12288-16384-8192 -> Dense: 647.6498509390061, Precomp WS: 1024.0312028423702, 7.6.4 WS: 676.9083300152489
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 16384-16384-6144 (52/169)
+finish 16384-16384-6144 -> Dense: 646.0437004518764, Precomp WS: 1014.5584895791261, 7.6.4 WS: 671.612220584358
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 24576-16384-4096 (53/169)
+finish 24576-16384-4096 -> Dense: 642.0914774899512, Precomp WS: 999.5494312446907, 7.6.4 WS: 662.8107341688628
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 32768-16384-3072 (54/169)
+finish 32768-16384-3072 -> Dense: 635.2044565014226, Precomp WS: 980.8718102674417, 7.6.4 WS: 655.3543104538542
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 49152-16384-2048 (55/169)
+finish 49152-16384-2048 -> Dense: 629.1365597037244, Precomp WS: 952.6907074455949, 7.6.4 WS: 643.6493111900495
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 1536-16384-49152 (56/169)
+finish 1536-16384-49152 -> Dense: 650.7824595584907, Precomp WS: 1025.0796424633093, 7.6.4 WS: 677.6130414164019
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 3072-16384-24576 (57/169)
+finish 3072-16384-24576 -> Dense: 652.864638548737, Precomp WS: 1040.647394588714, 7.6.4 WS: 682.5567804730524
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 6144-16384-12288 (58/169)
+finish 6144-16384-12288 -> Dense: 647.9526247951212, Precomp WS: 1027.030391739419, 7.6.4 WS: 673.5244641799809
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 12288-16384-6144 (59/169)
+finish 12288-16384-6144 -> Dense: 646.3207660193, Precomp WS: 1016.8966687844478, 7.6.4 WS: 673.2614878329945
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 24576-16384-3072 (60/169)
+finish 24576-16384-3072 -> Dense: 635.1583334622045, Precomp WS: 977.5465190391998, 7.6.4 WS: 654.3516512858153
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 49152-16384-1536 (61/169)
+finish 49152-16384-1536 -> Dense: 614.8512745906354, Precomp WS: 918.6512319796486, 7.6.4 WS: 636.7830080239722
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 2048-16384-32768 (62/169)
+finish 2048-16384-32768 -> Dense: 656.2613033302106, Precomp WS: 1047.4025690050908, 7.6.4 WS: 683.8220415328999
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 4096-16384-16384 (63/169)
+finish 4096-16384-16384 -> Dense: 649.7484544651252, Precomp WS: 1034.0110175942245, 7.6.4 WS: 678.9018693650373
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 8192-16384-8192 (64/169)
+finish 8192-16384-8192 -> Dense: 643.5056257422151, Precomp WS: 995.7208136567617, 7.6.4 WS: 669.3405759015712
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 16384-16384-4096 (65/169)
+finish 16384-16384-4096 -> Dense: 637.1806895611057, Precomp WS: 990.8552617759412, 7.6.4 WS: 658.2116182150871
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 32768-16384-2048 (66/169)
+finish 32768-16384-2048 -> Dense: 626.8562969376541, Precomp WS: 951.700954529235, 7.6.4 WS: 642.4132744723597
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1024-16384-49152 (67/169)
+finish 1024-16384-49152 -> Dense: 659.2215043558735, Precomp WS: 1049.6390158716542, 7.6.4 WS: 687.7030573804859
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1536-16384-32768 (68/169)
+finish 1536-16384-32768 -> Dense: 651.9182285714229, Precomp WS: 1028.9702526993, 7.6.4 WS: 678.5802258675417
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 2048-16384-24576 (69/169)
+finish 2048-16384-24576 -> Dense: 653.0920479167193, Precomp WS: 1040.9857395511076, 7.6.4 WS: 682.065398746023
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 3072-16384-16384 (70/169)
+finish 3072-16384-16384 -> Dense: 651.1159680700002, Precomp WS: 1035.2735519482014, 7.6.4 WS: 680.5756733643213
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 4096-16384-12288 (71/169)
+finish 4096-16384-12288 -> Dense: 649.4976632192624, Precomp WS: 1028.4271674730908, 7.6.4 WS: 675.0642951056176
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 6144-16384-8192 (72/169)
+[W729 21:19:25.299601311 CUDAGraph.cpp:307] Warning: CUDA warning: operation not permitted when stream is capturing (function reset)
+finish 6144-16384-8192 -> Dense: 643.3042018396877, Precomp WS: None, 7.6.4 WS: 669.2442210919448
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 8192-16384-6144 (73/169)
+finish 8192-16384-6144 -> Dense: 639.4154540169625, Precomp WS: 982.6060789281954, 7.6.4 WS: 655.7265013899606
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 12288-16384-4096 (74/169)
+finish 12288-16384-4096 -> Dense: 639.4973667884205, Precomp WS: 994.3410996978781, 7.6.4 WS: 663.140361910764
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 16384-16384-3072 (75/169)
+finish 16384-16384-3072 -> Dense: 633.3598873889498, Precomp WS: 973.3535476133137, 7.6.4 WS: 651.3714994160093
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 24576-16384-2048 (76/169)
+finish 24576-16384-2048 -> Dense: 622.6309900009715, Precomp WS: 949.1933964466076, 7.6.4 WS: 640.3809748398035
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 32768-16384-1536 (77/169)
+finish 32768-16384-1536 -> Dense: 615.648578757321, Precomp WS: 916.5482169103793, 7.6.4 WS: 635.2842371437752
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 49152-16384-1024 (78/169)
+finish 49152-16384-1024 -> Dense: 584.6250457099949, Precomp WS: 855.0218858293963, 7.6.4 WS: 607.4849215892417
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 768-16384-49152 (79/169)
+finish 768-16384-49152 -> Dense: 625.5276712065055, Precomp WS: 911.2223088113532, 7.6.4 WS: 682.1588962186061
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 6, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1536-16384-24576 (80/169)
+finish 1536-16384-24576 -> Dense: 648.8609338993044, Precomp WS: 1024.821724062996, 7.6.4 WS: 676.7249605489224
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 3072-16384-12288 (81/169)
+finish 3072-16384-12288 -> Dense: 646.4425099893178, Precomp WS: 1029.376280569881, 7.6.4 WS: 676.6350331377232
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 6144-16384-6144 (82/169)
+finish 6144-16384-6144 -> Dense: 636.921900350338, Precomp WS: 984.473574914447, 7.6.4 WS: 663.5646324182213
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 12288-16384-3072 (83/169)
+finish 12288-16384-3072 -> Dense: 632.3464429253445, Precomp WS: 979.5452687803689, 7.6.4 WS: 653.0217534911758
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 24576-16384-1536 (84/169)
+finish 24576-16384-1536 -> Dense: 611.2418300185943, Precomp WS: 914.5628719915645, 7.6.4 WS: 632.0817229624579
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 49152-16384-768 (85/169)
+finish 49152-16384-768 -> Dense: 563.4560140344589, Precomp WS: 795.5406020243295, 7.6.4 WS: 578.6843353307564
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1024-16384-32768 (86/169)
+finish 1024-16384-32768 -> Dense: 653.2236423433525, Precomp WS: 1041.0452165953232, 7.6.4 WS: 683.3104941019608
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 2048-16384-16384 (87/169)
+finish 2048-16384-16384 -> Dense: 650.2232671842407, Precomp WS: 1036.9005022905162, 7.6.4 WS: 681.6905654009611
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 4096-16384-8192 (88/169)
+finish 4096-16384-8192 -> Dense: 635.8881553700431, Precomp WS: 1012.6922338223316, 7.6.4 WS: 669.5833828718484
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 8192-16384-4096 (89/169)
+finish 8192-16384-4096 -> Dense: 614.2350252569881, Precomp WS: 963.6727886544926, 7.6.4 WS: 646.1085500629206
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 16384-16384-2048 (90/169)
+finish 16384-16384-2048 -> Dense: 613.4654062717269, Precomp WS: 944.2021271528934, 7.6.4 WS: 638.577794349209
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 32768-16384-1024 (91/169)
+finish 32768-16384-1024 -> Dense: 583.9235114418867, Precomp WS: 852.2530321649604, 7.6.4 WS: 605.993728780744
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 768-16384-32768 (92/169)
+finish 768-16384-32768 -> Dense: 625.0014368788089, Precomp WS: 916.7315100957578, 7.6.4 WS: 679.8132267074307
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1024-16384-24576 (93/169)
+finish 1024-16384-24576 -> Dense: 651.4548490746042, Precomp WS: 1042.6841046899278, 7.6.4 WS: 684.26582085588
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1536-16384-16384 (94/169)
+finish 1536-16384-16384 -> Dense: 644.5071389086451, Precomp WS: 1017.9142663505459, 7.6.4 WS: 674.7585345624576
+  Dense   best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 2048-16384-12288 (95/169)
+finish 2048-16384-12288 -> Dense: 647.9929927371054, Precomp WS: 1027.1086209234081, 7.6.4 WS: 676.8146665787139
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 3072-16384-8192 (96/169)
+finish 3072-16384-8192 -> Dense: 639.79353626302, Precomp WS: 1018.9020147319192, 7.6.4 WS: 671.490038300238
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 4096-16384-6144 (97/169)
+finish 4096-16384-6144 -> Dense: 636.3229583628279, Precomp WS: 997.6624787394088, 7.6.4 WS: 662.6049392122187
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 6144-16384-4096 (98/169)
+finish 6144-16384-4096 -> Dense: 611.7974912130976, Precomp WS: 966.5968432298596, 7.6.4 WS: 647.3246289549992
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 8192-16384-3072 (99/169)
+finish 8192-16384-3072 -> Dense: 612.2169087257016, Precomp WS: 948.3077897996258, 7.6.4 WS: 638.7108332816107
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 12288-16384-2048 (100/169)
+finish 12288-16384-2048 -> Dense: 622.0609844585507, Precomp WS: 945.6254548632112, 7.6.4 WS: 639.1065352905325
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 16384-16384-1536 (101/169)
+finish 16384-16384-1536 -> Dense: 610.2971570741955, Precomp WS: 913.1455376135202, 7.6.4 WS: 629.0178578959001
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 24576-16384-1024 (102/169)
+finish 24576-16384-1024 -> Dense: 581.9866540730627, Precomp WS: 847.9567692580166, 7.6.4 WS: 604.6515234573171
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 32768-16384-768 (103/169)
+finish 32768-16384-768 -> Dense: 561.8809738572438, Precomp WS: 793.9192019918663, 7.6.4 WS: 575.2979759546196
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 768-16384-24576 (104/169)
+finish 768-16384-24576 -> Dense: 622.7619331732434, Precomp WS: 917.4483400528712, 7.6.4 WS: 677.9951721194174
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1536-16384-12288 (105/169)
+finish 1536-16384-12288 -> Dense: 640.3272182632205, Precomp WS: 1011.3025284175249, 7.6.4 WS: 669.9581149148157
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 3072-16384-6144 (106/169)
+finish 3072-16384-6144 -> Dense: 638.3367629515421, Precomp WS: 997.0137342595133, 7.6.4 WS: 660.7407668022752
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 6144-16384-3072 (107/169)
+finish 6144-16384-3072 -> Dense: 611.9276149126052, Precomp WS: 952.3060144070434, 7.6.4 WS: 638.2876056772844
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 12288-16384-1536 (108/169)
+finish 12288-16384-1536 -> Dense: 608.1568058515244, Precomp WS: 908.4004521423005, 7.6.4 WS: 626.6631586500779
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 24576-16384-768 (109/169)
+finish 24576-16384-768 -> Dense: 562.2862227162301, Precomp WS: 789.2557047249478, 7.6.4 WS: 574.63533643406
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1024-16384-16384 (110/169)
+finish 1024-16384-16384 -> Dense: 645.0783407949998, Precomp WS: 1038.6923082676003, 7.6.4 WS: 678.1610536457268
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 2048-16384-8192 (111/169)
+finish 2048-16384-8192 -> Dense: 642.8116657471198, Precomp WS: 1026.7231753732422, 7.6.4 WS: 670.3949524142951
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 4096-16384-4096 (112/169)
+finish 4096-16384-4096 -> Dense: 622.5987049668233, Precomp WS: 982.8018941571733, 7.6.4 WS: 651.8631670304429
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 8192-16384-2048 (113/169)
+finish 8192-16384-2048 -> Dense: 600.4296861575515, Precomp WS: 922.0984745400966, 7.6.4 WS: 625.2697663752855
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 16384-16384-1024 (114/169)
+finish 16384-16384-1024 -> Dense: 586.7085477441868, Precomp WS: 850.3800684925274, 7.6.4 WS: 601.8036290783313
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 768-16384-16384 (115/169)
+finish 768-16384-16384 -> Dense: 621.8163055316725, Precomp WS: 919.0869681155522, 7.6.4 WS: 673.2423618263355
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 2}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1024-16384-12288 (116/169)
+finish 1024-16384-12288 -> Dense: 649.0624034291537, Precomp WS: 1026.2585844896987, 7.6.4 WS: 675.0340623286975
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 1536-16384-8192 (117/169)
+finish 1536-16384-8192 -> Dense: 638.4262112983726, Precomp WS: 992.1829011508868, 7.6.4 WS: 664.2264117773119
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 2048-16384-6144 (118/169)
+finish 2048-16384-6144 -> Dense: 638.0685614364173, Precomp WS: 1000.6472444300382, 7.6.4 WS: 663.7196766143056
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 3072-16384-4096 (119/169)
+finish 3072-16384-4096 -> Dense: 627.7617951783901, Precomp WS: 979.3800004685781, 7.6.4 WS: 649.2588788741846
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 4096-16384-3072 (120/169)
+finish 4096-16384-3072 -> Dense: 621.4759236525553, Precomp WS: 963.5187219284143, 7.6.4 WS: 644.8117579444289
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 6144-16384-2048 (121/169)
+finish 6144-16384-2048 -> Dense: 600.8098059932263, Precomp WS: 931.7305548926155, 7.6.4 WS: 625.580646376743
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 8192-16384-1536 (122/169)
+finish 8192-16384-1536 -> Dense: 589.9471492874444, Precomp WS: 900.560871312773, 7.6.4 WS: 620.97564644573
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 12288-16384-1024 (123/169)
+finish 12288-16384-1024 -> Dense: 580.5514051079784, Precomp WS: 840.7895508145075, 7.6.4 WS: 597.9163720636478
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 16384-16384-768 (124/169)
+finish 16384-16384-768 -> Dense: 558.2517651478034, Precomp WS: 788.0708518439905, 7.6.4 WS: 572.3673805854322
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 768-16384-12288 (125/169)
+finish 768-16384-12288 -> Dense: 617.399284472502, Precomp WS: 920.7669882191707, 7.6.4 WS: 667.0138552032713
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 6, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1536-16384-6144 (126/169)
+finish 1536-16384-6144 -> Dense: 634.3224855256576, Precomp WS: 993.9113060007146, 7.6.4 WS: 656.0325214913233
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 3072-16384-3072 (127/169)
+finish 3072-16384-3072 -> Dense: 622.1146764750031, Precomp WS: 956.2680451932993, 7.6.4 WS: 641.7663934235196
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 6144-16384-1536 (128/169)
+finish 6144-16384-1536 -> Dense: 588.1591987542944, Precomp WS: 881.0768319284961, 7.6.4 WS: 615.8696789043804
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 12288-16384-768 (129/169)
+finish 12288-16384-768 -> Dense: 557.6771434821496, Precomp WS: 785.8514663735082, 7.6.4 WS: 571.2177957659654
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1024-16384-8192 (130/169)
+finish 1024-16384-8192 -> Dense: 645.4210676774561, Precomp WS: 1015.4641049221585, 7.6.4 WS: 673.0287057472549
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 2048-16384-4096 (131/169)
+finish 2048-16384-4096 -> Dense: 630.1739166443142, Precomp WS: 982.7106663469248, 7.6.4 WS: 654.4532460516914
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 4096-16384-2048 (132/169)
+finish 4096-16384-2048 -> Dense: 609.1681177256187, Precomp WS: 930.9716962248002, 7.6.4 WS: 629.1080839189684
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 8192-16384-1024 (133/169)
+finish 8192-16384-1024 -> Dense: 580.219860812329, Precomp WS: 836.6320419863607, 7.6.4 WS: 599.2405195508371
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 768-16384-8192 (134/169)
+finish 768-16384-8192 -> Dense: 615.6518666717382, Precomp WS: 908.1796162208019, 7.6.4 WS: 663.6252692986482
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 6, 'SUBTILE_FACTOR': 2}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1024-16384-6144 (135/169)
+finish 1024-16384-6144 -> Dense: 636.7206716008649, Precomp WS: 1004.4508042573702, 7.6.4 WS: 659.9602451345539
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 1536-16384-4096 (136/169)
+finish 1536-16384-4096 -> Dense: 624.1330653872092, Precomp WS: 965.4361846338601, 7.6.4 WS: 643.9742217950117
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 2048-16384-3072 (137/169)
+finish 2048-16384-3072 -> Dense: 617.7450195788448, Precomp WS: 959.466455772302, 7.6.4 WS: 643.0660736720822
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 3072-16384-2048 (138/169)
+finish 3072-16384-2048 -> Dense: 608.7253136844079, Precomp WS: 921.1431236503477, 7.6.4 WS: 628.6486913209371
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 4096-16384-1536 (139/169)
+finish 4096-16384-1536 -> Dense: 595.7044918198793, Precomp WS: 886.8507234638324, 7.6.4 WS: 613.8728774861337
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+start 6144-16384-1024 (140/169)
+finish 6144-16384-1024 -> Dense: 571.481609812136, Precomp WS: 828.7663755123103, 7.6.4 WS: 588.3624253199899
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 8192-16384-768 (141/169)
+finish 8192-16384-768 -> Dense: 550.0768219884677, Precomp WS: 779.6118401379297, 7.6.4 WS: 568.7016622940405
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 768-16384-6144 (142/169)
+finish 768-16384-6144 -> Dense: 612.2630031503828, Precomp WS: 884.4216010392879, 7.6.4 WS: 651.0465229991999
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 2}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1536-16384-3072 (143/169)
+finish 1536-16384-3072 -> Dense: 622.332375238853, Precomp WS: 950.5860817416363, 7.6.4 WS: 632.6455821394648
+  Dense   best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 3072-16384-1536 (144/169)
+finish 3072-16384-1536 -> Dense: 596.7682504867867, Precomp WS: 895.9673146164945, 7.6.4 WS: 610.9799142025867
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 6144-16384-768 (145/169)
+finish 6144-16384-768 -> Dense: 549.0771990914792, Precomp WS: 780.0804660809662, 7.6.4 WS: 564.6226642570555
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1024-16384-4096 (146/169)
+finish 1024-16384-4096 -> Dense: 629.5903472480412, Precomp WS: 983.4852375997157, 7.6.4 WS: 656.9121000748047
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 2048-16384-2048 (147/169)
+finish 2048-16384-2048 -> Dense: 610.7989450028388, Precomp WS: 927.575296694002, 7.6.4 WS: 631.8601923718412
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 4096-16384-1024 (148/169)
+finish 4096-16384-1024 -> Dense: 570.4337073207306, Precomp WS: 830.6548483831605, 7.6.4 WS: 580.2422523459753
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 768-16384-4096 (149/169)
+finish 768-16384-4096 -> Dense: 603.3101113033376, Precomp WS: 878.1938863744746, 7.6.4 WS: 643.2267464319501
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1024-16384-3072 (150/169)
+finish 1024-16384-3072 -> Dense: 620.870070027989, Precomp WS: 939.4541507172748, 7.6.4 WS: 643.2079637061804
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 1536-16384-2048 (151/169)
+finish 1536-16384-2048 -> Dense: 599.792474718854, Precomp WS: 904.3521713057769, 7.6.4 WS: 619.8354239259954
+  Dense   best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=16
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 2048-16384-1536 (152/169)
+finish 2048-16384-1536 -> Dense: 591.4928241737665, Precomp WS: 883.283187229856, 7.6.4 WS: 610.1527571059612
+  Dense   best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 3072-16384-1024 (153/169)
+finish 3072-16384-1024 -> Dense: 564.9919486733106, Precomp WS: 819.9203352848492, 7.6.4 WS: 579.6407344806246
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 4096-16384-768 (154/169)
+finish 4096-16384-768 -> Dense: 542.9728621596157, Precomp WS: 772.8915370490654, 7.6.4 WS: 554.9705415155278
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 2}, num_warps=8
+start 768-16384-3072 (155/169)
+finish 768-16384-3072 -> Dense: 600.5650322719781, Precomp WS: 851.9012436564917, 7.6.4 WS: 630.2340340796965
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 6, 'SUBTILE_FACTOR': 2}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 1536-16384-1536 (156/169)
+finish 1536-16384-1536 -> Dense: 580.7580566817082, Precomp WS: 865.2317610657956, 7.6.4 WS: 598.8400480156879
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 3072-16384-768 (157/169)
+finish 3072-16384-768 -> Dense: 551.1206361709066, Precomp WS: 759.4172831699592, 7.6.4 WS: 555.1274076940276
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 1024-16384-2048 (158/169)
+finish 1024-16384-2048 -> Dense: 605.0401724964491, Precomp WS: 931.3654250612192, 7.6.4 WS: 632.4312619498694
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 2048-16384-1024 (159/169)
+finish 2048-16384-1024 -> Dense: 570.0257266139032, Precomp WS: 815.7667678443919, 7.6.4 WS: 584.3917450358418
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 768-16384-2048 (160/169)
+finish 768-16384-2048 -> Dense: 580.8775715666027, Precomp WS: 853.3573083087449, 7.6.4 WS: 637.900991858926
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 6, 'SUBTILE_FACTOR': 2}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 1024-16384-1536 (161/169)
+finish 1024-16384-1536 -> Dense: 590.1173224602343, Precomp WS: 898.3582937351417, 7.6.4 WS: 624.31388451801
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 1536-16384-1024 (162/169)
+finish 1536-16384-1024 -> Dense: 556.2364915980467, Precomp WS: 831.349627192193, 7.6.4 WS: 597.3535523300906
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 2048-16384-768 (163/169)
+finish 2048-16384-768 -> Dense: 538.7329627062591, Precomp WS: 776.4567591468516, 7.6.4 WS: 567.0692046273494
+  Dense   best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 768-16384-1536 (164/169)
+finish 768-16384-1536 -> Dense: 575.880405338672, Precomp WS: 820.758625499752, 7.6.4 WS: 621.4472771606645
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 6, 'SUBTILE_FACTOR': 2}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 1536-16384-768 (165/169)
+finish 1536-16384-768 -> Dense: 547.7606053250709, Precomp WS: 757.8955037904643, 7.6.4 WS: 563.2624609679797
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 1024-16384-1024 (166/169)
+finish 1024-16384-1024 -> Dense: 576.6147249816944, Precomp WS: 833.6639667430678, 7.6.4 WS: 594.0720312282766
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 8}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 768-16384-1024 (167/169)
+finish 768-16384-1024 -> Dense: 551.4691542533421, Precomp WS: 742.7750751669045, 7.6.4 WS: 585.5293513012953
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 2}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 1024-16384-768 (168/169)
+finish 1024-16384-768 -> Dense: 552.6844944925391, Precomp WS: 747.4658805752449, 7.6.4 WS: 566.0170445079888
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Sparse  best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+start 768-16384-768 (169/169)
+finish 768-16384-768 -> Dense: 529.1365895830928, Precomp WS: 689.7603545459896, 7.6.4 WS: 552.6466990083694
+  Dense   best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_buffers': 6, 'SUBTILE_FACTOR': 2}, num_warps=4
+  Sparse  best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_buffers': 4, 'SUBTILE_FACTOR': 4}, num_warps=4
+  Runtime best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 256, 'BLOCK_SIZE_K': 64, 'num_buffers': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+1.0435393509750388
+
+[INFO] Optimization charts successfully compiled and saved to 'Benchmark/v7.6.4/v7.6.4_Benchmark_16384.png'
+
+scontrol show job 688771
+JobId=688771 JobName=7.6.4_N=16384
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=1412935 Nice=0 Account=rrg-mmehride QOS=normal
+   JobState=COMPLETING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=13:36:30 TimeLimit=16:00:00 TimeMin=N/A
+   SubmitTime=2026-07-29T14:28:18 EligibleTime=2026-07-29T14:28:18
+   AccrueTime=2026-07-29T14:28:18
+   StartTime=2026-07-29T14:29:09 EndTime=2026-07-30T04:05:39 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-07-29T14:29:09 Scheduler=Main
+   Partition=compute AllocNode:Sid=trig-login01:2768365
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0012
+   BatchHost=trig0012
+   NumNodes=1 NumCPUs=24 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=1,mem=187.50G,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=187.50G,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=187.50G MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/scratch/notming/compression/sbatch_sh/trillium/7.6.4_benchmark.sh
+   SubmitLine=SBATCH --comment /opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/trillium/7.6.4_benchmark.sh --export=NONE --get-user-env sbatch_sh/trillium/7.6.4_benchmark.sh
+   WorkDir=/scratch/notming/compression
+   Comment=/opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/trillium/7.6.4_benchmark.sh
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/scratch/notming/compression/7.6.4_N=16384_688771.out
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 688771
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+688771       7.6.4_N=1+ rrg-mmehr+   13:36:31                         00:00:00   00:00:00      0:0 
+688771.batch      batch rrg-mmehr+   13:36:31                         00:00:00   00:00:00      0:0 
+688771.exte+     extern rrg-mmehr+   13:36:31                         00:00:00   00:00:00      0:0 
+

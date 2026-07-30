@@ -5108,3 +5108,127 @@ tpython 7.7.1_ws_seperate_warp_4_buf.py --tune
 tpython 7.7.1_ws_seperate_warp_4_buf.py 
 #1785281636
 tpython 8.7.1_benchmark_ws.py 7.7.1 8192
+#1785275406
+debugjob
+#1785282383
+load_module && start_gluon
+#1785282401
+rm -f compiler_scratch
+#1785282409
+rmdir -f compiler_scratch
+#1785282416
+rmdir --help
+#1785282432
+rmdir --force compiler_scratch
+#1785282437
+rmdir  compiler_scratch
+#1785282446
+cd compiler_scratch/
+#1785282448
+cd .triton_cache/
+#1785282451
+cd MIH4X24CEAJDWYGXCZ4EKW6DTWSUG2ZBSBPV7NGI62HAUKJ7F7BQ/
+#1785282452
+dir
+#1785282466
+rm -f .nfs622b6833f4e105da00010b72 
+#1785282483
+cd ../../..
+#1785282486
+debugjob
+#1785291870
+tpython 7.7.1_ws_seperate_warp_4_buf.py 
+#1785291947
+tpython 7.7.1_ws_seperate_warp_4_buf.py > ptx_dump.txt
+#1785276080
+load_module && start_gluon
+#1785276095
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1785276099
+sq
+#1785278386
+scancel 685680
+#1785279313
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1785280302
+sq
+#1785282476
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1785282952
+sq
+#1785337940
+debugjob
+#1785383341
+load_module && start_gluon
+#1785383390
+sbatch sbatch_sh/trillium/7.6.4_benchmark.sh 
+#1785337740
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1785337754
+load_module && start_gluon
+#1785337756
+sbatch sbatch_sh/trillium/7.6.2_benchmark.sh 
+#1785337759
+sq
+#1785337991
+sq --start
+#1785338002
+sq --start -i 15
+#1785340432
+sq
+#1785346243
+tpython 7.6.4_compression_ws_optimization.py --tune
+#1785347168
+tpython 7.6.4_compression_ws_optimization.py 
+#1785349697
+sbatch sbatch_sh/trillium/7.6.4_benchmark.sh 
+#1785349712
+sq
+#1785349724
+sq --start -i 60
+#1785349790
+sq
+#1785352759
+sq -i 60
+#1785425400
+load_module && start_gluon
+#1785425422
+tpython 8.7.1_benchmark_ws.py 7.6.3 8192
+#1785425921
+tpython 7.6.3_compress_ws_2_partition.py 
+#1785425967
+nvidia-smi
+#1785425974
+kill -9 2953865
+#1785425990
+tpython 7.6.3_compress_ws_2_partition.py 
+#1785426226
+tpython 8.7.1_benchmark_ws.py 7.6.3 8192
+#1785426544
+tpython 7.6.3_compress_ws_2_partition.py 
+#1785426731
+tpython 8.7.1_benchmark_ws.py 7.6.3 8192
+#1785426753
+tpython 7.6.3_compress_ws_2_partition.py 
+#1785426857
+tpython 8.7.1_benchmark_ws.py 7.6.3 8192
+#1785426986
+tpython 7.6.3_compress_ws_2_partition.py 
+#1785427104
+tpython 8.7.1_benchmark_ws.py 7.6.3 8192
+#1785427391
+tpython 7.8.2_prune_ws_2_partition.py 
+#1785427439
+tpython 8.7.1_benchmark_ws.py 7.8.2 8192
+#1785427654
+tpython 8.7.1_benchmark_ws.py 7.6.3 8192
+#1785427975
+tpython 8.7.1_benchmark_ws.py 7.8.2 8192
+#1785428762
+tpython 8.7.1_benchmark_ws.py 7.6.3 8192
+#1785432148
+tpython 7.6.3_compress_ws_2_partition.py 
+#1785432432
+quit
+#1785432434
+exit
