@@ -88,56 +88,17 @@ class SparseWGMMA:
         mma_layout: gl.constexpr = pick_sparse_wgmma_layout(dtype, BLOCK_M, BLOCK_N, num_warps)
         acc = gl.zeros((BLOCK_M, BLOCK_N), dtype=gl.float32, layout=mma_layout)
         return SparseWGMMA(acc, gl.to_tensor(False), mma_layout)
-    
+
     @gluon.jit
-    def generate_compressed_and_meta(self, a_pruned, BLOCK_M : gl.constexpr, BLOCK_K: gl.constexpr, a_compressed_layout: gl.constexpr):
-        # --- Extract groups of 4 consecutive columns using reshape + split ---
-        a_grouped = a_pruned.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
-        a_even, a_odd = a_grouped.split()
-
-        # split again to separate the pairs
-        a0, a2 = a_even.split()  # a0 = col 4g+0, a2 = col 4g+2
-        a1, a3 = a_odd.split()   # a1 = col 4g+1, a3 = col 4g+3
-
-        # OPTIMIZATION 1: Cache the non-zero checks.
-        b0 = a0 != 0
-        b1 = a1 != 0
-        b2 = a2 != 0
-        # OPTIMIZATION 2: Streamlined value extraction.
-        nz0 = gl.where(b0, a0, gl.where(b1, a1, a2))
-
-        nz1 = gl.where(b0 & b1, a1, gl.where(b2 & (b0 | b1), a2, a3))
-
-        a_compressed = gl.join(nz0, nz1)
-        a_compressed = a_compressed.reshape(BLOCK_M, BLOCK_K // 2)
-
-        # OPTIMIZATION 3: Direct metadata generation.
-        meta_4 = gl.where(b0,
-             gl.where(b1, 4, gl.where(b2, 8, 12)),
-             gl.where(b1, gl.where(b2, 9, 13), 14))
-
-        # To lower register usage, we do the reshape and permute BEFORE the reduction!
-        meta_4_reshaped = meta_4.reshape(BLOCK_M // 16, 2, 8, BLOCK_K // 64, 4, 2, 2)
-        meta_4_permuted = meta_4_reshaped.permute(0, 3, 2, 4, 1, 5, 6)
-        meta_4_ready = meta_4_permuted.reshape(BLOCK_M // 16, BLOCK_K, 2, 2)
-        
-        meta_reordered = gl.reduce(
-            gl.reduce(meta_4_ready, 3, create_metadata), 2, create_metadata_8
-        ).to(gl.int16)
-
-        e_layout: gl.constexpr = gl.DotOperandLayout(
-            operand_index=0,
-            parent=self.layout,
-            k_width=32 // gl.int16.primitive_bitwidth,
-            meta=1,
+    def f16_is_not_zero_bitwise(self, x):
+        return gl.inline_asm_elementwise(
+            asm="setp.ne.b16 $0, $1, 0;",
+            constraints="=b,h",
+            args=[x.to(gl.int16, bitcast=True)],
+            dtype=gl.int1,
+            is_pure=True,
+            pack=1
         )
-
-        a_compressed = gl.convert_layout(
-            a_compressed, a_compressed_layout, assert_trivial=False
-        )
-        e = gl.convert_layout(meta_reordered, e_layout)
-        
-        return a_compressed, e
 
     @gluon.jit
     def generate_compressed_and_meta_raw(self, a_pruned, BLOCK_M : gl.constexpr, BLOCK_K: gl.constexpr):
@@ -148,11 +109,10 @@ class SparseWGMMA:
         a0, a2 = a_even.split()  # col 4g+0, col 4g+2
         a1, a3 = a_odd.split()   # col 4g+1, col 4g+3
 
-        zero_fp16 = gl.zeros_like(a0)
         # Non-zero flags
-        b0_bool = a0 != zero_fp16
-        b1_bool = a1 != zero_fp16
-        b2_bool = a2 != zero_fp16
+        b0_bool = self.f16_is_not_zero_bitwise(a0)
+        b1_bool = self.f16_is_not_zero_bitwise(a1)
+        b2_bool = self.f16_is_not_zero_bitwise(a2)
 
         # 2. Extract non-zero values (nz0, nz1)
         nz0 = gl.where(b0_bool, a0, gl.where(b1_bool, a1, a2))
@@ -193,18 +153,6 @@ class SparseWGMMA:
             is_pure=True,
             pack=1,
         )
-
-        # e_layout: gl.constexpr = gl.DotOperandLayout(
-        #     operand_index=0,
-        #     parent=self.layout,
-        #     k_width=32 // gl.int16.primitive_bitwidth,
-        #     meta=1,
-        # )
-
-        # a_compressed = gl.convert_layout(
-        #     a_compressed, a_compressed_layout
-        # )
-        # e = gl.convert_layout(meta_reordered, e_layout)
         
         return a_compressed, meta_reordered
 
@@ -351,8 +299,8 @@ def sparse_matmul_load_and_compress_partition(p, SchedulerImpl: gl.constexpr):
     process_state = Counter.create(0, num_buffers)
     
     # Producer warp footprint lock (4 warps = 128 threads)
-    compress_warps: gl.constexpr = 4
-    a_warp_bases: gl.constexpr = [[16, 0], [32, 0]]
+    compress_warps: gl.constexpr = 8
+    a_warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0]]
     
     a_pruned_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
         reg_bases=[[0, 1], [0, 2], [8, 0], [0, 4], [0, 8]],
@@ -595,7 +543,7 @@ def sparse_matmul_warp_specialized_kernel(
     gl.warp_specialize([
         (sparse_matmul_compute_and_store_partition, (p, SchedulerImpl)),
         (sparse_matmul_load_and_compress_partition, (p, SchedulerImpl)),
-    ], [4])
+    ], [8])
 
 
 def sparse_matmul_get_configs(pre_hook=None, tune=True):
@@ -646,7 +594,7 @@ def sparse_matmul_get_configs(pre_hook=None, tune=True):
         for BM in (64, 128, 256, )
         for BN in (64, 128, 256, )
         for BK in (64, 128, 256, )
-        for warps in (4, 8, 16,)
+        for warps in (4, )
         for buffers in (3, 4, 5, 6,)
         for SF in (1, 2, 4, 8,)
         if valid(BM, BN, BK, warps, buffers, SF)
@@ -727,10 +675,10 @@ if __name__ == "__main__":
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=256, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=64, help="BLOCK_SIZE_K")
-    parser.add_argument("--warps", type=int, default=8, help="Number of warps")
-    parser.add_argument("--buffers", type=int, default=3, help="Number of buffers")
+    parser.add_argument("--warps", type=int, default=4, help="Number of warps")
+    parser.add_argument("--buffers", type=int, default=5, help="Number of buffers")
     parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
