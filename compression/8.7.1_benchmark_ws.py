@@ -71,6 +71,25 @@ def benchmark_kernels_ws(M, N, K, comp_module):
     except Exception as e:
         tflops_sparse_ws = None
         torch.cuda.synchronize()
+        
+    # def run_e2e_pytorch_sparse():
+    #     A_p = prune_2_4(A)
+    #     A_c, E_meta = compress_dense_to_sparse(A_p)
+    #     E_meta = E_meta.view(M // 16, K)
+    #     return gluon_ws_sparse.run_sparse_ws_matmul(A_c, E_meta, B)
+
+    # try:
+    #     ms_sparse_ws = triton.testing.do_bench_cudagraph(run_e2e_pytorch_sparse, rep=1000)
+    #     tflops_sparse_ws = to_tflops(ms_sparse_ws, M, N, K)
+    # except Exception as e:
+    #     print("Fall back to do_bench")
+    #     try:
+    #         # Fallback to do_bench if PyTorch dynamic memory allocation breaks CUDA Graph capture
+    #         ms_sparse_ws = triton.testing.do_bench(run_e2e_pytorch_sparse, rep=1000)
+    #         tflops_sparse_ws = to_tflops(ms_sparse_ws, M, N, K)
+    #     except Exception:
+    #         tflops_sparse_ws = None
+    #         torch.cuda.synchronize()
 
     # 3. Sparse Runtime Compression WS (Dynamic Version)
     try:
@@ -211,7 +230,7 @@ if __name__ == "__main__":
         })
         print(f"finish {shape_str} -> Dense: {metrics['Dense_WS_TFLOPS']}, Precomp WS: {metrics['Sparse_Precomp_WS_TFLOPS']}, {version} WS: {metrics['Runtime_WS_TFLOPS']}")
 
-        if M <= 768:
+        if M <= 768 and N <= 8192:
             best_dense = gluon_ws_dense.ws_kernel_autotune_768.best_config
             best_sparse = gluon_ws_sparse.sparse_ws_kernel_autotune_768.best_config
         else: 
