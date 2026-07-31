@@ -567,6 +567,7 @@ def sparse_matmul_get_configs(pre_hook=None, tune=True):
             },
             num_warps=warps,
             pre_hook=pre_hook,
+            num_stages=4,
         )
         for BM in (64, 128, 256)
         for BN in (64, 128, 256)
@@ -647,7 +648,8 @@ def run_sparse_ws_matmul(A_pruned, B, tune=True, manual_config=None):
             BLOCK_SIZE_K=manual_config["BK"],
             num_buffers=manual_config["buffers"], 
             SUBTILE_FACTOR=manual_config["SF"], 
-            num_warps=manual_config["warps"]
+            num_warps=manual_config["warps"],
+            num_stages=4
         )
 
     return c

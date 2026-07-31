@@ -5232,3 +5232,137 @@ tpython 7.6.3_compress_ws_2_partition.py
 quit
 #1785432434
 exit
+#1785416930
+debugjob
+#1785425382
+debugjob\
+#1785425386
+debugjob
+#1785445015
+load_module && start_gluon
+#1785445075
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_matmul_warp_specialized_kernel -o Profiling/ws/7.6.3 python 7.6.3_compress_ws_2_partition.py 
+#1785445136
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_matmul_warp_specialized_kernel -o Profiling/ws/7.8.2 python 7.8.2_prune_ws_2_partition.py 
+#1785446549
+debugjob
+#1785462835
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_matmul_warp_specialized_kernel -o Profile/ws/7.6.4_ptx_nz python 7.6.4_compression_ws_optimization.py 
+#1785462883
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_matmul_warp_specialized_kernel -o Profile/ws/7.6.4 python 7.6.4_compression_ws_optimization.py 
+#1785462924
+debugjob
+#1785415727
+sq
+#1785434601
+start_gluon
+#1785434615
+sbatch sbatch_sh/trillium/7.8.1_benchmark.sh 
+#1785434715
+sbatch sbatch_sh/trillium/7.6.3_benchmark.sh 
+#1785434744
+sbatch sbatch_sh/trillium/7.8.2_benchmark.sh 
+#1785434747
+sq
+#1785454519
+sbatch sbatch_sh/trillium/7.8.1_benchmark.sh 
+#1785454522
+sq
+#1785416831
+cd /home/notming/links/scratch/compression
+#1785416832
+load_module && start_gluon && tpython -c "
+#1785416832
+import torch
+#1785416832
+from prune import prune_2_4
+#1785416832
+
+#1785416832
+M, K = 1024, 1024
+#1785416832
+A = torch.randn(M, K, device='cuda', dtype=torch.float16)
+#1785416832
+
+#1785416832
+A_ref = prune_2_4(A)
+#1785416832
+
+#1785416832
+A_g = A.view(M, K // 4, 4)
+#1785416832
+a0 = A_g[:, :, 0]
+#1785416832
+a1 = A_g[:, :, 1]
+#1785416832
+a2 = A_g[:, :, 2]
+#1785416832
+a3 = A_g[:, :, 3]
+#1785416832
+
+#1785416832
+c01 = a0 > a1
+#1785416832
+c02 = a0 > a2
+#1785416832
+c03 = a0 > a3
+#1785416832
+c12 = a1 > a2
+#1785416832
+c13 = a1 > a3
+#1785416832
+c23 = a2 > a3
+#1785416832
+
+#1785416832
+c10 = ~c01
+#1785416832
+c20 = ~c02
+#1785416832
+c30 = ~c03
+#1785416832
+c21 = ~c12
+#1785416832
+c31 = ~c13
+#1785416832
+c32 = ~c23
+#1785416832
+
+#1785416832
+p0 = (c01 & c02) | (c01 & c03) | (c02 & c03)
+#1785416832
+p1 = (c10 & c12) | (c10 & c13) | (c12 & c13)
+#1785416832
+p2 = (c20 & c21) | (c20 & c23) | (c21 & c23)
+#1785416832
+p3 = (c30 & c31) | (c30 & c32) | (c31 & c32)
+#1785416832
+
+#1785416832
+a0_p = torch.where(p0, a0, torch.zeros_like(a0))
+#1785416832
+a1_p = torch.where(p1, a1, torch.zeros_like(a1))
+#1785416832
+a2_p = torch.where(p2, a2, torch.zeros_like(a2))
+#1785416832
+a3_p = torch.where(p3, a3, torch.zeros_like(a3))
+#1785416832
+
+#1785416832
+A_our = torch.stack([a0_p, a1_p, a2_p, a3_p], dim=-1).view(M, K)
+#1785416832
+
+#1785416832
+assert torch.equal(A_ref, A_our), 'Mismatch found!'
+#1785416832
+print('SUCCESS: 100% Match between prune_2_4 and our logic!')
+#1785416832
+"
+#1785416867
+cd /home/notming/links/scratch/compression
+#1785416868
+load_module && start_gluon && tpython 7.8.1_pruned_ws.py --bm 128 --bn 256 --bk 64 --warps 8 --buffers 3 --sf 4
+#1785427363
+cd /home/notming/links/scratch/compression
+#1785427365
+load_module && start_gluon && tpython 7.8.2_prune_ws_2_partition.py --bm 128 --bn 256 --bk 64 --warps 8 --buffers 3 --sf 4
