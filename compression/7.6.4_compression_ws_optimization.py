@@ -109,6 +109,17 @@ class SparseWGMMA:
         return SparseWGMMA(acc, gl.to_tensor(False), mma_layout)
     
     @gluon.jit
+    def f16_is_not_zero_bitwise(self, x):
+        return gl.inline_asm_elementwise(
+            asm="setp.ne.b16 $0, $1, 0;",
+            constraints="=b,h",
+            args=[x.to(gl.int16, bitcast=True)],
+            dtype=gl.int1,
+            is_pure=True,
+            pack=1
+        )
+    
+    @gluon.jit
     def generate_compressed_and_meta(self, a_pruned, BLOCK_M : gl.constexpr, BLOCK_K: gl.constexpr, a_compressed_layout: gl.constexpr):
         # 1. Reshape and extract 4 consecutive columns
         a_grouped = a_pruned.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
@@ -118,9 +129,9 @@ class SparseWGMMA:
         a1, a3 = a_odd.split()   # col 4g+1, col 4g+3
 
         # Non-zero flags
-        b0_bool = a0 != 0
-        b1_bool = a1 != 0
-        b2_bool = a2 != 0
+        b0_bool = self.f16_is_not_zero_bitwise(a0)
+        b1_bool = self.f16_is_not_zero_bitwise(a1)
+        b2_bool = self.f16_is_not_zero_bitwise(a2)
 
         # 2. Extract non-zero values (nz0, nz1)
         nz0 = gl.where(b0_bool, a0, gl.where(b1_bool, a1, a2))
