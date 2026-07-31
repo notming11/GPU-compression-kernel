@@ -109,18 +109,7 @@ class SparseWGMMA:
         return SparseWGMMA(acc, gl.to_tensor(False), mma_layout)
     
     @gluon.jit
-    def f16_is_not_zero_bitwise(self, x):
-        return gl.inline_asm_elementwise(
-            asm="setp.ne.b16 $0, $1, 0;",
-            constraints="=b,h",
-            args=[x.to(gl.int16, bitcast=True)],
-            dtype=gl.int1,
-            is_pure=True,
-            pack=1
-        )
-    
-    @gluon.jit
-    def generate_compressed_and_meta(self, a_pruned, BLOCK_M : gl.constexpr, BLOCK_K: gl.constexpr, a_compressed_layout: gl.constexpr):
+    def generate_compressed_and_meta(self, a_pruned, BLOCK_M : gl.constexpr, BLOCK_K: gl.constexpr, a_compressed_layout: gl.constexpr, a_intermediate_layout: gl.constexpr):
         # 1. Reshape and extract 4 consecutive columns
         a_grouped = a_pruned.reshape(BLOCK_M, BLOCK_K // 4, 2, 2)
         a_even, a_odd = a_grouped.split()
@@ -129,9 +118,9 @@ class SparseWGMMA:
         a1, a3 = a_odd.split()   # col 4g+1, col 4g+3
 
         # Non-zero flags
-        b0_bool = self.f16_is_not_zero_bitwise(a0)
-        b1_bool = self.f16_is_not_zero_bitwise(a1)
-        b2_bool = self.f16_is_not_zero_bitwise(a2)
+        b0_bool = a0 != 0
+        b1_bool = a1 != 0
+        b2_bool = a2 != 0
 
         # 2. Extract non-zero values (nz0, nz1)
         nz0 = gl.where(b0_bool, a0, gl.where(b1_bool, a1, a2))
@@ -179,11 +168,15 @@ class SparseWGMMA:
             k_width=32 // gl.int16.primitive_bitwidth,
             meta=1,
         )
-
+        
+        # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
+        # a_compressed = gl.convert_layout(a_compressed, a_intermediate_layout)
+        # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
         a_compressed = gl.convert_layout(
             a_compressed, a_compressed_layout
         )
-        e = gl.convert_layout(meta_reordered, e_layout)
+        # gl.static_print(gl.to_linear_layout(a_compressed.type.layout, [BLOCK_M, BLOCK_K // 2]))
+        e = gl.convert_layout(meta_reordered, e_layout, assert_trivial = True)
         
         return a_compressed, e
 
@@ -341,7 +334,7 @@ def sparse_matmul_load_partition(p, SchedulerImpl: gl.constexpr):
 @gluon.jit
 def sparse_matmul_compute_iteration(
     p, load_state, mma, k_iter, outstanding_mmas: gl.constexpr,
-    a_pruned_reg_layout: gl.constexpr, a_compressed_layout: gl.constexpr,
+    a_pruned_reg_layout: gl.constexpr, a_compressed_layout: gl.constexpr, a_intermediate_layout: gl.constexpr,
     BLOCK_M: gl.constexpr, BLOCK_K: gl.constexpr
 ):
     mbarrier.wait(p.load_ready_bars.index(load_state.index), load_state.phase)
@@ -351,7 +344,7 @@ def sparse_matmul_compute_iteration(
     
     # 2. Compress and pack metadata using LUT table
     a_comp, e = mma.generate_compressed_and_meta(
-        a_pruned, BLOCK_M, BLOCK_K, a_compressed_layout
+        a_pruned, BLOCK_M, BLOCK_K, a_compressed_layout, a_intermediate_layout
     )
 
     # 3. Issue the math using the locally scoped registers
@@ -373,7 +366,7 @@ def sparse_matmul_compute_iteration(
 @gluon.jit
 def sparse_matmul_compute_drain(
     p, load_state, mma, k_iter, limit, current_mma: gl.constexpr, num_mmas: gl.constexpr,
-    a_pruned_reg_layout: gl.constexpr, a_compressed_layout: gl.constexpr,
+    a_pruned_reg_layout: gl.constexpr, a_compressed_layout: gl.constexpr, a_intermediate_layout: gl.constexpr, 
     BLOCK_M: gl.constexpr, BLOCK_K: gl.constexpr
 ):
     if current_mma >= num_mmas: 
@@ -384,11 +377,11 @@ def sparse_matmul_compute_drain(
         else:
             load_state, mma, k_iter = sparse_matmul_compute_iteration(
                 p, load_state, mma, k_iter, num_mmas,
-                a_pruned_reg_layout, a_compressed_layout, BLOCK_M, BLOCK_K
+                a_pruned_reg_layout, a_compressed_layout, a_intermediate_layout, BLOCK_M, BLOCK_K
             )
             return sparse_matmul_compute_drain(
                 p, load_state, mma, k_iter, limit, gl.constexpr(current_mma + 1), num_mmas,
-                a_pruned_reg_layout, a_compressed_layout, BLOCK_M, BLOCK_K
+                a_pruned_reg_layout, a_compressed_layout, a_intermediate_layout, BLOCK_M, BLOCK_K
             )
 
 @gluon.jit
@@ -418,6 +411,15 @@ def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
         block_bases=[],
         shape=[16 * p.num_warps, 64],
     )
+    
+    
+    a_intermediate_layout: gl.constexpr = gl.DistributedLinearLayout(
+        [[0, 1], [8, 0], [0, 8], [0, 4]],
+        [[0, 2], [0, 16], [1, 0], [2, 0], [4, 0]],
+        a_warp_bases,
+        [],
+        [16 * p.num_warps, 32]
+    )
 
     num_mmas: gl.constexpr = 2
     k_iter = 0
@@ -439,7 +441,7 @@ def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
             for _ in gl.static_range(num_mmas):
                 load_state, mma, k_iter = sparse_matmul_compute_iteration(
                     p, load_state, mma, k_iter, num_mmas - 1,
-                    a_pruned_reg_layout, a_compressed_layout, BLOCK_M, BLOCK_K
+                    a_pruned_reg_layout, a_compressed_layout, a_intermediate_layout, BLOCK_M, BLOCK_K
                 )
 
         # Drain Epilogue
@@ -447,7 +449,7 @@ def sparse_matmul_compute_partition(p, SchedulerImpl: gl.constexpr):
             p, load_state, mma, k_iter,
             (total_k_iters % num_mmas) + k_iter,
             0, num_mmas - 1,
-            a_pruned_reg_layout, a_compressed_layout, BLOCK_M, BLOCK_K
+            a_pruned_reg_layout, a_compressed_layout, a_intermediate_layout, BLOCK_M, BLOCK_K
         )
 
         acc_state = store_acc_to_smem_subtile(p, mma, acc_state)
