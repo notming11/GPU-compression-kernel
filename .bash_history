@@ -5366,3 +5366,93 @@ load_module && start_gluon && tpython 7.8.1_pruned_ws.py --bm 128 --bn 256 --bk 
 cd /home/notming/links/scratch/compression
 #1785427365
 load_module && start_gluon && tpython 7.8.2_prune_ws_2_partition.py --bm 128 --bn 256 --bk 64 --warps 8 --buffers 3 --sf 4
+#1785526793
+load_module && start_gluon
+#1785526867
+tpython 8.7.1_benchmark_ws.py 7.6.4 8192
+#1785527761
+tpython 7.6.4_compression_ws_optimization.py 
+#1785528385
+nvidia-smi
+#1785528398
+kill -9 2826722 2826980
+#1785528563
+tpython 7.6.4_compression_ws_optimization.py 
+#1785528593
+nvidia-smi
+#1785528599
+kill -9 2827140
+#1785528722
+tpython 7.6.4_compression_ws_optimization.py 
+#1785528834
+tpython 8.7.1_benchmark_ws.py 7.6.4 8192
+#1785532825
+tpython gluon_ws_dense
+#1785532841
+tpython gluon_ws_dense.py 
+#1785533009
+tpython gluon_ws_dense.py --tune
+#1785533155
+tpython 7.6.4_compression_ws_optimization.py 
+#1785533309
+tpython 7.6.4_compression_ws_optimization.py --tune
+#1785533901
+load_module && start_gluon
+#1785533903
+tpython 7.6.4_compression_ws_optimization.py --tune
+#1785536253
+tpython 8.7.1_benchmark_ws.py 7.6.4 8192
+#1785533873
+sq
+#1785539789
+start_gluon
+#1785539800
+sbatch sbatch_sh/trillium/7.6.4_benchmark.sh 
+#1785539817
+sq
+#1785539898
+sq --start
+#1785539903
+sq
+#1785539915
+sq --start
+#1785539917
+sq
+#1785549804
+scancel 698637
+#1785525523
+start_gluon
+#1785525575
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_matmul_warp_specialized_kernel -o Profiling/ws/7.6.4_4_stage python 7.6.4_compression_ws_optimization.py 
+#1785525893
+load_module 
+#1785525902
+tpython 7.6.4_compression_ws_optimization.py 
+#1785526753
+debugjob
+#1785644317
+load_module && start_gluon
+#1785644352
+tpython 10.1_compress_acc.py 
+#1785644867
+tpython 7.8.1_prune_ws.py 
+#1785645017
+tpython 10.1_prune_acc.py 
+#1785646005
+tpython 10.1_prune_acc.py > test.txt
+#1785717341
+load_module && start_gluon
+#1785717572
+tpython 8.7.1_benchmark_ws.py 10.1 8192
+#1785718864
+tpython 10.1_prune_acc.py --tune
+#1785718902
+tpython 8.7.1_benchmark_ws.py 10.1 8192
+#1785719119
+tpython 10.1_prune_acc.py 
+#1785719536
+tpython 8.7.1_benchmark_ws.py 10.1 8192
+#1785720057
+tpython 10.1_prune_acc.py --tune
+#1785720841
+tpython 8.7.1_benchmark_ws.py 10.1 8192
