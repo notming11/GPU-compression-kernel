@@ -684,9 +684,9 @@ if __name__ == "__main__":
     for M, N, K in [(49152, 8192, 49152)]:
 
         if args.tune:
-            print(f"Testing 7.6.4_compression_ws_optimization (AUTOTUNE ON): M={M}, N={N}, K={K}...", end="\n", flush=True)
+            print(f"Testing 7.8.1_compression_ws_optimization (AUTOTUNE ON): M={M}, N={N}, K={K}...", end="\n", flush=True)
         else:
-            print(f"Testing 7.6.4_compression_ws_optimization with config {manual_config}: M={M}, N={N}, K={K}...", end="\n", flush=True)
+            print(f"Testing 7.8.1_compression_ws_optimization with config {manual_config}: M={M}, N={N}, K={K}...", end="\n", flush=True)
 
         A = torch.randn(M, K, device="cuda", dtype=torch.float16)
         B = torch.randn((K, N), device="cuda", dtype=torch.float16)

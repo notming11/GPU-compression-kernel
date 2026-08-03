@@ -273,6 +273,8 @@ def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
 def store_acc_to_smem_subtile(p, mma, acc_state):
     mma = mma.wait_num_outstanding(0)
     acc, mma = mma.take_result()
+    gl.static_print(gl.to_linear_layout(acc.type.layout, (acc.shape)))
+    gl.static_print(acc.type.layout.format_tensor_view(acc.shape))
     accs = _split_n(acc, p.SUBTILE_FACTOR)
 
     for i in gl.static_range(p.SUBTILE_FACTOR):

@@ -177,8 +177,8 @@ def matmul_store_partition(p, SchedulerImpl: gl.constexpr):
     state = Counter.create(0, p.acc_empty_bars.shape[0])
     scheduler = SchedulerImpl.initialize(p.c_desc.shape[0], p.c_desc.shape[1], BLOCK_M, BLOCK_N)
 
-    num_buffers: gl.constexpr = 2
-    outstanding_stores: gl.constexpr = 1
+    num_buffers: gl.constexpr = p.acc_bufs.shape[0]
+    outstanding_stores: gl.constexpr = num_buffers - 1
     store_iter = 0
 
     for idx in range(scheduler.get_num_tiles()):
@@ -207,8 +207,8 @@ def matmul_store_partition(p, SchedulerImpl: gl.constexpr):
 @gluon.jit
 def matmul_warp_specialized_kernel(a_desc, b_desc, c_desc, SchedulerImpl: gl.constexpr,
                                    M, N, K, BLOCK_SIZE_M, BLOCK_SIZE_N, BLOCK_SIZE_K,
-                                   num_buffers: gl.constexpr, SUBTILE_FACTOR: gl.constexpr,
-                                   num_warps: gl.constexpr):
+                                   num_buffers: gl.constexpr, num_acc_buffers: gl.constexpr,
+                                   SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr):
     dtype: gl.constexpr = a_desc.dtype
 
     a_bufs = gl.allocate_shared_memory(dtype, [num_buffers] + a_desc.block_type.shape, a_desc.layout)
@@ -220,9 +220,9 @@ def matmul_warp_specialized_kernel(a_desc, b_desc, c_desc, SchedulerImpl: gl.con
         mbarrier.init(load_empty_bars.index(i), count=1)
         mbarrier.init(load_ready_bars.index(i), count=1)
 
-    acc_bufs = gl.allocate_shared_memory(dtype, [2] + c_desc.block_type.shape, c_desc.layout)
-    acc_empty_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
-    acc_ready_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
+    acc_bufs = gl.allocate_shared_memory(dtype, [num_acc_buffers] + c_desc.block_type.shape, c_desc.layout)
+    acc_empty_bars = gl.allocate_shared_memory(gl.int64, [num_acc_buffers, 1], mbarrier.MBarrierLayout())
+    acc_ready_bars = gl.allocate_shared_memory(gl.int64, [num_acc_buffers, 1], mbarrier.MBarrierLayout())
 
     for i in gl.static_range(2):
         mbarrier.init(acc_empty_bars.index(i), count=1)
@@ -239,11 +239,11 @@ def matmul_warp_specialized_kernel(a_desc, b_desc, c_desc, SchedulerImpl: gl.con
     ], [1, 1], [24, 24])
 
 def matmul_get_configs(pre_hook=None, tune=True):
-    def valid(BM, BN, BK, warps, buffers, SF):
+    def valid(BM, BN, BK, warps, buffers, acc_buffers, SF):
         smem_bytes = 2 * (
                 (buffers * BM * BK) +
                 (buffers * BK * BN) +
-                (2 * BM * (BN // SF))
+                (acc_buffers * BM * (BN // SF))
         ) + (16 * buffers) + 32
         if smem_bytes > 232448: return False
 
@@ -275,6 +275,7 @@ def matmul_get_configs(pre_hook=None, tune=True):
                 "BLOCK_SIZE_N": BN,
                 "BLOCK_SIZE_K": BK,
                 "num_buffers": buffers,
+                "num_acc_buffers": acc_buffers,
                 "SUBTILE_FACTOR": SF,
             },
             num_warps=warps,
@@ -285,19 +286,20 @@ def matmul_get_configs(pre_hook=None, tune=True):
         for BK in (64, 128, 256,)
         for warps in (4, 8, 16)
         for buffers in (3, 4, 5, 6, 7)
+        for acc_buffers in (1, 2, )
         for SF in (1, 2, 4, 8)
-        if valid(BM, BN, BK, warps, buffers, SF)
+        if valid(BM, BN, BK, warps, buffers, acc_buffers, SF)
     ]
     
     return configs if tune else configs[:1]
 
 def matmul_get_trimmed_configs(pre_hook=None):
-    def valid(BM, BN, BK, warps, buffers, SF):
+    def valid(BM, BN, BK, warps, buffers, acc_buffers, SF):
         # Calculate shared memory usage
         smem_bytes = 2 * (
                 (buffers * BM * BK) +
                 (buffers * BK * BN) +
-                (2 * BM * (BN // SF))
+                (acc_buffers * BM * (BN // SF))
         ) + (16 * buffers) + 32
         
         # Hopper max shared memory per block
@@ -336,6 +338,7 @@ def matmul_get_trimmed_configs(pre_hook=None):
                 "BLOCK_SIZE_N": BN,
                 "BLOCK_SIZE_K": BK,
                 "num_buffers": buffers,
+                "num_acc_buffers": acc_buffers,
                 "SUBTILE_FACTOR": SF,
             },
             num_warps=warps,
@@ -347,8 +350,9 @@ def matmul_get_trimmed_configs(pre_hook=None):
         for BK in (64,)
         for warps in (8, 16, )
         for buffers in (3, 4, 5,)
-        for SF in (2, 4, 8)
-        if valid(BM, BN, BK, warps, buffers, SF)
+        for acc_buffers in (1, 2,)
+        for SF in (1, 2, 4, 8)
+        if valid(BM, BN, BK, warps, acc_buffers, buffers, SF)
     ]
     
     if not configs:
@@ -357,12 +361,12 @@ def matmul_get_trimmed_configs(pre_hook=None):
     return configs
 
 def matmul_get_768_configs(pre_hook=None):
-    def valid(BM, BN, BK, warps, buffers, SF):
+    def valid(BM, BN, BK, warps, buffers, acc_buffers, SF):
         # Calculate shared memory usage
         smem_bytes = 2 * (
                 (buffers * BM * BK) +
                 (buffers * BK * BN) +
-                (2 * BM * (BN // SF))
+                (acc_buffers * BM * (BN // SF))
         ) + (16 * buffers) + 32
         
         # Hopper max shared memory per block
@@ -401,6 +405,7 @@ def matmul_get_768_configs(pre_hook=None):
                 "BLOCK_SIZE_N": BN,
                 "BLOCK_SIZE_K": BK,
                 "num_buffers": buffers,
+                "num_acc_buffers": acc_buffers,
                 "SUBTILE_FACTOR": SF,
             },
             num_warps=warps,
@@ -412,8 +417,9 @@ def matmul_get_768_configs(pre_hook=None):
         for BK in (64, 128, )
         for warps in (4, )
         for buffers in (4, 5, 6, )
+        for acc_buffers in (1, 2, )
         for SF in (2, 4, 8)
-        if valid(BM, BN, BK, warps, buffers, SF)
+        if valid(BM, BN, BK, warps, buffers, acc_buffers, SF)
     ]
     
     if not configs:
@@ -510,6 +516,7 @@ def run_ws_matmul(A, B, tune=True, manual_config=None):
             BLOCK_SIZE_N=manual_config["BN"], 
             BLOCK_SIZE_K=manual_config["BK"],
             num_buffers=manual_config["buffers"], 
+            num_acc_buffers=manual_config["acc_buffers"], 
             SUBTILE_FACTOR=manual_config["SF"], 
             num_warps=manual_config["warps"]
         )
@@ -526,6 +533,7 @@ if __name__ == "__main__":
     parser.add_argument("--bk", type=int, default=64, help="BLOCK_SIZE_K")
     parser.add_argument("--warps", type=int, default=8, help="Number of warps")
     parser.add_argument("--buffers", type=int, default=3, help="Number of buffers")
+    parser.add_argument("--abuffers", type=int, default=2, help="Number of buffers")
     parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
@@ -536,6 +544,7 @@ if __name__ == "__main__":
         "BK": args.bk,
         "warps": args.warps,
         "buffers": args.buffers,
+        "acc_buffers": args.abuffers,
         "SF": args.sf
     }
 
