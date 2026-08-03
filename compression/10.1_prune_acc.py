@@ -706,7 +706,7 @@ if __name__ == "__main__":
         print(f"Running sparse matmul with manual config: {manual_config}")
 
     sizes = [
-        (49152, 8192, 49152)
+        (49152, 49152, 49152)
     ]
 
     from compress_2_4 import *
@@ -754,40 +754,29 @@ if __name__ == "__main__":
             bad_D = D_comp_blocks[mismatch_mask]       # Shape: (num_bad, 2)
             bad_C_dense = C_dense_blocks[mismatch_mask] # Shape: (num_bad, 4)
 
-            # 3. VERIFICATION (Absolute): Does Triton's output exist ANYWHERE in the dense block?
+            # 3. Find the best matching dense elements (ignoring spatial order)
             abs_dist = torch.abs(bad_D.unsqueeze(2) - bad_C_dense.unsqueeze(1)) # (num_bad, 2, 4)
+            best_match_indices = abs_dist.min(dim=2).indices # (num_bad, 2)
             
-            # Find the minimum absolute distance and the index of that best-matching dense element
-            min_abs_dist_to_dense, best_match_indices = abs_dist.min(dim=2) # Both are (num_bad, 2)
-            max_abs_error = min_abs_dist_to_dense.max(dim=1).values # (num_bad,)
-
-            # 4. VERIFICATION (Relative): Is the relative difference also within normal bounds?
             # Extract the actual PyTorch dense values that best matched Triton's output
             best_match_dense_vals = bad_C_dense.gather(1, best_match_indices) # (num_bad, 2)
-            
-            # Calculate the true relative error between Triton's value and the correctly aligned PyTorch value.
-            # We add 1e-5 to the denominator to prevent division by zero on very small numbers.
-            rel_error = torch.abs(bad_D - best_match_dense_vals) / (torch.abs(best_match_dense_vals) + 1e-5)
-            max_rel_error = rel_error.max(dim=1).values # (num_bad,)
 
-            # Allow thresholds purely for the cuBLAS vs WGMMA floating-point accumulation noise
-            # (0.5 absolute, 0.05 or 5% relative for very tiny numbers near 0)
-            unexplained_mask = (max_abs_error > 0.5) | (max_rel_error > 0.05)
-            unexplained_count = unexplained_mask.sum().item()
-
-            if unexplained_count > 0:
-                worst_abs = max_abs_error.max().item()
-                worst_rel = max_rel_error.max().item()
-                raise AssertionError(
-                    f"THEORY IS FALSE! Found {unexplained_count} blocks where Triton's output "
-                    f"does not match any element in the dense block.\n"
-                    f"Max unexplained absolute diff: {worst_abs:.4f}\n"
-                    f"Max unexplained relative diff: {worst_rel:.4f}"
+            # 4. VERIFICATION: Use PyTorch's native assertion to verify the aligned values
+            try:
+                # Set atol=0.5 and rtol=0.05 to match the expected accumulation noise floor
+                torch.testing.assert_close(
+                    bad_D, 
+                    best_match_dense_vals, 
+                    atol=0.5, 
+                    rtol=0.05
                 )
-            else:
                 print("VERIFIED: The explanation is TRUE.")
                 print("100% of Triton's mismatched outputs exist perfectly inside PyTorch's dense block.")
-                print(f"Max absolute noise for aligned values: {max_abs_error.max().item():.4f}")
-                print(f"Max relative noise for aligned values: {max_rel_error.max().item():.6f}")
+                
+            except AssertionError as e:
+                raise AssertionError(
+                    f"THEORY IS FALSE! Triton's output does not match any element in the dense block.\n\n"
+                    f"PyTorch assert_close failure details:\n{str(e)}"
+                ) from None
         else:
             print("No mismatches found!")

@@ -250,7 +250,10 @@ if __name__ == "__main__":
             best_dense = gluon_ws_dense.ws_kernel_autotune_trimmed.best_config
             best_sparse = gluon_ws_sparse.sparse_ws_kernel_autotune_trimmed.best_config
             
-        best_runtime = getattr(comp_module.sparse_ws_kernel_autotune_trimmed, "best_config", "Kernel Failed / Not Set")
+        best_runtime = getattr(comp_module.sparse_ws_kernel_autotune, "best_config", "Kernel Failed / Not Set")
+        if best_runtime == "Kernel Failed / Not Set":
+            best_runtime = getattr(comp_module.sparse_ws_kernel_autotune_trimmed, "best_config", "Kernel Failed / Not Set")
+            
         
         print(f"  Dense   best config: {best_dense.kwargs}, num_warps={best_dense.num_warps}")
         print(f"  Sparse  best config: {best_sparse.kwargs}, num_warps={best_sparse.num_warps}")

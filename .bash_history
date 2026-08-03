@@ -5456,3 +5456,39 @@ tpython 8.7.1_benchmark_ws.py 10.1 8192
 tpython 10.1_prune_acc.py --tune
 #1785720841
 tpython 8.7.1_benchmark_ws.py 10.1 8192
+#1785725798
+load_module && start_gluon
+#1785725804
+tpython 8.7.1_benchmark_ws.py 10.1 49152
+#1785701636
+debugjob
+#1785717258
+tpython 10.1_prune_acc.py
+#1785717272
+load_module && start_gluon
+#1785717277
+tpython 10.1_prune_acc.py
+#1785717327
+debugjob
+#1785725180
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "sparse_matmul_warp_specialized_kernel" -o Profiling/ws/10.1 python 10.1_prune_acc.py 
+#1785725674
+debugjob
+#1785725742
+debugjob --hrlp
+#1785725748
+debugjob --help
+#1785725766
+debugjob --account=rrg-mmehride
+#1785718993
+load_module && start_gluon
+#1785719003
+tpython 10.1_prune_acc.py 
+#1785725774
+sq
+#1785725780
+sq --start
+#1785727232
+sbatch sbatch_sh/trillium/10.1_benchmark_all.sh 
+#1785727238
+sq
