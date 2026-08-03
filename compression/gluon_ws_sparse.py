@@ -641,7 +641,7 @@ if __name__ == "__main__":
         print(f"Running sparse matmul with manual config: {manual_config}")
 
     sizes = [
-        (49152, 8192, 49152)
+        (49152, 49152, 49152)
     ]
 
     from compress_2_4 import *
