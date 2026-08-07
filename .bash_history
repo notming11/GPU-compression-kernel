@@ -5492,3 +5492,191 @@ sq --start
 sbatch sbatch_sh/trillium/10.1_benchmark_all.sh 
 #1785727238
 sq
+#1785768740
+load_module && start_gluon
+#1785768745
+sbatch sbatch_sh/trillium/10.1_benchmark_all.sh 
+#1785768925
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_matmul_warp_specialized_kernel -o Profiling/49152/10.1 python 10.1_prune_acc.py 
+#1785769026
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k sparse_matmul_warp_specialized_kernel -o Profiling/49152/sparse python gluon_ws_sparse.py 
+#1785769133
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k matmul_warp_specialized_kernel -o Profiling/49152/dense python gluon_ws_dense.py 
+#1785769631
+tpython 10.1_prune_acc.py 
+#1785769809
+tpython gluon_ws_sparse.py 
+#1785769831
+tpython 10.1_prune_acc.py 
+#1785794527
+tpython 7.6.4_compression_ws_optimization.py 
+#1785807432
+tpython gluon_ws_sparse.py --tune
+#1785817730
+sq
+#1785801103
+/home/notming/links/scratch/.venv/bin/python
+#1785802405
+load_module && start_gluon
+#1785802412
+tpython 11.1_2_kernel_baseline.py --tune
+#1785811250
+debugjob
+#1785818530
+tpython 8.7.1_benchmark_ws.py 11.1 8192
+#1785856818
+load_module && start_gluon
+#1785856827
+tpython 8.7.1_benchmark_ws.py 11.1 8192
+#1785891962
+load_module && start_gluon
+#1785891982
+tpython 8.7.1_benchmark_ws.py 7.8.1 8192
+#1785893011
+tpython 8.7.1_benchmark_ws.py 11.1 8192
+#1785893508
+tpython 8.7.1_benchmark_ws.py 7.8.1 8192
+#1785904882
+load_module && start_gluon
+#1785904891
+tpython 8.11_benchmark_2_kernel.py 11.1 8192
+#1785942207
+load_modul && start_gluon
+#1785942210
+load_module && start_gluon
+#1785942223
+tpython 8.11_benchmark_2_kernel.py 11.1 128
+#1785882757
+load_module && start_gluon
+#1785882764
+tpython 8.7.1_benchmark_ws.py 11.1 8192
+#1785883027
+nvidia-smi
+#1785883043
+tpython 8.7.1_benchmark_ws.py 7.6.4 8192
+#1785885836
+tpython 8.7.1_benchmark_ws.py 11.1 8192
+#1785886277
+tpython 8.7.1_benchmark_ws.py 7.8.1 8192
+#1785887517
+nvidia-smi
+#1785891651
+tpython 8.7.1_benchmark_ws.py 7.8.1 8192
+#1785891947
+debugjob
+#1785904295
+pip install torchao
+#1785904330
+pip install mslk --index-url https://download.pytorch.org/whl/cu130
+#1785904347
+pip install mslk
+#1785904356
+pip update mslk
+#1785904364
+pip install update mslk
+#1785904375
+pip install apache-tvm-ffi
+#1785904384
+pip install nvidia-cutlass-dsl==4.5.2 nvidia-cutlass-dsl-libs-base==4.5.2 nvidia-cutlass-dsl-libs-cu13==4.5.2
+#1785904400
+pip install nvidia-cutlass-dsl==4.5.2 nvidia-cutlass-dsl-libs-base==4.5.2 nvidia-cutlass-dsl-libs-cu13
+#1785904408
+pip install nvidia-cutlass-dsl==4.5.2 nvidia-cutlass-dsl-libs-base==4.5.2
+#1785904870
+debugjob
+#1785943149
+squeu -u=hungshou
+#1785943155
+squeue -u=hungshou
+#1785943174
+squeu --help
+#1785943179
+squeue --help
+#1785943201
+squeue -A=rrg-mmehride
+#1785943211
+squeue -A=def-mmehride
+#1785943419
+squeue
+#1785906161
+load_module && start_gluon
+#1785906181
+sbatch sbatch_sh/trillium/11.1_benchmark.sh 
+#1785906185
+sq
+#1785906194
+sq --start
+#1785906213
+sq
+#1785906239
+scancel --me
+#1785906259
+sbatch sbatch_sh/trillium/11.1_benchmark.sh 
+#1785906261
+sq --start
+#1785906266
+sq
+#1785964848
+load_module && start_gluon
+#1785964854
+tpython 8.11_benchmark_2_kernel.py 11.1 8192
+#1785988242
+load_module && start_gluon
+#1785988251
+tpython 8.11.1_benchmark_pruning.py 11.1
+#1785956882
+debugjob
+#1785984087
+load_module && start_gluon
+#1785984100
+tpython 8.11_benchmark_2_kernel.py 11.1 8192
+#1785986744
+tpython 8.11.1_benchmark_pruning.py 11.1
+#1785988234
+debugjob
+#1785988672
+sbatch sbatch_sh/trillium/11.1_benchmark_pruning.sh 
+#1785988675
+sq
+#1785988683
+sq --start
+#1785988692
+sq
+#1785961106
+load_module && start_gluon
+#1785961111
+pip install torchao
+#1785964215
+pip install mslk --index-url https://download.pytorch.org/whl/cu130
+#1785964222
+pip install --pre mslk --index-url https://download.pytorch.org/whl/nightly/cu130
+#1785964230
+pip install apache-tvm-ffi
+#1785964230
+pip install nvidia-cutlass-dsl==4.5.2 nvidia-cutlass-dsl-libs-base==4.5.2 nvidia-cutlass-dsl-libs-cu13==4.5.2
+#1785964272
+pip install nvidia-cutlass-dsl-libs-cu13
+#1785965533
+sbatch sbatch_sh/trillium/11.1_benchmark.sh 
+#1785965540
+sq
+#1786022038
+load_module && start_gluon
+#1786022046
+tpython 8.11_benchmark_2_kernel.py 11.1 8192
+#1786031017
+sq
+#1786022028
+debugjob
+#1786022418
+load_module && start_gluon
+#1786022463
+sbatch sbatch_sh/trillium/11.1_benchmark.sh
+#1786022465
+sq
+#1786022481
+sq --start
+#1786022492
+sq
+#1786070018
+/home/notming/links/scratch/.venv/bin/python

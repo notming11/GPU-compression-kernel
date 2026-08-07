@@ -46,7 +46,7 @@ import gluon_ws_sparse
 def to_tflops(ms, M, N, K):
     return (2 * M * N * K) / (ms * 1e-3 * 1e12) if ms else 0.0
 
-def benchmark_kernels_ws(M, N, K, comp_module):
+def benchmark_kernels_ws(M, N, K, comp_module, version):
     A = torch.randn((M, K), device="cuda", dtype=torch.float16)
     B = torch.randn((K, N), device="cuda", dtype=torch.float16)
     C = torch.zeros((M, N), device="cuda", dtype=torch.float16)
@@ -55,7 +55,7 @@ def benchmark_kernels_ws(M, N, K, comp_module):
     A_comp, E = compress_dense_to_sparse(A_pruned)
     E = E.view(M // 16, K) # As in gluon_ws_sparse.py
 
-    # start_time = time.perf_counter()
+    start_time = time.perf_counter()
     # 1. Dense WS
     try:
         ms_dense_ws = triton.testing.do_bench_cudagraph(lambda: gluon_ws_dense.run_ws_matmul(A, B), rep=1000)
@@ -64,10 +64,10 @@ def benchmark_kernels_ws(M, N, K, comp_module):
         tflops_dense_ws = None
         torch.cuda.synchronize()
     
-    # end_time = time.perf_counter()
-    # print(end_time - start_time)
+    end_time = time.perf_counter()
+    print(end_time - start_time)
     
-    # start_time = time.perf_counter()
+    start_time = time.perf_counter()
     # 2. Sparse Pre-compressed WS
     try:
         ms_sparse_ws = triton.testing.do_bench_cudagraph(lambda: gluon_ws_sparse.run_sparse_ws_matmul(A_comp, E, B), rep=1000)
@@ -75,44 +75,31 @@ def benchmark_kernels_ws(M, N, K, comp_module):
     except Exception as e:
         tflops_sparse_ws = None
         torch.cuda.synchronize()
-        
-    # def run_e2e_pytorch_sparse():
-    #     A_p = prune_2_4(A)
-    #     A_c, E_meta = compress_dense_to_sparse(A_p)
-    #     E_meta = E_meta.view(M // 16, K)
-    #     return gluon_ws_sparse.run_sparse_ws_matmul(A_c, E_meta, B)
+    end_time = time.perf_counter()
+    print(end_time - start_time)
 
-    # try:
-    #     ms_sparse_ws = triton.testing.do_bench_cudagraph(run_e2e_pytorch_sparse, rep=1000)
-    #     tflops_sparse_ws = to_tflops(ms_sparse_ws, M, N, K)
-    # except Exception as e:
-    #     print("Fall back to do_bench")
-    #     try:
-    #         # Fallback to do_bench if PyTorch dynamic memory allocation breaks CUDA Graph capture
-    #         ms_sparse_ws = triton.testing.do_bench(run_e2e_pytorch_sparse, rep=1000)
-    #         tflops_sparse_ws = to_tflops(ms_sparse_ws, M, N, K)
-    #     except Exception:
-    #         tflops_sparse_ws = None
-    #         torch.cuda.synchronize()
-    # end_time = time.perf_counter()
-    # print(end_time - start_time)
-
-    # start_time = time.perf_counter()
+    start_time = time.perf_counter()
     # 3. Sparse Runtime Compression WS (Dynamic Version)
     try:
-        ms_runtime_ws = triton.testing.do_bench_cudagraph(lambda: comp_module.run_sparse_ws_matmul(A_pruned, B), rep=1000)
+        if version in ["10.1"]:
+            print("compressed")
+            ms_runtime_ws = triton.testing.do_bench_cudagraph(lambda: comp_module.run_sparse_ws_matmul(A_comp, E, B), rep=1000)
+        elif version in ["7.8.1", "7.8.2"]:
+            print("dense")
+            ms_runtime_ws = triton.testing.do_bench_cudagraph(lambda: comp_module.run_sparse_ws_matmul(A, B), rep=1000)
+        elif version in ["11.1"]:
+            print("2 kernel")
+            ms_runtime_ws = triton.testing.do_bench_cudagraph(lambda: comp_module.run_2_kernel_ws_matmul(A, B), rep=1000)
+        else:
+            print("pruned")
+            ms_runtime_ws = triton.testing.do_bench_cudagraph(lambda: comp_module.run_sparse_ws_matmul(A_pruned, B), rep=1000)
+            
         tflops_runtime_ws = to_tflops(ms_runtime_ws, M, N, K)
     except Exception as e:
-        try:
-            ms_runtime_ws = triton.testing.do_bench_cudagraph(lambda: comp_module.run_sparse_ws_matmul(A_comp, E, B), rep=1000)
-            tflops_runtime_ws = to_tflops(ms_runtime_ws, M, N, K)
-        except Exception as e:
-            tflops_runtime_ws = None
-            print(e)
-            torch.cuda.synchronize()
+        torch.cuda.synchronize()
 
-    # end_time = time.perf_counter()
-    # print(end_time - start_time)
+    end_time = time.perf_counter()
+    print(end_time - start_time)
     
     return {
         "Dense_WS_TFLOPS": tflops_dense_ws,
@@ -192,9 +179,13 @@ if __name__ == "__main__":
         768, 1024, 1536, 2048, 3072, 4096, 6144, 8192, 12288, 16384, 24576, 32768, 49152,
         # 768
     ]
+    # shapes = [
+    #     (i, N, j)
+    #     for i in dim
+    #     for j in dim
+    # ]
     shapes = [
-        (i, N, j)
-        for i in dim
+        (512, N, j)
         for j in dim
     ]
     
@@ -207,7 +198,8 @@ if __name__ == "__main__":
         "7.7.1": "./7.7.1_ws_seperate_warp_4_buf.py",
         "7.8.1": "./7.8.1_prune_ws.py",
         "7.8.2": "./7.8.2_prune_ws_2_partition.py",
-        "10.1": "./10.1_prune_acc.py"
+        "10.1": "./10.1_prune_acc.py",
+        "11.1": "./11.1_2_kernel_baseline.py",
         # Add future WS iterations here if needed
     }
     
@@ -235,7 +227,7 @@ if __name__ == "__main__":
         shape_str = f"{M}-{N}-{K}"
         print(f"start {shape_str} ({idx+1}/{len(shapes)})", flush = True)
         
-        metrics = benchmark_kernels_ws(M, N, K, comp_module)
+        metrics = benchmark_kernels_ws(M, N, K, comp_module, version)
         
         data_log.append({
             "Shape": shape_str,
@@ -249,11 +241,11 @@ if __name__ == "__main__":
         else: 
             best_dense = gluon_ws_dense.ws_kernel_autotune_trimmed.best_config
             best_sparse = gluon_ws_sparse.sparse_ws_kernel_autotune_trimmed.best_config
-            
-        best_runtime = getattr(comp_module.sparse_ws_kernel_autotune, "best_config", "Kernel Failed / Not Set")
-        if best_runtime == "Kernel Failed / Not Set":
-            best_runtime = getattr(comp_module.sparse_ws_kernel_autotune_trimmed, "best_config", "Kernel Failed / Not Set")
-            
+        
+        if version == "11.1":
+            best_runtime = getattr(comp_module.compress_2_4_autotune, "best_config", "Kernel Failed / Not Set")
+        else:
+            best_runtime = getattr(comp_module.sparse_ws_kernel_autotune, "best_config", "Kernel Failed / Not Set")            
         
         print(f"  Dense   best config: {best_dense.kwargs}, num_warps={best_dense.num_warps}")
         print(f"  Sparse  best config: {best_sparse.kwargs}, num_warps={best_sparse.num_warps}")

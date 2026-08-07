@@ -1,0 +1,3 @@
+compress the same tile with different method depend on the weights
+
+dynamic sparsity

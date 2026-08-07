@@ -767,8 +767,8 @@ if __name__ == "__main__":
                 torch.testing.assert_close(
                     bad_D, 
                     best_match_dense_vals, 
-                    atol=0.5, 
-                    rtol=0.05
+                    atol=1e-2, 
+                    rtol=1e-1
                 )
                 print("VERIFIED: The explanation is TRUE.")
                 print("100% of Triton's mismatched outputs exist perfectly inside PyTorch's dense block.")
