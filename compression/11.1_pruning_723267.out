@@ -1,0 +1,892 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+Starting Isolated Prune/Compress Benchmark (Testing 169 shapes)...
+
+[1/169] Benchmarking 49152-49152...
+/usr/local/lib/python3.12/dist-packages/torchao/sparsity/training/autograd.py:37: UserWarning: The PyTorch API of SparseSemiStructuredTensor is in prototype stage and will change in the near future. Please open a Github issue for features requests and see our documentation on the torch.sparse module for further information about the project.
+  out = cls(
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 8.8001 ms (857.91 GB/s)
+  Custom TMA:  2.7134 ms (2782.40 GB/s)
+
+[2/169] Benchmarking 32768-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 5.8929 ms (854.10 GB/s)
+  Custom TMA:  1.8305 ms (2749.68 GB/s)
+
+[3/169] Benchmarking 49152-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 5.8873 ms (854.92 GB/s)
+  Custom TMA:  1.8167 ms (2770.46 GB/s)
+
+[4/169] Benchmarking 24576-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 4.4600 ms (846.38 GB/s)
+  Custom TMA:  1.3937 ms (2708.48 GB/s)
+
+[5/169] Benchmarking 49152-24576...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 4.4591 ms (846.55 GB/s)
+  Custom TMA:  1.3927 ms (2710.40 GB/s)
+
+[6/169] Benchmarking 32768-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 3.9291 ms (853.99 GB/s)
+  Custom TMA:  1.2391 ms (2708.05 GB/s)
+
+[7/169] Benchmarking 16384-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 2.9467 ms (854.02 GB/s)
+  Custom TMA:  0.9530 ms (2640.77 GB/s)
+
+[8/169] Benchmarking 24576-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 3.0015 ms (838.45 GB/s)
+  Custom TMA:  0.9455 ms (2661.60 GB/s)
+
+[9/169] Benchmarking 32768-24576...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 3.0001 ms (838.82 GB/s)
+  Custom TMA:  0.9532 ms (2640.06 GB/s)
+
+[10/169] Benchmarking 49152-16384...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 2.9586 ms (850.59 GB/s)
+  Custom TMA:  0.9459 ms (2660.66 GB/s)
+
+[11/169] Benchmarking 12288-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 2.2525 ms (837.91 GB/s)
+  Custom TMA:  0.7314 ms (2580.61 GB/s)
+
+[12/169] Benchmarking 24576-24576...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 2.2798 ms (827.91 GB/s)
+  Custom TMA:  0.7338 ms (2572.21 GB/s)
+
+[13/169] Benchmarking 49152-12288...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 2.2400 ms (842.61 GB/s)
+  Custom TMA:  0.7318 ms (2579.09 GB/s)
+
+[14/169] Benchmarking 16384-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.9669 ms (852.98 GB/s)
+  Custom TMA:  0.6558 ms (2558.19 GB/s)
+
+[15/169] Benchmarking 32768-16384...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.9681 ms (852.46 GB/s)
+  Custom TMA:  0.6539 ms (2565.52 GB/s)
+
+[16/169] Benchmarking 8192-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.5229 ms (826.23 GB/s)
+  Custom TMA:  0.5126 ms (2454.49 GB/s)
+
+[17/169] Benchmarking 12288-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.4903 ms (844.33 GB/s)
+  Custom TMA:  0.5098 ms (2468.25 GB/s)
+
+[18/169] Benchmarking 16384-24576...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.4916 ms (843.57 GB/s)
+  Custom TMA:  0.5131 ms (2452.30 GB/s)
+
+[19/169] Benchmarking 24576-16384...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.4935 ms (842.53 GB/s)
+  Custom TMA:  0.5079 ms (2477.21 GB/s)
+
+[20/169] Benchmarking 32768-12288...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.4886 ms (845.26 GB/s)
+  Custom TMA:  0.5129 ms (2453.27 GB/s)
+
+[21/169] Benchmarking 49152-8192...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.5236 ms (825.86 GB/s)
+  Custom TMA:  0.5083 ms (2475.72 GB/s)
+
+[22/169] Benchmarking 6144-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.1684 ms (807.72 GB/s)
+  Custom TMA:  0.4021 ms (2347.24 GB/s)
+
+[23/169] Benchmarking 12288-24576...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.1364 ms (830.45 GB/s)
+  Custom TMA:  0.4019 ms (2348.17 GB/s)
+
+[24/169] Benchmarking 24576-12288...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.1351 ms (831.43 GB/s)
+  Custom TMA:  0.4031 ms (2341.07 GB/s)
+
+[25/169] Benchmarking 49152-6144...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.1816 ms (798.68 GB/s)
+  Custom TMA:  0.4007 ms (2355.36 GB/s)
+
+[26/169] Benchmarking 8192-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.0296 ms (814.71 GB/s)
+  Custom TMA:  0.3677 ms (2281.68 GB/s)
+
+[27/169] Benchmarking 16384-16384...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.9861 ms (850.68 GB/s)
+  Custom TMA:  0.3632 ms (2309.74 GB/s)
+
+[28/169] Benchmarking 32768-8192...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 1.0260 ms (817.64 GB/s)
+  Custom TMA:  0.3628 ms (2311.92 GB/s)
+
+[29/169] Benchmarking 4096-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.8272 ms (760.54 GB/s)
+  Custom TMA:  0.2905 ms (2166.02 GB/s)
+
+[30/169] Benchmarking 6144-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.7849 ms (801.56 GB/s)
+  Custom TMA:  0.2895 ms (2173.35 GB/s)
+
+[31/169] Benchmarking 8192-24576...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.7818 ms (804.77 GB/s)
+  Custom TMA:  0.2912 ms (2160.32 GB/s)
+
+[32/169] Benchmarking 12288-16384...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.7498 ms (839.12 GB/s)
+  Custom TMA:  0.2893 ms (2174.44 GB/s)
+
+[33/169] Benchmarking 16384-12288...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.7492 ms (839.72 GB/s)
+  Custom TMA:  0.2914 ms (2159.12 GB/s)
+
+[34/169] Benchmarking 24576-8192...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.7811 ms (805.49 GB/s)
+  Custom TMA:  0.2902 ms (2167.87 GB/s)
+
+[35/169] Benchmarking 32768-6144...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.7812 ms (805.35 GB/s)
+  Custom TMA:  0.2901 ms (2168.39 GB/s)
+
+[36/169] Benchmarking 49152-4096...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.8126 ms (774.27 GB/s)
+  Custom TMA:  0.2887 ms (2179.08 GB/s)
+
+[37/169] Benchmarking 3072-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.6362 ms (741.74 GB/s)
+  Custom TMA:  0.2367 ms (1993.88 GB/s)
+
+[38/169] Benchmarking 6144-24576...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.6033 ms (782.14 GB/s)
+  Custom TMA:  0.2362 ms (1997.74 GB/s)
+
+[39/169] Benchmarking 12288-12288...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.5699 ms (827.98 GB/s)
+  Custom TMA:  0.2366 ms (1994.63 GB/s)
+
+[40/169] Benchmarking 24576-6144...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.6034 ms (782.01 GB/s)
+  Custom TMA:  0.2360 ms (1999.42 GB/s)
+
+[41/169] Benchmarking 49152-3072...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.6357 ms (742.25 GB/s)
+  Custom TMA:  0.2349 ms (2008.77 GB/s)
+
+[42/169] Benchmarking 4096-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.5546 ms (756.33 GB/s)
+  Custom TMA:  0.2166 ms (1936.85 GB/s)
+
+[43/169] Benchmarking 8192-16384...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.5120 ms (819.27 GB/s)
+  Custom TMA:  0.2164 ms (1938.09 GB/s)
+
+[44/169] Benchmarking 16384-8192...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.5122 ms (818.88 GB/s)
+  Custom TMA:  0.2179 ms (1925.09 GB/s)
+
+[45/169] Benchmarking 32768-4096...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.5501 ms (762.50 GB/s)
+  Custom TMA:  0.2175 ms (1928.49 GB/s)
+
+[46/169] Benchmarking 2048-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.4635 ms (678.65 GB/s)
+  Custom TMA:  0.1822 ms (1726.68 GB/s)
+
+[47/169] Benchmarking 3072-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.4252 ms (739.76 GB/s)
+  Custom TMA:  0.1806 ms (1741.57 GB/s)
+
+[48/169] Benchmarking 4096-24576...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.4271 ms (736.61 GB/s)
+  Custom TMA:  0.1820 ms (1728.05 GB/s)
+
+[49/169] Benchmarking 6144-16384...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3938 ms (798.80 GB/s)
+  Custom TMA:  0.1796 ms (1751.51 GB/s)
+
+[50/169] Benchmarking 8192-12288...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3938 ms (798.76 GB/s)
+  Custom TMA:  0.1816 ms (1732.50 GB/s)
+
+[51/169] Benchmarking 12288-8192...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3936 ms (799.15 GB/s)
+  Custom TMA:  0.1803 ms (1744.37 GB/s)
+
+[52/169] Benchmarking 16384-6144...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3936 ms (799.31 GB/s)
+  Custom TMA:  0.1804 ms (1744.06 GB/s)
+
+[53/169] Benchmarking 24576-4096...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.4270 ms (736.76 GB/s)
+  Custom TMA:  0.1795 ms (1752.24 GB/s)
+
+[54/169] Benchmarking 32768-3072...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.4265 ms (737.64 GB/s)
+  Custom TMA:  0.1819 ms (1729.11 GB/s)
+
+[55/169] Benchmarking 49152-2048...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.4605 ms (683.18 GB/s)
+  Custom TMA:  0.1792 ms (1755.72 GB/s)
+
+[56/169] Benchmarking 1536-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3711 ms (635.77 GB/s)
+  Custom TMA:  0.1547 ms (1525.51 GB/s)
+
+[57/169] Benchmarking 3072-24576...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3400 ms (693.91 GB/s)
+  Custom TMA:  0.1545 ms (1527.03 GB/s)
+
+[58/169] Benchmarking 6144-12288...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3063 ms (770.33 GB/s)
+  Custom TMA:  0.1543 ms (1528.63 GB/s)
+
+[59/169] Benchmarking 12288-6144...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3070 ms (768.47 GB/s)
+  Custom TMA:  0.1535 ms (1537.29 GB/s)
+
+[60/169] Benchmarking 24576-3072...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3386 ms (696.82 GB/s)
+  Custom TMA:  0.1556 ms (1516.55 GB/s)
+
+[61/169] Benchmarking 49152-1536...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3772 ms (625.53 GB/s)
+  Custom TMA:  0.1531 ms (1540.86 GB/s)
+
+[62/169] Benchmarking 2048-32768...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3124 ms (671.24 GB/s)
+  Custom TMA:  0.1450 ms (1446.39 GB/s)
+
+[63/169] Benchmarking 4096-16384...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2770 ms (757.18 GB/s)
+  Custom TMA:  0.1448 ms (1448.70 GB/s)
+
+[64/169] Benchmarking 8192-8192...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2774 ms (755.97 GB/s)
+  Custom TMA:  0.1449 ms (1446.82 GB/s)
+
+[65/169] Benchmarking 16384-4096...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2775 ms (755.83 GB/s)
+  Custom TMA:  0.1438 ms (1458.15 GB/s)
+
+[66/169] Benchmarking 32768-2048...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.3137 ms (668.58 GB/s)
+  Custom TMA:  0.1425 ms (1471.23 GB/s)
+
+[67/169] Benchmarking 1024-49152...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2853 ms (551.34 GB/s)
+  Custom TMA:  0.1266 ms (1242.86 GB/s)
+
+[68/169] Benchmarking 1536-32768...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.2519 ms (624.31 GB/s)
+  Custom TMA:  0.1263 ms (1244.99 GB/s)
+
+[69/169] Benchmarking 2048-24576...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.2508 ms (627.11 GB/s)
+  Custom TMA:  0.1266 ms (1242.09 GB/s)
+
+[70/169] Benchmarking 3072-16384...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2183 ms (720.54 GB/s)
+  Custom TMA:  0.1264 ms (1244.58 GB/s)
+
+[71/169] Benchmarking 4096-12288...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.2177 ms (722.40 GB/s)
+  Custom TMA:  0.1269 ms (1238.99 GB/s)
+
+[72/169] Benchmarking 6144-8192...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2180 ms (721.42 GB/s)
+  Custom TMA:  0.1262 ms (1246.30 GB/s)
+
+[73/169] Benchmarking 8192-6144...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.2175 ms (723.02 GB/s)
+  Custom TMA:  0.1264 ms (1244.30 GB/s)
+
+[74/169] Benchmarking 12288-4096...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2175 ms (723.11 GB/s)
+  Custom TMA:  0.1245 ms (1262.91 GB/s)
+
+[75/169] Benchmarking 16384-3072...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2178 ms (722.04 GB/s)
+  Custom TMA:  0.1265 ms (1243.13 GB/s)
+
+[76/169] Benchmarking 24576-2048...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2509 ms (626.87 GB/s)
+  Custom TMA:  0.1247 ms (1261.01 GB/s)
+
+[77/169] Benchmarking 32768-1536...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.2517 ms (624.89 GB/s)
+  Custom TMA:  0.1251 ms (1256.96 GB/s)
+
+[78/169] Benchmarking 49152-1024...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.2819 ms (557.96 GB/s)
+  Custom TMA:  0.1232 ms (1276.80 GB/s)
+
+[79/169] Benchmarking 768-49152...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.2397 ms (492.10 GB/s)
+  Custom TMA:  0.1109 ms (1064.14 GB/s)
+
+[80/169] Benchmarking 1536-24576...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.2067 ms (570.84 GB/s)
+  Custom TMA:  0.1111 ms (1062.16 GB/s)
+
+[81/169] Benchmarking 3072-12288...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1744 ms (676.51 GB/s)
+  Custom TMA:  0.1118 ms (1054.81 GB/s)
+
+[82/169] Benchmarking 6144-6144...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1742 ms (677.04 GB/s)
+  Custom TMA:  0.1115 ms (1058.12 GB/s)
+
+[83/169] Benchmarking 12288-3072...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1743 ms (676.81 GB/s)
+  Custom TMA:  0.1112 ms (1061.30 GB/s)
+
+[84/169] Benchmarking 24576-1536...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.2067 ms (570.80 GB/s)
+  Custom TMA:  0.1104 ms (1068.18 GB/s)
+
+[85/169] Benchmarking 49152-768...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.2391 ms (493.46 GB/s)
+  Custom TMA:  0.1103 ms (1069.58 GB/s)
+
+[86/169] Benchmarking 1024-32768...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1927 ms (544.10 GB/s)
+  Custom TMA:  0.1054 ms (994.69 GB/s)
+
+[87/169] Benchmarking 2048-16384...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1592 ms (658.79 GB/s)
+  Custom TMA:  0.1060 ms (989.29 GB/s)
+
+[88/169] Benchmarking 4096-8192...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1595 ms (657.58 GB/s)
+  Custom TMA:  0.1060 ms (989.23 GB/s)
+
+[89/169] Benchmarking 8192-4096...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1593 ms (658.23 GB/s)
+  Custom TMA:  0.1054 ms (995.11 GB/s)
+
+[90/169] Benchmarking 16384-2048...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1595 ms (657.58 GB/s)
+  Custom TMA:  0.1048 ms (1000.36 GB/s)
+
+[91/169] Benchmarking 32768-1024...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1930 ms (543.41 GB/s)
+  Custom TMA:  0.1044 ms (1004.23 GB/s)
+
+[92/169] Benchmarking 768-32768...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1641 ms (479.16 GB/s)
+  Custom TMA:  0.0959 ms (820.00 GB/s)
+
+[93/169] Benchmarking 1024-24576...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1625 ms (483.88 GB/s)
+  Custom TMA:  0.0954 ms (824.33 GB/s)
+
+[94/169] Benchmarking 1536-16384...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1306 ms (602.12 GB/s)
+  Custom TMA:  0.0958 ms (821.09 GB/s)
+
+[95/169] Benchmarking 2048-12288...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1302 ms (604.03 GB/s)
+  Custom TMA:  0.0959 ms (819.86 GB/s)
+
+[96/169] Benchmarking 3072-8192...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1306 ms (602.35 GB/s)
+  Custom TMA:  0.0955 ms (823.43 GB/s)
+
+[97/169] Benchmarking 4096-6144...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1303 ms (603.78 GB/s)
+  Custom TMA:  0.0960 ms (819.04 GB/s)
+
+[98/169] Benchmarking 6144-4096...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1304 ms (603.26 GB/s)
+  Custom TMA:  0.0952 ms (826.37 GB/s)
+
+[99/169] Benchmarking 8192-3072...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1303 ms (603.54 GB/s)
+  Custom TMA:  0.0952 ms (826.10 GB/s)
+
+[100/169] Benchmarking 12288-2048...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1305 ms (602.48 GB/s)
+  Custom TMA:  0.0947 ms (830.09 GB/s)
+
+[101/169] Benchmarking 16384-1536...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1306 ms (602.39 GB/s)
+  Custom TMA:  0.0953 ms (825.40 GB/s)
+
+[102/169] Benchmarking 24576-1024...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1617 ms (486.22 GB/s)
+  Custom TMA:  0.0944 ms (833.26 GB/s)
+
+[103/169] Benchmarking 32768-768...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1649 ms (476.87 GB/s)
+  Custom TMA:  0.0955 ms (823.73 GB/s)
+
+[104/169] Benchmarking 768-24576...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1430 ms (412.36 GB/s)
+  Custom TMA:  0.0873 ms (675.86 GB/s)
+
+[105/169] Benchmarking 1536-12288...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1080 ms (546.07 GB/s)
+  Custom TMA:  0.0879 ms (670.74 GB/s)
+
+[106/169] Benchmarking 3072-6144...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1084 ms (544.27 GB/s)
+  Custom TMA:  0.0873 ms (675.28 GB/s)
+
+[107/169] Benchmarking 6144-3072...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1079 ms (546.56 GB/s)
+  Custom TMA:  0.0875 ms (673.75 GB/s)
+
+[108/169] Benchmarking 12288-1536...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1084 ms (543.95 GB/s)
+  Custom TMA:  0.0875 ms (674.36 GB/s)
+
+[109/169] Benchmarking 24576-768...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1426 ms (413.61 GB/s)
+  Custom TMA:  0.0869 ms (678.96 GB/s)
+
+[110/169] Benchmarking 1024-16384...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.1015 ms (516.78 GB/s)
+  Custom TMA:  0.0852 ms (615.70 GB/s)
+
+[111/169] Benchmarking 2048-8192...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1014 ms (516.93 GB/s)
+  Custom TMA:  0.0853 ms (614.31 GB/s)
+
+[112/169] Benchmarking 4096-4096...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1017 ms (515.75 GB/s)
+  Custom TMA:  0.0856 ms (612.21 GB/s)
+
+[113/169] Benchmarking 8192-2048...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1015 ms (516.42 GB/s)
+  Custom TMA:  0.0852 ms (615.63 GB/s)
+
+[114/169] Benchmarking 16384-1024...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.1009 ms (519.64 GB/s)
+  Custom TMA:  0.0840 ms (623.91 GB/s)
+
+[115/169] Benchmarking 768-16384...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0874 ms (450.03 GB/s)
+  Custom TMA:  0.0803 ms (489.77 GB/s)
+
+[116/169] Benchmarking 1024-12288...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0873 ms (450.54 GB/s)
+  Custom TMA:  0.0804 ms (489.15 GB/s)
+
+[117/169] Benchmarking 1536-8192...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0871 ms (451.69 GB/s)
+  Custom TMA:  0.0795 ms (494.92 GB/s)
+
+[118/169] Benchmarking 2048-6144...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0875 ms (449.38 GB/s)
+  Custom TMA:  0.0802 ms (490.02 GB/s)
+
+[119/169] Benchmarking 3072-4096...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0872 ms (451.15 GB/s)
+  Custom TMA:  0.0796 ms (494.02 GB/s)
+
+[120/169] Benchmarking 4096-3072...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0877 ms (448.57 GB/s)
+  Custom TMA:  0.0795 ms (494.43 GB/s)
+
+[121/169] Benchmarking 6144-2048...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0872 ms (450.99 GB/s)
+  Custom TMA:  0.0808 ms (486.55 GB/s)
+
+[122/169] Benchmarking 8192-1536...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0875 ms (449.22 GB/s)
+  Custom TMA:  0.0796 ms (493.84 GB/s)
+
+[123/169] Benchmarking 12288-1024...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0874 ms (449.85 GB/s)
+  Custom TMA:  0.0790 ms (497.83 GB/s)
+
+[124/169] Benchmarking 16384-768...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0873 ms (450.49 GB/s)
+  Custom TMA:  0.0799 ms (492.33 GB/s)
+
+[125/169] Benchmarking 768-12288...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0768 ms (384.06 GB/s)
+  Custom TMA:  0.0738 ms (399.66 GB/s)
+
+[126/169] Benchmarking 1536-6144...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0768 ms (384.06 GB/s)
+  Custom TMA:  0.0743 ms (397.17 GB/s)
+
+[127/169] Benchmarking 3072-3072...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0772 ms (381.83 GB/s)
+  Custom TMA:  0.0750 ms (393.37 GB/s)
+
+[128/169] Benchmarking 6144-1536...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0772 ms (382.11 GB/s)
+  Custom TMA:  0.0752 ms (392.37 GB/s)
+
+[129/169] Benchmarking 12288-768...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0771 ms (382.34 GB/s)
+  Custom TMA:  0.0755 ms (390.60 GB/s)
+
+[130/169] Benchmarking 1024-8192...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.0710 ms (369.13 GB/s)
+  Custom TMA:  0.0701 ms (373.85 GB/s)
+
+[131/169] Benchmarking 2048-4096...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.0713 ms (367.67 GB/s)
+  Custom TMA:  0.0706 ms (371.57 GB/s)
+
+[132/169] Benchmarking 4096-2048...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.0714 ms (367.35 GB/s)
+  Custom TMA:  0.0701 ms (373.88 GB/s)
+
+[133/169] Benchmarking 8192-1024...
+  -> Best Custom Config: BM=256, BK=256, warps=8
+  TorchAO C++: 0.0713 ms (367.60 GB/s)
+  Custom TMA:  0.0700 ms (374.64 GB/s)
+
+[134/169] Benchmarking 768-8192...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0670 ms (293.55 GB/s)
+  Custom TMA:  0.0678 ms (290.08 GB/s)
+
+[135/169] Benchmarking 1024-6144...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0659 ms (298.42 GB/s)
+  Custom TMA:  0.0685 ms (286.92 GB/s)
+
+[136/169] Benchmarking 1536-4096...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0663 ms (296.73 GB/s)
+  Custom TMA:  0.0681 ms (288.78 GB/s)
+
+[137/169] Benchmarking 2048-3072...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0664 ms (296.06 GB/s)
+  Custom TMA:  0.0681 ms (288.63 GB/s)
+
+[138/169] Benchmarking 3072-2048...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0665 ms (295.60 GB/s)
+  Custom TMA:  0.0681 ms (288.63 GB/s)
+
+[139/169] Benchmarking 4096-1536...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0668 ms (294.32 GB/s)
+  Custom TMA:  0.0681 ms (288.56 GB/s)
+
+[140/169] Benchmarking 6144-1024...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0666 ms (295.34 GB/s)
+  Custom TMA:  0.0681 ms (288.76 GB/s)
+
+[141/169] Benchmarking 8192-768...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0668 ms (294.14 GB/s)
+  Custom TMA:  0.0684 ms (287.31 GB/s)
+
+[142/169] Benchmarking 768-6144...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0612 ms (241.04 GB/s)
+  Custom TMA:  0.0665 ms (221.89 GB/s)
+
+[143/169] Benchmarking 1536-3072...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0610 ms (241.74 GB/s)
+  Custom TMA:  0.0668 ms (220.67 GB/s)
+
+[144/169] Benchmarking 3072-1536...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0613 ms (240.43 GB/s)
+  Custom TMA:  0.0667 ms (221.04 GB/s)
+
+[145/169] Benchmarking 6144-768...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0610 ms (241.79 GB/s)
+  Custom TMA:  0.0668 ms (220.76 GB/s)
+
+[146/169] Benchmarking 1024-4096...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.0564 ms (232.26 GB/s)
+  Custom TMA:  0.0631 ms (207.58 GB/s)
+
+[147/169] Benchmarking 2048-2048...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0555 ms (236.34 GB/s)
+  Custom TMA:  0.0639 ms (205.05 GB/s)
+
+[148/169] Benchmarking 4096-1024...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0558 ms (235.07 GB/s)
+  Custom TMA:  0.0636 ms (206.04 GB/s)
+
+[149/169] Benchmarking 768-4096...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.0506 ms (194.19 GB/s)
+  Custom TMA:  0.0623 ms (157.83 GB/s)
+
+[150/169] Benchmarking 1024-3072...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.0505 ms (194.59 GB/s)
+  Custom TMA:  0.0621 ms (158.28 GB/s)
+
+[151/169] Benchmarking 1536-2048...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.0505 ms (194.73 GB/s)
+  Custom TMA:  0.0624 ms (157.53 GB/s)
+
+[152/169] Benchmarking 2048-1536...
+  -> Best Custom Config: BM=128, BK=256, warps=4
+  TorchAO C++: 0.0507 ms (193.73 GB/s)
+  Custom TMA:  0.0622 ms (157.98 GB/s)
+
+[153/169] Benchmarking 3072-1024...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.0508 ms (193.42 GB/s)
+  Custom TMA:  0.0624 ms (157.55 GB/s)
+
+[154/169] Benchmarking 4096-768...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.0503 ms (195.42 GB/s)
+  Custom TMA:  0.0621 ms (158.32 GB/s)
+
+[155/169] Benchmarking 768-3072...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.0503 ms (146.59 GB/s)
+  Custom TMA:  0.0619 ms (119.15 GB/s)
+
+[156/169] Benchmarking 1536-1536...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.0500 ms (147.58 GB/s)
+  Custom TMA:  0.0615 ms (119.85 GB/s)
+
+[157/169] Benchmarking 3072-768...
+  -> Best Custom Config: BM=256, BK=128, warps=4
+  TorchAO C++: 0.0498 ms (148.09 GB/s)
+  Custom TMA:  0.0616 ms (119.72 GB/s)
+
+[158/169] Benchmarking 1024-2048...
+  -> Best Custom Config: BM=64, BK=256, warps=4
+  TorchAO C++: 0.0474 ms (138.39 GB/s)
+  Custom TMA:  0.0603 ms (108.67 GB/s)
+
+[159/169] Benchmarking 2048-1024...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0476 ms (137.73 GB/s)
+  Custom TMA:  0.0604 ms (108.57 GB/s)
+
+[160/169] Benchmarking 768-2048...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0466 ms (105.55 GB/s)
+  Custom TMA:  0.0591 ms (83.14 GB/s)
+
+[161/169] Benchmarking 1024-1536...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0470 ms (104.63 GB/s)
+  Custom TMA:  0.0594 ms (82.78 GB/s)
+
+[162/169] Benchmarking 1536-1024...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0470 ms (104.68 GB/s)
+  Custom TMA:  0.0594 ms (82.77 GB/s)
+
+[163/169] Benchmarking 2048-768...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0472 ms (104.22 GB/s)
+  Custom TMA:  0.0594 ms (82.70 GB/s)
+
+[164/169] Benchmarking 768-1536...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0461 ms (79.89 GB/s)
+  Custom TMA:  0.0590 ms (62.50 GB/s)
+
+[165/169] Benchmarking 1536-768...
+  -> Best Custom Config: BM=256, BK=64, warps=4
+  TorchAO C++: 0.0469 ms (78.57 GB/s)
+  Custom TMA:  0.0588 ms (62.72 GB/s)
+
+[166/169] Benchmarking 1024-1024...
+  -> Best Custom Config: BM=64, BK=128, warps=4
+  TorchAO C++: 0.0453 ms (72.40 GB/s)
+  Custom TMA:  0.0582 ms (56.27 GB/s)
+
+[167/169] Benchmarking 768-1024...
+  -> Best Custom Config: BM=128, BK=64, warps=4
+  TorchAO C++: 0.0443 ms (55.50 GB/s)
+  Custom TMA:  0.0573 ms (42.87 GB/s)
+
+[168/169] Benchmarking 1024-768...
+  -> Best Custom Config: BM=128, BK=64, warps=4
+  TorchAO C++: 0.0451 ms (54.53 GB/s)
+  Custom TMA:  0.0573 ms (42.93 GB/s)
+
+[169/169] Benchmarking 768-768...
+  -> Best Custom Config: BM=64, BK=128, warps=4
+  TorchAO C++: 0.0443 ms (41.64 GB/s)
+  Custom TMA:  0.0578 ms (31.91 GB/s)
+
+[INFO] Benchmark charts saved to 'Benchmark/v11.1/v11.1_Compression_Benchmark.png'
+
+scontrol show job 723267
+JobId=723267 JobName=11.1_pruning
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=1365780 Nice=0 Account=rrg-mmehride QOS=normal
+   JobState=COMPLETING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:30:38 TimeLimit=01:00:00 TimeMin=N/A
+   SubmitTime=2026-08-06T23:29:45 EligibleTime=2026-08-06T23:29:45
+   AccrueTime=2026-08-06T23:29:45
+   StartTime=2026-08-06T23:30:33 EndTime=2026-08-07T00:01:11 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-06T23:30:33 Scheduler=Main
+   Partition=compute AllocNode:Sid=trig-login01:1856734
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0019
+   BatchHost=trig0019
+   NumNodes=1 NumCPUs=24 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=1,mem=187.50G,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=187.50G,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=187.50G MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/scratch/notming/compression/sbatch_sh/trillium/11.1_benchmark_pruning.sh
+   SubmitLine=SBATCH --comment /opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/trillium/11.1_benchmark_pruning.sh --export=NONE --get-user-env sbatch_sh/trillium/11.1_benchmark_pruning.sh
+   WorkDir=/scratch/notming/compression
+   Comment=/opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/trillium/11.1_benchmark_pruning.sh
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/scratch/notming/compression/11.1_pruning_723267.out
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 723267
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+723267       11.1_prun+ rrg-mmehr+   00:30:38                         00:00:00   00:00:00      0:0 
+723267.batch      batch rrg-mmehr+   00:30:38                         00:00:00   00:00:00      0:0 
+723267.exte+     extern rrg-mmehr+   00:30:38                         00:00:00   00:00:00      0:0 
+
