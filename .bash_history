@@ -5680,3 +5680,47 @@ sq --start
 sq
 #1786070018
 /home/notming/links/scratch/.venv/bin/python
+#1786067942
+load_module && start_gluon
+#1786067960
+tpython 11.1_2_kernel_baseline.py 
+#1786067987
+tpython 11.1_2_kernel_baseline.py --tune
+#1786068216
+tpython 8.11.1_benchmark_pruning.py 11.1
+#1786069189
+debugjob
+#1786072977
+load_module && start_gluon
+#1786072987
+sbatch sbatch_sh/trillium/11.1_benchmark_pruning.sh 
+#1786073066
+sq
+#1786073071
+sq --start
+#1786073081
+sq
+#1786073142
+sq --start
+#1786073312
+sq
+#1786073385
+sbatch sbatch_sh/trillium/11.1_benchmark_pruning.sh 
+#1786073387
+sq
+#1786073397
+sq -i 60
+#1786074547
+sq
+#1786067913
+cd /home/notming/links/scratch/compression
+#1786067914
+load_module && start_gluon && tpython 11.1_2_kernel_baseline.py
+#1786067939
+cd /home/notming/links/scratch/compression
+#1786067940
+load_module && start_gluon && tpython 11.1_2_kernel_baseline.py --tune
+#1786070196
+cd /home/notming/links/scratch/compression
+#1786070198
+load_module && start_gluon && tpython 8.11.1_benchmark_pruning.py 11.1
