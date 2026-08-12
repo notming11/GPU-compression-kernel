@@ -4,11 +4,24 @@ import pytest
 import torch
 import triton
 import triton.language as tl
-from triton.language.extra.cuda.inline_ptx_lib import (
-    _mul_f32x2,
-    _fma_f32x2,
-    _reduce_fadd2,
-)
+# from triton.language.extra.cuda.inline_ptx_lib import (
+#     _mul_f32x2,
+#     _fma_f32x2,
+#     _reduce_fadd2,
+# )
+
+@triton.jit
+def _mul_f32x2(a, b):
+    return a * b
+
+@triton.jit
+def _fma_f32x2(a, b, c):
+    return (a * b) + c
+
+@triton.jit
+def _reduce_fadd2(a, b):
+    return a + b
+
 from triton.tools.tensor_descriptor import TensorDescriptor
 import os
 
@@ -57,7 +70,8 @@ def _attn_fwd_subtile(
     FADD2_REDUCE: tl.constexpr,
     FWD_DOT_ATTRS: tl.constexpr = None,
 ):
-    qk = tl.dot(q, k, attrs=FWD_DOT_ATTRS.get("qk"))
+    qk = tl.dot(q, k)
+    # qk = tl.dot(q, k, attrs=FWD_DOT_ATTRS.get("qk"))
     if STAGE == 2:
         mask = offs_m[:, None] >= (start_n + offs_n[None, :])
         qk = qk * qk_scale + tl.where(mask, 0, -1.0e6)
@@ -102,7 +116,8 @@ def _attn_fwd_subtile(
     # prepare p and v for the dot
     p = p.to(dtype)
     # note that this non transposed v for FP8 is only supported on Blackwell
-    acc = tl.dot(p, v, acc, attrs=FWD_DOT_ATTRS.get("pv"))
+    acc = tl.dot(p, v, acc)
+    # acc = tl.dot(p, v, acc, attrs=FWD_DOT_ATTRS.get("pv"))
     # update m_i and l_i
     # place this at the end of the loop to reduce register pressure
     if not FADD2_REDUCE:
@@ -156,9 +171,9 @@ def _attn_fwd_inner_oss_dp(
             hi,
             BLOCK_N,
             warp_specialize=warp_specialize,
-            merge_epilogue=True,
-            merge_correction=True,
-            data_partition_factor=DP_FACTOR,
+            # merge_epilogue=True,
+            # merge_correction=True,
+            # data_partition_factor=DP_FACTOR,
     ):
         start_n = tl.multiple_of(start_n, BLOCK_N)
 
@@ -521,9 +536,9 @@ def _attn_fwd_persist(
             0,
             tiles_per_sm,
             warp_specialize=warp_specialize and OUTER_LOOP,
-            merge_epilogue=True,
-            merge_correction=True,
-            data_partition_factor=DP_FACTOR,
+            # merge_epilogue=True,
+            # merge_correction=True,
+            # data_partition_factor=DP_FACTOR,
     ):
         pid = tile_idx % n_tile_num
         off_hz = tile_idx // n_tile_num
@@ -721,7 +736,8 @@ def _attn_bwd_dkdv_inner(
     offs_m = curr_m + tl.arange(0, BLOCK_M1)
     m = tl.load(M + offs_m)
     if RESCHED:
-        qkT = tl.dot(k, qT, attrs=BWD_DOT_ATTRS.get("qkT"))
+        qkT = tl.dot(k, qT)
+        # qkT = tl.dot(k, qT, attrs=BWD_DOT_ATTRS.get("qkT"))
     else:
         qkT = tl.dot(k, qT)
     pT = tl.math.exp2(qkT - m[None, :])
@@ -732,9 +748,11 @@ def _attn_bwd_dkdv_inner(
     ppT = pT
     ppT = ppT.to(dtype)
     if RESCHED:
-        dpT = tl.dot(v, tl.trans(do), attrs=BWD_DOT_ATTRS.get("dpT")).to(tl.float32)
+        dpT = tl.dot(v, tl.trans(do)).to(tl.float32)
+        # dpT = tl.dot(v, tl.trans(do), attrs=BWD_DOT_ATTRS.get("dpT")).to(tl.float32)
         Di = tl.load(D + offs_m)
-        dv += tl.dot(ppT, do, attrs=BWD_DOT_ATTRS.get("dv"))
+        dv += tl.dot(ppT, do)
+        # dv += tl.dot(ppT, do, attrs=BWD_DOT_ATTRS.get("dv"))
     else:
         dv += tl.dot(ppT, do)
         Di = tl.load(D + offs_m)
@@ -742,8 +760,10 @@ def _attn_bwd_dkdv_inner(
     dsT = pT * (dpT - Di[None, :])
     dsT = dsT.to(dtype)
     if RESCHED:
-        dq = tl.dot(tl.trans(dsT), k, attrs=BWD_DOT_ATTRS.get("dq"))
-        dk += tl.dot(dsT, tl.trans(qT), attrs=BWD_DOT_ATTRS.get("dk"))
+        dq = tl.dot(tl.trans(dsT), k)
+        dk += tl.dot(dsT, tl.trans(qT))
+        # dq = tl.dot(tl.trans(dsT), k, attrs=BWD_DOT_ATTRS.get("dq"))
+        # dk += tl.dot(dsT, tl.trans(qT), attrs=BWD_DOT_ATTRS.get("dk"))
     else:
         dk += tl.dot(dsT, tl.trans(qT))
         dq = tl.dot(tl.trans(dsT), k)
@@ -800,7 +820,7 @@ def _attn_bwd_dkdv(
                 0,
                 num_steps,
                 warp_specialize=True,
-                merge_epilogue_to_computation=True,
+                # merge_epilogue_to_computation=True,
         ):
             dk, dv, curr_m = _attn_bwd_dkdv_inner(
                 dk,
@@ -1180,7 +1200,7 @@ def _attn_bwd_persist(
             0,
             tiles_per_sm,
             warp_specialize=True,
-            merge_epilogue_to_computation=True,
+            # merge_epilogue_to_computation=True,
     ):
         pid = tile_idx % n_tile_num
         bhid = tile_idx // n_tile_num
@@ -1615,7 +1635,7 @@ for HEAD_DIM in [128]:  # 64, 128]:
             configs.append(
                 triton.testing.Benchmark(
                     x_names=["N_CTX"],
-                    x_vals=[2**i for i in range(11, 12)],  # 0, 15)],
+                    x_vals=[2**i for i in range(10, 17)],  # 0, 15)],
                     line_arg="provider",
                     line_vals=["triton-fp16"] + (["flash"] if HAS_FLASH else []),
                     line_names=["Triton [FP16]"] + (["Flash-2"] if HAS_FLASH else []),

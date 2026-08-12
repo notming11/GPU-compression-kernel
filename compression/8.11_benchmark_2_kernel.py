@@ -82,7 +82,7 @@ def benchmark_kernels_ws(M, N, K, comp_module, version):
 
     # 3. Custom Runtime / 2-Kernel Triton Implementation (11.1)
     if version == "11.1":
-        ms_runtime_ws = safe_bench(lambda: comp_module.run_2_kernel_ws_matmul(A, B), use_cudagraph=False)
+        ms_runtime_ws = safe_bench(lambda: comp_module.run_2_kernel_ws_matmul(A, B), use_cudagraph=True)
     else:
         raise ValueError(f"Unsupported version: {version}. This script only supports 11.1")
         
