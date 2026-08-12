@@ -5724,3 +5724,113 @@ load_module && start_gluon && tpython 11.1_2_kernel_baseline.py --tune
 cd /home/notming/links/scratch/compression
 #1786070198
 load_module && start_gluon && tpython 8.11.1_benchmark_pruning.py 11.1
+#1786377040
+load_module && start_gluon
+#1786377045
+cd ../attention/
+#1786377050
+tpython gluon_attention_forward.py 
+#1786377126
+tpython gluon_attention_forward.py --tune
+#1786398684
+load_module && start_gluon
+#1786398690
+cd ../attention/
+#1786398701
+tpython gluon_attention_forward.py > test.txt
+#1786376189
+load_module && start_gluon
+#1786376192
+cd .. 
+#1786376194
+cd attention/
+#1786376200
+tpython gluon_attention_forward.py 
+#1786376602
+cd ..
+#1786376605
+cd compression
+#1786376773
+cd ..
+#1786376776
+cd attention
+#1786376799
+ln -s ../compression/common.py ./common.py
+#1786376814
+tpython gluon_attention_forward.py 
+#1786376949
+ln ../compression/common.py ./common.py
+#1786376958
+tpython gluon_attention_forward.py 
+#1786377028
+debugjob
+#1786384927
+cd ../compression/
+#1786384942
+tpython gluon_ws_dense.py 
+#1786385093
+tpython gluon_ws_dense.py > layout.txt
+#1786385154
+tpython gluon_ws_dense.py 
+#1786385682
+cd ../attention/
+#1786385685
+tpython gluon_attention_forward.py 
+#1786398672
+debugjob
+#1786463446
+load_module && start_gluon
+#1786463449
+cd ../s
+#1786463453
+cd ../attention/
+#1786463461
+tpython gluon_attention_forward.py > test.txt 
+#1786469411
+load_module && start_gluon
+#1786469414
+cd ../attention/
+#1786469417
+tpython gluon_attention_forward.py 
+#1786469445
+tpython gluon_attention_forward.py > test.txt 
+#1786470383
+load_module && start_gluon
+#1786470389
+cd ../attention/
+#1786470393
+tpython gluon_attention_forward.py > test.txt 
+#1786470429
+nvidia-smi
+#1786470436
+kill -9 2039492
+#1786470446
+tpython gluon_attention_forward.py 
+#1786470470
+nvidia-smi
+#1786470474
+kill -9 2041102
+#1786507455
+/home/notming/links/scratch/.venv/bin/python
+#1786502734
+load_module && start_gluon
+#1786502737
+cd ../attention/
+#1786502745
+tpython gluon_attention_forward.py > test.txt
+#1786504252
+nvidia-smi
+#1786504258
+kill -9 2766675
+#1786504261
+tpython gluon_attention_forward.py > test.txt
+#1786504273
+tpython gluon_attention_forward.py
+#1786504544
+tpython benchmark.py 
+#1786504650
+tpython gluon_attention_forward.py --tune
+#1786507510
+tpython gluon_attention_forward.py --tune > ptx_dump.txt
+#1786508804
+tpython benchmark.py 

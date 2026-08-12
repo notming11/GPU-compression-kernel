@@ -278,11 +278,11 @@ def run_2_kernel_ws_matmul(A, B, tune=True, manual_config=None):
             M, K
         )
         
-        cache_size_bytes = 256 * 1024 * 1024 
+        # cache_size_bytes = 256 * 1024 * 1024 
     
         # Allocate and write zeros to force eviction of existing L2 data
-        dummy = torch.empty(cache_size_bytes, dtype=torch.int8, device="cuda")
-        dummy.zero_()
+        # dummy = torch.empty(cache_size_bytes, dtype=torch.int8, device="cuda")
+        # dummy.zero_()
         
         # 1D SM-bound grid for the persistent matmul kernel
         def grid_matmul(meta):
