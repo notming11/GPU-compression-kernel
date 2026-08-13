@@ -5834,3 +5834,211 @@ tpython gluon_attention_forward.py --tune
 tpython gluon_attention_forward.py --tune > ptx_dump.txt
 #1786508804
 tpython benchmark.py 
+#1786489365
+sq
+#1786491457
+load_module && start_gluon
+#1786491474
+sbatch sbatch_sh/trillium/11.1_benchmark.sh 
+#1786491480
+sq
+#1786499647
+pip install torchao
+#1786500609
+tpython 8.11_benchmark_2_kernel.py 11.1
+#1786500747
+tpython 8.11_benchmark_2_kernel.py 11.1 8192
+#1786501092
+tpython 8.11.1_benchmark_pruning.py 11.1
+#1786501567
+tpython 8.11.2_benchmark_pruning_cuSPARSElt.py 11.1 
+#1786502696
+debugjob
+#1786517430
+cd ../attention/
+#1786517433
+tpython gluon_attention_forward.py 
+#1786461631
+load_module && start_gluon
+#1786461641
+cd ../attention/
+#1786461647
+tpython gluon_attention_forward.py 
+#1786463435
+debugjob
+#1786476039
+cd ../compression/
+#1786476050
+sbatch sbatch_sh/trillium/11.1_benchmark.sh 
+#1786476054
+sq
+#1786486021
+module spider cusparselt
+#1786486079
+module load cusparselt/0.9.11
+#1786486094
+module load cusparselt/0.9.1.1
+#1786486220
+nvcc main.cu -o hopper_compress     -arch=sm_90     -I/path/to/cusparselt/include     -L/path/to/cusparselt/lib64     -lcusparseLt     -lcudart
+#1786486457
+./hopper_compress 
+#1786486683
+export CUSPARSELT_INCLUDE=/path/to/cusparselt/include
+#1786486683
+export CUSPARSELT_LIB=/path/to/cusparselt/lib64
+#1786486690
+debugjob
+#1786501584
+sq
+#1786544200
+load_module && start_gluon
+#1786544205
+cd ../attention/
+#1786544211
+tpython gluon_fa3_forward.py 
+#1786544284
+nvidia-smi
+#1786544291
+kill -9 1092872
+#1786544294
+tpython gluon_attention_forward.py 
+#1786544568
+tpython gluon_fa3_forward.py 
+#1786544954
+nvidia-smi
+#1786544960
+kill -9 1096486
+#1786545132
+tpython gluon_fa3_forward.py 
+#1786545651
+tpython gluon_fa3_forward.py --tune
+#1786545991
+kill -9
+#1786545996
+kill -l
+#1786546004
+kill --all
+#1786546009
+nvidia-smi
+#1786546015
+kill -9 1126871
+#1786546024
+tpython gluon_fa3_forward.py --tune > ptx_dump.txt 
+#1786546093
+nvidia-smi
+#1786546098
+kill -i 1137622
+#1786546103
+kill -9 1137622
+#1786546116
+tpython gluon_fa3_forward.py --tune > ptx_dump.txt 
+#1786546343
+nvidia-smi
+#1786546348
+kill -o 1139906
+#1786546352
+kill -9 1139906
+#1786547246
+tpython gluon_fa3_forward.py --tune > ptx_dump.txt 
+#1786550737
+sq
+#1786550760
+load_module && start_gluon
+#1786550766
+cd ../attention/
+#1786550772
+tpython benchmark.py 
+#1786551703
+nvidia-smi
+#1786551710
+kill -9 3028559
+#1786551750
+tpython benchmark.py 
+#1786552072
+tpython gluon_fa3_forward.py 
+#1786552138
+tpython gluon_fa3_forward.py --tune
+#1786552495
+tpython benchmark.py 
+#1786552897
+nvidia-smi
+#1786552905
+kill -9 3039544
+#1786552945
+tpython benchmark.py 
+#1786552995
+nvidia-smi
+#1786553003
+kill -9 3040355
+#1786553170
+tpython benchmark.py 
+#1786554908
+nvidia-smi
+#1786554917
+kill -9 3041011 3058899
+#1786554924
+tpython gluon_fa3_forward.py 
+#1786554954
+nvidia-smi
+#1786554963
+kill -9 3060518
+#1786555160
+tpython gluon_fa3_forward.py 
+#1786555365
+nvidia-smi
+#1786555372
+kill -9 3063532
+#1786555374
+tpython gluon_fa3_forward.py 
+#1786555531
+tpython benchmark.py 
+#1786555579
+TORCH_USE_CUDA_DSA=1 tpython benchmark.py 
+#1786555616
+TORCH_USE_CUDA_DSA tpython benchmark.py 
+#1786555634
+tpython TORCH_USE_CUDA_DSA=1 benchmark.py 
+#1786555649
+TORCH_USE_CUDA_DSA=1 tpython benchmark.py 
+#1786561373
+cuda-gdb
+#1786561157
+load_module && start_gluon
+#1786561160
+cd ../attention/
+#1786561167
+tpython benchmark.py 
+#1786561209
+nvidia-smi
+#1786561215
+kill -9 1505025
+#1786561224
+tpython gluon_fa3_forward.py --tune
+#1786561301
+tpython benchmark.py 
+#1786561466
+kill
+#1786561478
+nvidia-smi
+#1786561484
+kill 1507697
+#1786561486
+nvidia-smi
+#1786561490
+kill -9 1507697
+#1786561491
+nvidia-smi
+#1786561942
+tpython benchmark.py 
+#1786562137
+nvidia-smi
+#1786562143
+kill -9 1514391
+#1786562189
+tpython gluon_fa3_forward.py --tune
+#1786562308
+tpython benchmark.py 
+#1786544167
+debugjob
+#1786599679
+sq
