@@ -54,7 +54,7 @@ def pick_wgmma_layout(dtype, BLOCK_M, BLOCK_N, num_warps, sparse=False):
 @aggregate
 class WGMMA:
     acc: Union[warpgroup_mma_accumulator, gl.tensor]
-    use_acc: gl.tensor
+    use_acc: gl.constexpr
     layout: gl.constexpr
     sparse: gl.constexpr
     BLOCK_M: gl.constexpr
@@ -63,7 +63,7 @@ class WGMMA:
     @gluon.constexpr_function
     def __init__(self, acc, use_acc, layout, BLOCK_M, BLOCK_N, sparse=False):
         self.acc = acc
-        self.use_acc = use_acc
+        self.use_acc = gl.constexpr(use_acc)
         self.layout = gl.constexpr(layout)
         self.sparse = gl.constexpr(sparse)
         self.BLOCK_M = gl.constexpr(BLOCK_M)
@@ -73,7 +73,7 @@ class WGMMA:
     def initialize(dtype: gl.constexpr, BLOCK_M: gl.constexpr, BLOCK_N: gl.constexpr, num_warps: gl.constexpr, sparse: gl.constexpr=False):
         mma_layout: gl.constexpr = pick_wgmma_layout(dtype, BLOCK_M, BLOCK_N, num_warps, sparse=sparse)
         acc = gl.zeros((BLOCK_M, BLOCK_N), dtype=gl.float32, layout=mma_layout)
-        return WGMMA(acc, gl.to_tensor(False), mma_layout, BLOCK_M, BLOCK_N, sparse=sparse)
+        return WGMMA(acc, gl.constexpr(False), mma_layout, BLOCK_M, BLOCK_N, sparse=sparse)
 
     @gluon.jit
     def initialize_from(dtype: gl.constexpr, mma, num_warps: gl.constexpr, sparse: gl.constexpr=False):
@@ -88,7 +88,7 @@ class WGMMA:
         acc = warpgroup_mma(a, b, self.acc, is_async=True, use_acc=self.use_acc)
         # Note that aggregates don't support in-place mutation, so we need to
         # return a new instance and re-assign it at the callsite.
-        return WGMMA(acc, gl.to_tensor(True), self.layout, self.BLOCK_M, self.BLOCK_N, sparse=self.sparse)
+        return WGMMA(acc, gl.constexpr(True), self.layout, self.BLOCK_M, self.BLOCK_N, sparse=self.sparse)
 
     @gluon.jit
     def issue_metadata_load(self, e):
@@ -105,7 +105,7 @@ class WGMMA:
         acc = warpgroup_mma(a, b, self.acc, e=e_reg, is_async=True, use_acc=self.use_acc)
         # Note that aggregates don't support in-place mutation, so we need to
         # return a new instance and re-assign it at the callsite.
-        return WGMMA(acc, gl.to_tensor(True), self.layout, self.BLOCK_M, self.BLOCK_N, sparse=self.sparse)
+        return WGMMA(acc, gl.constexpr(True), self.layout, self.BLOCK_M, self.BLOCK_N, sparse=self.sparse)
 
     @gluon.jit
     def wait_num_outstanding(self, num_outstanding: gl.constexpr):
@@ -115,7 +115,7 @@ class WGMMA:
     # Take the result and reset the accumulator.
     @gluon.jit
     def take_result(self):
-        return self.acc, WGMMA(self.acc, gl.to_tensor(False), self.layout, self.BLOCK_M, self.BLOCK_N, sparse=self.sparse)
+        return self.acc, WGMMA(self.acc, gl.constexpr(False), self.layout, self.BLOCK_M, self.BLOCK_N, sparse=self.sparse)
 
 # Schedulers
 

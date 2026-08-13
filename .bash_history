@@ -6056,3 +6056,53 @@ tpython benchmark.py --head-dim 64
 tpython benchmark.py --head-dim 64 > benchmark_log_64.txt 
 #1786637865
 tpython benchmark.py --head-dim 128
+#1786642900
+load_module && start_gluon
+#1786642911
+cd ../attention/
+#1786642922
+tpython gluon_attention_forward.py 
+#1786637411
+start_gluon
+#1786637415
+cd ../attention/
+#1786637427
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786637436
+sq
+#1786637446
+scancel 760743
+#1786637468
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786637473
+sq
+#1786643744
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786643757
+sq
+#1786644034
+scancel 761040
+#1786644110
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786644199
+sq
+#1786636435
+debugjob
+#1786641427
+load_module && start_gluon
+#1786641441
+cd ../attention/
+#1786641505
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_4096_128" python gluon_fa3_forward.py 
+#1786641638
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/3_partition_4096_128" python gluon_attention_forward.py 
+#1786642025
+apptainer exec --nvccli $SCRATCH/sparse.sif     ncu --set full -f     --nvtx --nvtx-include "PyTorch_SDPA_4096_128"     -o "Profiling/pytorch_sdpa_4096_128"     python profile_sdpa.py
+#1786642046
+apptainer exec --nvccli $SCRATCH/sparse.sif     ncu --set full -f     --nvtx --nvtx-include "PyTorch_SDPA_4096_128"     -o "Profiling/pytorch_sdpa_4096_128"     python pytorch_sdpa.py 
+#1786642120
+apptainer exec --nvccli $SCRATCH/sparse.sif     ncu --set full -f     --nvtx --nvtx-include "PyTorch_SDPA_4096_128/"     -o "Profiling/pytorch_sdpa_4096_128"     python pytorch_sdpa.py 
+#1786642881
+debugjob
+#1786644304
+tpython gluon_fa3_forward.py 
