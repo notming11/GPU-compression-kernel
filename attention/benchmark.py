@@ -169,6 +169,22 @@ def plot_benchmark_results(df_peak: pd.DataFrame, head_dim: int, output_dir: str
     plt.savefig(output_image, dpi=300, bbox_inches="tight")
     print(f"\n[INFO] Benchmark chart saved successfully to '{output_image}'")
     plt.show()
+    
+def get_best_config(module):
+    """Extracts best_config from module autotuner cache or direct attributes."""
+    # 1. Check dynamic autotune cache dict (used in gluon_attention_forward.py)
+    cache = getattr(module, "_autotune_cache", {})
+    for autotuner in cache.values():
+        if getattr(autotuner, "best_config", None) is not None:
+            return autotuner.best_config
+
+    # 2. Direct attribute check (used in GEMM benchmark modules)
+    for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
+        obj = getattr(module, name, None)
+        if obj and getattr(obj, "best_config", None) is not None:
+            return obj.best_config
+
+    return "Kernel Failed / Not Set"
 
 # ---------------------------------------------------------------------------
 # MAIN EXECUTION
@@ -210,8 +226,9 @@ if __name__ == "__main__":
     print(f"{'='*70}\n")
 
     for idx, seq_len in enumerate(seq_lengths):
-        print(f"[{idx+1}/{len(seq_lengths)}] Benchmarking SEQ_LEN={seq_len}, HEAD_DIM={args.head_dim}...", end="", flush=True)
-        
+        shape_str = f"SEQ_LEN={seq_len}-HEAD_DIM={args.head_dim}"
+        print(f"start {shape_str} ({idx+1}/{len(seq_lengths)})", flush=True)
+
         metrics = benchmark_fa3_kernel(
             seq_len=seq_len, 
             head_dim=args.head_dim, 
@@ -227,11 +244,26 @@ if __name__ == "__main__":
             **metrics
         })
 
-        torch_tflops = f"{metrics['PyTorch_SDPA_TFLOPS']:.2f}" if metrics['PyTorch_SDPA_TFLOPS'] else "N/A"
-        triton_3p_tflops = f"{metrics['Triton_3Part_TFLOPS']:.2f}" if metrics['Triton_3Part_TFLOPS'] else "N/A"
-        triton_4p_tflops = f"{metrics['Triton_4Part_TFLOPS']:.2f}" if metrics['Triton_4Part_TFLOPS'] else "N/A"
-        
-        print(f" Done!\n    └─ PyTorch SDPA: {torch_tflops} TFLOPS | Triton 3-Part: {triton_3p_tflops} TFLOPS | Triton 4-Part: {triton_4p_tflops} TFLOPS")
+        # 1. Extract autotune configurations directly
+        best_3part = get_best_config(fa3_3part_module)
+        best_4part = get_best_config(fa3_4part_module)
+
+        # 2. Print metrics and configs (GEMM Benchmark Style)
+        print(
+            f"finish {shape_str} -> SDPA: {metrics['PyTorch_SDPA_TFLOPS']:.2f} TFLOPS, "
+            f"3-Part: {metrics['Triton_3Part_TFLOPS']:.2f} TFLOPS, "
+            f"4-Part: {metrics['Triton_4Part_TFLOPS']:.2f} TFLOPS"
+        )
+
+        if isinstance(best_3part, str):
+            print(f"  3-Part best config: {best_3part}")
+        else:
+            print(f"  3-Part best config: {best_3part.kwargs}, num_warps={getattr(best_3part, 'num_warps', 'N/A')}")
+
+        if isinstance(best_4part, str):
+            print(f"  4-Part best config: {best_4part}", flush=True)
+        else:
+            print(f"  4-Part best config: {best_4part.kwargs}, num_warps={getattr(best_4part, 'num_warps', 'N/A')}", flush=True)
 
     df_raw = pd.DataFrame(data_log)
     

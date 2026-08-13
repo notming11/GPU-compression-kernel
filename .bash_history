@@ -6042,3 +6042,17 @@ tpython benchmark.py
 debugjob
 #1786599679
 sq
+#1786636452
+load_module & start_gluon
+#1786636458
+cd ../attention/
+#1786636478
+tpython gluon_attention_forward.py 
+#1786636492
+tpython gluon_attention_forward.py --tune
+#1786636923
+tpython benchmark.py --head-dim 64
+#1786637261
+tpython benchmark.py --head-dim 64 > benchmark_log_64.txt 
+#1786637865
+tpython benchmark.py --head-dim 128
