@@ -6106,3 +6106,17 @@ apptainer exec --nvccli $SCRATCH/sparse.sif     ncu --set full -f     --nvtx --n
 debugjob
 #1786644304
 tpython gluon_fa3_forward.py 
+#1786662453
+load_module && start_gluon
+#1786662456
+cd ../attention/
+#1786662469
+tpython gluon_fa3_forward.py --tune
+#1786663899
+tpython benchmark.py
+#1786664397
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o 
+#1786664418
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_4096_128" python gluon_fa3_forward.py 
+#1786664777
+tpython benchmark.py --head-dim=64

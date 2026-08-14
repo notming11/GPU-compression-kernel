@@ -201,7 +201,7 @@ def store_acc_to_smem_subtile(p, acc, acc_state):
 # ---------------------------------------------------------------------------
 
 @gluon.jit
-def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr):
+def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
@@ -238,7 +238,7 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         q_state = q_state.next()
 
 @gluon.jit
-def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr):
+def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
@@ -268,6 +268,8 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
 
         base_step = tile_idx * num_steps
+        
+        sm_scale: gl.constexpr = 1.0 / math.sqrt(HEAD_DIM)
 
         for step in range(0, num_steps, 2):
             g_step = base_step + step
@@ -281,12 +283,12 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mma_s = mma_s.wait_num_outstanding(0)
             
             S_tile, mma_s = mma_s.take_result()
-            S_tile = S_tile / gl.sqrt(gl.cast(p.q_desc.shape[1], gl.float32))
+            S_tile = S_tile * sm_scale
             
             m_new_tile = gl.max(S_tile, axis=1)
             m_new = gl.maximum(m_old, m_new_tile)
             
-            rescale_factor = gl.exp(m_old - m_new)
+            rescale_factor = gl.exp((m_old - m_new))
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
             
             mma_o = mma_o.wait_num_outstanding(0)
@@ -294,8 +296,10 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             o_acc = o_acc * rescale_factor_m[:, None]
             mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
             
-            P_tile_f32 = gl.exp(S_tile - m_new[:, None])
-            l_old = l_old * rescale_factor + gl.sum(P_tile_f32, axis=1)
+            P_tile_f32 = gl.exp((S_tile - m_new[:, None]))
+            
+            p_sum = gl.sum(P_tile_f32, axis=1)
+            l_old = l_old * rescale_factor + p_sum
             m_old = m_new
 
             P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
@@ -344,7 +348,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
 
 
 @gluon.jit
-def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr):
+def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
@@ -372,6 +376,8 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
 
         base_step = tile_idx * num_steps
+        
+        sm_scale: gl.constexpr = 1.0 / math.sqrt(HEAD_DIM)
 
         for step in range(1, num_steps, 2):
             g_step = base_step + step
@@ -385,12 +391,12 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mma_s = mma_s.wait_num_outstanding(0)
             
             S_tile, mma_s = mma_s.take_result()
-            S_tile = S_tile / gl.sqrt(gl.cast(p.q_desc.shape[1], gl.float32))
+            S_tile = S_tile * sm_scale
             
             m_new_tile = gl.max(S_tile, axis=1)
             m_new = gl.maximum(m_old, m_new_tile)
             
-            rescale_factor = gl.exp(m_old - m_new)
+            rescale_factor = gl.exp((m_old - m_new))
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
             
             mma_o = mma_o.wait_num_outstanding(0)
@@ -398,8 +404,10 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             o_acc = o_acc * rescale_factor_m[:, None]
             mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
             
-            P_tile_f32 = gl.exp(S_tile - m_new[:, None])
-            l_old = l_old * rescale_factor + gl.sum(P_tile_f32, axis=1)
+            P_tile_f32 = gl.exp((S_tile - m_new[:, None]))
+            
+            p_sum = gl.sum(P_tile_f32, axis=1)
+            l_old = l_old * rescale_factor + p_sum
             m_old = m_new
 
             P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
@@ -430,7 +438,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.arrive(p.wg1_done_bar.index(0), count=1)
 
 @gluon.jit
-def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr):
+def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
     BLOCK_M: gl.constexpr = p.o_desc.block_type.shape[0]
     SPLIT_K: gl.constexpr = p.o_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = SPLIT_K * p.SUBTILE_FACTOR
@@ -526,10 +534,10 @@ def fa3_warp_specialized_kernel(
     )
 
     gl.warp_specialize([
-        (fa3_consumer_wg0, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS)),
-        (fa3_consumer_wg1, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS)),
-        (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS)),
-        (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS)),
+        (fa3_consumer_wg0, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
+        (fa3_consumer_wg1, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
+        (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
+        (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
     ], [num_warps, 1, 1])
 
 def fa3_get_configs(pre_hook=None, tune=True):
@@ -600,7 +608,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
         for BM in (64, 128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
-        for warps in (4, 8)
+        for warps in (4, 8, )
         for num_stages in (2, 4, 6)  # STRICTLY EVEN STAGES ONLY
         for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, num_stages, SF)
