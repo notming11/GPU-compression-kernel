@@ -6120,3 +6120,547 @@ apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_speci
 apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_4096_128" python gluon_fa3_forward.py 
 #1786664777
 tpython benchmark.py --head-dim=64
+#1786647914
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_4096_128" python gluon_fa3_forward.py 
+#1786647923
+load_module && start_gluon
+#1786647927
+cd ../attention/
+#1786647931
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_4096_128" python gluon_fa3_forward.py 
+#1786647970
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/3_partition_4096_128" python gluon_attention_forward.py 
+#1786648019
+apptainer exec --nvccli $SCRATCH/sparse.sif     ncu --set full -f     --nvtx --nvtx-include "PyTorch_SDPA_4096_128/"     -o "Profiling/pytorch_sdpa_4096_128"     python pytorch_sdpa.py 
+#1786649043
+tpython gluon_fa3_forward.py --tune > ptx_dump
+#1786649729
+tpython gluon_attention_forward.py --tune
+#1786661388
+tpython benchmark.py
+#1786662440
+debugjob
+#1786667375
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python gluon_fa3_forward.py 
+#1786667461
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_4096_128 python gluon_attention_forward.py 
+#1786672717
+debugjob
+#1786648404
+load_module && start_gluon
+#1786648407
+cd ../attention/
+#1786648415
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786648426
+sq
+#1786648898
+scancel 761234
+#1786650603
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786662188
+sq
+#1786662211
+sq -i 60
+#1786662418
+scancel --me
+#1786663134
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786663137
+sq -i 60
+#1786676498
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786676519
+sq -i 60
+#1786677550
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786677551
+sq -i 60
+#1786677577
+scancel 762990
+#1786677586
+sq -i 60
+#1786677955
+scancel --me
+#1786675033
+sed -n '100,160p' attention/gluon_fa3_forward.py
+#1786675038
+sed -n '1,105p' attention/gluon_fa3_forward.py
+#1786675092
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython -c "import triton.language.core as c; import inspect; print(inspect.getsource(c._aggregate))"
+#1786675108
+cd /home/notming/links/scratch
+#1786675110
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython -c "import gluon_fa3_forward as g; print('Annotations:', getattr(g.PartitionArgs, '__annotations__', None))"
+#1786675232
+cd /home/notming/links/scratch
+#1786675233
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython -c "
+#1786675233
+class Foo:
+#1786675233
+    x: int
+#1786675233
+    y: str
+#1786675233
+
+#1786675233
+print('Foo __annotations__:', Foo.__annotations__)
+#1786675233
+print('Foo dict keys:', Foo.__dict__.keys())
+#1786675233
+import annotationlib
+#1786675233
+print('annotationlib format_VALUE:', annotationlib.get_annotations(Foo))
+#1786675233
+"
+#1786675256
+cd /home/notming/links/scratch
+#1786675257
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython -c "import sys; print('Python sys.version:', sys.version)"
+#1786675277
+cd /home/notming/links/scratch
+#1786675278
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython gluon_fa3_forward.py
+#1786675311
+cd /home/notming/links/scratch
+#1786675312
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && compute-sanitizer --tool memcheck tpython gluon_fa3_forward.py
+#1786675325
+cd /home/notming/links/scratch
+#1786675326
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && which tpython && which compute-sanitizer
+#1786675333
+cd /home/notming/links/scratch
+#1786675334
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && compute-sanitizer --tool memcheck --target-processes all apptainer exec --nvccli $SCRATCH/sparse.sif python gluon_fa3_forward.py
+#1786675489
+cd /home/notming/links/scratch
+#1786675490
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675490
+with open('gluon_attention_forward.py') as f:
+#1786675490
+    print('=== gluon_attention_forward.py ===')
+#1786675490
+    lines = f.readlines()
+#1786675490
+    print('Total lines:', len(lines))
+#1786675490
+    print(''.join(lines[:100]))
+#1786675490
+"
+#1786675505
+cd /home/notming/links/scratch
+#1786675506
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675506
+with open('gluon_attention_forward.py') as f:
+#1786675506
+    af_text = f.read()
+#1786675506
+
+#1786675506
+with open('gluon_fa3_forward.py') as f:
+#1786675506
+    fa3_text = f.read()
+#1786675506
+
+#1786675506
+print('=== PartitionArgs in gluon_attention_forward.py ===')
+#1786675506
+p1 = af_text.find('class PartitionArgs:')
+#1786675506
+p2 = af_text.find('@aggregate\nclass Counter:', p1)
+#1786675506
+print(af_text[p1:p2])
+#1786675506
+
+#1786675506
+print('=== PartitionArgs in gluon_fa3_forward.py ===')
+#1786675506
+p1 = fa3_text.find('class PartitionArgs:')
+#1786675506
+p2 = fa3_text.find('@aggregate\nclass Counter:', p1)
+#1786675506
+print(fa3_text[p1:p2])
+#1786675506
+"
+#1786675522
+cd /home/notming/links/scratch
+#1786675523
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675523
+with open('gluon_attention_forward.py') as f:
+#1786675523
+    af_text = f.read()
+#1786675523
+
+#1786675523
+with open('gluon_fa3_forward.py') as f:
+#1786675523
+    fa3_text = f.read()
+#1786675523
+
+#1786675523
+import re
+#1786675523
+print('Functions in gluon_attention_forward.py:')
+#1786675523
+for m in re.finditer(r'(def \w+|class \w+|@\w+)', af_text):
+#1786675523
+    print(m.group(0))
+#1786675523
+
+#1786675523
+print('\nFunctions in gluon_fa3_forward.py:')
+#1786675523
+for m in re.finditer(r'(def \w+|class \w+|@\w+)', fa3_text):
+#1786675523
+    print(m.group(0))
+#1786675523
+"
+#1786675566
+cd /home/notming/links/scratch
+#1786675567
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython gluon_attention_forward.py
+#1786675611
+cd /home/notming/links/scratch
+#1786675613
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675613
+with open('gluon_fa3_forward.py') as f:
+#1786675613
+    text = f.read()
+#1786675613
+
+#1786675613
+# Let's inspect fa3_warp_specialized_kernel in gluon_fa3_forward.py
+#1786675613
+p = text.find('@gluon.jit\ndef fa3_warp_specialized_kernel')
+#1786675613
+print(text[p:])
+#1786675613
+"
+#1786675628
+cd /home/notming/links/scratch
+#1786675629
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675629
+with open('gluon_fa3_forward.py') as f:
+#1786675629
+    lines = f.readlines()
+#1786675629
+print(''.join(lines[200:400]))
+#1786675629
+"
+#1786675642
+cd /home/notming/links/scratch
+#1786675644
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675644
+with open('gluon_fa3_forward.py') as f:
+#1786675644
+    lines = f.readlines()
+#1786675644
+print(''.join(lines[400:600]))
+#1786675644
+"
+#1786675656
+cd /home/notming/links/scratch
+#1786675657
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675657
+with open('gluon_attention_forward.py') as f:
+#1786675657
+    text = f.read()
+#1786675657
+
+#1786675657
+p = text.find('warp_specialize')
+#1786675657
+print(text[p-200:p+300])
+#1786675657
+"
+#1786675670
+cd /home/notming/links/scratch
+#1786675671
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675671
+with open('gluon_attention_forward.py') as f:
+#1786675671
+    text = f.read()
+#1786675671
+
+#1786675671
+p = text.find('fa3_warp_specialized_kernel')
+#1786675671
+print(text[p:p+1200])
+#1786675671
+"
+#1786675697
+cd /home/notming/links/scratch
+#1786675698
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675698
+with open('gluon_attention_forward.py') as f:
+#1786675698
+    lines = f.readlines()
+#1786675698
+print(''.join(lines[450:520]))
+#1786675698
+"
+#1786675715
+cd /home/notming/links/scratch
+#1786675716
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675716
+with open('gluon_attention_forward.py') as f:
+#1786675716
+    lines = f.readlines()
+#1786675716
+print(''.join(lines[380:460]))
+#1786675716
+"
+#1786675734
+cd /home/notming/links/scratch
+#1786675735
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675735
+with open('gluon_fa3_forward.py') as f:
+#1786675735
+    text = f.read()
+#1786675735
+
+#1786675735
+p1 = text.find('def fa3_producer_partition')
+#1786675735
+p2 = text.find('def fa3_consumer_wg0')
+#1786675735
+print(text[p1:p2])
+#1786675735
+"
+#1786675751
+cd /home/notming/links/scratch
+#1786675752
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675752
+with open('gluon_fa3_forward.py') as f:
+#1786675752
+    text = f.read()
+#1786675752
+
+#1786675752
+p1 = text.find('def store_acc_to_smem_subtile')
+#1786675752
+p2 = text.find('def fa3_producer_partition')
+#1786675752
+print(text[p1:p2])
+#1786675752
+"
+#1786675764
+cd /home/notming/links/scratch
+#1786675765
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675765
+import inspect
+#1786675765
+from triton.experimental.gluon import language as gl
+#1786675765
+print(inspect.getsource(gl.warp_specialize))
+#1786675765
+"
+#1786675781
+cd /home/notming/links/scratch
+#1786675782
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675782
+with open('gluon_attention_forward.py') as f:
+#1786675782
+    text = f.read()
+#1786675782
+
+#1786675782
+p1 = text.find('def store_acc_to_smem_subtile')
+#1786675782
+p2 = text.find('def fa3_producer_partition')
+#1786675782
+print(text[p1:p2])
+#1786675782
+"
+#1786675795
+cd /home/notming/links/scratch
+#1786675796
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675796
+with open('gluon_attention_forward.py') as f:
+#1786675796
+    text = f.read()
+#1786675796
+
+#1786675796
+p1 = text.find('def fa3_store_partition')
+#1786675796
+p2 = text.find('def fa3_warp_specialized_kernel')
+#1786675796
+print(text[p1:p2])
+#1786675796
+"
+#1786675812
+cd /home/notming/links/scratch
+#1786675813
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675813
+import inspect
+#1786675813
+from triton.experimental.gluon import language as gl
+#1786675813
+print(inspect.signature(gl.warp_specialize))
+#1786675813
+"
+#1786675831
+cd /home/notming/links/scratch
+#1786675832
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786675832
+with open('gluon_fa3_forward.py') as f:
+#1786675832
+    code = f.read()
+#1786675832
+
+#1786675832
+# Fix 1: mbarrier.init(kv_empty_bars.index(i), count=2)
+#1786675832
+code = code.replace('mbarrier.init(kv_empty_bars.index(i), count=1)', 'mbarrier.init(kv_empty_bars.index(i), count=2)')
+#1786675832
+
+#1786675832
+# Fix 2: worker_num_regs in warp_specialize
+#1786675832
+code = code.replace('], [num_warps, 1, 1])', '], [num_warps, 1, 1], [128, 24, 24])')
+#1786675832
+
+#1786675832
+with open('gluon_fa3_forward_test.py', 'w') as f:
+#1786675832
+    f.write(code)
+#1786675832
+
+#1786675832
+print('Saved gluon_fa3_forward_test.py')
+#1786675832
+"
+#1786675852
+cd /home/notming/links/scratch
+#1786675853
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython gluon_fa3_forward_test.py
+#1786675889
+cd /home/notming/links/scratch
+#1786675890
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython gluon_fa3_forward_test.py --tune
+#1786676012
+cd /home/notming/links/scratch
+#1786676013
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && diff -u gluon_fa3_forward.py gluon_fa3_forward_test.py
+#1786676022
+cd /home/notming/links/scratch
+#1786676023
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && cp gluon_fa3_forward_test.py gluon_fa3_forward.py && rm gluon_fa3_forward_test.py
+#1786676093
+cd /home/notming/links/scratch
+#1786676094
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython gluon_fa3_forward.py
+#1786677206
+cd /home/notming/links/scratch
+#1786677208
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786677208
+with open('gluon_fa3_forward.py') as f:
+#1786677208
+    text = f.read()
+#1786677208
+
+#1786677208
+p1 = text.find('def fa3_get_configs')
+#1786677208
+p2 = text.find('def run_fa3_kernel')
+#1786677208
+print('=== gluon_fa3_forward.py ===')
+#1786677208
+print(text[p1:p2])
+#1786677208
+"
+#1786677232
+cd /home/notming/links/scratch
+#1786677234
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786677234
+with open('gluon_attention_forward.py') as f:
+#1786677234
+    text = f.read()
+#1786677234
+
+#1786677234
+p1 = text.find('def fa3_get_configs')
+#1786677234
+p2 = text.find('def run_fa3_kernel')
+#1786677234
+print('=== gluon_attention_forward.py ===')
+#1786677234
+print(text[p1:p2])
+#1786677234
+"
+#1786677251
+cd /home/notming/links/scratch
+#1786677252
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && python3 -c "
+#1786677252
+with open('gluon_fa3_forward.py') as f:
+#1786677252
+    code = f.read()
+#1786677252
+
+#1786677252
+# Fix 1: 356 typo -> 256
+#1786677252
+code = code.replace('for BN in (64, 128, 356)', 'for BN in (64, 128, 256)')
+#1786677252
+
+#1786677252
+# Fix 2: worker_num_regs in warp_specialize
+#1786677252
+code = code.replace('], [num_warps, 1, 1])', '], [num_warps, 1, 1], [128, 24, 24])')
+#1786677252
+
+#1786677252
+# Also check SF in configs: (1, 2, 4, 8)
+#1786677252
+code = code.replace('for SF in (4, 8)', 'for SF in (1, 2, 4, 8)')
+#1786677252
+
+#1786677252
+with open('gluon_fa3_forward.py', 'w') as f:
+#1786677252
+    f.write(code)
+#1786677252
+
+#1786677252
+print('Updated gluon_fa3_forward.py')
+#1786677252
+"
+#1786677267
+cd /home/notming/links/scratch
+#1786677268
+source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython gluon_fa3_forward.py --tune
+#1786723232
+load_module && start_gluon && cd ../att
+#1786723241
+cd ../attention/
+#1786723347
+tpython gluon_fa3_forward.py --tune
+#1786723522
+tpython gluon_fa3_forward.py --tune > ptx_dump.txt
+#1786723596
+tpython gluon_fa3_forward.py --tune > ptx_dump
+#1786724117
+tpython benchmark.py --head-dim=64

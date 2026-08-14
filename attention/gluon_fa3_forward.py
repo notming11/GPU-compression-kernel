@@ -1,7 +1,10 @@
 import argparse
+import importlib.util
+import os
+import sys
+import math
 import torch
 import triton
-import math
 
 from triton.experimental import gluon
 from triton.experimental.gluon import language as gl
@@ -15,11 +18,11 @@ from triton.experimental.gluon.language.nvidia.hopper import (
     fence_async_shared,
 )
 
-from common import (
-    WGMMA,
-)
+from common import WGMMA
 
-import os
+# ---------------------------------------------------------------------------
+# WORKSPACE & ENVIRONMENT OVERRIDES
+# ---------------------------------------------------------------------------
 SCRATCH_WORKSPACE = "compiler_scratch"
 JOB_ID = str(os.getpid())
 
@@ -33,7 +36,6 @@ os.environ["TMP"] = SCRATCH_WORKSPACE
 os.environ["TEMP"] = SCRATCH_WORKSPACE
 os.environ["CUDA_CACHE_PATH"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
 os.environ["TORCH_HOME"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
-
 os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 
 # ---------------------------------------------------------------------------
@@ -84,27 +86,29 @@ def GroupedPersistentTileScheduler(GROUP_SIZE_M):
 
 @aggregate 
 class PartitionArgs:
-    q_desc: tma.tensor_descriptor
+    q0_desc: tma.tensor_descriptor
+    q1_desc: tma.tensor_descriptor
     k_desc: tma.tensor_descriptor
     v_desc: tma.tensor_descriptor
-    o_desc: tma.tensor_descriptor
+    o0_desc: tma.tensor_descriptor
+    o1_desc: tma.tensor_descriptor
 
-    q_buf: gl.shared_memory_descriptor
+    q0_buf: gl.shared_memory_descriptor
+    q1_buf: gl.shared_memory_descriptor
     k_bufs: gl.shared_memory_descriptor
     v_bufs: gl.shared_memory_descriptor
-    o_bufs: gl.shared_memory_descriptor
+    o0_bufs: gl.shared_memory_descriptor
+    o1_bufs: gl.shared_memory_descriptor
 
     q_ready_bar: gl.shared_memory_descriptor
     q_empty_bar: gl.shared_memory_descriptor
     kv_empty_bars: gl.shared_memory_descriptor
     kv_ready_bars: gl.shared_memory_descriptor
-    o_empty_bars: gl.shared_memory_descriptor
-    o_ready_bars: gl.shared_memory_descriptor
     
-    smem_o1: gl.shared_memory_descriptor
-    smem_m1: gl.shared_memory_descriptor
-    smem_l1: gl.shared_memory_descriptor
-    wg1_done_bar: gl.shared_memory_descriptor
+    o0_empty_bars: gl.shared_memory_descriptor
+    o0_ready_bars: gl.shared_memory_descriptor
+    o1_empty_bars: gl.shared_memory_descriptor
+    o1_ready_bars: gl.shared_memory_descriptor
 
     SUBTILE_FACTOR: gl.constexpr
     num_warps: gl.constexpr
@@ -112,34 +116,38 @@ class PartitionArgs:
     @gluon.constexpr_function
     def __init__(
         self, 
-        q_desc, k_desc, v_desc, o_desc, 
-        q_buf, k_bufs, v_bufs, o_bufs, 
+        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc, 
+        q0_buf, q1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs, 
         q_ready_bar, q_empty_bar, 
         kv_empty_bars, kv_ready_bars,
-        o_empty_bars, o_ready_bars, 
-        smem_o1, smem_m1, smem_l1, wg1_done_bar,
+        o0_empty_bars, o0_ready_bars,
+        o1_empty_bars, o1_ready_bars,
         SUBTILE_FACTOR: gl.constexpr, 
         num_warps: gl.constexpr
     ):
-        self.q_desc = q_desc
+        self.q0_desc = q0_desc
+        self.q1_desc = q1_desc
         self.k_desc = k_desc
         self.v_desc = v_desc
-        self.o_desc = o_desc
-        self.q_buf = q_buf
+        self.o0_desc = o0_desc
+        self.o1_desc = o1_desc
+        
+        self.q0_buf = q0_buf
+        self.q1_buf = q1_buf
         self.k_bufs = k_bufs
         self.v_bufs = v_bufs
-        self.o_bufs = o_bufs
+        self.o0_bufs = o0_bufs
+        self.o1_bufs = o1_bufs
+        
         self.q_ready_bar = q_ready_bar
         self.q_empty_bar = q_empty_bar
         self.kv_empty_bars = kv_empty_bars
         self.kv_ready_bars = kv_ready_bars
-        self.o_empty_bars = o_empty_bars
-        self.o_ready_bars = o_ready_bars
         
-        self.smem_o1 = smem_o1
-        self.smem_m1 = smem_m1
-        self.smem_l1 = smem_l1
-        self.wg1_done_bar = wg1_done_bar
+        self.o0_empty_bars = o0_empty_bars
+        self.o0_ready_bars = o0_ready_bars
+        self.o1_empty_bars = o1_empty_bars
+        self.o1_ready_bars = o1_ready_bars
         
         self.SUBTILE_FACTOR = gl.constexpr(SUBTILE_FACTOR)
         self.num_warps = gl.constexpr(num_warps)
@@ -182,31 +190,32 @@ def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
     return xs
 
 @gluon.jit
-def store_acc_to_smem_subtile(p, acc, acc_state):
-    accs = _split_n(acc, p.SUBTILE_FACTOR)
+def store_acc_to_smem_subtile(acc, o_bufs, o_empty_bars, o_ready_bars, acc_state, SUBTILE_FACTOR: gl.constexpr):
+    accs = _split_n(acc, SUBTILE_FACTOR)
 
-    for i in gl.static_range(p.SUBTILE_FACTOR):
-        mbarrier.wait(p.o_empty_bars.index(acc_state.index), acc_state.phase)
-        o_buf = p.o_bufs.index(acc_state.index)
+    for i in gl.static_range(SUBTILE_FACTOR):
+        mbarrier.wait(o_empty_bars.index(acc_state.index), acc_state.phase)
+        o_buf = o_bufs.index(acc_state.index)
 
         o_buf.store(accs[i])
         fence_async_shared()
-        mbarrier.arrive(p.o_ready_bars.index(acc_state.index), count=1)
+        mbarrier.arrive(o_ready_bars.index(acc_state.index), count=1)
         acc_state = acc_state.next()
 
     return acc_state
 
 # ---------------------------------------------------------------------------
-# ATTENTION PARTITIONS
+# ATTENTION PARTITIONS (4-PARTITION WARP SPECIALIZATION WITH Q-ROW SLICING)
 # ---------------------------------------------------------------------------
 
 @gluon.jit
 def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
-    BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
+    SUB_BM: gl.constexpr = p.q0_desc.block_type.shape[0]
+    BLOCK_M: gl.constexpr = SUB_BM * 2
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
-    BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
+    BLOCK_K: gl.constexpr = p.q0_desc.block_type.shape[1]
 
-    scheduler = SchedulerImpl.initialize(p.o_desc.shape[0], p.o_desc.shape[1], BLOCK_M, BLOCK_K)
+    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0] * 2, p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
 
     kv_state = Counter.create(0, p.kv_empty_bars.shape[0])
     q_state = Counter.create(0, p.q_empty_bar.shape[0])
@@ -215,13 +224,13 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)      
           
         mbarrier.wait(p.q_empty_bar.index(0), q_state.phase)
-        
         q_bar = p.q_ready_bar.index(0)
-        mbarrier.expect(q_bar, p.q_desc.block_type.nbytes)
-        tma.async_copy_global_to_shared(p.q_desc, [global_m_offset, 0], q_bar, p.q_buf)
+        
+        mbarrier.expect(q_bar, p.q0_desc.block_type.nbytes + p.q1_desc.block_type.nbytes)
+        tma.async_copy_global_to_shared(p.q0_desc, [global_m_offset, 0], q_bar, p.q0_buf)
+        tma.async_copy_global_to_shared(p.q1_desc, [global_m_offset + SUB_BM, 0], q_bar, p.q1_buf)
         
         kv_global_offset = bh_idx * SEQ_LEN
-
         num_steps = SEQ_LEN // BLOCK_N
 
         for step in range(num_steps):
@@ -229,7 +238,6 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
             mbarrier.wait(p.kv_empty_bars.index(kv_state.index), kv_state.phase)
 
             mbarrier.expect(bar, p.k_desc.block_type.nbytes + p.v_desc.block_type.nbytes)
-
             tma.async_copy_global_to_shared(p.k_desc, [0, kv_global_offset + step * BLOCK_N], bar, p.k_bufs.index(kv_state.index))
             tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.v_bufs.index(kv_state.index))
             
@@ -239,64 +247,60 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
 
 @gluon.jit
 def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
-    BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
+    SUB_BM: gl.constexpr = p.q0_desc.block_type.shape[0]
+    BLOCK_M: gl.constexpr = SUB_BM * 2
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
-    BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
+    BLOCK_K: gl.constexpr = p.q0_desc.block_type.shape[1]
+    
     num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
-    dtype: gl.constexpr = p.q_desc.dtype
+    dtype: gl.constexpr = p.q0_desc.dtype
 
-    scheduler = SchedulerImpl.initialize(p.o_desc.shape[0], p.o_desc.shape[1], BLOCK_M, BLOCK_K)
+    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0] * 2, p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
 
-    acc_state = Counter.create(0, p.o_empty_bars.shape[0])
+    acc_state = Counter.create(0, p.o0_empty_bars.shape[0])
     q_state = Counter.create(0, p.q_empty_bar.shape[0])
-    wg1_state = Counter.create(0, 1)
+    kv_state = Counter.create(0, num_stages)
     
     num_steps = SEQ_LEN // BLOCK_N
+    sm_scale: gl.constexpr = 1.0 / math.sqrt(HEAD_DIM)
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
         
-        mma_o = WGMMA.initialize(dtype, BLOCK_M, BLOCK_K, p.num_warps)
-        mma_s_dummy = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
+        mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
+        mma_s_dummy = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
 
         m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_o.layout)
         s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_s_dummy.layout)
 
-        m_old = gl.full((BLOCK_M,), -float('inf'), dtype=gl.float32, layout=s_layout)
-        l_old = gl.zeros((BLOCK_M,), dtype=gl.float32, layout=s_layout)
+        m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
+        l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
         
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
 
-        base_step = tile_idx * num_steps
-        
-        sm_scale: gl.constexpr = 1.0 / math.sqrt(HEAD_DIM)
-
-        for step in range(0, num_steps, 2):
-            g_step = base_step + step
-            kv_idx = g_step % num_stages
-            kv_phase = (g_step // num_stages) % 2
+        for step in range(num_steps):
+            kv_idx = kv_state.index
+            kv_phase = kv_state.phase
 
             mbarrier.wait(p.kv_ready_bars.index(kv_idx), kv_phase)
 
-            mma_s = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(kv_idx))
-            mma_s = mma_s.wait_num_outstanding(0)
+            mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
+            mma_s = mma_s.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_idx))
             
-            S_tile, mma_s = mma_s.take_result()
+            S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
             S_tile = S_tile * sm_scale
             
             m_new_tile = gl.max(S_tile, axis=1)
             m_new = gl.maximum(m_old, m_new_tile)
             
-            rescale_factor = gl.exp((m_old - m_new))
+            rescale_factor = gl.exp(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
             
-            mma_o = mma_o.wait_num_outstanding(0)
-            o_acc, mma_o = mma_o.take_result()
+            o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
             o_acc = o_acc * rescale_factor_m[:, None]
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
+            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
             
-            P_tile_f32 = gl.exp((S_tile - m_new[:, None]))
+            P_tile_f32 = gl.exp(S_tile - m_new[:, None])
             
             p_sum = gl.sum(P_tile_f32, axis=1)
             l_old = l_old * rescale_factor + p_sum
@@ -314,97 +318,73 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_idx))
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_idx), count=1)
+            kv_state = kv_state.next()
     
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         q_state = q_state.next()
 
-        mma_o = mma_o.wait_num_outstanding(0)
-        acc0, mma_o = mma_o.take_result()
+        acc0, mma_o = mma_o.wait_num_outstanding(0).take_result()
+        l_final_m = gl.convert_layout(l_old, m_layout)
+        acc_final = (acc0 / l_final_m[:, None]).to(p.o0_desc.dtype)
 
-        mbarrier.wait(p.wg1_done_bar.index(0), wg1_state.phase)
-
-        acc1 = p.smem_o1.load(mma_o.layout)
-        m1 = p.smem_m1.load(s_layout)
-        l1 = p.smem_l1.load(s_layout)
-        
-        m0 = m_old
-        l0 = l_old
-        m_final = gl.maximum(m0, m1)
-
-        alpha0 = gl.exp(m0 - m_final)
-        alpha1 = gl.exp(m1 - m_final)
-
-        l_final = l0 * alpha0 + l1 * alpha1
-
-        alpha0_m = gl.convert_layout(alpha0, m_layout)
-        alpha1_m = gl.convert_layout(alpha1, m_layout)
-        l_final_m = gl.convert_layout(l_final, m_layout)
-
-        acc_merged = (acc0 * alpha0_m[:, None] + acc1 * alpha1_m[:, None]) / l_final_m[:, None]
-        acc_final = acc_merged.to(p.o_desc.dtype)
-
-        acc_state = store_acc_to_smem_subtile(p, acc_final, acc_state)
-        wg1_state = wg1_state.next()
-
+        acc_state = store_acc_to_smem_subtile(acc_final, p.o0_bufs, p.o0_empty_bars, p.o0_ready_bars, acc_state, p.SUBTILE_FACTOR)
 
 @gluon.jit
 def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
-    BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
+    SUB_BM: gl.constexpr = p.q1_desc.block_type.shape[0]
+    BLOCK_M: gl.constexpr = SUB_BM * 2
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
-    BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
+    BLOCK_K: gl.constexpr = p.q1_desc.block_type.shape[1]
+    
     num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
-    dtype: gl.constexpr = p.q_desc.dtype
+    dtype: gl.constexpr = p.q1_desc.dtype
 
-    scheduler = SchedulerImpl.initialize(p.o_desc.shape[0], p.o_desc.shape[1], BLOCK_M, BLOCK_K)
+    scheduler = SchedulerImpl.initialize(p.o1_desc.shape[0] * 2, p.o1_desc.shape[1], BLOCK_M, BLOCK_K)
 
+    acc_state = Counter.create(0, p.o1_empty_bars.shape[0])
     q_state = Counter.create(0, p.q_empty_bar.shape[0])
+    kv_state = Counter.create(0, num_stages)
     
     num_steps = SEQ_LEN // BLOCK_N
+    sm_scale: gl.constexpr = 1.0 / math.sqrt(HEAD_DIM)
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
         
-        mma_o = WGMMA.initialize(dtype, BLOCK_M, BLOCK_K, p.num_warps)
-        mma_s_dummy = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
+        mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
+        mma_s_dummy = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
 
         m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_o.layout)
         s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_s_dummy.layout)
 
-        m_old = gl.full((BLOCK_M,), -float('inf'), dtype=gl.float32, layout=s_layout)
-        l_old = gl.zeros((BLOCK_M,), dtype=gl.float32, layout=s_layout)
+        m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
+        l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
         
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
 
-        base_step = tile_idx * num_steps
-        
-        sm_scale: gl.constexpr = 1.0 / math.sqrt(HEAD_DIM)
-
-        for step in range(1, num_steps, 2):
-            g_step = base_step + step
-            kv_idx = g_step % num_stages
-            kv_phase = (g_step // num_stages) % 2
+        for step in range(num_steps):
+            kv_idx = kv_state.index
+            kv_phase = kv_state.phase
 
             mbarrier.wait(p.kv_ready_bars.index(kv_idx), kv_phase)
 
-            mma_s = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(kv_idx))
-            mma_s = mma_s.wait_num_outstanding(0)
+            mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
+            mma_s = mma_s.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_idx))
             
-            S_tile, mma_s = mma_s.take_result()
+            S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
             S_tile = S_tile * sm_scale
             
             m_new_tile = gl.max(S_tile, axis=1)
             m_new = gl.maximum(m_old, m_new_tile)
             
-            rescale_factor = gl.exp((m_old - m_new))
+            rescale_factor = gl.exp(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
             
-            mma_o = mma_o.wait_num_outstanding(0)
-            o_acc, mma_o = mma_o.take_result()
+            o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
             o_acc = o_acc * rescale_factor_m[:, None]
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
+            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
             
-            P_tile_f32 = gl.exp((S_tile - m_new[:, None]))
+            P_tile_f32 = gl.exp(S_tile - m_new[:, None])
             
             p_sum = gl.sum(P_tile_f32, axis=1)
             l_old = l_old * rescale_factor + p_sum
@@ -422,48 +402,49 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_idx))
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_idx), count=1)
+            kv_state = kv_state.next()
     
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         q_state = q_state.next()
-        
-        mma_o = mma_o.wait_num_outstanding(0)
-        acc1, mma_o = mma_o.take_result()
 
-        p.smem_o1.store(gl.cast(acc1, gl.float16))
-        p.smem_m1.store(m_old)
-        p.smem_l1.store(l_old)
-    
-        fence_async_shared()
-    
-        mbarrier.arrive(p.wg1_done_bar.index(0), count=1)
+        acc1, mma_o = mma_o.wait_num_outstanding(0).take_result()
+        l_final_m = gl.convert_layout(l_old, m_layout)
+        acc_final = (acc1 / l_final_m[:, None]).to(p.o1_desc.dtype)
+
+        acc_state = store_acc_to_smem_subtile(acc_final, p.o1_bufs, p.o1_empty_bars, p.o1_ready_bars, acc_state, p.SUBTILE_FACTOR)
 
 @gluon.jit
 def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
-    BLOCK_M: gl.constexpr = p.o_desc.block_type.shape[0]
-    SPLIT_K: gl.constexpr = p.o_desc.block_type.shape[1]
+    SUB_BM: gl.constexpr = p.o0_desc.block_type.shape[0]
+    BLOCK_M: gl.constexpr = SUB_BM * 2
+    SPLIT_K: gl.constexpr = p.o0_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = SPLIT_K * p.SUBTILE_FACTOR
 
-    scheduler = SchedulerImpl.initialize(p.o_desc.shape[0], p.o_desc.shape[1], BLOCK_M, BLOCK_K)
-    state = Counter.create(0, p.o_empty_bars.shape[0])
+    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0] * 2, p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
+    state = Counter.create(0, p.o0_empty_bars.shape[0])
 
-    num_buffers: gl.constexpr = p.o_bufs.shape[0]
+    num_buffers: gl.constexpr = p.o0_bufs.shape[0]
     outstanding_stores: gl.constexpr = num_buffers - 1
     store_iter = 0
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)  
-        off_m = pid_m * BLOCK_M
 
         for i in gl.static_range(p.SUBTILE_FACTOR):
-            mbarrier.wait(p.o_ready_bars.index(state.index), state.phase)
-            o_buf = p.o_bufs.index(state.index)
+            mbarrier.wait(p.o0_ready_bars.index(state.index), state.phase)
+            mbarrier.wait(p.o1_ready_bars.index(state.index), state.phase)
 
-            tma.async_copy_shared_to_global(p.o_desc, [global_m_offset, i * SPLIT_K], o_buf)
+            o0_buf = p.o0_bufs.index(state.index)
+            o1_buf = p.o1_bufs.index(state.index)
+
+            tma.async_copy_shared_to_global(p.o0_desc, [global_m_offset, i * SPLIT_K], o0_buf)
+            tma.async_copy_shared_to_global(p.o1_desc, [global_m_offset + SUB_BM, i * SPLIT_K], o1_buf)
 
             if store_iter >= outstanding_stores:
                 tma.store_wait(outstanding_stores)
                 empty_idx = (store_iter - outstanding_stores) % num_buffers
-                mbarrier.arrive(p.o_empty_bars.index(empty_idx), count=1)
+                mbarrier.arrive(p.o0_empty_bars.index(empty_idx), count=1)
+                mbarrier.arrive(p.o1_empty_bars.index(empty_idx), count=1)
 
             state = state.next()
             store_iter += 1
@@ -475,21 +456,25 @@ def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: 
 # ---------------------------------------------------------------------------
 @gluon.jit
 def fa3_warp_specialized_kernel(
-    q_desc, k_desc, v_desc, o_desc,
-    # Q_flat, K_T, V_flat, O_flat,  # Passed for pre_hook descriptor re-instantiation
+    q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
     SchedulerImpl: gl.constexpr,
     SEQ_LEN: gl.constexpr, HEAD_DIM: gl.constexpr, NUM_HEADS: gl.constexpr, 
     BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
     num_stages: gl.constexpr, SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr
 ):
-    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, warps: {num_warps}, buf: {num_stages}, SF: {SUBTILE_FACTOR}", flush=True)\
+    
+    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, warps: {num_warps}, buf: {num_stages}, sf: {SUBTILE_FACTOR}", flush=True)
+    dtype: gl.constexpr = q0_desc.dtype
+    SUB_BM: gl.constexpr = BLOCK_SIZE_M // 2
 
-    dtype: gl.constexpr = q_desc.dtype
-
-    q_buf = gl.allocate_shared_memory(dtype, q_desc.block_type.shape, q_desc.layout)
+    q0_buf = gl.allocate_shared_memory(dtype, q0_desc.block_type.shape, q0_desc.layout)
+    q1_buf = gl.allocate_shared_memory(dtype, q1_desc.block_type.shape, q1_desc.layout)
+    
     k_bufs = gl.allocate_shared_memory(dtype, [num_stages] + k_desc.block_type.shape, k_desc.layout)
     v_bufs = gl.allocate_shared_memory(dtype, [num_stages] + v_desc.block_type.shape, v_desc.layout)
-    o_bufs = gl.allocate_shared_memory(dtype, [2] + o_desc.block_type.shape, o_desc.layout)
+    
+    o0_bufs = gl.allocate_shared_memory(dtype, [2] + o0_desc.block_type.shape, o0_desc.layout)
+    o1_bufs = gl.allocate_shared_memory(dtype, [2] + o1_desc.block_type.shape, o1_desc.layout)
 
     q_ready_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
     q_empty_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
@@ -497,39 +482,36 @@ def fa3_warp_specialized_kernel(
     kv_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
     kv_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
 
-    o_empty_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
-    o_ready_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
+    o0_empty_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
+    o0_ready_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
+    o1_empty_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
+    o1_ready_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
 
     mbarrier.init(q_ready_bar.index(0), count=1)
     mbarrier.init(q_empty_bar.index(0), count=2)
     mbarrier.arrive(q_empty_bar.index(0), count=2)
 
     for i in gl.static_range(num_stages):
-        mbarrier.init(kv_empty_bars.index(i), count=1)
+        mbarrier.init(kv_empty_bars.index(i), count=2)
         mbarrier.init(kv_ready_bars.index(i), count=1)
-        mbarrier.arrive(kv_empty_bars.index(i), count=1)
+        mbarrier.arrive(kv_empty_bars.index(i), count=2)
 
     for i in gl.static_range(2):
-        mbarrier.init(o_empty_bars.index(i), count=1)
-        mbarrier.init(o_ready_bars.index(i), count=1)
-        mbarrier.arrive(o_empty_bars.index(i), count=1)
-        
-    vec_layout: gl.constexpr = gl.NVMMASharedLayout.get_default_for([BLOCK_SIZE_M], gl.float32)
-        
-    smem_o1 = gl.allocate_shared_memory(gl.float16, [BLOCK_SIZE_M, BLOCK_SIZE_K], o_desc.layout)
-    smem_m1 = gl.allocate_shared_memory(gl.float32, [BLOCK_SIZE_M], vec_layout)
-    smem_l1 = gl.allocate_shared_memory(gl.float32, [BLOCK_SIZE_M], vec_layout)
+        mbarrier.init(o0_empty_bars.index(i), count=1)
+        mbarrier.init(o0_ready_bars.index(i), count=1)
+        mbarrier.arrive(o0_empty_bars.index(i), count=1)
 
-    wg1_done_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
-    mbarrier.init(wg1_done_bar.index(0), count=1)
+        mbarrier.init(o1_empty_bars.index(i), count=1)
+        mbarrier.init(o1_ready_bars.index(i), count=1)
+        mbarrier.arrive(o1_empty_bars.index(i), count=1)
 
     p = PartitionArgs(
-        q_desc, k_desc, v_desc, o_desc,
-        q_buf, k_bufs, v_bufs, o_bufs,
+        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
+        q0_buf, q1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs,
         q_ready_bar, q_empty_bar, 
         kv_empty_bars, kv_ready_bars,
-        o_empty_bars, o_ready_bars,
-        smem_o1, smem_m1, smem_l1, wg1_done_bar, 
+        o0_empty_bars, o0_ready_bars,
+        o1_empty_bars, o1_ready_bars,
         SUBTILE_FACTOR, num_warps
     )
 
@@ -540,25 +522,28 @@ def fa3_warp_specialized_kernel(
         (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
     ], [num_warps, 1, 1])
 
+# ---------------------------------------------------------------------------
+# AUTOTUNER & CONFIG HOOKS
+# ---------------------------------------------------------------------------
+
 def fa3_get_configs(pre_hook=None, tune=True):
     def valid(BM, BN, BK, warps, num_stages, SF):
-        if BM == 128 and BN == 256:
+        if BM == 256 and BN == 256:
             return False
-        # 2-consumer workgroups require EVEN pipeline stages to eliminate SMEM races
-        if num_stages % 2 != 0:
+        if BM < 32 or BM % 2 != 0:
             return False
 
+        SUB_BM = BM // 2
         fp16_elements = (
-            (2 * BM * BK) +
+            (2 * SUB_BM * BK) +
             (2 * num_stages * BK * BN) +
-            (2 * BM * (BK // SF))
+            (2 * 2 * SUB_BM * (BK // SF))
         )
         fp16_smem_bytes = 2 * fp16_elements
-        fp32_smem_bytes = 4 * (2 * BM)
-        num_barriers = 7 + (2 * num_stages)
+        num_barriers = 2 + (2 * num_stages) + 8
         barrier_bytes = 8 * num_barriers
 
-        total_smem_bytes = fp16_smem_bytes + fp32_smem_bytes + barrier_bytes
+        total_smem_bytes = fp16_smem_bytes + barrier_bytes
         if total_smem_bytes > 232448:
             return False
 
@@ -573,17 +558,17 @@ def fa3_get_configs(pre_hook=None, tune=True):
         warps_n = 1
         m = 16
         while (warps_m * warps_n) != warps:
-            if BM > m * warps_m:
+            if SUB_BM > m * warps_m:
                 warps_m *= 2
             else:
                 warps_n *= 2
 
         if SF > 1 and warps_n > 1:
             return False
-        if BM < warps_m * 16 or BN < warps_n * 16:
+        if SUB_BM < warps_m * 16 or BN < warps_n * 16:
             return False
 
-        elements_per_thread = (BM * max(BN, BK)) / (warps * 32)
+        elements_per_thread = (SUB_BM * max(BN, BK)) / (warps * 32)
         required_regs = elements_per_thread + 64 
         max_regs_per_thread = min(255, 65536 // (warps * 32))
 
@@ -608,8 +593,8 @@ def fa3_get_configs(pre_hook=None, tune=True):
         for BM in (64, 128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
-        for warps in (4, 8, )
-        for num_stages in (2, 4, 6)  # STRICTLY EVEN STAGES ONLY
+        for warps in (4, 8)
+        for num_stages in (2, 3, 4, 5, 6)
         for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, num_stages, SF)
     ]
@@ -618,28 +603,35 @@ def fa3_get_configs(pre_hook=None, tune=True):
 
 def fa3_tma_set_block_size_hook(nargs):
     block_m = nargs["BLOCK_SIZE_M"]
+    sub_bm = block_m // 2
     block_n = nargs["BLOCK_SIZE_N"]
     block_k = nargs["BLOCK_SIZE_K"]
     split_k = nargs["BLOCK_SIZE_K"] // nargs["SUBTILE_FACTOR"]
 
-    nargs["q_desc"].block_shape = [block_m, block_k]
+    nargs["q0_desc"].block_shape = [sub_bm, block_k]
+    nargs["q1_desc"].block_shape = [sub_bm, block_k]
     nargs["k_desc"].block_shape = [block_k, block_n]
     nargs["v_desc"].block_shape = [block_n, block_k]
-    nargs["o_desc"].block_shape = [block_m, split_k]
+    nargs["o0_desc"].block_shape = [sub_bm, split_k]
+    nargs["o1_desc"].block_shape = [sub_bm, split_k]
 
-    nargs["q_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["q_desc"].block_shape, gl.float16)
+    layout_q = gl.NVMMASharedLayout.get_default_for(nargs["q0_desc"].block_shape, gl.float16)
+    layout_o = gl.NVMMASharedLayout.get_default_for(nargs["o0_desc"].block_shape, gl.float16)
+
+    nargs["q0_desc"].layout = layout_q
+    nargs["q1_desc"].layout = layout_q
     nargs["k_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["k_desc"].block_shape, gl.float16)
     nargs["v_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["v_desc"].block_shape, gl.float16)
-    nargs["o_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["o_desc"].block_shape, gl.float16)
+    nargs["o0_desc"].layout = layout_o
+    nargs["o1_desc"].layout = layout_o
 
 _autotune_cache = {}
 
 def get_autotuned_kernel(head_dim: int):
     if head_dim not in _autotune_cache:
-        # Strictly filter configurations where BLOCK_SIZE_K == HEAD_DIM
         configs = [
             config for config in fa3_get_configs(pre_hook=fa3_tma_set_block_size_hook, tune=True)
-            if config.kwargs["BLOCK_SIZE_K"] == head_dim and config.kwargs["num_stages"] % 2 == 0
+            if config.kwargs["BLOCK_SIZE_K"] == head_dim
         ]
         
         _autotune_cache[head_dim] = triton.autotune(
@@ -651,6 +643,10 @@ def get_autotuned_kernel(head_dim: int):
         )(fa3_warp_specialized_kernel)
         
     return _autotune_cache[head_dim]
+
+# ---------------------------------------------------------------------------
+# CPU HOST CALLER
+# ---------------------------------------------------------------------------
 
 def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
     BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM = Q.shape
@@ -665,10 +661,12 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
     dummy_block = [1, 1]
     dummy_layout = gl.NVMMASharedLayout.get_default_for(dummy_block, gl.float16)
 
-    q_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
+    q0_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
+    q1_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
     k_desc = TensorDescriptor.from_tensor(K_T, dummy_block, dummy_layout)
     v_desc = TensorDescriptor.from_tensor(V_flat, dummy_block, dummy_layout)
-    o_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
+    o0_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
+    o1_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
 
     if tune:
         kernel = get_autotuned_kernel(HEAD_DIM)
@@ -679,8 +677,7 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             return (min(num_sms, total_tiles), )
 
         kernel[grid](
-            q_desc, k_desc, v_desc, o_desc,
-            # Q_flat, K_T, V_flat, O_flat,
+            q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
             GroupedPersistentTileScheduler(8),
             SEQ_LEN, HEAD_DIM, NUM_HEADS
         )
@@ -690,7 +687,9 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             "BLOCK_SIZE_N": manual_config["BN"],
             "BLOCK_SIZE_K": manual_config["BK"],
             "SUBTILE_FACTOR": manual_config["SF"],
-            "q_desc": q_desc, "k_desc": k_desc, "v_desc": v_desc, "o_desc": o_desc
+            "q0_desc": q0_desc, "q1_desc": q1_desc,
+            "k_desc": k_desc, "v_desc": v_desc,
+            "o0_desc": o0_desc, "o1_desc": o1_desc
         }
         fa3_tma_set_block_size_hook(hook_kwargs)
 
@@ -700,8 +699,7 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
         grid = (min(num_sms, total_tiles), )
 
         fa3_warp_specialized_kernel[grid](
-            q_desc, k_desc, v_desc, o_desc,
-            # Q_flat, K_T, V_flat, O_flat,
+            q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
             GroupedPersistentTileScheduler(8),
             SEQ_LEN, HEAD_DIM, NUM_HEADS,
             BLOCK_SIZE_M=manual_config["BM"],
@@ -715,15 +713,15 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
     return O
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run FlashAttention-3 Warp-Specialized Kernel")
+    parser = argparse.ArgumentParser(description="Run Refactored FlashAttention-3 Warp-Specialized Kernel")
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
-    parser.add_argument("--bm", type=int, default=64, help="BLOCK_SIZE_M")
+    parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
     parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="HEAD_DIM (BLOCK_SIZE_K)")
+    parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
+    parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=4, help="Number of compute warps")
-    parser.add_argument("--stages", type=int, default=4, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
 
@@ -731,9 +729,9 @@ if __name__ == "__main__":
         "BM": args.bm,
         "BN": args.bn,
         "BK": args.bk,
-        "warps": args.warps,
         "num_stages": args.stages,
-        "SF": args.sf
+        "SF": args.sf,
+        "warps": args.warps,
     }
 
     if args.tune:
@@ -743,10 +741,8 @@ if __name__ == "__main__":
         
     NUM_HEADS = 16
     sizes = [
-        (4096, 128),
         # (512, 64),
-        # (2048, 128),
-        # (8192, 256),
+        (4096, 128),
     ]
     
     torch.set_printoptions(profile="full")
@@ -754,35 +750,16 @@ if __name__ == "__main__":
 
     for SEQ_LEN, HEAD_DIM in sizes:
         BATCH = max(1, 16384 // SEQ_LEN)
-        # BATCH = 2
-        print(f"Testing BATCH={BATCH}, NUM_HEADS={NUM_HEADS}, SEQ_LEN={SEQ_LEN}, HEAD_DIM={HEAD_DIM}", flush=True)
+        print(f"\nTesting BATCH={BATCH}, NUM_HEADS={NUM_HEADS}, SEQ_LEN={SEQ_LEN}, HEAD_DIM={HEAD_DIM}", flush=True)
         
         Q = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         K = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         V = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         
-        # test_configs = [
-        #     {'BM': 64, 'BN': 64, 'BK': 64, 'warps': 4, 'num_stages': 3, 'SF': 1},
-        #     {'BM': 64, 'BN': 64, 'BK': 64, 'warps': 4, 'num_stages': 3, 'SF': 2},
-        #     {'BM': 128, 'BN': 64, 'BK': 64, 'warps': 4, 'num_stages': 2, 'SF': 1},
-        #     {'BM': 128, 'BN': 64, 'BK': 64, 'warps': 4, 'num_stages': 2, 'SF': 2},
-        # ]
-
-        # print("--- Starting Sequential Config Sweep ---", flush=True)
-
-        # for i, cfg in enumerate(test_configs):
-        #     print(f"Running config {i}: {cfg}", flush=True)
-
-        #     # 1. Execute kernel with current config (mutating TMA descriptors)
-        #     O_triton = run_fa3_kernel(Q, K, V, tune=False, manual_config=cfg)
-
-        #     # 2. Force explicit stream synchronization between launches
-        #     torch.cuda.synchronize()
-        #     print(f"Config {i} completed successfully.", flush=True)
-        
         O_triton = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
         O_torch = torch.nn.functional.scaled_dot_product_attention(Q, K, V)
         
         torch.testing.assert_close(O_torch, O_triton, rtol=1e-2, atol=1e-2)
+        print("PASS: PyTorch reference matches Triton Gluon FA3!")
     
-    print("Done. PyTorch reference matches Triton Gluon FA3!")
+    print("\nDone. All test cases passed successfully!", flush=True)

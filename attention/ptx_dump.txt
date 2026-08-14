@@ -1,5 +1,0 @@
-Running FlashAttention-3. Autotuning enabled.
-Testing BATCH=32, NUM_HEADS=16, SEQ_LEN=512, HEAD_DIM=64
-Testing BATCH=8, NUM_HEADS=16, SEQ_LEN=2048, HEAD_DIM=128
-Testing BATCH=2, NUM_HEADS=16, SEQ_LEN=8192, HEAD_DIM=256
-Done. PyTorch reference matches Triton Gluon FA3!
