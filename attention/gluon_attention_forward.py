@@ -195,7 +195,7 @@ def store_acc_to_smem_subtile(p, acc, acc_state):
 # ---------------------------------------------------------------------------
 
 @gluon.jit
-def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr):
+def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
@@ -231,7 +231,7 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         q_state = q_state.next()
 
 @gluon.jit
-def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr):
+def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]  # Dynamically equals HEAD_DIM
@@ -246,6 +246,8 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
     
     num_steps = SEQ_LEN // BLOCK_N
 
+    sm_scale: gl.constexpr = 1/math.sqrt(HEAD_DIM)
+    
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)  
         
@@ -259,6 +261,7 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         l_old = gl.zeros((BLOCK_M,), dtype=gl.float32, layout=s_layout)
         
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
+        
 
         for step in range(num_steps):
             mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
@@ -269,7 +272,7 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
             mma_s = mma_s.wait_num_outstanding(0)
             
             S_tile, mma_s = mma_s.take_result()
-            S_tile = S_tile / gl.sqrt(gl.cast(BLOCK_K, gl.float32))
+            S_tile = S_tile * sm_scale
             
             # Online Softmax
             m_new_tile = gl.max(S_tile, axis=1)
@@ -285,7 +288,9 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
             mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
             
             P_tile_f32 = gl.exp(S_tile - m_new[:, None])
-            l_old = l_old * rescale_factor + gl.sum(P_tile_f32, axis=1)
+            
+            p_sum = gl.sum(P_tile_f32, axis=1)
+            l_old = l_old * rescale_factor + p_sum
             m_old = m_new
 
             P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
@@ -318,7 +323,7 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         acc_state = store_acc_to_smem_subtile(p, acc, acc_state)
 
 @gluon.jit
-def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr):
+def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
     BLOCK_M: gl.constexpr = p.o_desc.block_type.shape[0]
     SPLIT_K: gl.constexpr = p.o_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = SPLIT_K * p.SUBTILE_FACTOR
@@ -397,9 +402,9 @@ def fa3_warp_specialized_kernel(
     )
 
     gl.warp_specialize([
-        (fa3_consumer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS)),
-        (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS)),
-        (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS)),
+        (fa3_consumer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
+        (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
+        (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
     ], [1, 1], [24, 24])
 
 
@@ -470,7 +475,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
         for BM in (64, 128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
-        for warps in (4, 8)
+        for warps in (4, 8, )
         for num_stages in (2, 3, 4, 5)
         for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, num_stages, SF)
@@ -587,7 +592,7 @@ if __name__ == "__main__":
     parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--warps", type=int, default=8, help="Number of compute warps")
     parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
+    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
 
