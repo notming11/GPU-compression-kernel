@@ -215,10 +215,11 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = p.q0_desc.block_type.shape[1]
 
-    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0] * 2, p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
+    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
 
-    kv_state = Counter.create(0, p.kv_empty_bars.shape[0])
-    q_state = Counter.create(0, p.q_empty_bar.shape[0])
+    # Empty barriers start at phase=1 for Producer wait
+    kv_state = Counter.create(1, p.kv_empty_bars.shape[0])
+    q_state = Counter.create(1, p.q_empty_bar.shape[0])
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)      
@@ -255,9 +256,9 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
     dtype: gl.constexpr = p.q0_desc.dtype
 
-    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0] * 2, p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
+    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
 
-    acc_state = Counter.create(0, p.o0_empty_bars.shape[0])
+    acc_state = Counter.create(1, p.o0_empty_bars.shape[0])
     q_state = Counter.create(0, p.q_empty_bar.shape[0])
     kv_state = Counter.create(0, num_stages)
     
@@ -275,33 +276,29 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
 
         m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
         l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
-        
+
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
 
         for step in range(num_steps):
-            kv_idx = kv_state.index
-            kv_phase = kv_state.phase
+            mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
 
-            mbarrier.wait(p.kv_ready_bars.index(kv_idx), kv_phase)
-
+            # 1. GEMM 1: S = Q0 * K^T
             mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_idx))
-            
-            S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+            mma_s = mma_s.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index))
+            S_tile, mma_s = mma_s.wait_num_outstanding(1000).take_result()
             S_tile = S_tile * sm_scale
-            
+
+            # 2. Online Softmax Statistics
             m_new_tile = gl.max(S_tile, axis=1)
             m_new = gl.maximum(m_old, m_new_tile)
-            
+
             rescale_factor = gl.exp(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
-            
-            o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
-            o_acc = o_acc * rescale_factor_m[:, None]
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
-            
+
+            # 3. Rescale Existing Accumulator
+
+            # 4. Softmax Normalization
             P_tile_f32 = gl.exp(S_tile - m_new[:, None])
-            
             p_sum = gl.sum(P_tile_f32, axis=1)
             l_old = l_old * rescale_factor + p_sum
             m_old = m_new
@@ -315,17 +312,23 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             )
             P_tile_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
-            mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_idx))
+            # 5. GEMM 2: O0 += P * V
+            o_acc, mma_o = mma_o.wait_num_outstanding(1000).take_result()
+            o_acc = o_acc * rescale_factor_m[:, None]
+            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            
+            mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_state.index))
 
-            mbarrier.arrive(p.kv_empty_bars.index(kv_idx), count=1)
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
             kv_state = kv_state.next()
-    
+
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         q_state = q_state.next()
 
-        acc0, mma_o = mma_o.wait_num_outstanding(0).take_result()
+        # Output Normalization & Sub-tile Store
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
         l_final_m = gl.convert_layout(l_old, m_layout)
-        acc_final = (acc0 / l_final_m[:, None]).to(p.o0_desc.dtype)
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
 
         acc_state = store_acc_to_smem_subtile(acc_final, p.o0_bufs, p.o0_empty_bars, p.o0_ready_bars, acc_state, p.SUBTILE_FACTOR)
 
@@ -339,9 +342,9 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
     dtype: gl.constexpr = p.q1_desc.dtype
 
-    scheduler = SchedulerImpl.initialize(p.o1_desc.shape[0] * 2, p.o1_desc.shape[1], BLOCK_M, BLOCK_K)
+    scheduler = SchedulerImpl.initialize(p.o1_desc.shape[0], p.o1_desc.shape[1], BLOCK_M, BLOCK_K)
 
-    acc_state = Counter.create(0, p.o1_empty_bars.shape[0])
+    acc_state = Counter.create(1, p.o1_empty_bars.shape[0])
     q_state = Counter.create(0, p.q_empty_bar.shape[0])
     kv_state = Counter.create(0, num_stages)
     
@@ -359,33 +362,29 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
 
         m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
         l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
-        
+
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
 
         for step in range(num_steps):
-            kv_idx = kv_state.index
-            kv_phase = kv_state.phase
+            mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
 
-            mbarrier.wait(p.kv_ready_bars.index(kv_idx), kv_phase)
-
+            # 1. GEMM 1: S = Q1 * K^T
             mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_idx))
-            
-            S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+            mma_s = mma_s.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index))
+            S_tile, mma_s = mma_s.wait_num_outstanding(1000).take_result()
             S_tile = S_tile * sm_scale
-            
+
+            # 2. Online Softmax Statistics
             m_new_tile = gl.max(S_tile, axis=1)
             m_new = gl.maximum(m_old, m_new_tile)
-            
+
             rescale_factor = gl.exp(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
-            
-            o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
-            o_acc = o_acc * rescale_factor_m[:, None]
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
-            
+
+            # 3. Rescale Existing Accumulator
+
+            # 4. Softmax Normalization
             P_tile_f32 = gl.exp(S_tile - m_new[:, None])
-            
             p_sum = gl.sum(P_tile_f32, axis=1)
             l_old = l_old * rescale_factor + p_sum
             m_old = m_new
@@ -397,19 +396,25 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
                 k_width=32 // dtype.primitive_bitwidth,
                 meta=0,
             )
-            P_tile_permuted = gl.convert_layout(P_tile_f16, p_layout)
+            P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
-            mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_idx))
+            # 5. GEMM 2: O1 += P * V
+            o_acc, mma_o = mma_o.wait_num_outstanding(1000).take_result()
+            o_acc = o_acc * rescale_factor_m[:, None]
+            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
-            mbarrier.arrive(p.kv_empty_bars.index(kv_idx), count=1)
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
             kv_state = kv_state.next()
-    
+
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         q_state = q_state.next()
 
-        acc1, mma_o = mma_o.wait_num_outstanding(0).take_result()
+        # Output Normalization & Sub-tile Store
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
         l_final_m = gl.convert_layout(l_old, m_layout)
-        acc_final = (acc1 / l_final_m[:, None]).to(p.o1_desc.dtype)
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o1_desc.dtype)
 
         acc_state = store_acc_to_smem_subtile(acc_final, p.o1_bufs, p.o1_empty_bars, p.o1_ready_bars, acc_state, p.SUBTILE_FACTOR)
 
@@ -420,7 +425,7 @@ def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: 
     SPLIT_K: gl.constexpr = p.o0_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = SPLIT_K * p.SUBTILE_FACTOR
 
-    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0] * 2, p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
+    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
     state = Counter.create(0, p.o0_empty_bars.shape[0])
 
     num_buffers: gl.constexpr = p.o0_bufs.shape[0]
@@ -450,6 +455,10 @@ def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: 
             store_iter += 1
 
     tma.store_wait(0)
+    if store_iter > 0:
+        last_empty_idx = (store_iter - 1) % num_buffers
+        mbarrier.arrive(p.o0_empty_bars.index(last_empty_idx), count=1)
+        mbarrier.arrive(p.o1_empty_bars.index(last_empty_idx), count=1)
 
 # ---------------------------------------------------------------------------
 # KERNEL LAUNCHER
@@ -462,8 +471,6 @@ def fa3_warp_specialized_kernel(
     BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
     num_stages: gl.constexpr, SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr
 ):
-    
-    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, warps: {num_warps}, buf: {num_stages}, sf: {SUBTILE_FACTOR}", flush=True)
     dtype: gl.constexpr = q0_desc.dtype
     SUB_BM: gl.constexpr = BLOCK_SIZE_M // 2
 
@@ -487,23 +494,20 @@ def fa3_warp_specialized_kernel(
     o1_empty_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
     o1_ready_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
 
+    # Initialize barriers without pre-arriving
     mbarrier.init(q_ready_bar.index(0), count=1)
     mbarrier.init(q_empty_bar.index(0), count=2)
-    mbarrier.arrive(q_empty_bar.index(0), count=2)
 
     for i in gl.static_range(num_stages):
-        mbarrier.init(kv_empty_bars.index(i), count=2)
         mbarrier.init(kv_ready_bars.index(i), count=1)
-        mbarrier.arrive(kv_empty_bars.index(i), count=2)
+        mbarrier.init(kv_empty_bars.index(i), count=2)
 
     for i in gl.static_range(2):
-        mbarrier.init(o0_empty_bars.index(i), count=1)
         mbarrier.init(o0_ready_bars.index(i), count=1)
-        mbarrier.arrive(o0_empty_bars.index(i), count=1)
+        mbarrier.init(o0_empty_bars.index(i), count=1)
 
-        mbarrier.init(o1_empty_bars.index(i), count=1)
         mbarrier.init(o1_ready_bars.index(i), count=1)
-        mbarrier.arrive(o1_empty_bars.index(i), count=1)
+        mbarrier.init(o1_empty_bars.index(i), count=1)
 
     p = PartitionArgs(
         q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
@@ -530,7 +534,8 @@ def fa3_get_configs(pre_hook=None, tune=True):
     def valid(BM, BN, BK, warps, num_stages, SF):
         if BM == 256 and BN == 256:
             return False
-        if BM < 32 or BM % 2 != 0:
+        SUB_BM = BM // 2
+        if SUB_BM % 64 != 0:
             return False
 
         SUB_BM = BM // 2
@@ -551,7 +556,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
             return False
 
         split_k = BK // SF
-        if split_k < 16:
+        if split_k < 32:
             return False
 
         warps_m = 4
@@ -590,7 +595,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
             num_stages=num_stages,
             pre_hook=pre_hook,
         )
-        for BM in (64, 128, 256)
+        for BM in (128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
         for warps in (4, 8)
@@ -717,7 +722,7 @@ if __name__ == "__main__":
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="HEAD_DIM (BLOCK_SIZE_K)")
     parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
     parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")
@@ -742,14 +747,21 @@ if __name__ == "__main__":
     NUM_HEADS = 16
     sizes = [
         # (512, 64),
-        (4096, 128),
+        # (4096, 128),
+        # (16384, 256),
+        (4096, 128)
     ]
     
     torch.set_printoptions(profile="full")
     torch.set_printoptions(linewidth=20000)
+    
+    os.environ["MLIR_ENABLE_DUMP"]="1"
+    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/4_partition_4096_128"
+    os.makedirs(os.path.dirname(os.environ["MLIR_DUMP_PATH"]), exist_ok=True)
 
     for SEQ_LEN, HEAD_DIM in sizes:
         BATCH = max(1, 16384 // SEQ_LEN)
+        # BATCH = 1
         print(f"\nTesting BATCH={BATCH}, NUM_HEADS={NUM_HEADS}, SEQ_LEN={SEQ_LEN}, HEAD_DIM={HEAD_DIM}", flush=True)
         
         Q = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
@@ -759,6 +771,7 @@ if __name__ == "__main__":
         O_triton = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
         O_torch = torch.nn.functional.scaled_dot_product_attention(Q, K, V)
         
+        # torch.testing.assert_close(O_torch[:, :, :64, :], O_triton[:, :, :64, :], rtol=1e-2, atol=1e-2)
         torch.testing.assert_close(O_torch, O_triton, rtol=1e-2, atol=1e-2)
         print("PASS: PyTorch reference matches Triton Gluon FA3!")
     

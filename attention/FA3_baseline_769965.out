@@ -1,0 +1,172 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=64)
+======================================================================
+
+start SEQ_LEN=512-HEAD_DIM=64 (1/6)
+finish SEQ_LEN=512-HEAD_DIM=64 -> SDPA: 340.98 TFLOPS, 3-Part: 115.01 TFLOPS, 4-Part: 114.06 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=8
+start SEQ_LEN=1024-HEAD_DIM=64 (2/6)
+finish SEQ_LEN=1024-HEAD_DIM=64 -> SDPA: 386.34 TFLOPS, 3-Part: 178.25 TFLOPS, 4-Part: 177.50 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=8
+start SEQ_LEN=2048-HEAD_DIM=64 (3/6)
+finish SEQ_LEN=2048-HEAD_DIM=64 -> SDPA: 413.90 TFLOPS, 3-Part: 246.76 TFLOPS, 4-Part: 240.15 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=8
+start SEQ_LEN=4096-HEAD_DIM=64 (4/6)
+finish SEQ_LEN=4096-HEAD_DIM=64 -> SDPA: 426.84 TFLOPS, 3-Part: 296.04 TFLOPS, 4-Part: 290.62 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=8
+start SEQ_LEN=8192-HEAD_DIM=64 (5/6)
+finish SEQ_LEN=8192-HEAD_DIM=64 -> SDPA: 432.03 TFLOPS, 3-Part: 329.59 TFLOPS, 4-Part: 323.44 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 5, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=8
+start SEQ_LEN=16384-HEAD_DIM=64 (6/6)
+finish SEQ_LEN=16384-HEAD_DIM=64 -> SDPA: 433.53 TFLOPS, 3-Part: 355.31 TFLOPS, 4-Part: 343.91 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 64, 'num_stages': 6, 'SUBTILE_FACTOR': 1}, num_warps=8
+
+======================================================================
+                    SUMMARY BENCHMARK RESULTS
+======================================================================
+ SEQ_LEN  PyTorch_SDPA_TFLOPS  Triton_3Part_TFLOPS  Triton_4Part_TFLOPS
+     512           340.981070           115.013739           114.058859
+    1024           386.336165           178.245779           177.495098
+    2048           413.903365           246.759460           240.152290
+    4096           426.839886           296.042415           290.624430
+    8192           432.032800           329.588540           323.441505
+   16384           433.529225           355.308077           343.905957
+
+[INFO] Benchmark chart saved successfully to 'Benchmark/FA3_Benchmark_HEAD_DIM_64.png'
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=128)
+======================================================================
+
+start SEQ_LEN=512-HEAD_DIM=128 (1/6)
+finish SEQ_LEN=512-HEAD_DIM=128 -> SDPA: 444.10 TFLOPS, 3-Part: 127.25 TFLOPS, 4-Part: 125.27 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+start SEQ_LEN=1024-HEAD_DIM=128 (2/6)
+finish SEQ_LEN=1024-HEAD_DIM=128 -> SDPA: 512.84 TFLOPS, 3-Part: 205.38 TFLOPS, 4-Part: 204.22 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+start SEQ_LEN=2048-HEAD_DIM=128 (3/6)
+finish SEQ_LEN=2048-HEAD_DIM=128 -> SDPA: 548.39 TFLOPS, 3-Part: 291.62 TFLOPS, 4-Part: 289.70 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+start SEQ_LEN=4096-HEAD_DIM=128 (4/6)
+finish SEQ_LEN=4096-HEAD_DIM=128 -> SDPA: 563.38 TFLOPS, 3-Part: 366.26 TFLOPS, 4-Part: 364.86 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+start SEQ_LEN=8192-HEAD_DIM=128 (5/6)
+finish SEQ_LEN=8192-HEAD_DIM=128 -> SDPA: 582.82 TFLOPS, 3-Part: 419.48 TFLOPS, 4-Part: 419.67 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+start SEQ_LEN=16384-HEAD_DIM=128 (6/6)
+finish SEQ_LEN=16384-HEAD_DIM=128 -> SDPA: 585.69 TFLOPS, 3-Part: 452.10 TFLOPS, 4-Part: 453.72 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+
+======================================================================
+                    SUMMARY BENCHMARK RESULTS
+======================================================================
+ SEQ_LEN  PyTorch_SDPA_TFLOPS  Triton_3Part_TFLOPS  Triton_4Part_TFLOPS
+     512           444.103050           127.254364           125.266640
+    1024           512.839373           205.384445           204.223409
+    2048           548.391299           291.615808           289.696580
+    4096           563.378573           366.258828           364.863464
+    8192           582.822591           419.480307           419.669602
+   16384           585.691036           452.098322           453.717910
+
+[INFO] Benchmark chart saved successfully to 'Benchmark/FA3_Benchmark_HEAD_DIM_128.png'
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=256)
+======================================================================
+
+start SEQ_LEN=512-HEAD_DIM=256 (1/6)
+finish SEQ_LEN=512-HEAD_DIM=256 -> SDPA: 467.57 TFLOPS, 3-Part: 129.69 TFLOPS, 4-Part: 113.19 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+start SEQ_LEN=1024-HEAD_DIM=256 (2/6)
+finish SEQ_LEN=1024-HEAD_DIM=256 -> SDPA: 544.55 TFLOPS, 3-Part: 214.18 TFLOPS, 4-Part: 176.38 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+start SEQ_LEN=2048-HEAD_DIM=256 (3/6)
+finish SEQ_LEN=2048-HEAD_DIM=256 -> SDPA: 587.80 TFLOPS, 3-Part: 311.08 TFLOPS, 4-Part: 240.24 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+start SEQ_LEN=4096-HEAD_DIM=256 (4/6)
+finish SEQ_LEN=4096-HEAD_DIM=256 -> SDPA: 615.70 TFLOPS, 3-Part: 397.77 TFLOPS, 4-Part: 292.11 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+start SEQ_LEN=8192-HEAD_DIM=256 (5/6)
+finish SEQ_LEN=8192-HEAD_DIM=256 -> SDPA: 630.71 TFLOPS, 3-Part: 462.51 TFLOPS, 4-Part: 326.33 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+start SEQ_LEN=16384-HEAD_DIM=256 (6/6)
+finish SEQ_LEN=16384-HEAD_DIM=256 -> SDPA: 634.29 TFLOPS, 3-Part: 502.47 TFLOPS, 4-Part: 344.55 TFLOPS
+  3-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  4-Part best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+
+======================================================================
+                    SUMMARY BENCHMARK RESULTS
+======================================================================
+ SEQ_LEN  PyTorch_SDPA_TFLOPS  Triton_3Part_TFLOPS  Triton_4Part_TFLOPS
+     512           467.570423           129.691447           113.187595
+    1024           544.547535           214.180618           176.382929
+    2048           587.804729           311.078988           240.236250
+    4096           615.704135           397.773214           292.114789
+    8192           630.709297           462.513023           326.326226
+   16384           634.286128           502.465544           344.547627
+
+[INFO] Benchmark chart saved successfully to 'Benchmark/FA3_Benchmark_HEAD_DIM_256.png'
+
+scontrol show job 769965
+JobId=769965 JobName=FA3_baseline
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=1302157 Nice=0 Account=rrg-mmehride QOS=normal
+   JobState=COMPLETING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:54:45 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-08-14T19:30:49 EligibleTime=2026-08-14T19:30:49
+   AccrueTime=2026-08-14T19:30:49
+   StartTime=2026-08-14T19:31:01 EndTime=2026-08-14T20:25:46 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-14T19:31:01 Scheduler=Main
+   Partition=compute AllocNode:Sid=trig-login01:3802270
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0028
+   BatchHost=trig0028
+   NumNodes=1 NumCPUs=24 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=1,mem=187.50G,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=187.50G,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=187.50G MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/scratch/notming/attention/sbatch_sh/benchmark_fa3_baseline.sh
+   SubmitLine=SBATCH --comment /opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/benchmark_fa3_baseline.sh --export=NONE --get-user-env sbatch_sh/benchmark_fa3_baseline.sh
+   WorkDir=/scratch/notming/attention
+   Comment=/opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/benchmark_fa3_baseline.sh
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/scratch/notming/attention/FA3_baseline_769965.out
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 769965
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+769965       FA3_basel+ rrg-mmehr+   00:54:45                         00:00:00   00:00:00      0:0 
+769965.batch      batch rrg-mmehr+   00:54:45                         00:00:00   00:00:00      0:0 
+769965.exte+     extern rrg-mmehr+   00:54:45                         00:00:00   00:00:00      0:0 
+
