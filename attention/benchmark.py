@@ -191,7 +191,7 @@ def get_best_config(module):
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Benchmark Triton FA3 Kernels (3-Part vs 4-Part)")
-    parser.add_argument("--module-3part", type=str, default="./gluon_attention_forward.py", help="Path to your 3-partition Triton script")
+    parser.add_argument("--module-3part", type=str, default="./gluon_3_partition_pingpong.py", help="Path to your 3-partition Triton script")
     parser.add_argument("--module-4part", type=str, default="./gluon_fa3_forward.py", help="Path to your 4-partition Triton script")
     parser.add_argument("--head-dim", type=int, default=128, help="Head dimension to evaluate")
     parser.add_argument("--tune", action="store_true", default=True, help="Enable Triton autotuner during benchmark")
