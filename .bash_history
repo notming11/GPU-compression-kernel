@@ -6672,3 +6672,391 @@ tpython -c "import os; os.system('compute-sanitizer --tool=racecheck python gluo
 tpython -c "import os; os.system('compute-sanitizer --tool=memcheck python gluon_fa3_forward.py')"
 #1786751304
 tpython -c "import os; os.system('compute-sanitizer --tool=racecheck python gluon_fa3_forward.py')"
+#1786762789
+load_module && start_gluon && cd ../attention
+#1786762812
+tpython gluon_3_partition_pingpong.py
+#1786762889
+tpython benchmark.py --head-dim=128
+#1786764057
+tpython gluon_3_partition_pingpong.py
+#1786764262
+tpython benchmark.py --head-dim=128
+#1786765151
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128 python gluon_3_partition_pingpong.py 
+#1786765612
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128 python gluon_3_partition_pingpong.py --bm 128 --bn 128 --stages 4 --sf 2 --warps 8
+#1786765780
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128 python gluon_3_partition_pingpong.py --bm 128 --bn 256 --stages 2 --sf 2 --warps 8
+#1786765800
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128 python gluon_3_partition_pingpong.py --bm 128 --bn 128 --stages 2 --sf 2 --warps 8
+#1786765926
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128 python gluon_3_partition_pingpong.py 
+#1786765984
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_suboptimal_4096_128 python gluon_3_partition_pingpong.py --bm 128 --bn 128 --stages 2 --sf 2 --warps 8
+#1786731374
+grep -E "(load_module|start_gluon|tpython)" ~/.bashrc
+#1786724587
+load_module && start_gluon && cd ../attention
+#1786724608
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786724619
+sq
+#1786746656
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786746658
+sq
+#1786748275
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786748289
+scancel 769802
+#1786749624
+sq
+#1786750249
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786750251
+sq
+#1786760445
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786760452
+sq
+#1786760984
+scancel --me
+#1786761010
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786761013
+sq
+#1786762022
+scancel --me
+#1786762073
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786762758
+sq
+#1786762766
+scancel 771253
+#1786723206
+debugjob
+#1786728433
+load_module && start_gluon && cd ../attention
+#1786728502
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python gluon_fa3_forward.py 
+#1786729002
+tpython gluon_fa3_forward.py 
+#1786731492
+debugjob
+#1786745591
+tpython gluon_fa3_forward.py 
+#1786746329
+tpython gluon_fa3_forward.py --tune
+#1786747923
+tpython gluon_fa3_forward.py 
+#1786748000
+tpython gluon_fa3_forward.py --tune
+#1786750493
+tpython gluon_fa3_forward.py 
+#1786750523
+compute-sanitizer --tool=synccheck tpython gluon_fa3_forward.py 
+#1786750539
+compute-sanitizer tpython gluon_fa3_forward.py 
+#1786750655
+tpython -c "import os; os.system('compute-sanitizer --tool=synccheck python gluon_fa3_forward.py')"
+#1786750733
+tpython -c "import os; os.system('compute-sanitizer --tool=racecheck python gluon_fa3_forward.py')"
+#1786751117
+debugjob
+#1786757004
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python gluon_fa3_forward.py 
+#1786758692
+tpython gluon_fa3_forward.py 
+#1786762749
+debugjob
+#1786730905
+head -n 50 /home/notming/links/scratch/attention/gluon_fa3_forward.py
+#1786730912
+nl -ba /home/notming/links/scratch/attention/gluon_fa3_forward.py | sed -n '50,220p'
+#1786730915
+nl -ba /home/notming/links/scratch/attention/gluon_fa3_forward.py | sed -n '220,380p'
+#1786730920
+nl -ba /home/notming/links/scratch/attention/gluon_fa3_forward.py | sed -n '370,550p'
+#1786730923
+nl -ba /home/notming/links/scratch/attention/gluon_fa3_forward.py | sed -n '550,750p'
+#1786730927
+nl -ba /home/notming/links/scratch/attention/gluon_fa3_forward.py | sed -n '750,860p'
+#1786730932
+cat /home/notming/links/scratch/attention/common.py
+#1786730941
+grep -rn "warp_specialize" /home/notming/links/scratch
+#1786730950
+ls -la /home/notming/links/scratch/attention
+#1786730957
+head -n 100 /home/notming/links/scratch/attention/gluon_attention_forward.py
+#1786730972
+nl -ba /home/notming/links/scratch/attention/gluon_attention_forward.py | sed -n '380,500p'
+#1786730992
+grep -n "\* 2" /home/notming/links/scratch/attention/gluon_fa3_forward.py
+#1786731003
+sed -n '411,485p' /home/notming/links/scratch/attention/gluon_attention_forward.py
+#1786731046
+sed -n '310,370p' /home/notming/links/scratch/attention/gluon_attention_forward.py
+#1786731053
+sed -n '380,495p' /home/notming/links/scratch/attention/gluon_fa3_forward.py
+#1786731076
+python3 -c '
+#1786731076
+path = "/home/notming/links/scratch/attention/gluon_fa3_forward.py"
+#1786731076
+with open(path, "r") as f:
+#1786731076
+    content = f.read()
+#1786731076
+
+#1786731076
+# 1. Fix scheduler initialize * 2
+#1786731076
+old1 = "scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0] * 2, p.o0_desc.shape[1], BLOCK_M, BLOCK_K)"
+#1786731076
+new1 = "scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)"
+#1786731076
+old2 = "scheduler = SchedulerImpl.initialize(p.o1_desc.shape[0] * 2, p.o1_desc.shape[1], BLOCK_M, BLOCK_K)"
+#1786731076
+new2 = "scheduler = SchedulerImpl.initialize(p.o1_desc.shape[0], p.o1_desc.shape[1], BLOCK_M, BLOCK_K)"
+#1786731076
+
+#1786731076
+content = content.replace(old1, new1).replace(old2, new2)
+#1786731076
+
+#1786731076
+# 2. Fix valid() in fa3_get_configs
+#1786731076
+old_valid_bm = "        if BM < 32 or BM % 2 != 0:\n            return False"
+#1786731076
+new_valid_bm = "        SUB_BM = BM // 2\n        if SUB_BM % 64 != 0:\n            return False"
+#1786731076
+content = content.replace(old_valid_bm, new_valid_bm)
+#1786731076
+
+#1786731076
+old_split_k = "        split_k = BK // SF\n        if split_k < 16:\n            return False"
+#1786731076
+new_split_k = "        split_k = BK // SF\n        if split_k < 32:\n            return False"
+#1786731076
+content = content.replace(old_split_k, new_split_k)
+#1786731076
+
+#1786731076
+old_for_bm = "        for BM in (64, 128, 256)"
+#1786731076
+new_for_bm = "        for BM in (128, 256)"
+#1786731076
+content = content.replace(old_for_bm, new_for_bm)
+#1786731076
+
+#1786731076
+# 3. Fix MLIR dump directory creation
+#1786731076
+old_dump = "    os.environ[\"MLIR_ENABLE_DUMP\"]=\"1\"\n    os.environ[\"MLIR_DUMP_PATH\"] = \"./MLIR_DUMP/4_partition_4096_128\""
+#1786731076
+new_dump = "    os.environ[\"MLIR_ENABLE_DUMP\"]=\"1\"\n    os.environ[\"MLIR_DUMP_PATH\"] = \"./MLIR_DUMP/4_partition_4096_128\"\n    os.makedirs(os.environ[\"MLIR_DUMP_PATH\"], exist_ok=True)"
+#1786731076
+content = content.replace(old_dump, new_dump)
+#1786731076
+
+#1786731076
+with open(path, "w") as f:
+#1786731076
+    f.write(content)
+#1786731076
+print("Updated successfully")
+#1786731076
+'
+#1786731089
+cd /home/notming/links/scratch/attention && apptainer exec --nvccli $SCRATCH/sparse.sif python gluon_fa3_forward.py
+#1786731108
+cd /home/notming/links/scratch
+#1786731109
+apptainer exec --nvccli /scratch/notming/sparse.sif python /scratch/notming/attention/gluon_fa3_forward.py
+#1786731157
+bash -i -c "load_module && start_gluon && cd /scratch/notming/attention && tpython gluon_fa3_forward.py"
+#1786731195
+python3 -c '
+#1786731195
+path = "/home/notming/links/scratch/attention/gluon_fa3_forward.py"
+#1786731195
+with open(path, "r") as f:
+#1786731195
+    content = f.read()
+#1786731195
+
+#1786731195
+old_dump = "    os.makedirs(os.environ[\"MLIR_DUMP_PATH\"], exist_ok=True)"
+#1786731195
+new_dump = "    os.makedirs(os.path.dirname(os.environ[\"MLIR_DUMP_PATH\"]), exist_ok=True)"
+#1786731195
+content = content.replace(old_dump, new_dump)
+#1786731195
+
+#1786731195
+with open(path, "w") as f:
+#1786731195
+    f.write(content)
+#1786731195
+print("Updated dump path")
+#1786731195
+'
+#1786731206
+bash -i -c "load_module && start_gluon && cd /scratch/notming/attention && tpython gluon_fa3_forward.py"
+#1786731242
+sed -n '150,310p' /home/notming/links/scratch/attention/gluon_attention_forward.py
+#1786731250
+grep -n "Counter.create" /home/notming/links/scratch/attention/gluon_fa3_forward.py
+#1786731265
+python3 -c '
+#1786731265
+path = "/home/notming/links/scratch/attention/gluon_fa3_forward.py"
+#1786731265
+with open(path, "r") as f:
+#1786731265
+    content = f.read()
+#1786731265
+
+#1786731265
+# 1. Fix producer Counter.create(0, ...) -> Counter.create(1, ...)
+#1786731265
+old_prod = """    kv_state = Counter.create(0, p.kv_empty_bars.shape[0])
+#1786731265
+    q_state = Counter.create(0, p.q_empty_bar.shape[0])"""
+#1786731265
+new_prod = """    kv_state = Counter.create(1, p.kv_empty_bars.shape[0])
+#1786731265
+    q_state = Counter.create(1, p.q_empty_bar.shape[0])"""
+#1786731265
+assert old_prod in content, "old_prod not found"
+#1786731265
+content = content.replace(old_prod, new_prod, 1)
+#1786731265
+
+#1786731265
+# 2. Fix consumer wg0
+#1786731265
+old_wg0_outer = """    acc_state = Counter.create(0, p.o0_empty_bars.shape[0])
+#1786731265
+    q_state = Counter.create(0, p.q_empty_bar.shape[0])
+#1786731265
+    
+#1786731265
+    num_steps = SEQ_LEN // BLOCK_N"""
+#1786731265
+new_wg0_outer = """    acc_state = Counter.create(1, p.o0_empty_bars.shape[0])
+#1786731265
+    q_state = Counter.create(0, p.q_empty_bar.shape[0])
+#1786731265
+    k_state = Counter.create(0, num_stages)
+#1786731265
+    v_state = Counter.create(0, num_stages)
+#1786731265
+    
+#1786731265
+    num_steps = SEQ_LEN // BLOCK_N"""
+#1786731265
+assert old_wg0_outer in content, "old_wg0_outer not found"
+#1786731265
+content = content.replace(old_wg0_outer, new_wg0_outer, 1)
+#1786731265
+
+#1786731265
+old_wg0_inner = """        m_old = gl.full((SUB_BM,), -float(\x27inf\x27), dtype=gl.float32, layout=s_layout)
+#1786731265
+        l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
+#1786731265
+        
+#1786731265
+        k_state = Counter.create(0, num_stages)
+#1786731265
+        v_state = Counter.create(0, num_stages)
+#1786731265
+
+#1786731265
+        mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)"""
+#1786731265
+new_wg0_inner = """        m_old = gl.full((SUB_BM,), -float(\x27inf\x27), dtype=gl.float32, layout=s_layout)
+#1786731265
+        l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
+#1786731265
+
+#1786731265
+        mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)"""
+#1786731265
+assert old_wg0_inner in content, "old_wg0_inner not found"
+#1786731265
+content = content.replace(old_wg0_inner, new_wg0_inner, 1)
+#1786731265
+
+#1786731265
+# 3. Fix consumer wg1
+#1786731265
+old_wg1_outer = """    acc_state = Counter.create(0, p.o1_empty_bars.shape[0])
+#1786731265
+    q_state = Counter.create(0, p.q_empty_bar.shape[0])
+#1786731265
+    
+#1786731265
+    num_steps = SEQ_LEN // BLOCK_N"""
+#1786731265
+new_wg1_outer = """    acc_state = Counter.create(1, p.o1_empty_bars.shape[0])
+#1786731265
+    q_state = Counter.create(0, p.q_empty_bar.shape[0])
+#1786731265
+    k_state = Counter.create(0, num_stages)
+#1786731265
+    v_state = Counter.create(0, num_stages)
+#1786731265
+    
+#1786731265
+    num_steps = SEQ_LEN // BLOCK_N"""
+#1786731265
+assert old_wg1_outer in content, "old_wg1_outer not found"
+#1786731265
+content = content.replace(old_wg1_outer, new_wg1_outer, 1)
+#1786731265
+
+#1786731265
+old_wg1_inner = """        m_old = gl.full((SUB_BM,), -float(\x27inf\x27), dtype=gl.float32, layout=s_layout)
+#1786731265
+        l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
+#1786731265
+        
+#1786731265
+        # Track K prefetching vs V consumption/release separately
+#1786731265
+        k_state = Counter.create(0, num_stages)
+#1786731265
+        v_state = Counter.create(0, num_stages)
+#1786731265
+
+#1786731265
+        mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)"""
+#1786731265
+new_wg1_inner = """        m_old = gl.full((SUB_BM,), -float(\x27inf\x27), dtype=gl.float32, layout=s_layout)
+#1786731265
+        l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
+#1786731265
+
+#1786731265
+        mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)"""
+#1786731265
+assert old_wg1_inner in content, "old_wg1_inner not found"
+#1786731265
+content = content.replace(old_wg1_inner, new_wg1_inner, 1)
+#1786731265
+
+#1786731265
+with open(path, "w") as f:
+#1786731265
+    f.write(content)
+#1786731265
+print("Updated Counter phases successfully!")
+#1786731265
+'
+#1786731279
+bash -i -c "load_module && start_gluon && cd /scratch/notming/attention && tpython gluon_fa3_forward.py"
