@@ -565,7 +565,7 @@ def get_autotuned_kernel(head_dim: int):
         
         _autotune_cache[head_dim] = triton.autotune(
             configs=configs,
-            key=["SEQ_LEN"],
+            key=["SEQ_LEN", "NUM_HEADS"],
             do_bench=lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
                 kernel_call, rep=100, quantiles=quantiles
             ),
