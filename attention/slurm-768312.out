@@ -1,0 +1,37 @@
+
+scontrol show job 768312
+JobId=768312 JobName=debugjob-1-notming
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=10922575 Nice=0 Account=def-mmehride QOS=normal
+   JobState=COMPLETING Reason=TimeLimit Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=0 Reboot=0 ExitCode=0:0
+   RunTime=02:00:02 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-08-14T14:18:13 EligibleTime=2026-08-14T14:18:13
+   AccrueTime=Unknown
+   StartTime=2026-08-14T14:18:13 EndTime=2026-08-14T16:18:15 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-14T14:18:13 Scheduler=Main
+   Partition=debug AllocNode:Sid=trig-login01:3162048
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0023
+   BatchHost=trig0023
+   NumNodes=1 NumCPUs=24 NumTasks=24 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=24,mem=187.50G,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=187.50G,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=187.50G MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/bin/sh
+   SubmitLine=SALLOC --comment /opt/slurm/bin/salloc --time=2:0:0 --job-name=debugjob-1-notming --nodes=1 --ntasks=24 --account=def-mmehride -p debug --gpus-per-node=1 --time=2:0:0 --job-name=debugjob-1-notming --nodes=1 --ntasks=24 --account=def-mmehride -p debug --gpus-per-node=1
+   WorkDir=/scratch/notming/attention
+   Comment=/opt/slurm/bin/salloc --time=2:0:0 --job-name=debugjob-1-notming --nodes=1 --ntasks=24 --account=def-mmehride -p debug --gpus-per-node=1
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 768312
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+768312       debugjob-+ def-mmehr+   02:00:02                        02:13.103  04:59.038      0:0 
+768312.inte+ interacti+ def-mmehr+   02:01:03          0  10264348K  02:13.103  04:59.038      0:9 
+768312.exte+     extern def-mmehr+   02:01:02                         00:00:00   00:00:00      0:0 
+

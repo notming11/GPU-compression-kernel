@@ -6664,3 +6664,11 @@ tpython gluon_fa3_forward.py --tune > ptx_dump.txt
 tpython gluon_fa3_forward.py --tune > ptx_dump
 #1786724117
 tpython benchmark.py --head-dim=64
+#1786751144
+load_module && start_gluon && cd ../attention
+#1786751155
+tpython -c "import os; os.system('compute-sanitizer --tool=racecheck python gluon_fa3_forward.py')"
+#1786751198
+tpython -c "import os; os.system('compute-sanitizer --tool=memcheck python gluon_fa3_forward.py')"
+#1786751304
+tpython -c "import os; os.system('compute-sanitizer --tool=racecheck python gluon_fa3_forward.py')"
