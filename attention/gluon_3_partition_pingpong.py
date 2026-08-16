@@ -237,6 +237,8 @@ def fa3_consumer_partition(
     NUM_HEADS: gl.constexpr,
     HEAD_DIM: gl.constexpr,
     p_layout: gl.constexpr,
+    m_layout: gl.constexpr,
+    s_layout: gl.constexpr,
 ):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
@@ -261,11 +263,7 @@ def fa3_consumer_partition(
         )
 
         mma_o = WGMMA.initialize(dtype, BLOCK_M, BLOCK_K, p.num_warps)
-        mma_s_dummy = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
-
-        m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_o.layout)
-        s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_s_dummy.layout)
-
+        
         m_old = gl.full(
             (BLOCK_M,), -float("inf"), dtype=gl.float32, layout=s_layout
         )
@@ -287,7 +285,6 @@ def fa3_consumer_partition(
             S_tile, _ = mma_s.take_result()
             S_tile = S_tile * sm_scale_log2
 
-
             # 2. OVERLAP: Issue S_{step+1} BEFORE Softmax math
             mbarrier.wait(
                 p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase
@@ -304,19 +301,17 @@ def fa3_consumer_partition(
             rescale_factor = gl.exp2(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
 
-
-            P_tile_f32 = gl.exp2(S_tile - m_new[:, None])
-            p_sum = gl.sum(P_tile_f32, axis=1)
-            l_old = l_old * rescale_factor + p_sum
-            m_old = m_new
-
-            P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
-            P_tile_permuted = gl.convert_layout(P_tile_f16, p_layout)
-
             mma_o = mma_o.wait_num_outstanding(0)
             o_acc, mma_o = mma_o.take_result()
             o_acc = o_acc * rescale_factor_m[:, None]
             mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
+
+            S_tile = gl.exp2(S_tile - m_new[:, None])
+            p_sum = gl.sum(S_tile, axis=1)
+            l_old = l_old * rescale_factor + p_sum
+            m_old = m_new
+
+            P_tile_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
             
             # 4. Issue O += P * V
             mma_o = mma_o.issue_async_mma(
@@ -344,12 +339,11 @@ def fa3_consumer_partition(
         o_acc = o_acc * rescale_factor_m[:, None]
         mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
 
-        P_tile_f32 = gl.exp2(S_tile - m_new[:, None])
-        p_sum = gl.sum(P_tile_f32, axis=1)
+        S_tile = gl.exp2(S_tile - m_new[:, None])
+        p_sum = gl.sum(S_tile, axis=1)
         l_old = l_old * rescale_factor + p_sum
 
-        P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
-        P_tile_permuted = gl.convert_layout(P_tile_f16, p_layout)
+        P_tile_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
         mma_o = mma_o.issue_async_mma(
             P_tile_permuted, p.v_bufs.index(kv_state.index)
@@ -459,9 +453,12 @@ def fa3_warp_specialized_kernel(
         k_width=32 // dtype.primitive_bitwidth,
         meta=0,
     )
+    
+    m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_K, num_warps))
+    s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_N, num_warps))
 
     gl.warp_specialize([
-        (fa3_consumer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout)),
+        (fa3_consumer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
         (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
     ], [1, 1], [24, 24])
@@ -532,7 +529,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
             pre_hook=pre_hook,
         )
         for BM in (64, 128, 256)
-        for BN in (128, )
+        for BN in (64, 128, )
         for BK in (64, 128, 256)
         for warps in (4, 8, 16)
         for num_stages in (2, 4, )
@@ -650,7 +647,7 @@ if __name__ == "__main__":
     parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=1, help="SUBTILE_FACTOR")
+    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=8, help="Number of compute warps")
     
     args = parser.parse_args()
