@@ -1,0 +1,178 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+[INFO] Skipping '4-Part' via CLI flag.
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=64)
+   Active Kernels: ['3-Part (Standard)', '3-Part (PingPong)']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=64 (1/6)
+Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 343.90 TFLOPS, 3-Part (Standard): 119.10 TFLOPS, 3-Part (PingPong): 115.13 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 2}, num_warps=8
+Start SEQ_LEN=1024-HEAD_DIM=64 (2/6)
+Finish SEQ_LEN=1024-HEAD_DIM=64 -> PyTorch SDPA: 389.46 TFLOPS, 3-Part (Standard): 187.97 TFLOPS, 3-Part (PingPong): 179.18 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+Start SEQ_LEN=2048-HEAD_DIM=64 (3/6)
+Finish SEQ_LEN=2048-HEAD_DIM=64 -> PyTorch SDPA: 417.28 TFLOPS, 3-Part (Standard): 263.07 TFLOPS, 3-Part (PingPong): 247.47 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+Start SEQ_LEN=4096-HEAD_DIM=64 (4/6)
+Finish SEQ_LEN=4096-HEAD_DIM=64 -> PyTorch SDPA: 430.05 TFLOPS, 3-Part (Standard): 322.72 TFLOPS, 3-Part (PingPong): 300.15 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+Start SEQ_LEN=8192-HEAD_DIM=64 (5/6)
+Finish SEQ_LEN=8192-HEAD_DIM=64 -> PyTorch SDPA: 435.46 TFLOPS, 3-Part (Standard): 361.44 TFLOPS, 3-Part (PingPong): 333.68 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=8
+Start SEQ_LEN=16384-HEAD_DIM=64 (6/6)
+Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 437.22 TFLOPS, 3-Part (Standard): 385.85 TFLOPS, 3-Part (PingPong): 353.53 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=8
+
+======================================================================
+                    SUMMARY BENCHMARK RESULTS
+======================================================================
+ SEQ_LEN  PyTorch SDPA_TFLOPS  3-Part (Standard)_TFLOPS  3-Part (PingPong)_TFLOPS
+     512           343.897483                119.096412                115.125836
+    1024           389.462761                187.965167                179.183477
+    2048           417.276575                263.073404                247.469011
+    4096           430.049306                322.720815                300.151468
+    8192           435.455028                361.441737                333.681337
+   16384           437.222085                385.847309                353.532865
+
+[INFO] Benchmark chart saved successfully to 'Benchmark/FA3_Benchmark_HEAD_DIM_64.png'
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+[INFO] Skipping '4-Part' via CLI flag.
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=128)
+   Active Kernels: ['3-Part (Standard)', '3-Part (PingPong)']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=128 (1/6)
+Finish SEQ_LEN=512-HEAD_DIM=128 -> PyTorch SDPA: 448.76 TFLOPS, 3-Part (Standard): 129.50 TFLOPS, 3-Part (PingPong): 124.05 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 128, 'num_stages': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+Start SEQ_LEN=1024-HEAD_DIM=128 (2/6)
+Finish SEQ_LEN=1024-HEAD_DIM=128 -> PyTorch SDPA: 517.56 TFLOPS, 3-Part (Standard): 212.62 TFLOPS, 3-Part (PingPong): 199.81 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 128, 'num_stages': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
+Start SEQ_LEN=2048-HEAD_DIM=128 (3/6)
+Finish SEQ_LEN=2048-HEAD_DIM=128 -> PyTorch SDPA: 551.53 TFLOPS, 3-Part (Standard): 299.58 TFLOPS, 3-Part (PingPong): 279.59 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 128, 'num_stages': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+Start SEQ_LEN=4096-HEAD_DIM=128 (4/6)
+Finish SEQ_LEN=4096-HEAD_DIM=128 -> PyTorch SDPA: 572.54 TFLOPS, 3-Part (Standard): 385.81 TFLOPS, 3-Part (PingPong): 347.09 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 128, 'num_stages': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+Start SEQ_LEN=8192-HEAD_DIM=128 (5/6)
+Finish SEQ_LEN=8192-HEAD_DIM=128 -> PyTorch SDPA: 589.90 TFLOPS, 3-Part (Standard): 442.38 TFLOPS, 3-Part (PingPong): 393.40 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 128, 'num_stages': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+Start SEQ_LEN=16384-HEAD_DIM=128 (6/6)
+Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 593.64 TFLOPS, 3-Part (Standard): 477.90 TFLOPS, 3-Part (PingPong): 421.76 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 128, 'num_stages': 4, 'SUBTILE_FACTOR': 8}, num_warps=8
+
+======================================================================
+                    SUMMARY BENCHMARK RESULTS
+======================================================================
+ SEQ_LEN  PyTorch SDPA_TFLOPS  3-Part (Standard)_TFLOPS  3-Part (PingPong)_TFLOPS
+     512           448.755969                129.495681                124.045864
+    1024           517.558321                212.617357                199.813174
+    2048           551.526683                299.575447                279.588623
+    4096           572.541684                385.806366                347.086458
+    8192           589.896337                442.376139                393.397918
+   16384           593.644471                477.896504                421.755688
+
+[INFO] Benchmark chart saved successfully to 'Benchmark/FA3_Benchmark_HEAD_DIM_128.png'
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+[INFO] Skipping '4-Part' via CLI flag.
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=256)
+   Active Kernels: ['3-Part (Standard)', '3-Part (PingPong)']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=256 (1/6)
+Finish SEQ_LEN=512-HEAD_DIM=256 -> PyTorch SDPA: 473.08 TFLOPS, 3-Part (Standard): 131.97 TFLOPS, 3-Part (PingPong): 117.50 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+Start SEQ_LEN=1024-HEAD_DIM=256 (2/6)
+Finish SEQ_LEN=1024-HEAD_DIM=256 -> PyTorch SDPA: 549.39 TFLOPS, 3-Part (Standard): 220.64 TFLOPS, 3-Part (PingPong): 185.48 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+Start SEQ_LEN=2048-HEAD_DIM=256 (3/6)
+Finish SEQ_LEN=2048-HEAD_DIM=256 -> PyTorch SDPA: 584.08 TFLOPS, 3-Part (Standard): 324.17 TFLOPS, 3-Part (PingPong): 257.34 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+Start SEQ_LEN=4096-HEAD_DIM=256 (4/6)
+Finish SEQ_LEN=4096-HEAD_DIM=256 -> PyTorch SDPA: 621.44 TFLOPS, 3-Part (Standard): 418.40 TFLOPS, 3-Part (PingPong): 318.06 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+Start SEQ_LEN=8192-HEAD_DIM=256 (5/6)
+Finish SEQ_LEN=8192-HEAD_DIM=256 -> PyTorch SDPA: 635.92 TFLOPS, 3-Part (Standard): 487.92 TFLOPS, 3-Part (PingPong): 358.23 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+Start SEQ_LEN=16384-HEAD_DIM=256 (6/6)
+Finish SEQ_LEN=16384-HEAD_DIM=256 -> PyTorch SDPA: 640.80 TFLOPS, 3-Part (Standard): 532.07 TFLOPS, 3-Part (PingPong): 371.10 TFLOPS
+  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+  [3-Part (PingPong)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
+
+======================================================================
+                    SUMMARY BENCHMARK RESULTS
+======================================================================
+ SEQ_LEN  PyTorch SDPA_TFLOPS  3-Part (Standard)_TFLOPS  3-Part (PingPong)_TFLOPS
+     512           473.081035                131.971382                117.501137
+    1024           549.394763                220.644645                185.476118
+    2048           584.082764                324.165424                257.343939
+    4096           621.439351                418.397792                318.064870
+    8192           635.918723                487.915621                358.232961
+   16384           640.795781                532.073625                371.096600
+
+[INFO] Benchmark chart saved successfully to 'Benchmark/FA3_Benchmark_HEAD_DIM_256.png'
+
+scontrol show job 783376
+JobId=783376 JobName=FA3_baseline
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=1281790 Nice=0 Account=rrg-mmehride QOS=normal
+   JobState=COMPLETING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=00:48:20 TimeLimit=02:00:00 TimeMin=N/A
+   SubmitTime=2026-08-16T12:18:31 EligibleTime=2026-08-16T12:18:31
+   AccrueTime=2026-08-16T12:18:31
+   StartTime=2026-08-16T12:18:32 EndTime=2026-08-16T13:06:52 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-16T12:18:32 Scheduler=Main
+   Partition=compute AllocNode:Sid=trig-login01:2425438
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0037
+   BatchHost=trig0037
+   NumNodes=1 NumCPUs=24 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=1,mem=187.50G,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=187.50G,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=187.50G MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/scratch/notming/attention/sbatch_sh/benchmark_fa3_baseline.sh
+   SubmitLine=SBATCH --comment /opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/benchmark_fa3_baseline.sh --export=NONE --get-user-env sbatch_sh/benchmark_fa3_baseline.sh
+   WorkDir=/scratch/notming/attention
+   Comment=/opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/benchmark_fa3_baseline.sh
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/scratch/notming/attention/FA3_baseline_783376.out
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 783376
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+783376       FA3_basel+ rrg-mmehr+   00:48:20                         00:00:00   00:00:00      0:0 
+783376.batch      batch rrg-mmehr+   00:48:20                         00:00:00   00:00:00      0:0 
+783376.exte+     extern rrg-mmehr+   00:48:20                         00:00:00   00:00:00      0:0 
+
