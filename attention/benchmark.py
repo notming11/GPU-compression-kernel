@@ -92,29 +92,29 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, fa3_3part_module, fa3_4par
         print(f"Triton FA3 (3-Part) benchmark failed at SEQ_LEN={seq_len}: {e}")
         ms_triton_3part, tflops_triton_3part = None, None
 
-    # 3. Benchmark Triton FA3 (4 Partition) Kernel
-    try:
-        _ = _invoke_kernel_module(fa3_4part_module, Q_4d, K_4d, V_4d, tune=tune)
-        torch.cuda.synchronize()
+    # # 3. Benchmark Triton FA3 (4 Partition) Kernel
+    # try:
+    #     _ = _invoke_kernel_module(fa3_4part_module, Q_4d, K_4d, V_4d, tune=tune)
+    #     torch.cuda.synchronize()
         
-        ms_triton_4part = triton.testing.do_bench_cudagraph(
-            lambda: _invoke_kernel_module(fa3_4part_module, Q_4d, K_4d, V_4d, tune=tune), 
-            rep=rep
-        )
-        tflops_triton_4part = to_attention_tflops(
-            ms_triton_4part, seq_len, head_dim, batch=BATCH_SIZE, num_heads=NUM_HEADS
-        )
-    except Exception as e:
-        print(f"Triton FA3 (4-Part) benchmark failed at SEQ_LEN={seq_len}: {e}")
-        ms_triton_4part, tflops_triton_4part = None, None
+    #     ms_triton_4part = triton.testing.do_bench_cudagraph(
+    #         lambda: _invoke_kernel_module(fa3_4part_module, Q_4d, K_4d, V_4d, tune=tune), 
+    #         rep=rep
+    #     )
+    #     tflops_triton_4part = to_attention_tflops(
+    #         ms_triton_4part, seq_len, head_dim, batch=BATCH_SIZE, num_heads=NUM_HEADS
+    #     )
+    # except Exception as e:
+    #     print(f"Triton FA3 (4-Part) benchmark failed at SEQ_LEN={seq_len}: {e}")
+    #     ms_triton_4part, tflops_triton_4part = None, None
 
     return {
         "PyTorch_SDPA_TFLOPS": tflops_torch,
         "Triton_3Part_TFLOPS": tflops_triton_3part,
-        "Triton_4Part_TFLOPS": tflops_triton_4part,
+        # "Triton_4Part_TFLOPS": tflops_triton_4part,
         "PyTorch_ms": ms_torch,
         "Triton_3Part_ms": ms_triton_3part,
-        "Triton_4Part_ms": ms_triton_4part,
+        # "Triton_4Part_ms": ms_triton_4part,
     }
 
 
@@ -129,7 +129,7 @@ def plot_benchmark_results(df_peak: pd.DataFrame, head_dim: int, output_dir: str
     # 1. Throughput Plot (TFLOPS)
     ax1.plot(x, df_peak["PyTorch_SDPA_TFLOPS"], marker="o", linewidth=2.5, label="PyTorch SDPA (Native FA2)", color="#2b5c8f")
     ax1.plot(x, df_peak["Triton_3Part_TFLOPS"], marker="s", linewidth=2.5, label="Custom Triton FA3 (3 Partition)", color="#d95f02")
-    ax1.plot(x, df_peak["Triton_4Part_TFLOPS"], marker="^", linewidth=2.5, label="Custom Triton FA3 (4 Partition)", color="#7570b3")
+    # ax1.plot(x, df_peak["Triton_4Part_TFLOPS"], marker="^", linewidth=2.5, label="Custom Triton FA3 (4 Partition)", color="#7570b3")
 
     ax1.set_ylabel("Throughput (TFLOPS)", fontsize=11, fontweight="bold")
     ax1.set_title(f"FlashAttention Throughput vs Sequence Length (HEAD_DIM={head_dim}, FP16)", fontsize=13, fontweight="bold", pad=12)
@@ -138,16 +138,18 @@ def plot_benchmark_results(df_peak: pd.DataFrame, head_dim: int, output_dir: str
 
     # 2. Relative Speedup Ratio Plot vs PyTorch SDPA
     df_peak["Speedup_3Part"] = df_peak["Triton_3Part_TFLOPS"] / df_peak["PyTorch_SDPA_TFLOPS"]
-    df_peak["Speedup_4Part"] = df_peak["Triton_4Part_TFLOPS"] / df_peak["PyTorch_SDPA_TFLOPS"]
+    # df_peak["Speedup_4Part"] = df_peak["Triton_4Part_TFLOPS"] / df_peak["PyTorch_SDPA_TFLOPS"]
     
     width = 0.35
     bars1 = ax2.bar(x - width/2, df_peak["Speedup_3Part"], width, label="3-Partition vs SDPA", color="#729ece", edgecolor="#2b5c8f", alpha=0.85)
-    bars2 = ax2.bar(x + width/2, df_peak["Speedup_4Part"], width, label="4-Partition vs SDPA", color="#e7298a", edgecolor="#7570b3", alpha=0.85)
+    # bars2 = ax2.bar(x + width/2, df_peak["Speedup_4Part"], width, label="4-Partition vs SDPA", color="#e7298a", edgecolor="#7570b3", alpha=0.85)
     
     ax2.axhline(1.0, color="#d62728", linestyle="--", linewidth=1.5, label="Parity (1.0x)")
 
     # Add text labels on top of bars
-    for bars in [bars1, bars2]:
+    for bars in [bars1, 
+                #  bars2
+                 ]:
         for bar in bars:
             height = bar.get_height()
             if not np.isnan(height) and height > 0:
@@ -191,7 +193,7 @@ def get_best_config(module):
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Benchmark Triton FA3 Kernels (3-Part vs 4-Part)")
-    parser.add_argument("--module-3part", type=str, default="./gluon_3_partition_pingpong.py", help="Path to your 3-partition Triton script")
+    parser.add_argument("--module-3part", type=str, default="./gluon_attention_forward.py", help="Path to your 3-partition Triton script")
     parser.add_argument("--module-4part", type=str, default="./gluon_fa3_forward.py", help="Path to your 4-partition Triton script")
     parser.add_argument("--head-dim", type=int, default=128, help="Head dimension to evaluate")
     parser.add_argument("--tune", action="store_true", default=True, help="Enable Triton autotuner during benchmark")
@@ -246,13 +248,13 @@ if __name__ == "__main__":
 
         # 1. Extract autotune configurations directly
         best_3part = get_best_config(fa3_3part_module)
-        best_4part = get_best_config(fa3_4part_module)
+        # best_4part = get_best_config(fa3_4part_module)
 
         # 2. Print metrics and configs (GEMM Benchmark Style)
         print(
             f"finish {shape_str} -> SDPA: {metrics['PyTorch_SDPA_TFLOPS']:.2f} TFLOPS, "
             f"3-Part: {metrics['Triton_3Part_TFLOPS']:.2f} TFLOPS, "
-            f"4-Part: {metrics['Triton_4Part_TFLOPS']:.2f} TFLOPS"
+            # f"4-Part: {metrics['Triton_4Part_TFLOPS']:.2f} TFLOPS"
         )
 
         if isinstance(best_3part, str):
@@ -260,10 +262,10 @@ if __name__ == "__main__":
         else:
             print(f"  3-Part best config: {best_3part.kwargs}, num_warps={getattr(best_3part, 'num_warps', 'N/A')}")
 
-        if isinstance(best_4part, str):
-            print(f"  4-Part best config: {best_4part}", flush=True)
-        else:
-            print(f"  4-Part best config: {best_4part.kwargs}, num_warps={getattr(best_4part, 'num_warps', 'N/A')}", flush=True)
+        # if isinstance(best_4part, str):
+        #     print(f"  4-Part best config: {best_4part}", flush=True)
+        # else:
+        #     print(f"  4-Part best config: {best_4part.kwargs}, num_warps={getattr(best_4part, 'num_warps', 'N/A')}", flush=True)
 
     df_raw = pd.DataFrame(data_log)
     
@@ -271,7 +273,11 @@ if __name__ == "__main__":
     print(f"\n{'='*70}")
     print("                    SUMMARY BENCHMARK RESULTS")
     print(f"{'='*70}")
-    print(df_raw[["SEQ_LEN", "PyTorch_SDPA_TFLOPS", "Triton_3Part_TFLOPS", "Triton_4Part_TFLOPS"]].to_string(index=False))
+    print(df_raw[["SEQ_LEN", 
+                  "PyTorch_SDPA_TFLOPS", 
+                  "Triton_3Part_TFLOPS", 
+                #   "Triton_4Part_TFLOPS"
+                  ]].to_string(index=False))
     
     # Plot results
     plot_benchmark_results(df_raw, head_dim=args.head_dim)
