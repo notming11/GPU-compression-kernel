@@ -587,7 +587,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run FlashAttention-3 Warp-Specialized Kernel")
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
-    parser.add_argument("--bm", type=int, default=256, help="BLOCK_SIZE_M")
+    parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
     parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--warps", type=int, default=8, help="Number of compute warps")

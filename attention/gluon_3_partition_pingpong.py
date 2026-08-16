@@ -417,6 +417,8 @@ def fa3_warp_specialized_kernel(
     BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
     num_stages: gl.constexpr, SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr
 ):
+    
+    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush = True)
     dtype: gl.constexpr = q_desc.dtype
 
     q_buf = gl.allocate_shared_memory(dtype, q_desc.block_type.shape, q_desc.layout)
@@ -527,7 +529,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
         for BM in (64, 128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
-        for warps in (4, 8, )
+        for warps in (4, 8, 16)
         for num_stages in (2, 3, 4, 5)
         for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, num_stages, SF)
