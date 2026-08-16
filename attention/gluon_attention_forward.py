@@ -396,11 +396,11 @@ def fa3_warp_specialized_kernel(
     )
     
     p_layout: gl.constexpr = gl.DotOperandLayout(
-                operand_index=0,
-                parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_K, num_warps),
-                k_width=32 // dtype.primitive_bitwidth,
-                meta=0,
-            )
+        operand_index=0,
+        parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_K, num_warps),
+        k_width=32 // dtype.primitive_bitwidth,
+        meta=0,
+    )
 
     gl.warp_specialize([
         (fa3_consumer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout)),
