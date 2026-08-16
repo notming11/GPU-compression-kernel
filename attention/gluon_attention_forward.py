@@ -157,11 +157,9 @@ class Counter:
     @gluon.must_use_result
     @gluon.jit
     def next(self, pred=True):
-        incr = self.index + gl.where(pred, 1, 0)
-        rollover = incr == self.num_barriers
-        index = gl.where(rollover, 0, incr)
-        phase = gl.where(rollover, self.phase ^ 1, self.phase)
-        return Counter(index, phase, self.num_barriers)
+        next_index = (self.index + 1) & (self.num_barriers - 1)
+        next_phase = gl.where(next_index == 0, self.phase ^ 1, self.phase)
+        return Counter(next_index, next_phase, self.num_barriers)
 
 @gluon.jit
 def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
@@ -476,8 +474,8 @@ def fa3_get_configs(pre_hook=None, tune=True):
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
         for warps in (4, 8, )
-        for num_stages in (2, 3, 4, 5)
-        for SF in (1, 2, 4, 8)
+        for num_stages in (2, 4)
+        for SF in (1, 2, 4, 8, )
         if valid(BM, BN, BK, warps, num_stages, SF)
     ]
     
@@ -588,11 +586,11 @@ if __name__ == "__main__":
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=256, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_N")
+    parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
+    parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=8, help="Number of compute warps")
-    parser.add_argument("--stages", type=int, default=3, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
 
