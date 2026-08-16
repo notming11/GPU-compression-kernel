@@ -7060,3 +7060,55 @@ print("Updated Counter phases successfully!")
 '
 #1786731279
 bash -i -c "load_module && start_gluon && cd /scratch/notming/attention && tpython gluon_fa3_forward.py"
+#1786863033
+load_module && start_gluon
+#1786863037
+cd ../attention/
+#1786863049
+tpython gluon_attention_forward.py 
+#1786863079
+nvidia-smi
+#1786863084
+kill -9 1405182
+#1786863244
+tpython gluon_attention_forward.py 
+#1786863438
+nvidia-smi
+#1786863445
+kill -9 1406648
+#1786863450
+tpython gluon_attention_forward.py > test.txt
+#1786863598
+nvidia-smi
+#1786863607
+kill -9 1407261 1407835
+#1786863925
+tpython gluon_attention_forward.py > test.txt
+#1786863975
+nvidia-smi
+#1786863982
+kill -9 1409641
+#1786863984
+tpython gluon_attention_forward.py > test.txt
+#1786864027
+nvidia-smi
+#1786864032
+
+#1786864042
+tpython gluon_attention_forward.py > test.txt
+#1786864048
+nvidia-smi
+#1786864058
+tpython gluon_attention_forward.py
+#1786864276
+nvidia-smi
+#1786864284
+kill -9 1410317
+#1786864291
+tpython gluon_attention_forward.py 
+#1786864384
+nvidia-smi
+#1786864388
+kill -9 1412020
+#1786864393
+tpython gluon_attention_forward.py 

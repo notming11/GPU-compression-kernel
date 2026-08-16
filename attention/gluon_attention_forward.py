@@ -233,7 +233,6 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]  # Dynamically equals HEAD_DIM
-    SPLIT_K: gl.constexpr = p.o_desc.block_type.shape[1]
     dtype: gl.constexpr = p.q_desc.dtype
 
     scheduler = SchedulerImpl.initialize(p.o_desc.shape[0], p.o_desc.shape[1], BLOCK_M, BLOCK_K)
@@ -244,7 +243,9 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
     
     num_steps = SEQ_LEN // BLOCK_N
 
-    sm_scale: gl.constexpr = 1/math.sqrt(HEAD_DIM)
+    # Pre-scale with log2(e) for fast hardware MUFU.EX2 (exp2) intrinsics
+    LOG2E: gl.constexpr = 1.4426950408889634
+    sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
     
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)  
@@ -259,33 +260,33 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         l_old = gl.zeros((BLOCK_M,), dtype=gl.float32, layout=s_layout)
         
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
-        
 
         for step in range(num_steps):
             mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
 
-            # First WGMMA (S = Q * K^T)
+            # 1. First WGMMA (S = Q * K^T)
             mma_s = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
             mma_s = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(kv_state.index))
             mma_s = mma_s.wait_num_outstanding(0)
             
             S_tile, mma_s = mma_s.take_result()
-            S_tile = S_tile * sm_scale
+            S_tile = S_tile * sm_scale_log2
             
-            # Online Softmax
+            # 2. Online Softmax Max Update & Rescaling
             m_new_tile = gl.max(S_tile, axis=1)
             m_new = gl.maximum(m_old, m_new_tile)
             
-            rescale_factor = gl.exp(m_old - m_new)
+            rescale_factor = gl.exp2(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
             
+            # Unconditional accumulator scaling (on step 0, 0 * rescale = 0)
             mma_o = mma_o.wait_num_outstanding(0)
-            
             o_acc, mma_o = mma_o.take_result()
             o_acc = o_acc * rescale_factor_m[:, None]
             mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
             
-            P_tile_f32 = gl.exp(S_tile - m_new[:, None])
+            # 3. Softmax Exponentiation & Sum
+            P_tile_f32 = gl.exp2(S_tile - m_new[:, None])
             
             p_sum = gl.sum(P_tile_f32, axis=1)
             l_old = l_old * rescale_factor + p_sum
@@ -301,7 +302,7 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
             )
             P_tile_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
-            # Second WGMMA (O += P * V)
+            # 4. Second WGMMA (O += P * V)
             mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_state.index))
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
