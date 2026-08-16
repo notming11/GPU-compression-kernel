@@ -7112,3 +7112,61 @@ nvidia-smi
 kill -9 1412020
 #1786864393
 tpython gluon_attention_forward.py 
+#1786832862
+load_module && start_gluon && cd ../attention
+#1786832953
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128.ncu-rep python gluon_3_partition_pingpong.py 
+#1786833104
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786833708
+sq
+#1786839966
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128.ncu-rep python gluon_3_partition_pingpong.py 
+#1786856424
+tpython gluon_3_partition_pingpong.py --tune > ptx_dump 
+#1786856639
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786856674
+scancel --me
+#1786856684
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786858731
+scancel --me
+#1786858820
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_suboptimal_4096_128.ncu-rep python gluon_attention_forward.py 
+#1786859666
+tpython benchmark.py 
+#1786860368
+nvidia-smi
+#1786860375
+tpython benchmark.py 
+#1786860511
+tpython gluon_attention_forward.py --tune
+#1786860596
+tpython benchmark.py 
+#1786861475
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_4096_128.ncu-rep python gluon_attention_forward.py 
+#1786861900
+tpython gluon_attention_forward.py
+#1786862033
+tpython benchmark.py 
+#1786862604
+tpython gluon_attention_forward.py
+#1786862638
+nvidia-smi
+#1786862659
+kill -9 2990853 3247101
+#1786862996
+debugjob
+#1786892151
+load_module && start_gluon && cd ../attention
+#1786892163
+tpython gluon_attention_forward.py 
+#1786892265
+tpython benchmark.py 
+#1786892878
+tpython benchmark.py --skip-4part
+#1786892934
+[A
+#1786892935
+tpython benchmark.py --skip-4part

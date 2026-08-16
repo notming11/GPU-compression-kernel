@@ -157,11 +157,9 @@ class Counter:
     @gluon.must_use_result
     @gluon.jit
     def next(self, pred=True):
-        incr = self.index + gl.where(pred, 1, 0)
-        rollover = incr == self.num_barriers
-        index = gl.where(rollover, 0, incr)
-        phase = gl.where(rollover, self.phase ^ 1, self.phase)
-        return Counter(index, phase, self.num_barriers)
+        next_index = (self.index + 1) & (self.num_barriers - 1)
+        next_phase = gl.where(next_index == 0, self.phase ^ 1, self.phase)
+        return Counter(next_index, next_phase, self.num_barriers)
 
 @gluon.jit
 def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
@@ -231,79 +229,84 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         q_state = q_state.next()
 
 @gluon.jit
-def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
+def fa3_consumer_partition(
+    p: PartitionArgs,
+    SchedulerImpl: gl.constexpr,
+    SEQ_LEN: gl.constexpr,
+    NUM_HEADS: gl.constexpr,
+    HEAD_DIM: gl.constexpr,
+):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
-    SPLIT_K: gl.constexpr = p.o_desc.block_type.shape[1]
     dtype: gl.constexpr = p.q_desc.dtype
 
-    scheduler = SchedulerImpl.initialize(p.o_desc.shape[0], p.o_desc.shape[1], BLOCK_M, BLOCK_K)
+    scheduler = SchedulerImpl.initialize(
+        p.o_desc.shape[0], p.o_desc.shape[1], BLOCK_M, BLOCK_K
+    )
 
     kv_state = Counter.create(0, p.kv_ready_bars.shape[0])
     acc_state = Counter.create(1, p.o_empty_bars.shape[0])
     q_state = Counter.create(0, p.q_empty_bar.shape[0])
-    
+
     num_steps = SEQ_LEN // BLOCK_N
-    sm_scale: gl.constexpr = 1.0 / math.sqrt(HEAD_DIM)
-    
+    LOG2E: gl.constexpr = 1.4426950408889634
+    sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
+
     for tile_idx in range(scheduler.get_num_tiles()):
-        pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)  
-        
+        pid_m, bh_idx, global_m_offset = scheduler.get_tile(
+            tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS
+        )
+
         mma_o = WGMMA.initialize(dtype, BLOCK_M, BLOCK_K, p.num_warps)
         mma_s_dummy = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
 
         m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_o.layout)
         s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_s_dummy.layout)
 
-        m_old = gl.full((BLOCK_M,), -float('inf'), dtype=gl.float32, layout=s_layout)
+        m_old = gl.full(
+            (BLOCK_M,), -float("inf"), dtype=gl.float32, layout=s_layout
+        )
         l_old = gl.zeros((BLOCK_M,), dtype=gl.float32, layout=s_layout)
-        
+
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
 
-        # -------------------------------------------------------------------
-        # PIPELINE PROLOGUE: Prime GEMM1 for step 0
-        # -------------------------------------------------------------------
+        # Prologue: Issue S_0 = Q * K_0^T
         mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
         mma_s = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
         mma_s = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(kv_state.index))
 
-        # -------------------------------------------------------------------
-        # MAIN PING-PONG LOOP: Steps 0 to num_steps - 2 (Branchless)
-        # -------------------------------------------------------------------
+        # Main Loop (Steps 0 to num_steps - 2)
         for step in range(num_steps - 1):
             next_kv_state = kv_state.next()
 
-            # 1. Issue GEMM1 for step i + 1 (Runs asynchronously on Tensor Cores)
-            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+            # 1. Wait for S_{step} and previous O accumulator
+            mma_s = mma_s.wait_num_outstanding(0)
+            S_tile, _ = mma_s.take_result()
+            S_tile = S_tile * sm_scale_log2
+
+
+            # 2. OVERLAP: Issue S_{step+1} BEFORE Softmax math
+            mbarrier.wait(
+                p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase
+            )
             mma_s_next = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
-            mma_s_next = mma_s_next.issue_async_mma(p.q_buf, p.k_bufs.index(next_kv_state.index))
+            mma_s_next = mma_s_next.issue_async_mma(
+                  p.q_buf, p.k_bufs.index(next_kv_state.index)
+            )     
 
-            # 2. Process Softmax for step i on ALUs (leaving GEMM1_{i+1} in flight)
-            S_tile, mma_s = mma_s.wait_num_outstanding(1).take_result()
-            S_tile = S_tile * sm_scale
-
+            # 3. Softmax ALU math runs concurrently while Tensor Cores execute S_{step+1}
             m_new_tile = gl.max(S_tile, axis=1)
             m_new = gl.maximum(m_old, m_new_tile)
-            
-            P_tile_f32 = gl.exp(S_tile - m_new[:, None])
+
+            rescale_factor = gl.exp2(m_old - m_new)
+            rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
+
+
+            P_tile_f32 = gl.exp2(S_tile - m_new[:, None])
             p_sum = gl.sum(P_tile_f32, axis=1)
-            
-            o_acc, mma_o = mma_o.wait_num_outstanding(1000).take_result()
-
-            if gl.max(m_new - m_old, axis=0) > 0:
-                rescale_factor = gl.exp(m_old - m_new)
-                rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
-
-                o_acc = o_acc * rescale_factor_m[:, None]
-                l_old = l_old * rescale_factor + p_sum
-            else:
-                o_acc = o_acc
-                l_old = l_old + p_sum
-
+            l_old = l_old * rescale_factor + p_sum
             m_old = m_new
-
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
 
             P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
             p_layout: gl.constexpr = gl.DotOperandLayout(
@@ -314,41 +317,40 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
             )
             P_tile_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
-            # 3. Issue GEMM2 for step i
-            mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_state.index))
+            mma_o = mma_o.wait_num_outstanding(0)
+            o_acc, mma_o = mma_o.take_result()
+            o_acc = o_acc * rescale_factor_m[:, None]
+            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
+            
+            # 4. Issue O += P * V
+            mma_o = mma_o.issue_async_mma(
+                P_tile_permuted, p.v_bufs.index(kv_state.index)
+            )
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-            
             kv_state = next_kv_state
             mma_s = mma_s_next
 
-        # -------------------------------------------------------------------
-        # PIPELINE EPILOGUE: Final Step (num_steps - 1)
-        # -------------------------------------------------------------------
-        S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
-        S_tile = S_tile * sm_scale
+        # Epilogue (Final Step num_steps - 1)
+        mma_s = mma_s.wait_num_outstanding(0)
+        S_tile, _ = mma_s.take_result()
+        S_tile = S_tile * sm_scale_log2
+
+        mma_o = mma_o.wait_num_outstanding(0)
+        o_acc, mma_o = mma_o.take_result()
 
         m_new_tile = gl.max(S_tile, axis=1)
         m_new = gl.maximum(m_old, m_new_tile)
-        
-        P_tile_f32 = gl.exp(S_tile - m_new[:, None])
-        p_sum = gl.sum(P_tile_f32, axis=1)
-        
-        o_acc, mma_o = mma_o.wait_num_outstanding(1000).take_result()
 
-        if gl.max(m_new - m_old, axis=0) > 0:
-            rescale_factor = gl.exp(m_old - m_new)
-            rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
+        rescale_factor = gl.exp2(m_old - m_new)
+        rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
 
-            o_acc = o_acc * rescale_factor_m[:, None]
-            l_old = l_old * rescale_factor + p_sum
-        else:
-            o_acc = o_acc
-            l_old = l_old + p_sum
-
-        m_old = m_new
-
+        o_acc = o_acc * rescale_factor_m[:, None]
         mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
+
+        P_tile_f32 = gl.exp2(S_tile - m_new[:, None])
+        p_sum = gl.sum(P_tile_f32, axis=1)
+        l_old = l_old * rescale_factor + p_sum
 
         P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
         p_layout: gl.constexpr = gl.DotOperandLayout(
@@ -359,20 +361,26 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         )
         P_tile_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
-        mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_state.index))
-
+        mma_o = mma_o.issue_async_mma(
+            P_tile_permuted, p.v_bufs.index(kv_state.index)
+        )
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+
+        # Reset counter state for the next persistent tile
         kv_state = kv_state.next()
 
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         q_state = q_state.next()
 
-        # Output Normalization & Sub-tile Store
-        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
-        l_final_m = gl.convert_layout(l_old, m_layout)
-        acc_final = (o_acc / l_final_m[:, None]).to(p.o_desc.dtype)
+        # Output normalization
+        mma_o = mma_o.wait_num_outstanding(0)
+        acc, mma_o = mma_o.take_result()
 
-        acc_state = store_acc_to_smem_subtile(p, acc_final, acc_state)
+        l_final_m = gl.convert_layout(l_old, m_layout)
+        acc = acc / l_final_m[:, None]
+        acc = acc.to(p.o_desc.dtype)
+
+        acc_state = store_acc_to_smem_subtile(p, acc, acc_state)
 
 @gluon.jit
 def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
@@ -530,7 +538,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
         for warps in (4, 8, 16)
-        for num_stages in (2, 3, 4, 5)
+        for num_stages in (2, 4, )
         for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, num_stages, SF)
     ]
@@ -644,9 +652,9 @@ if __name__ == "__main__":
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
     parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_N")
-    parser.add_argument("--warps", type=int, default=8, help="Number of compute warps")
-    parser.add_argument("--stages", type=int, default=3, help="Number of pipeline stages for KV")
+    parser.add_argument("--stages", type=int, default=4, help="Number of pipeline stages for KV")
     parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
+    parser.add_argument("--warps", type=int, default=8, help="Number of compute warps")
     
     args = parser.parse_args()
 
