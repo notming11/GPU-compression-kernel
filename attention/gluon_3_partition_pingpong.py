@@ -535,7 +535,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
             pre_hook=pre_hook,
         )
         for BM in (64, 128, 256)
-        for BN in (64, 128, 256)
+        for BN in (128, )
         for BK in (64, 128, 256)
         for warps in (4, 8, 16)
         for num_stages in (2, 4, )
@@ -650,10 +650,10 @@ if __name__ == "__main__":
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_N")
-    parser.add_argument("--stages", type=int, default=4, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
+    parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
+    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=8, help="Number of compute warps")
     
     args = parser.parse_args()

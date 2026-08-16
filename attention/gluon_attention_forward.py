@@ -295,6 +295,7 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
 
             P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
             P_tile_permuted = gl.convert_layout(P_tile_f16, p_layout)
+            # P_tile_permuted = P_tile_f16
 
             # 4. Second WGMMA (O += P * V)
             mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_state.index))
@@ -620,6 +621,10 @@ if __name__ == "__main__":
     
     torch.set_printoptions(profile="full")
     torch.set_printoptions(linewidth=20000)
+    
+    os.environ["MLIR_ENABLE_DUMP"]="1"
+    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/3_partition_4096_128"
+    os.makedirs(os.path.dirname(os.environ["MLIR_DUMP_PATH"]), exist_ok=True)
 
     for SEQ_LEN, HEAD_DIM in sizes:
         BATCH = max(1, 16384//SEQ_LEN)
