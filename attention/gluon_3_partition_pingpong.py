@@ -295,8 +295,7 @@ def fa3_consumer_partition(
             )     
 
             # 3. Softmax ALU math runs concurrently while Tensor Cores execute S_{step+1}
-            m_new_tile = gl.max(S_tile, axis=1)
-            m_new = gl.maximum(m_old, m_new_tile)
+            m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
 
             rescale_factor = gl.exp2(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
@@ -330,8 +329,7 @@ def fa3_consumer_partition(
         mma_o = mma_o.wait_num_outstanding(0)
         o_acc, mma_o = mma_o.take_result()
 
-        m_new_tile = gl.max(S_tile, axis=1)
-        m_new = gl.maximum(m_old, m_new_tile)
+        m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
 
         rescale_factor = gl.exp2(m_old - m_new)
         rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
@@ -644,10 +642,10 @@ if __name__ == "__main__":
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_N")
-    parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
+    parser.add_argument("--stages", type=int, default=4, help="Number of pipeline stages for KV")
+    parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=8, help="Number of compute warps")
     
     args = parser.parse_args()
