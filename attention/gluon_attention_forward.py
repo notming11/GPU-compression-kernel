@@ -230,7 +230,7 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         q_state = q_state.next()
 
 @gluon.jit
-def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr):
+def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
     BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]  # Dynamically equals HEAD_DIM
@@ -253,9 +253,6 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         
         mma_o = WGMMA.initialize(dtype, BLOCK_M, BLOCK_K, p.num_warps)
         mma_s_dummy = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
-
-        m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_o.layout)
-        s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_s_dummy.layout)
 
         m_old = gl.full((BLOCK_M,), -float('inf'), dtype=gl.float32, layout=s_layout)
         l_old = gl.zeros((BLOCK_M,), dtype=gl.float32, layout=s_layout)
@@ -295,7 +292,6 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
 
             P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
             P_tile_permuted = gl.convert_layout(P_tile_f16, p_layout)
-            # P_tile_permuted = P_tile_f16
 
             # 4. Second WGMMA (O += P * V)
             mma_o = mma_o.issue_async_mma(P_tile_permuted, p.v_bufs.index(kv_state.index))
@@ -401,9 +397,12 @@ def fa3_warp_specialized_kernel(
         k_width=32 // dtype.primitive_bitwidth,
         meta=0,
     )
+    
+    m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_K, num_warps))
+    s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_N, num_warps))
 
     gl.warp_specialize([
-        (fa3_consumer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout)),
+        (fa3_consumer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
         (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
     ], [1, 1], [24, 24])
