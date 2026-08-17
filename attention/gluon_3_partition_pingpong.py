@@ -300,7 +300,7 @@ def fa3_consumer_partition(
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
             # 3. Wait for S_next WGMMA
-            mma_s = mma_s.wait_num_outstanding(0)
+            mma_s = mma_s.wait_num_outstanding(1)
             S_tile = mma_s.take_result()[0]
             S_tile = S_tile * sm_scale_log2
 
@@ -320,7 +320,7 @@ def fa3_consumer_partition(
             # 5. Wait for O += P_cur * V_{j-1} WGMMA & rescale O_i
             mma_o = mma_o.wait_num_outstanding(0)
             pv_tile = mma_o.take_result()[0]
-            o_acc = o_acc * rescale_factor_m[:, None] + pv_tile
+            o_acc = (o_acc + pv_tile) * rescale_factor_m[:, None]
             o_acc = gl.cast(o_acc, dtype)
 
             # 6. Release KV buffer stage j-1
@@ -653,10 +653,10 @@ if __name__ == "__main__":
         
     BATCH, NUM_HEADS = 2, 16
     sizes = [
-        # (4096, 128),
-        (256, 64),
-        (512, 128),
-        (8192, 256)
+        (4096, 128),
+        # (256, 64),
+        # (512, 128),
+        # (8192, 256)
     ]
     
     torch.set_printoptions(profile="full")
