@@ -7170,3 +7170,115 @@ tpython benchmark.py --skip-4part
 [A
 #1786892935
 tpython benchmark.py --skip-4part
+#1786932462
+load_module && start_gluon && cd ../attention
+#1786932477
+tpython gluon_3_partition_pingpong.py 
+#1786932888
+nvidia-smi
+#1786932896
+kill -9 1658480 1659066
+#1786932900
+tpython gluon_3_partition_pingpong.py 
+#1786935264
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_1674287/KOOEU547QBPC2PKXTOS6YVIBFBNHP4RNCCH5VIV7W2V2TNCWEG6Q/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1786891685
+load_module && start_gluon && cd ../attention
+#1786891703
+tpython gluon_attention_forward.py 
+#1786891738
+tpython benchmark.py 
+#1786892132
+debugjob
+#1786904409
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/3_partition_4096_128" python gluon_attention_forward.py 
+#1786904526
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/3_partition_pingpong_4096_128" python gluon_3_partition_pingpong.py 
+#1786905364
+tpython gluon_attention_forward.py 
+#1786906609
+tpython benchmark.py --skip-4part
+#1786907645
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/3_partition_pingpong_suboptimal_4096_128" python gluon_3_partition_pingpong.py 
+#1786908098
+tpython benchmark.py --skip-4part
+#1786918904
+tpython gluon_3_partition_pingpong.py 
+#1786918983
+tpython benchmark.py --skip-4part
+#1786920199
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/3_partition_pingpong_suboptimal_4096_128" python gluon_3_partition_pingpong.py 
+#1786920610
+tpython gluon_3_partition_pingpong.py 
+#1786920682
+tpython benchmark.py --skip-4part
+#1786921491
+tpython gluon_3_partition_pingpong.py 
+#1786921535
+tpython benchmark.py --skip-4part
+#1786921712
+tpython gluon_3_partition_pingpong.py 
+#1786921734
+tpython benchmark.py --skip-4part
+#1786924427
+tpython gluon_3_partition_pingpong.py 
+#1786924497
+tpython benchmark.py --skip-4part
+#1786924906
+tpython gluon_3_partition_pingpong.py 
+#1786925004
+tpython benchmark.py --skip-4part
+#1786930982
+tpython gluon_3_partition_pingpong.py 
+#1786893548
+load_module && start_gluon && cd ../attention
+#1786893558
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786895081
+sq
+#1786896114
+scancel 782899
+#1786897111
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786897120
+sq
+#1786922668
+apptainer exec $SCRATCH/sparse.sif --nvccli ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_suboptimal_4096_128 python gluon_3_partition_pingpong.py 
+#1786922685
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_suboptimal_4096_128 python gluon_3_partition_pingpong.py 
+#1786925493
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3958640/I3Z2NR23ALPE3K4GVH5WHQ4XMPRGNC2S5T5JSHJRKCNX2CQ6YZAQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1786925617
+ptxas -v --gpu-name=sm_90a --maxrregcount=256 compiler_scratch/triton_cache_3958640/I3Z2NR23ALPE3K4GVH5WHQ4XMPRGNC2S5T5JSHJRKCNX2CQ6YZAQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1786925883
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128 python gluon_3_partition_pingpong.py 
+#1786925937
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_4096_128 python gluon_attention_forward.py 
+#1786927380
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786927382
+sq
+#1786931719
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_1498481/GPUMBIOAF3KQL7IUUFRCHJWMWXM5W5XJW7YTFHRRB54HI64PI5AA/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1786932444
+debugjob
+#1786981135
+load_module && start_gluon && cd ../attention
+#1786981144
+tpython gluon_3_partition_pingpong.py 
+#1786982599
+tpython gluon_3_partition_pingpong.py > test.txt
+#1786982683
+tpython gluon_3_partition_pingpong.py 
+#1786983873
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_66508/EEJ5CFVLM5J75VA5UNE4WLNMO23YG3MGPSL5Z36U57ITIL3I74TQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1786983902
+tpython gluon_3_partition_pingpong.py --tune
+#1786984157
+tpython gluon_attention_forward.py --tune
+#1786984240
+tpython gluon_3_partition_pingpong.py --tune
+#1786984421
+tpython gluon_3_partition_pingpong.py
+#1786985112
+tpython gluon_3_partition_pingpong.py --tune
