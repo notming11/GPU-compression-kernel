@@ -270,19 +270,21 @@ def fa3_consumer_partition(
         l_old = gl.zeros((BLOCK_M,), dtype=gl.float32, layout=s_layout)
 
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
+        
+        mma_s_curr = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
+        mma_s_next = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
 
         # Prologue: Issue S_0 = Q * K_0^T
         mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
-        mma_s = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
-        mma_s = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(kv_state.index))
+        mma_s_curr = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(kv_state.index))
 
         # Main Loop (Steps 0 to num_steps - 2)
         for step in range(num_steps - 1):
             next_kv_state = kv_state.next()
 
             # 1. Wait for S_{step} and previous O accumulator
-            mma_s = mma_s.wait_num_outstanding(0)
-            S_tile, _ = mma_s.take_result()
+            mma_s_curr = mma_s.wait_num_outstanding(0)
+            S_tile, _ = mma_s_curr.take_result()
             S_tile = S_tile * sm_scale_log2
 
             # 2. OVERLAP: Issue S_{step+1} BEFORE Softmax math
@@ -319,7 +321,7 @@ def fa3_consumer_partition(
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
             kv_state = next_kv_state
-            mma_s = mma_s_next
+            mma_s_curr = mma_s_next
 
         # Epilogue (Final Step num_steps - 1)
         mma_s = mma_s.wait_num_outstanding(0)
@@ -642,10 +644,10 @@ if __name__ == "__main__":
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_N")
-    parser.add_argument("--stages", type=int, default=4, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=8, help="SUBTILE_FACTOR")
+    parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
+    parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=8, help="Number of compute warps")
     
     args = parser.parse_args()
