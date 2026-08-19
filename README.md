@@ -88,3 +88,7 @@ sbatch compression/sbatch_sh/trillium/11.1_benchmark.sh
 
 - **GPU**: NVIDIA H100 SXM 80GB (Hopper, sm_90a)
 - **Key features used**: TMA (Tensor Memory Accelerator), WGMMA (Warp-Group Matrix Multiply Accumulate), warp specialization, structured sparsity (2:4)
+
+## Acknowledgements
+
+- Sparse WGMMA operations in Triton/Gluon used throughout this project rely on a custom sparse WGMMA implementation developed by my mentor in **stoicc** (not publicly available).
