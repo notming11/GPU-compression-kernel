@@ -254,6 +254,9 @@ def fa3_consumer_partition(
     num_steps = SEQ_LEN // BLOCK_N
     LOG2E: gl.constexpr = 1.4426950408889634
     sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
+    
+    mma_s_impl: gl.constexpr = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
+    mma_o_impl: gl.constexpr = WGMMA.initialize(dtype, BLOCK_M, BLOCK_K, p.num_warps)
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)
@@ -269,8 +272,7 @@ def fa3_consumer_partition(
         # PROLOGUE: Compute S_0 = Q * K_0^T -> convert to P_cur (FP16/BF16)
         # ------------------------------------------------------------------
         mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
-        mma_s = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
-        mma_s = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(kv_state.index))
+        mma_s = mma_s_impl.issue_async_mma(p.q_buf, p.k_bufs.index(kv_state.index))
 
         mma_s = mma_s.wait_num_outstanding(0)
         S_tile = mma_s.take_result()[0]
@@ -292,12 +294,10 @@ def fa3_consumer_partition(
 
             # 1. Issue S_next = Q * K_j^T asynchronously
             mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-            mma_s = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(next_kv_state.index))
+            mma_s = mma_s_impl.issue_async_mma(p.q_buf, p.k_bufs.index(next_kv_state.index))
 
             # 2. Issue O += P_cur * V_{j-1} asynchronously
-            mma_o = WGMMA.initialize(dtype, BLOCK_M, BLOCK_K, p.num_warps)
-            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+            mma_o = mma_o_impl.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
             # 3. Wait for S_next WGMMA
             mma_s = mma_s.wait_num_outstanding(1)
@@ -331,8 +331,7 @@ def fa3_consumer_partition(
         # EPILOGUE: Final V tile & Output Normalization
         # ------------------------------------------------------------------
         # Issue final O += P_last * V_{Tc-1}
-        mma_o = WGMMA.initialize(dtype, BLOCK_M, BLOCK_K, p.num_warps)
-        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+        mma_o = mma_o_impl.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
         # FIX: Wait for WGMMA execution to complete BEFORE signaling buffer release
         mma_o = mma_o.wait_num_outstanding(0)
@@ -594,6 +593,8 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             GroupedPersistentTileScheduler(8),
             SEQ_LEN, HEAD_DIM, NUM_HEADS
         )
+        
+        return O, kernel.best_config
     else:
         manual_config["BK"] = HEAD_DIM
         hook_kwargs = {
@@ -622,7 +623,21 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             num_warps=manual_config["warps"]
         )
 
-    return O
+        return O, manual_config
+
+def get_best_config(module):
+    """Extracts best_config from module autotuner cache or direct attributes."""
+    cache = getattr(module, "_autotune_cache", {})
+    for autotuner in cache.values():
+        if getattr(autotuner, "best_config", None) is not None:
+            return autotuner.best_config
+
+    for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
+        obj = getattr(module, name, None)
+        if obj and getattr(obj, "best_config", None) is not None:
+            return obj.best_config
+
+    return "Kernel Failed / Not Set"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run FlashAttention-3 Warp-Specialized Kernel")
@@ -671,9 +686,12 @@ if __name__ == "__main__":
         K = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         V = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         
-        O_triton = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
+        O_triton, config = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
         O_torch = torch.nn.functional.scaled_dot_product_attention(Q, K, V)
         
         torch.testing.assert_close(O_torch, O_triton, rtol=1e-2, atol=1e-2)
+        
+        if args.tune:
+            print(f"best config: {config}")
     
     print("Done. PyTorch reference matches Triton Gluon FA3 across dynamic head dimensions!")
