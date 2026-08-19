@@ -588,7 +588,7 @@ if __name__ == "__main__":
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
     parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")

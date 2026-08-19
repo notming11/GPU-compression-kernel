@@ -7282,3 +7282,95 @@ tpython gluon_3_partition_pingpong.py --tune
 tpython gluon_3_partition_pingpong.py
 #1786985112
 tpython gluon_3_partition_pingpong.py --tune
+#1787026423
+load_module && start_gluon && cd ../attention
+#1787026442
+tpython gluon_attention_pingpong_overlap.py 
+#1787026510
+kill -A
+#1787026518
+tpython gluon_attention_pingpong_overlap.py 
+#1787026571
+sudo fuser -k /dev/nvidia0
+#1787026577
+fuser -k /dev/nvidia0
+#1787026817
+tpython gluon_attention_forward.py 
+#1787026856
+tpython gluon_fa3_forward.py 
+#1787027176
+tpython gluon_attention_forward.py 
+#1787027203
+tpython gluon_attention_pingpong_overlap.py 
+#1787027599
+nvidia-smi
+#1787027608
+kill -9 2378745 2378907
+#1787027614
+tpython gluon_attention_pingpong_overlap.py 
+#1786988262
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o ./attention/Profiling/3_partition_pingpong_4096_128.ncu-rep python ./attention/gluon_3_partition_pingpong.py 
+#1786988274
+cd attention/
+#1786988288
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128.ncu-rep python gluon_3_partition_pingpong.py 
+#1786988306
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128 python gluon_3_partition_pingpong.py 
+#1786988386
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/3_partition_pingpong_4096_128" python gluon_3_partition_pingpong.py 
+#1786988506
+load_module && start_gluon
+#1786988513
+cd ../attention/
+#1786988514
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/3_partition_pingpong_4096_128" python gluon_3_partition_pingpong.py 
+#1786988577
+tpython gluon_3_partition_pingpong.py --tune
+#1786988943
+git reset ./MLIR_DUMP/3_partition_4096_128
+#1786988963
+git reset HEAD~1
+#1786989236
+tpython gluon_3_partition_pingpong.py
+#1786990486
+tpython gluon_3_partition_pingpong.py --tune
+#1787003913
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/3_partition_pingpong_4096_128 python gluon_3_partition_pingpong.py 
+#1787005295
+tpython gluon_3_partition_pingpong.py 
+#1787005458
+tpython gluon_3_partition_pingpong.py --tune
+#1787006332
+tpython gluon_3_partition_pingpong.py 
+#1787006582
+tpython gluon_3_partition_pingpong.py --tune
+#1787008090
+tpython gluon_3_partition_pingpong.py 
+#1787008137
+tpython gluon_3_partition_pingpong.py --tune
+#1787009142
+tpython benchmark.py --skip-4part
+#1787018840
+debugjob
+#1786985461
+cd attention/
+#1786985480
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786985484
+sq
+#1786990893
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1786990895
+sq
+#1786996776
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1787007127
+sq
+#1787009124
+scancel --me
+#1787092605
+load_module && start_gluon && cd ../at
+#1787092611
+cd ../attention
+#1787092628
+tpython gluon_attention_pingpong_overlap.py 

@@ -1,0 +1,11 @@
+sparse matmul store as sparse, fuse matmul with sparifier
+
+vs
+
+sparse matmul store as dense then sparsify
+
+expect fuse to be better
+
+continue on attention
+
+sparse marlin not good cuz in python

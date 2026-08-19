@@ -110,6 +110,9 @@ class PartitionArgs:
     o1_empty_bars: gl.shared_memory_descriptor
     o1_ready_bars: gl.shared_memory_descriptor
 
+    ping_bar: gl.shared_memory_descriptor
+    pong_bar: gl.shared_memory_descriptor
+
     SUBTILE_FACTOR: gl.constexpr
     num_warps: gl.constexpr
     
@@ -122,6 +125,7 @@ class PartitionArgs:
         kv_empty_bars, kv_ready_bars,
         o0_empty_bars, o0_ready_bars,
         o1_empty_bars, o1_ready_bars,
+        ping_bar, pong_bar,
         SUBTILE_FACTOR: gl.constexpr, 
         num_warps: gl.constexpr
     ):
@@ -149,6 +153,9 @@ class PartitionArgs:
         self.o1_empty_bars = o1_empty_bars
         self.o1_ready_bars = o1_ready_bars
         
+        self.ping_bar = ping_bar
+        self.pong_bar = pong_bar
+
         self.SUBTILE_FACTOR = gl.constexpr(SUBTILE_FACTOR)
         self.num_warps = gl.constexpr(num_warps)
 
@@ -205,7 +212,7 @@ def store_acc_to_smem_subtile(acc, o_bufs, o_empty_bars, o_ready_bars, acc_state
     return acc_state
 
 # ---------------------------------------------------------------------------
-# ATTENTION PARTITIONS (4-PARTITION WARP SPECIALIZATION WITH Q-ROW SLICING)
+# ATTENTION PARTITIONS (PRODUCER / CONSUMERS / STORE)
 # ---------------------------------------------------------------------------
 
 @gluon.jit
@@ -217,7 +224,6 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
 
     scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
 
-    # Empty barriers start at phase=1 for Producer wait
     kv_state = Counter.create(1, p.kv_empty_bars.shape[0])
     q_state = Counter.create(1, p.q_empty_bar.shape[0])
 
@@ -263,7 +269,11 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     kv_state = Counter.create(0, num_stages)
     
     num_steps = SEQ_LEN // BLOCK_N
-    sm_scale: gl.constexpr = 1.0 / math.sqrt(HEAD_DIM)
+    LOG2E: gl.constexpr = 1.4426950408889634
+    sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
+
+    ping_phase = 0
+    pong_phase = 1
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
@@ -279,58 +289,90 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
 
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
 
-        for step in range(num_steps):
-            mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+        # -------------------------------------------------------------------
+        # PROLOGUE: Issue S_0 = Q0 * K_0^T
+        # -------------------------------------------------------------------
+        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+        mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
+        mma_s = mma_s.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index))
 
-            # 1. GEMM 1: S = Q0 * K^T
+        # Signal WG1 that WG0 has finished issuing its Prologue WGMMA
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+
+        # Compute initial Softmax math for S_0
+        S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+        S_tile = S_tile * sm_scale_log2
+
+        m_old = gl.max(S_tile, axis=1)
+        P_tile_f32 = gl.exp2(S_tile - m_old[:, None])
+        l_old = gl.sum(P_tile_f32, axis=1)
+
+        P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
+        p_layout: gl.constexpr = gl.DotOperandLayout(
+            operand_index=0,
+            parent=mma_o.layout,
+            k_width=32 // dtype.primitive_bitwidth,
+            meta=0,
+        )
+        P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
+
+        # -------------------------------------------------------------------
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+        # -------------------------------------------------------------------
+        for step in range(1, num_steps):
+            next_kv_state = kv_state.next()
+
+            # 1. Issue S_next = Q0 * K_j^T
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
             mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index))
-            S_tile, mma_s = mma_s.wait_num_outstanding(1).take_result()
-            S_tile = S_tile * sm_scale
+            mma_s = mma_s.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index))
 
-            # 2. Online Softmax Statistics
-            m_new_tile = gl.max(S_tile, axis=1)
-            m_new = gl.maximum(m_old, m_new_tile)
-            
-            P_tile_f32 = gl.exp(S_tile - m_new[:, None])
-            p_sum = gl.sum(P_tile_f32, axis=1)
-
-            o_acc, mma_o = mma_o.wait_num_outstanding(1).take_result()
-            
-            # 4. Softmax Normalization
-            if gl.max(m_new - m_old, axis=0) > 0:
-                rescale_factor = gl.exp(m_old - m_new)
-                rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
-
-                o_acc = o_acc * rescale_factor_m[:, None]
-                l_old = l_old * rescale_factor + p_sum
-            else:
-                l_old = l_old + p_sum
-
-            m_old = m_new
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
-
-            P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
-            p_layout: gl.constexpr = gl.DotOperandLayout(
-                operand_index=0,
-                parent=mma_o.layout,
-                k_width=32 // dtype.primitive_bitwidth,
-                meta=0,
-            )
-            P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
-
-            # 5. GEMM 2: O1 += P * V
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
-            
+            # 2. Issue O0 += P_cur * V_{j-1}
+            mma_o = WGMMA(mma_o.acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
-            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-            kv_state = kv_state.next()
+            # 4. Softmax math on CUDA ALUs for S_next (Overlapped with WG1 issuing WGMMA)
+            S_tile, mma_s = mma_s.wait_num_outstanding(1).take_result()
+            S_tile = S_tile * sm_scale_log2
+            
+            # 3. Hand off Tensor Core issue slot to WG1
+            mbarrier.arrive(p.ping_bar.index(0), count=1)
 
+            m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+            rescale_factor = gl.exp2(m_old - m_new)
+            rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
+
+            P_next_f32 = gl.exp2(S_tile - m_new[:, None])
+            p_sum = gl.sum(P_next_f32, axis=1)
+
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0
+            mbarrier.wait(p.pong_bar.index(0), pong_phase)
+            pong_phase ^= 1
+
+            o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+            o_acc = o_acc * rescale_factor_m[:, None]
+            l_old = l_old * rescale_factor + p_sum
+            m_old = m_new
+
+            P_tile_f16 = gl.cast(P_next_f32, dtype=dtype)
+            P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
+
+            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+            kv_state = next_kv_state
+
+        # -------------------------------------------------------------------
+        # EPILOGUE: Final V Tile & Store
+        # -------------------------------------------------------------------
+        mma_o = WGMMA(mma_o.acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
+        kv_state = kv_state.next()
         q_state = q_state.next()
 
-        # Output Normalization & Sub-tile Store
         o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
         l_final_m = gl.convert_layout(l_old, m_layout)
         acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
@@ -354,7 +396,11 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     kv_state = Counter.create(0, num_stages)
     
     num_steps = SEQ_LEN // BLOCK_N
-    sm_scale: gl.constexpr = 1.0 / math.sqrt(HEAD_DIM)
+    LOG2E: gl.constexpr = 1.4426950408889634
+    sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
+
+    ping_phase = 1
+    pong_phase = 0
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
@@ -368,60 +414,97 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
         l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
 
+        # Wait for WG0 to complete its Prologue WGMMA issue
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+        ping_phase ^= 1
+
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
 
-        for step in range(num_steps):
-            mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+        # -------------------------------------------------------------------
+        # PROLOGUE: Issue S_0 = Q1 * K_0^T
+        # -------------------------------------------------------------------
+        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+        mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
+        mma_s = mma_s.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index))
 
-            # 1. GEMM 1: S = Q1 * K^T
+        # Hand off back to WG0
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+
+        # Compute initial Softmax math for S_0
+        S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+        S_tile = S_tile * sm_scale_log2
+
+        m_old = gl.max(S_tile, axis=1)
+        P_tile_f32 = gl.exp2(S_tile - m_old[:, None])
+        l_old = gl.sum(P_tile_f32, axis=1)
+
+        P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
+        p_layout: gl.constexpr = gl.DotOperandLayout(
+            operand_index=0,
+            parent=mma_o.layout,
+            k_width=32 // dtype.primitive_bitwidth,
+            meta=0,
+        )
+        P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
+
+        # -------------------------------------------------------------------
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+        # -------------------------------------------------------------------
+        for step in range(1, num_steps):
+            next_kv_state = kv_state.next()
+
+            # 1. Wait for WG0 signal before issuing Tensor Core operations
+            mbarrier.wait(p.ping_bar.index(0), ping_phase)
+            ping_phase ^= 1
+
+            # 2. Issue S_next = Q1 * K_j^T
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
             mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index))
-            S_tile, mma_s = mma_s.wait_num_outstanding(1).take_result()
-            S_tile = S_tile * sm_scale
+            mma_s = mma_s.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index))
 
-            # 2. Online Softmax Statistics
-            m_new_tile = gl.max(S_tile, axis=1)
-            m_new = gl.maximum(m_old, m_new_tile)
-            
-            P_tile_f32 = gl.exp(S_tile - m_new[:, None])
-            p_sum = gl.sum(P_tile_f32, axis=1)
-
-            o_acc, mma_o = mma_o.wait_num_outstanding(1).take_result()
-            
-            # 4. Softmax Normalization
-            if gl.max(m_new - m_old, axis=0) > 0:
-                rescale_factor = gl.exp(m_old - m_new)
-                rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
-
-                o_acc = o_acc * rescale_factor_m[:, None]
-                l_old = l_old * rescale_factor + p_sum
-            else:
-                l_old = l_old + p_sum
-
-            m_old = m_new
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
-
-            P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
-            p_layout: gl.constexpr = gl.DotOperandLayout(
-                operand_index=0,
-                parent=mma_o.layout,
-                k_width=32 // dtype.primitive_bitwidth,
-                meta=0,
-            )
-            P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
-
-            # 5. GEMM 2: O1 += P * V
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
-            
+            # 3. Issue O1 += P_cur * V_{j-1}
+            mma_o = WGMMA(mma_o.acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
-            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-            kv_state = kv_state.next()
 
+            # 5. Softmax math on CUDA ALUs for S_next (Overlapped with WG0 issuing WGMMA)
+            S_tile, mma_s = mma_s.wait_num_outstanding(1).take_result()
+            S_tile = S_tile * sm_scale_log2
+            
+            # 4. Hand off Tensor Core issue slot back to WG0
+            mbarrier.arrive(p.pong_bar.index(0), count=1)
+
+            m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+            rescale_factor = gl.exp2(m_old - m_new)
+            rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
+
+            P_next_f32 = gl.exp2(S_tile - m_new[:, None])
+            p_sum = gl.sum(P_next_f32, axis=1)
+
+            o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+            o_acc = o_acc * rescale_factor_m[:, None]
+            l_old = l_old * rescale_factor + p_sum
+            m_old = m_new
+
+            P_tile_f16 = gl.cast(P_next_f32, dtype=dtype)
+            P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
+
+            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+            kv_state = next_kv_state
+
+        # -------------------------------------------------------------------
+        # EPILOGUE: Final V Tile & Store
+        # -------------------------------------------------------------------
+        mma_o = WGMMA(mma_o.acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
+        kv_state = kv_state.next()
         q_state = q_state.next()
 
-        # Output Normalization & Sub-tile Store
         o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
         l_final_m = gl.convert_layout(l_old, m_layout)
         acc_final = (o_acc / l_final_m[:, None]).to(p.o1_desc.dtype)
@@ -481,6 +564,8 @@ def fa3_warp_specialized_kernel(
     BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
     num_stages: gl.constexpr, SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr
 ):
+    
+    gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush = True)
     dtype: gl.constexpr = q0_desc.dtype
     SUB_BM: gl.constexpr = BLOCK_SIZE_M // 2
 
@@ -504,9 +589,14 @@ def fa3_warp_specialized_kernel(
     o1_empty_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
     o1_ready_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
 
-    # Initialize barriers without pre-arriving
+    ping_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
+    pong_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
+
     mbarrier.init(q_ready_bar.index(0), count=1)
     mbarrier.init(q_empty_bar.index(0), count=2)
+
+    mbarrier.init(ping_bar.index(0), count=1)
+    mbarrier.init(pong_bar.index(0), count=1)
 
     for i in gl.static_range(num_stages):
         mbarrier.init(kv_ready_bars.index(i), count=1)
@@ -526,6 +616,7 @@ def fa3_warp_specialized_kernel(
         kv_empty_bars, kv_ready_bars,
         o0_empty_bars, o0_ready_bars,
         o1_empty_bars, o1_ready_bars,
+        ping_bar, pong_bar,
         SUBTILE_FACTOR, num_warps
     )
 
@@ -548,14 +639,13 @@ def fa3_get_configs(pre_hook=None, tune=True):
         if SUB_BM % 64 != 0:
             return False
 
-        SUB_BM = BM // 2
         fp16_elements = (
             (2 * SUB_BM * BK) +
             (2 * num_stages * BK * BN) +
             (2 * 2 * SUB_BM * (BK // SF))
         )
         fp16_smem_bytes = 2 * fp16_elements
-        num_barriers = 2 + (2 * num_stages) + 8
+        num_barriers = 2 + (2 * num_stages) + 8 + 2
         barrier_bytes = 8 * num_barriers
 
         total_smem_bytes = fp16_smem_bytes + barrier_bytes
@@ -696,6 +786,8 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             GroupedPersistentTileScheduler(8),
             SEQ_LEN, HEAD_DIM, NUM_HEADS
         )
+        
+        return O, kernel.best_config
     else:
         hook_kwargs = {
             "BLOCK_SIZE_M": manual_config["BM"],
@@ -725,14 +817,14 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             num_warps=manual_config["warps"]
         )
 
-    return O
+        return O, manual_config
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run Refactored FlashAttention-3 Warp-Specialized Kernel")
+    parser = argparse.ArgumentParser(description="Run FlashAttention-3 Ping-Pong + 2-Stage Async Kernel")
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="HEAD_DIM (BLOCK_SIZE_K)")
     parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
     parser.add_argument("--sf", type=int, default=1, help="SUBTILE_FACTOR")
@@ -756,33 +848,27 @@ if __name__ == "__main__":
         
     NUM_HEADS = 16
     sizes = [
-        # (512, 64),
-        # (4096, 128),
-        # (16384, 256),
-        (4096, 128)
+        (256, 128)
     ]
     
     torch.set_printoptions(profile="full")
     torch.set_printoptions(linewidth=20000)
-    
-    os.environ["MLIR_ENABLE_DUMP"]="1"
-    os.environ["MLIR_DUMP_PATH"] = "./MLIR_DUMP/4_partition_4096_128"
-    os.makedirs(os.path.dirname(os.environ["MLIR_DUMP_PATH"]), exist_ok=True)
 
     for SEQ_LEN, HEAD_DIM in sizes:
         BATCH = max(1, 16384 // SEQ_LEN)
-        # BATCH = 1
         print(f"\nTesting BATCH={BATCH}, NUM_HEADS={NUM_HEADS}, SEQ_LEN={SEQ_LEN}, HEAD_DIM={HEAD_DIM}", flush=True)
         
         Q = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         K = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         V = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         
-        O_triton = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
+        O_triton, config = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
         O_torch = torch.nn.functional.scaled_dot_product_attention(Q, K, V)
         
-        # torch.testing.assert_close(O_torch[:, :, :64, :], O_triton[:, :, :64, :], rtol=1e-2, atol=1e-2)
         torch.testing.assert_close(O_torch, O_triton, rtol=1e-2, atol=1e-2)
         print("PASS: PyTorch reference matches Triton Gluon FA3!")
+        
+        if args.tune:
+            print(f"best config: {config}")
     
     print("\nDone. All test cases passed successfully!", flush=True)
