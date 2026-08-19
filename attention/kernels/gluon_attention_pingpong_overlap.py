@@ -328,7 +328,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mma_s = mma_s.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index))
 
             # 2. Issue O0 += P_cur * V_{j-1}
-            mma_o = WGMMA(mma_o.acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
             # 4. Softmax math on CUDA ALUs for S_next (Overlapped with WG1 issuing WGMMA)
@@ -357,7 +357,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             P_tile_f16 = gl.cast(P_next_f32, dtype=dtype)
             P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
             kv_state = next_kv_state
@@ -365,7 +365,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         # -------------------------------------------------------------------
         # EPILOGUE: Final V Tile & Store
         # -------------------------------------------------------------------
-        mma_o = WGMMA(mma_o.acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -463,7 +463,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mma_s = mma_s.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index))
 
             # 3. Issue O1 += P_cur * V_{j-1}
-            mma_o = WGMMA(mma_o.acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
 
@@ -489,7 +489,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             P_tile_f16 = gl.cast(P_next_f32, dtype=dtype)
             P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
             kv_state = next_kv_state
@@ -497,7 +497,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         # -------------------------------------------------------------------
         # EPILOGUE: Final V Tile & Store
         # -------------------------------------------------------------------
-        mma_o = WGMMA(mma_o.acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -848,7 +848,7 @@ if __name__ == "__main__":
         
     NUM_HEADS = 16
     sizes = [
-        (256, 128)
+        (4096, 128)
     ]
     
     torch.set_printoptions(profile="full")
