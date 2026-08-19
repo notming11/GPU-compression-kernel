@@ -7374,3 +7374,897 @@ load_module && start_gluon && cd ../at
 cd ../attention
 #1787092628
 tpython gluon_attention_pingpong_overlap.py 
+#1787068630
+debugjob
+#1787107132
+load_module && start_gluon
+#1787107147
+tpython 7.6.4_compression_ws_optimization.py 
+#1787107166
+nvidia-smi
+#1787107171
+debugjob
+#1787107794
+ls -la /home/notming/links/scratch/
+#1787107802
+ls -la /home/notming/links/scratch/compression/ && echo "---" && ls -la /home/notming/links/scratch/attention/
+#1787107809
+ls /home/notming/links/scratch/compression/Benchmark/ && echo "---" && ls /home/notming/links/scratch/compression/compiler_scratch/ && echo "---" && ls /home/notming/links/scratch/gluon_spmm/ && echo "---" && ls /home/notming/links/scratch/note/
+#1787107813
+head -100 /home/notming/links/scratch/compression/11.1_2_kernel_baseline.py
+#1787107830
+head -60 /home/notming/links/scratch/compression/10.1_prune_acc.py && echo "===" && head -60 /home/notming/links/scratch/compression/7.8.1_prune_ws.py
+#1787107832
+head -60 /home/notming/links/scratch/attention/gluon_attention_pingpong_overlap.py && echo "===" && head -60 /home/notming/links/scratch/attention/gluon_fa3_forward.py && echo "===" && head -60 /home/notming/links/scratch/attention/gluon_attention_forward.py
+#1787107848
+cat /home/notming/links/scratch/compression/11.1_N=8192_750942.out | head -80
+#1787107850
+cat /home/notming/links/scratch/compression/10.1_N=16384_706955.out | head -80
+#1787107860
+cat /home/notming/links/scratch/compression/11.1_pruning_723267.out | head -40
+#1787107867
+cat /home/notming/links/scratch/compression/7.8.1_N=8192_694903.out | head -40
+#1787107877
+ls /home/notming/links/scratch/compression/Benchmark/ && echo "---" && ls /home/notming/links/scratch/attention/Benchmark/ && echo "---" && cat /home/notming/links/scratch/note/08-18.txt
+#1787107878
+head -80 /home/notming/links/scratch/attention/gluon_attention_pingpong_overlap.py
+#1787107886
+cat /home/notming/links/scratch/note/08-05.txt && echo "===" && cat /home/notming/links/scratch/note/08-11.txt
+#1787107887
+ls /home/notming/links/scratch/gluon_spmm/stoicc/ && ls /home/notming/links/scratch/gluon_spmm/trillium/
+#1787107894
+ls /home/notming/links/scratch/gluon_spmm/stoicc/kernels/ && ls /home/notming/links/scratch/gluon_spmm/stoicc/compression/
+#1787107895
+cat /home/notming/links/scratch/gluon_spmm/.gitignore 2>/dev/null || echo "no gitignore" && cat /home/notming/links/scratch/.gitignore
+#1787108056
+ls /home/notming/links/scratch/compression/Benchmark/archive/ && echo "---" && ls /home/notming/links/scratch/compression/Benchmark/v11.1/ && ls /home/notming/links/scratch/compression/Benchmark/v10.1/ && ls /home/notming/links/scratch/compression/Benchmark/v7.8.1/
+#1787108059
+ls /home/notming/links/scratch/gluon_spmm/stoicc/kernels/ && cat /home/notming/links/scratch/gluon_spmm/stoicc/__init__.py 2>/dev/null | head -30
+#1787108070
+cat /home/notming/links/scratch/compression/common.py | head -30 && echo "===" && ls /home/notming/links/scratch/compression/sbatch_sh/ && echo "===" && ls /home/notming/links/scratch/attention/sbatch_sh/
+#1787108074
+ls /home/notming/links/scratch/compression/sbatch_sh/rorqual/ && ls /home/notming/links/scratch/compression/sbatch_sh/trillium/ 2>/dev/null | head -10
+#1787108962
+grep -h "^from\|^import" /home/notming/links/scratch/compression/[0-9]*.py | sort -u
+#1787108966
+grep -h "^from\|^import" /home/notming/links/scratch/attention/gluon_*.py | sort -u
+#1787108980
+# Check which files import from each other (numbered file importing another numbered file)
+#1787108980
+grep -l "import gluon_ws_sparse\|from gluon_ws_sparse\|import gluon_ws_dense\|from gluon_ws_dense" /home/notming/links/scratch/compression/[0-9]*.py && echo "---" && \
+#1787108980
+grep "^from\|^import" /home/notming/links/scratch/compression/gluon_ws_sparse.py | grep -v "^from triton\|^import triton\|^import torch\|^import argparse\|^import os\|^import sys\|^import math\|^import importlib" | head -20 && echo "---" && \
+#1787108980
+grep "^from\|^import" /home/notming/links/scratch/compression/gluon_ws_dense.py | grep -v "^from triton\|^import triton\|^import torch\|^import argparse\|^import os\|^import sys\|^import math\|^import importlib" | head -20
+#1787109220
+# Get benchmark numbers for the README
+#1787109220
+echo "=== 11.1 e2e (first 5 shapes) ===" && head -30 /home/notming/links/scratch/compression/11.1_N=8192_750942.out | grep -E "TFLOPS|start" && echo "=== 11.1 pruning standalone (first 3) ===" && head -25 /home/notming/links/scratch/compression/11.1_pruning_723267.out | grep -E "TorchAO|Custom TMA|Benchmarking" && echo "=== 10.1 (first 3 shapes) ===" && head -30 /home/notming/links/scratch/compression/10.1_N=16384_706955.out | grep -E "Dense:|finish" && echo "=== 7.8.1 (first 3 shapes) ===" && head -30 /home/notming/links/scratch/compression/7.8.1_N=8192_694903.out | grep -E "finish"
+#1787109228
+# List the exact .py files we need to move to dev/ (everything numbered that's NOT a landmark)
+#1787109228
+ls /home/notming/links/scratch/compression/[0-9]*.py | grep -v "11.1_2_kernel_baseline\|10.1_prune_acc\|7.8.1_prune_ws" | sort
+#1787109288
+cat > /home/notming/links/scratch/README.md << 'READMEEOF'
+#1787109288
+# GPU Sparse Kernel Research
+
+#1787109288
+
+
+#1787109288
+GPU kernels for **2:4 structured sparse matrix multiplication** and **sparse attention** on NVIDIA Hopper (H100), written with [Triton](https://github.com/triton-lang/triton) and [Gluon](https://github.com/triton-lang/triton/tree/main/python/triton/experimental/gluon) (Triton's experimental low-level API for warp specialization, TMA, and explicit shared memory management).
+
+#1787109288
+
+
+#1787109288
+## Key Results — Sparse MatMul
+
+#1787109288
+
+
+#1787109288
+All benchmarks run on H100 SXM 80GB, measured in TFLOPS over 169 matrix shapes.
+
+#1787109288
+
+
+#1787109288
+### v11.1 — Two-Kernel Approach (Prune+Compress → Sparse MatMul)
+
+#1787109288
+
+
+#1787109288
+Separates pruning/compression into a standalone kernel, then feeds into the existing sparse WGMMA matmul.
+
+#1787109288
+
+
+#1787109288
+| Metric | Typical Value | Comparison |
+
+#1787109288
+|--------|--------------|------------|
+
+#1787109288
+| **E2E throughput** | ~990 TFLOPS | **1.5× dense WS** (~660 TFLOPS) |
+
+#1787109288
+| **Standalone prune+compress** | ~2750 GB/s | **3.2× TorchAO** C++ (~855 GB/s) |
+
+#1787109288
+
+
+#1787109288
+- Kernel: [`compression/kernels/11.1_2_kernel_baseline.py`](compression/kernels/11.1_2_kernel_baseline.py)
+
+#1787109288
+- E2E results: [`compression/results/11.1_N=8192_750942.out`](compression/results/11.1_N=8192_750942.out)
+
+#1787109288
+- Pruning results: [`compression/results/11.1_pruning_723267.out`](compression/results/11.1_pruning_723267.out)
+
+#1787109288
+
+
+#1787109288
+### v10.1 — Fused Output Pruning+Compression
+
+#1787109288
+
+
+#1787109288
+Fuses 2:4 pruning and metadata generation directly into the matmul accumulator writeback. Near-zero overhead compared to the pre-computed sparse baseline.
+
+#1787109288
+
+
+#1787109288
+| Metric | Typical Value | Comparison |
+
+#1787109288
+|--------|--------------|------------|
+
+#1787109288
+| **E2E throughput** | ~1060 TFLOPS | **~99% of precomp sparse** (~1070 TFLOPS) |
+
+#1787109288
+
+
+#1787109288
+- Kernel: [`compression/kernels/10.1_prune_acc.py`](compression/kernels/10.1_prune_acc.py)
+
+#1787109288
+- Results: [`compression/results/10.1_N=16384_706955.out`](compression/results/10.1_N=16384_706955.out)
+
+#1787109288
+
+
+#1787109288
+### v7.8.1 — Input Pruning (Negative Result)
+
+#1787109288
+
+
+#1787109288
+Prunes + compresses input tiles before the matmul. The compression overhead dominates — throughput drops to ~565 TFLOPS, **worse than dense** (~660 TFLOPS).
+
+#1787109288
+
+
+#1787109288
+- Kernel: [`compression/kernels/7.8.1_prune_ws.py`](compression/kernels/7.8.1_prune_ws.py)
+
+#1787109288
+- Results: [`compression/results/7.8.1_N=8192_694903.out`](compression/results/7.8.1_N=8192_694903.out)
+
+#1787109288
+
+
+#1787109288
+## Key Results — Attention (WIP)
+
+#1787109288
+
+
+#1787109288
+FlashAttention-3 style forward pass with warp specialization and ping-pong overlap, currently under active development.
+
+#1787109288
+
+
+#1787109288
+- Active kernel: [`attention/kernels/gluon_attention_pingpong_overlap.py`](attention/kernels/gluon_attention_pingpong_overlap.py)
+
+#1787109288
+- FA3 reference: [`attention/kernels/gluon_fa3_forward.py`](attention/kernels/gluon_fa3_forward.py)
+
+#1787109288
+- Baseline benchmarks: [`attention/results/`](attention/results/)
+
+#1787109288
+
+
+#1787109288
+## Directory Layout
+
+#1787109288
+
+
+#1787109288
+```
+
+#1787109288
+.
+
+#1787109288
+├── compression/              # 2:4 sparse matmul kernels
+
+#1787109288
+│   ├── kernels/              #   landmark / milestone kernels
+
+#1787109288
+│   ├── dev/                  #   development history (v1–v9, benchmarks, profiling)
+
+#1787109288
+│   ├── results/              #   .out benchmark logs + plots
+
+#1787109288
+│   ├── common.py             #   shared WGMMA helpers & tile scheduler
+
+#1787109288
+│   ├── gluon_ws_sparse.py    #   warp-specialized sparse matmul (imported by v11)
+
+#1787109288
+│   ├── gluon_ws_dense.py     #   warp-specialized dense matmul baseline
+
+#1787109288
+│   ├── prune.py              #   2:4 pruning reference impl
+
+#1787109288
+│   ├── compress_2_4.py       #   dense→sparse conversion
+
+#1787109288
+│   └── sbatch_sh/            #   Slurm job scripts
+
+#1787109288
+│
+
+#1787109288
+├── attention/                # FlashAttention-style kernels (WIP)
+
+#1787109288
+│   ├── kernels/              #   active attention kernels
+
+#1787109288
+│   ├── dev/                  #   experimental variants
+
+#1787109288
+│   ├── results/              #   benchmark outputs + plots
+
+#1787109288
+│   ├── common.py             #   → symlink to compression/common.py
+
+#1787109288
+│   └── sbatch_sh/            #   Slurm job scripts
+
+#1787109288
+│
+
+#1787109288
+├── gluon_spmm/               # (gitignored) packaged sparse matmul library
+
+#1787109288
+├── note/                     # dated research notes
+
+#1787109288
+└── practice/                 # learning / scratch experiments
+
+#1787109288
+```
+
+#1787109288
+
+
+#1787109288
+## Running
+
+#1787109288
+
+
+#1787109288
+Kernels run inside an Apptainer/Singularity container with Triton + PyTorch + CUDA 12.x:
+
+#1787109288
+
+
+#1787109288
+```bash
+
+#1787109288
+# Interactive
+
+#1787109288
+singularity exec --nv sparse.sif python compression/kernels/11.1_2_kernel_baseline.py
+
+#1787109288
+
+
+#1787109288
+# Via Slurm
+
+#1787109288
+sbatch compression/sbatch_sh/trillium/11.1_benchmark.sh
+
+#1787109288
+```
+
+#1787109288
+
+
+#1787109288
+## Hardware
+
+#1787109288
+
+
+#1787109288
+- **GPU**: NVIDIA H100 SXM 80GB (Hopper, sm_90a)
+
+#1787109288
+- **Key features used**: TMA (Tensor Memory Accelerator), WGMMA (Warp-Group Matrix Multiply Accumulate), warp specialization, structured sparsity (2:4)
+
+#1787109288
+READMEEOF
+
+#1787109288
+echo "DONE: root README.md"
+#1787109317
+cat > /home/notming/links/scratch/compression/README.md << 'EOF'
+#1787109317
+# Sparse MatMul Kernels (2:4 Structured Sparsity)
+
+#1787109317
+
+
+#1787109317
+Triton/Gluon kernels exploring runtime 2:4 pruning and compression fused with warp-specialized matrix multiplication on H100.
+
+#1787109317
+
+
+#1787109317
+## Version Progression
+
+#1787109317
+
+
+#1787109317
+The numbered files track the development history. Each major version explores a different approach:
+
+#1787109317
+
+
+#1787109317
+| Version | Approach | Key Insight |
+
+#1787109317
+|---------|----------|-------------|
+
+#1787109317
+| **1–3** | Single-tile compression | Layout transforms, PTX-level register shuffles for 2:4 metadata |
+
+#1787109317
+| **4–5** | Compression loop | Multi-tile tiled compression without persistence |
+
+#1787109317
+| **6** | Persistent compression | CTA-persistent tile scheduling |
+
+#1787109317
+| **7.0–7.5** | Pipelined compression | TMA async copy + software pipelining (double/triple buffering) |
+
+#1787109317
+| **7.6** | Warp-specialized (WS) | Split load/compute into separate warp groups |
+
+#1787109317
+| **7.7** | WS + separate warp buffers | 4-buffer design with independent warp staging |
+
+#1787109317
+| **7.8** | **WS + input pruning** | Prune+compress input tiles before matmul (**negative result — slower than dense**) |
+
+#1787109317
+| **8** | Benchmarking scripts | Systematic measurement across 169 shapes |
+
+#1787109317
+| **9** | Shape search / profiling | Find optimal tile shapes and sparsity ratios |
+
+#1787109317
+| **10** | **WS + output pruning** | Fuse pruning into accumulator writeback (**near-zero overhead**) |
+
+#1787109317
+| **11** | **Two-kernel baseline** | Separate prune+compress kernel → sparse matmul (**1.5× dense e2e**) |
+
+#1787109317
+
+
+#1787109317
+## Landmark Kernels (`kernels/`)
+
+#1787109317
+
+
+#1787109317
+### `11.1_2_kernel_baseline.py`
+
+#1787109317
+Two-kernel design: a standalone prune+compress kernel writes compressed sparse format, then the existing sparse WS matmul consumes it. Achieves **~990 TFLOPS** (1.5× dense, 3× TorchAO prune standalone).
+
+#1787109317
+
+
+#1787109317
+### `10.1_prune_acc.py`
+
+#1787109317
+Single-kernel: fuses 2:4 pruning into the matmul's accumulator-to-output writeback path. Achieves **~1060 TFLOPS** with near-zero overhead vs. pre-computed sparse.
+
+#1787109317
+
+
+#1787109317
+### `7.8.1_prune_ws.py`
+
+#1787109317
+Single-kernel: prunes + compresses each input tile inline during the load→compute pipeline. **Negative result**: compression latency on the critical path drops throughput to ~565 TFLOPS (worse than dense).
+
+#1787109317
+
+
+#1787109317
+## Shared Files
+
+#1787109317
+
+
+#1787109317
+| File | Purpose |
+
+#1787109317
+|------|---------|
+
+#1787109317
+| `common.py` | WGMMA instruction selection, tile scheduler, layout helpers |
+
+#1787109317
+| `gluon_ws_sparse.py` | Warp-specialized sparse matmul (the "matmul" half of v11's two-kernel design) |
+
+#1787109317
+| `gluon_ws_dense.py` | Warp-specialized dense matmul baseline |
+
+#1787109317
+| `prune.py` | Reference 2:4 pruning (top-2 of every 4 elements) |
+
+#1787109317
+| `compress_2_4.py` | Dense → compressed sparse format conversion |
+
+#1787109317
+
+
+#1787109317
+## Directory Structure
+
+#1787109317
+
+
+#1787109317
+```
+
+#1787109317
+compression/
+
+#1787109317
+├── kernels/           # Landmark kernels (with symlinks to shared files)
+
+#1787109317
+├── dev/               # All intermediate experiments (v1–v9 + v7.8.2, benchmarks)
+
+#1787109317
+├── results/           # Benchmark .out logs
+
+#1787109317
+│   └── plots/         # Benchmark visualization PNGs
+
+#1787109317
+├── common.py          # Shared helpers
+
+#1787109317
+├── gluon_ws_sparse.py # Sparse matmul kernel
+
+#1787109317
+├── gluon_ws_dense.py  # Dense matmul kernel
+
+#1787109317
+├── prune.py           # 2:4 pruning
+
+#1787109317
+├── compress_2_4.py    # Compression logic
+
+#1787109317
+├── sbatch_sh/         # Slurm job scripts
+
+#1787109317
+└── Profiling/         # NSight profiles
+
+#1787109317
+```
+
+#1787109317
+EOF
+
+#1787109317
+echo "DONE: compression/README.md"
+#1787109334
+cat > /home/notming/links/scratch/attention/README.md << 'EOF'
+#1787109334
+# Attention Kernels (WIP)
+
+#1787109334
+
+
+#1787109334
+FlashAttention-3 style forward pass kernels with warp specialization for H100, written in Triton/Gluon.
+
+#1787109334
+
+
+#1787109334
+## Active Kernels (`kernels/`)
+
+#1787109334
+
+
+#1787109334
+### `gluon_attention_pingpong_overlap.py`
+
+#1787109334
+Main active kernel. Implements ping-pong overlapping of Q·K^T and softmax·V WGMMA stages with warp-specialized load/compute partitions. Uses persistent tile scheduling over (batch, head, seq) dimensions.
+
+#1787109334
+
+
+#1787109334
+### `gluon_fa3_forward.py`
+
+#1787109335
+FlashAttention-3 reference implementation in Gluon with warp specialization. Used as the performance baseline.
+
+#1787109335
+
+
+#1787109335
+### `gluon_attention_forward.py`
+
+#1787109335
+Simpler forward-pass variant without ping-pong overlap. Useful for correctness validation.
+
+#1787109335
+
+
+#1787109335
+## Development Files (`dev/`)
+
+#1787109335
+
+
+#1787109335
+| File | Description |
+
+#1787109335
+|------|-------------|
+
+#1787109335
+| `gluon_3_partition_pingpong.py` | 3-partition ping-pong experiment |
+
+#1787109335
+| `fused-attention-ws-device-tma-hopper-or-blackwell.py` | Reference WS attention from Triton upstream |
+
+#1787109335
+
+
+#1787109335
+## Baseline Benchmarks
+
+#1787109335
+
+
+#1787109335
+FA3 baseline results and throughput plots are in [`results/`](results/).
+
+#1787109335
+
+
+#1787109335
+## Shared Files
+
+#1787109335
+
+
+#1787109335
+| File | Purpose |
+
+#1787109335
+|------|---------|
+
+#1787109335
+| `common.py` | WGMMA instruction selection and layout helpers (hardlinked to `compression/common.py`) |
+
+#1787109335
+| `benchmark.py` | Benchmark harness |
+
+#1787109335
+| `pytorch_sdpa.py` | PyTorch SDPA reference for correctness comparison |
+
+#1787109335
+
+
+#1787109335
+## Directory Structure
+
+#1787109335
+
+
+#1787109335
+```
+
+#1787109335
+attention/
+
+#1787109335
+├── kernels/           # Active attention kernels (with symlinks to shared files)
+
+#1787109335
+├── dev/               # Experimental variants
+
+#1787109335
+├── results/           # Benchmark .out logs + plots
+
+#1787109335
+├── common.py          # → hardlink to compression/common.py
+
+#1787109335
+├── benchmark.py       # Benchmark harness
+
+#1787109335
+├── sbatch_sh/         # Slurm job scripts
+
+#1787109335
+└── Profiling/         # NSight profiles
+
+#1787109335
+```
+
+#1787109335
+EOF
+
+#1787109335
+echo "DONE: attention/README.md"
+#1787109352
+cd /home/notming/links/scratch/compression && \
+#1787109352
+mkdir -p kernels dev results/plots && \
+#1787109352
+echo "DONE: created directories"
+#1787109368
+cd /home/notming/links/scratch
+#1787109369
+cd /home/notming/links/scratch/compression && \
+#1787109369
+mv 11.1_2_kernel_baseline.py kernels/ && \
+#1787109369
+mv 10.1_prune_acc.py kernels/ && \
+#1787109369
+mv 7.8.1_prune_ws.py kernels/ && \
+#1787109369
+echo "DONE: moved landmark kernels"
+#1787109400
+cd /home/notming/links/scratch
+#1787109402
+cd /home/notming/links/scratch/compression && \
+#1787109402
+mv 1B_sliced_tensor_no_gather.py 1_sliced_tensor.py \
+#1787109402
+   2A_compression.py 2B_test.py 2C_test_no_gather.py \
+#1787109402
+   3A_match_metadata.py 3B_test_wgmma.py 3C_test_wgmma_opt_layout.py \
+#1787109402
+   3D_single_tile_no_gather.py 3E_single_tile_no_gather_or_convert_layout.py \
+#1787109402
+   3F.1_single_tile_reduce_interlayout.py 3F_single_tile_reduce.py \
+#1787109402
+   3G_single_tile_no_gather_nz_convert_layout.py 3H_single_tile_no_gather_better_layout.py \
+#1787109402
+   3I_single_tile_ptx.py 3J_single_tile_ptx_match.py 3T.py \
+#1787109402
+   4_test_without_convert_layout.py \
+#1787109402
+   5.1_compression_loop_with_convert.py 5_compression_loop.py \
+#1787109402
+   6_compression_persistent.py \
+#1787109402
+   7.1_compression_pipeline_with_convert.py 7.2_compression_pipeline_no_gather.py \
+#1787109402
+   7.3.1_compression_pipeline_reduce_interlayout.py 7.3_compression_pipeline_reduce.py \
+#1787109402
+   7.4_compression_pipeline_ptx_prototype.py \
+#1787109402
+   7.5.1_compression_pipeline_ldmatrix.py 7.5.2_compression_pipeline_different_compression.py \
+#1787109402
+   7.5_compression_pipeline_no_ldmatrix.py \
+#1787109402
+   7.6.1_compression_ws_outstanding_mmas.py 7.6.2_compression_ws_register_buffer.py \
+#1787109402
+   7.6.3_compress_ws_2_partition.py 7.6.4_compression_ws_optimization.py \
+#1787109402
+   7.6_compression_ws.py \
+#1787109402
+   7.7.1_ws_seperate_warp_4_buf.py 7.8.2_prune_ws_2_partition.py \
+#1787109402
+   7_compression_pipeline.py \
+#1787109402
+   8.11.1_benchmark_pruning.py 8.11.2_benchmark_pruning_cuSPARSElt.py \
+#1787109402
+   8.11_benchmark_2_kernel.py 8.1_benchmark_gather.py 8.2_benchmark_compression.py \
+#1787109402
+   8.3_benchmark_single_tile.py 8.5_benchmark_loop.py \
+#1787109402
+   8.7.1_benchmark_ws.py 8.7_benchmark_persistent.py \
+#1787109402
+   9.1_find_max_shape.py 9.2_find_best_ratio.py 9.3_find_best_shape.py 9.4_profile_ws.py \
+#1787109402
+   dev/ && \
+#1787109402
+echo "DONE: moved dev files"
+#1787109415
+cd /home/notming/links/scratch
+#1787109416
+cd /home/notming/links/scratch/compression && \
+#1787109416
+mv *.out results/ && \
+#1787109416
+mv Benchmark/archive Benchmark/v* results/plots/ && \
+#1787109416
+echo "DONE: moved results"
+#1787109436
+cd /home/notming/links/scratch
+#1787109437
+cd /home/notming/links/scratch/compression && \
+#1787109438
+mv _note.txt per_thread.txt ptx_explanation.md ptx_dump.txt ptx_check.py layout.txt test_script.py sanity_check.py dev/ 2>/dev/null
+#1787109438
+# Move gluon_pipeline* and gluon_loop/persistent/single_tile to dev/ (they are intermediate)
+#1787109438
+mv gluon_loop.py gluon_persistent.py gluon_single_tile.py gluon_pipeline.py gluon_pipeline_dense.py gluon_pipeline_sparse.py dev/ && \
+#1787109438
+echo "DONE: moved remaining dev files"
+#1787109551
+cd /home/notming/links/scratch
+#1787109552
+ls -la /home/notming/links/scratch/compression/ && echo "=== kernels ===" && ls -la /home/notming/links/scratch/compression/kernels/ && echo "=== dev ===" && ls /home/notming/links/scratch/compression/dev/ && echo "=== results ===" && ls /home/notming/links/scratch/compression/results/
+#1787109555
+ls -la /home/notming/links/scratch/attention/
+#1787109605
+cd /home/notming/links/scratch/compression && \
+#1787109605
+mv 9_profiling_note.txt gluon_ws.py dev/ 2>/dev/null || true
+#1787109605
+rmdir Benchmark 2>/dev/null || true
+#1787109605
+# Create symlinks in compression/kernels
+#1787109605
+cd /home/notming/links/scratch/compression/kernels && \
+#1787109605
+ln -sf ../common.py common.py && \
+#1787109605
+ln -sf ../prune.py prune.py && \
+#1787109605
+ln -sf ../compress_2_4.py compress_2_4.py && \
+#1787109605
+ln -sf ../gluon_ws_sparse.py gluon_ws_sparse.py && \
+#1787109605
+ln -sf ../gluon_ws_dense.py gluon_ws_dense.py
+#1787109605
+# Create symlinks in compression/dev
+#1787109605
+cd /home/notming/links/scratch/compression/dev && \
+#1787109605
+ln -sf ../common.py common.py && \
+#1787109605
+ln -sf ../prune.py prune.py && \
+#1787109605
+ln -sf ../compress_2_4.py compress_2_4.py && \
+#1787109605
+ln -sf ../gluon_ws_sparse.py gluon_ws_sparse.py && \
+#1787109605
+ln -sf ../gluon_ws_dense.py gluon_ws_dense.py
+#1787109605
+echo "DONE: compression symlinks & cleanup"
+#1787109632
+cd /home/notming/links/scratch
+#1787109633
+cd /home/notming/links/scratch/attention && \
+#1787109633
+mkdir -p kernels dev results/plots && \
+#1787109633
+mv gluon_attention_pingpong_overlap.py gluon_fa3_forward.py gluon_attention_forward.py kernels/ && \
+#1787109633
+mv fused-attention-ws-device-tma-hopper-or-blackwell.py gluon_3_partition_pingpong.py ptx_dump test.txt dev/ 2>/dev/null || true
+#1787109633
+# Move results
+#1787109633
+mv FA3_baseline_*.out results/ 2>/dev/null || true
+#1787109633
+mv Benchmark/*.png results/plots/ 2>/dev/null || true
+#1787109633
+rmdir Benchmark 2>/dev/null || true
+#1787109633
+# Symlinks in attention/kernels
+#1787109633
+cd /home/notming/links/scratch/attention/kernels && \
+#1787109633
+ln -sf ../common.py common.py && \
+#1787109633
+ln -sf ../benchmark.py benchmark.py && \
+#1787109633
+ln -sf ../pytorch_sdpa.py pytorch_sdpa.py
+#1787109633
+# Symlinks in attention/dev
+#1787109633
+cd /home/notming/links/scratch/attention/dev && \
+#1787109633
+ln -sf ../common.py common.py && \
+#1787109633
+ln -sf ../benchmark.py benchmark.py && \
+#1787109633
+ln -sf ../pytorch_sdpa.py pytorch_sdpa.py
+#1787109633
+echo "DONE: attention reorganization & symlinks"
+#1787109640
+cd /home/notming/links/scratch
+#1787109641
+ls -la /home/notming/links/scratch/compression/ && echo "=== compression/kernels ===" && ls -la /home/notming/links/scratch/compression/kernels/ && echo "=== compression/results ===" && ls /home/notming/links/scratch/compression/results/ && echo "=== attention ===" && ls -la /home/notming/links/scratch/attention/ && echo "=== attention/kernels ===" && ls -la /home/notming/links/scratch/attention/kernels/ && echo "=== attention/results ===" && ls /home/notming/links/scratch/attention/results/
+#1787109665
+ls -la /home/notming/links/scratch/compression/Benchmark/ && rmdir /home/notming/links/scratch/compression/Benchmark/ 2>/dev/null || true
+#1787109675
+rm -rf /home/notming/links/scratch/compression/Benchmark/
+#1787109718
+load_module && start_gluon && tpython -m py_compile /home/notming/links/scratch/compression/kernels/11.1_2_kernel_baseline.py \
+#1787109718
+  /home/notming/links/scratch/compression/kernels/10.1_prune_acc.py \
+#1787109718
+  /home/notming/links/scratch/compression/kernels/7.8.1_prune_ws.py \
+#1787109718
+  /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py \
+#1787109718
+  /home/notming/links/scratch/attention/kernels/gluon_fa3_forward.py && echo "ALL SYNTAX CHECKS PASSED"
+#1787109731
+cd /home/notming/links/scratch
+#1787109732
+test -e /home/notming/links/scratch/compression/kernels/common.py && \
+#1787109732
+test -e /home/notming/links/scratch/compression/kernels/prune.py && \
+#1787109732
+test -e /home/notming/links/scratch/compression/kernels/compress_2_4.py && \
+#1787109732
+test -e /home/notming/links/scratch/compression/kernels/gluon_ws_sparse.py && \
+#1787109732
+test -e /home/notming/links/scratch/compression/kernels/gluon_ws_dense.py && \
+#1787109732
+test -e /home/notming/links/scratch/attention/kernels/common.py && \
+#1787109732
+test -e /home/notming/links/scratch/attention/kernels/benchmark.py && \
+#1787109732
+test -e /home/notming/links/scratch/attention/kernels/pytorch_sdpa.py && \
+#1787109732
+echo "ALL SYMLINKS VALID AND RESOLVED"

@@ -281,7 +281,7 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
             mma_o = mma_o.wait_num_outstanding(0)
             o_acc, mma_o = mma_o.take_result()
             o_acc = o_acc * rescale_factor_m[:, None]
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, BLOCK_M, BLOCK_K)
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, BLOCK_M, BLOCK_K)
             
             # 3. Softmax Exponentiation & Sum
             P_tile_f32 = gl.exp2(S_tile - m_new[:, None])
