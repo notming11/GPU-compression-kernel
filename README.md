@@ -23,16 +23,16 @@ Separates pruning/compression into a standalone kernel, then feeds into the exis
 
 ### v10.1 — Fused Output Pruning+Compression
 
-Fuses 2:4 pruning and metadata generation directly into the matmul accumulator writeback. Near-zero overhead compared to the pre-computed sparse baseline.
+Fuses 2:4 pruning and metadata generation directly into the matmul accumulator writeback. Near-zero overhead compared to the pre-computed sparse baseline. Reduced overhead compare to 2 kernels soluton.
 
 | Metric | Typical Value | Comparison |
 |--------|--------------|------------|
-| **E2E throughput** | ~1060 TFLOPS | **~99% of precomp sparse** (~1070 TFLOPS) |
+| **E2E throughput** | ~1060 TFLOPS | **~99% of precomp sparse** (~1070 TFLOPS) / **> than 2 kernel** (~1050 TFLOPS)|
 
 - Kernel: [`compression/kernels/10.1_prune_acc.py`](compression/kernels/10.1_prune_acc.py)
-- Results: [`compression/results/10.1_N=16384_706955.out`](compression/results/10.1_N=16384_706955.out)
+- Results: [`compression/results/10.1_N=8192_815845.out`](compression/results/10.1_N=8192_815845.out)
 
-![](./compression/results/plots/v10.1/v10.1_Benchmark_16384.png)
+![](./compression/results/plots/v10.1/v10.1_benchmark_8192.png)
 
 ### v7.8.1 — Input Pruning (Negative Result)
 

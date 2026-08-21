@@ -118,7 +118,7 @@ def benchmark_kernels_ws(M, N, K, comp_module, version):
 
         # Warmup and benchmark the isolated compression time
         _ = run_torchao_compress()
-        ms_torchao_compress = safe_bench(run_torchao_compress, use_cudagraph=False)
+        ms_torchao_compress = safe_bench(run_torchao_compress, use_cudagraph=True)
         
     except Exception as e:
         print(f"TorchAO Compress failed: {e}")
@@ -224,7 +224,7 @@ if __name__ == "__main__":
 
     # Only 11.1 remains
     paths = {
-        "11.1": "./11.1_2_kernel_baseline.py",
+        "11.1": "/home/notming/links/scratch/compression/kernels/11.1_2_kernel_baseline.py",
     }
 
     try:
