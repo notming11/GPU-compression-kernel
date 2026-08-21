@@ -8268,3 +8268,235 @@ test -e /home/notming/links/scratch/attention/kernels/benchmark.py && \
 test -e /home/notming/links/scratch/attention/kernels/pytorch_sdpa.py && \
 #1787109732
 echo "ALL SYMLINKS VALID AND RESOLVED"
+#1787155636
+exit
+#1787155621
+ssh trig0002
+#1787155643
+ssh trig0003
+#1787154939
+load_module && start_gluon & cd ../attention
+#1787154947
+load_module
+#1787154953
+start_gluon
+#1787154958
+cd ../attention/
+#1787154975
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787155003
+nvidia-smi
+#1787155009
+kill -9 230070
+#1787155054
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787155094
+nvidia-smi
+#1787155099
+kill -9 230236
+#1787155176
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787155252
+nvidia-smi
+#1787155258
+kill -9 230566
+#1787155398
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787155432
+sudo fuser -k -9 /dev/nvidia*
+#1787155439
+pkill -9 -u $USER -f python
+#1787155442
+nvidia-smi
+#1787155591
+source ~/.bachrc
+#1787155594
+source ~/.bashrc
+#1787155596
+gkill
+#1787156111
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787156141
+gkill
+#1787156154
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787156312
+gkill
+#1787156428
+tpython dev/gluon_fa3_forward.py 
+#1787171316
+load_module && start_gluon && cd ../attention
+#1787171347
+tpython kernels/test.py 
+#1787171401
+gkill
+#1787171422
+tpython kernels/test.py 
+#1787173278
+gkill
+#1787173291
+tpython kernels/test.py 
+#1787173340
+gkill
+#1787173341
+compute-sanitizer --tool=synccheck apptainer exec --nvccli $SCRATCH/sparse.sif python -c "
+import torch
+from your_module import run_fa3_kernel
+
+Q = torch.randn((2, 8, 256, 64), device='cuda', dtype=torch.float16)
+K = torch.randn((2, 8, 256, 64), device='cuda', dtype=torch.float16)
+V = torch.randn((2, 8, 256, 64), device='cuda', dtype=torch.float16)
+
+config = {'BM': 128, 'BN': 128, 'BK': 64, 'num_stages': 2, 'SF': 2, 'warps': 4}
+run_fa3_kernel(Q, K, V, tune=False, manual_config=config)
+torch.cuda.synchronize()
+print('DONE')
+"
+#1787173378
+compute-sanitizer --tool=synccheck apptainer exec --nvccli $SCRATCH/sparse.sif python -c "
+import torch
+from gluon_attention_pingpong_overlap import run_fa3_kernel
+
+Q = torch.randn((2, 8, 256, 64), device='cuda', dtype=torch.float16)
+K = torch.randn((2, 8, 256, 64), device='cuda', dtype=torch.float16)
+V = torch.randn((2, 8, 256, 64), device='cuda', dtype=torch.float16)
+
+config = {'BM': 128, 'BN': 128, 'BK': 64, 'num_stages': 2, 'SF': 2, 'warps': 4}
+run_fa3_kernel(Q, K, V, tune=False, manual_config=config)
+torch.cuda.synchronize()
+print('DONE')
+"
+#1787173425
+compute-sanitizer --tool=synccheck apptainer exec --nvccli $SCRATCH/sparse.sif python -c "
+import torch
+from kernels.gluon_attention_pingpong_overlap import run_fa3_kernel
+
+Q = torch.randn((2, 8, 256, 64), device='cuda', dtype=torch.float16)
+K = torch.randn((2, 8, 256, 64), device='cuda', dtype=torch.float16)
+V = torch.randn((2, 8, 256, 64), device='cuda', dtype=torch.float16)
+
+config = {'BM': 128, 'BN': 128, 'BK': 64, 'num_stages': 2, 'SF': 2, 'warps': 4}
+run_fa3_kernel(Q, K, V, tune=False, manual_config=config)
+torch.cuda.synchronize()
+print('DONE')
+"
+#1787173468
+nvidia-smi
+#1787173471
+gkill
+#1787173743
+tpython kernels/test.py 
+#1787173769
+gkill
+#1787173777
+tpython kernels/test.py 
+#1787173820
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787154561
+load_module && start_gluon
+#1787154565
+cd ../attention/
+#1787154579
+dir
+#1787154592
+tpython kernels/gluon_attention_forward.py 
+#1787154678
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787154917
+debugjob
+#1787168149
+head -n 120 README.md
+#1787168154
+tail -n +121 README.md
+#1787168159
+grep -rn "stoicc" . || true
+#1787168166
+head -n 40 compression/common.py
+#1787168173
+grep -n -C 5 "sparse" compression/common.py
+#1787168176
+cat README.md
+#1787168183
+python3 -c '
+#1787168183
+with open("README.md", "r") as f:
+#1787168183
+    content = f.read()
+#1787168183
+
+#1787168183
+new_content = content.rstrip() + """
+#1787168183
+
+#1787168183
+## Acknowledgements
+#1787168183
+
+#1787168183
+- Sparse WGMMA operations in Triton/Gluon used throughout this project rely on a custom sparse WGMMA implementation developed by my mentor in **stoicc** (not publicly available).
+#1787168183
+"""
+#1787168183
+
+#1787168183
+with open("README.md", "w") as f:
+#1787168183
+    f.write(new_content)
+#1787168183
+'
+#1787168193
+git diff README.md
+#1787240708
+load_module && start_gluon
+#1787240731
+cd dev/
+#1787240741
+tpython 8.11_benchmark_2_kernel.py 
+#1787240767
+cd ..
+#1787240774
+tpython dev/8.11_benchmark_2_kernel.py 
+#1787240789
+tpython dev/8.11_benchmark_2_kernel.py 11.1 8192
+#1787243173
+tpython dev/10.2_prune_acc_2_kernel.py --tune
+#1787244060
+tpython dev/8.10_benchmark_post_compression.py 
+#1787244070
+tpython dev/8.10_benchmark_post_compression.py 8192
+#1787253822
+load_module && start_gluon && cd ../attention
+#1787253846
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787254312
+gkill
+#1787254317
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787254345
+gkill
+#1787254346
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787254720
+gkill
+#1787254726
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787254905
+gkill
+#1787255115
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787255135
+gkill
+#1787255657
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787255677
+gkill
+#1787255730
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787255760
+gkill
+#1787255775
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787255907
+gkill
+#1787255909
+tpython kernels/gluon_attention_pingpong_overlap.py --tune

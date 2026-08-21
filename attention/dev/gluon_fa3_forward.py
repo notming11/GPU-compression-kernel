@@ -308,7 +308,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
                 l_old = l_old + p_sum
 
             m_old = m_new
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
             P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
             p_layout: gl.constexpr = gl.DotOperandLayout(
@@ -320,7 +320,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
             # 5. GEMM 2: O1 += P * V
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
@@ -399,7 +399,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
                 l_old = l_old + p_sum
 
             m_old = m_new
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
             P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
             p_layout: gl.constexpr = gl.DotOperandLayout(
@@ -411,7 +411,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
             # 5. GEMM 2: O1 += P * V
-            mma_o = WGMMA(o_acc, gl.constexpr(True), mma_o.layout, SUB_BM, BLOCK_K)
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
