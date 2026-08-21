@@ -18,7 +18,7 @@ from triton.experimental.gluon.language.nvidia.hopper import (
     fence_async_shared,
 )
 
-from common import WGMMA
+from common import WGMMA, pick_wgmma_layout
 
 # ---------------------------------------------------------------------------
 # WORKSPACE & ENVIRONMENT OVERRIDES
@@ -216,7 +216,7 @@ def store_acc_to_smem_subtile(acc, o_bufs, o_empty_bars, o_ready_bars, acc_state
 # ---------------------------------------------------------------------------
 
 @gluon.jit
-def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
+def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
     SUB_BM: gl.constexpr = p.q0_desc.block_type.shape[0]
     BLOCK_M: gl.constexpr = SUB_BM * 2
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
@@ -253,7 +253,7 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         q_state = q_state.next()
 
 @gluon.jit
-def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
+def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
     SUB_BM: gl.constexpr = p.q0_desc.block_type.shape[0]
     BLOCK_M: gl.constexpr = SUB_BM * 2
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
@@ -272,17 +272,13 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     LOG2E: gl.constexpr = 1.4426950408889634
     sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
 
-    ping_phase = 0
-    pong_phase = 1
+    pong_phase = 0
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
         
         mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
         mma_s_dummy = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-
-        m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_o.layout)
-        s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_s_dummy.layout)
 
         m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
         l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
@@ -308,12 +304,6 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         l_old = gl.sum(P_tile_f32, axis=1)
 
         P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
-        p_layout: gl.constexpr = gl.DotOperandLayout(
-            operand_index=0,
-            parent=mma_o.layout,
-            k_width=32 // dtype.primitive_bitwidth,
-            meta=0,
-        )
         P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
         # -------------------------------------------------------------------
@@ -321,6 +311,10 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         # -------------------------------------------------------------------
         for step in range(1, num_steps):
             next_kv_state = kv_state.next()
+            
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0
+            mbarrier.wait(p.pong_bar.index(0), pong_phase)
+            pong_phase ^= 1
 
             # 1. Issue S_next = Q0 * K_j^T
             mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
@@ -332,7 +326,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
             # 4. Softmax math on CUDA ALUs for S_next (Overlapped with WG1 issuing WGMMA)
-            S_tile, mma_s = mma_s.wait_num_outstanding(1).take_result()
+            S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
             S_tile = S_tile * sm_scale_log2
             
             # 3. Hand off Tensor Core issue slot to WG1
@@ -345,28 +339,28 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             P_next_f32 = gl.exp2(S_tile - m_new[:, None])
             p_sum = gl.sum(P_next_f32, axis=1)
 
-            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0
-            mbarrier.wait(p.pong_bar.index(0), pong_phase)
-            pong_phase ^= 1
-
             o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
             o_acc = o_acc * rescale_factor_m[:, None]
             l_old = l_old * rescale_factor + p_sum
             m_old = m_new
 
-            P_tile_f16 = gl.cast(P_next_f32, dtype=dtype)
-            P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
+            P_cur_permuted = gl.convert_layout(gl.cast(P_next_f32, dtype=dtype), p_layout)
 
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
             kv_state = next_kv_state
-
+            
         # -------------------------------------------------------------------
         # EPILOGUE: Final V Tile & Store
         # -------------------------------------------------------------------
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+        pong_phase ^= 1
+        
         mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+        
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
@@ -380,7 +374,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         acc_state = store_acc_to_smem_subtile(acc_final, p.o0_bufs, p.o0_empty_bars, p.o0_ready_bars, acc_state, p.SUBTILE_FACTOR)
 
 @gluon.jit
-def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
+def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
     SUB_BM: gl.constexpr = p.q1_desc.block_type.shape[0]
     BLOCK_M: gl.constexpr = SUB_BM * 2
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
@@ -399,17 +393,13 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     LOG2E: gl.constexpr = 1.4426950408889634
     sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
 
-    ping_phase = 1
-    pong_phase = 0
+    ping_phase = 0
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
         
         mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
         mma_s_dummy = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-
-        m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_o.layout)
-        s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=mma_s_dummy.layout)
 
         m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
         l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
@@ -439,12 +429,6 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         l_old = gl.sum(P_tile_f32, axis=1)
 
         P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
-        p_layout: gl.constexpr = gl.DotOperandLayout(
-            operand_index=0,
-            parent=mma_o.layout,
-            k_width=32 // dtype.primitive_bitwidth,
-            meta=0,
-        )
         P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
 
         # -------------------------------------------------------------------
@@ -466,9 +450,8 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
-
             # 5. Softmax math on CUDA ALUs for S_next (Overlapped with WG0 issuing WGMMA)
-            S_tile, mma_s = mma_s.wait_num_outstanding(1).take_result()
+            S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
             S_tile = S_tile * sm_scale_log2
             
             # 4. Hand off Tensor Core issue slot back to WG0
@@ -486,8 +469,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             l_old = l_old * rescale_factor + p_sum
             m_old = m_new
 
-            P_tile_f16 = gl.cast(P_next_f32, dtype=dtype)
-            P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
+            P_cur_permuted = gl.convert_layout(gl.cast(P_next_f32, dtype=dtype), p_layout)
 
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
@@ -497,6 +479,9 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         # -------------------------------------------------------------------
         # EPILOGUE: Final V Tile & Store
         # -------------------------------------------------------------------
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+        ping_phase ^= 1
+        
         mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
@@ -512,7 +497,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         acc_state = store_acc_to_smem_subtile(acc_final, p.o1_bufs, p.o1_empty_bars, p.o1_ready_bars, acc_state, p.SUBTILE_FACTOR)
 
 @gluon.jit
-def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
+def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
     SUB_BM: gl.constexpr = p.o0_desc.block_type.shape[0]
     BLOCK_M: gl.constexpr = SUB_BM * 2
     SPLIT_K: gl.constexpr = p.o0_desc.block_type.shape[1]
@@ -565,7 +550,7 @@ def fa3_warp_specialized_kernel(
     num_stages: gl.constexpr, SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr
 ):
     
-    gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush = True)
+    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush = True)
     dtype: gl.constexpr = q0_desc.dtype
     SUB_BM: gl.constexpr = BLOCK_SIZE_M // 2
 
@@ -619,12 +604,22 @@ def fa3_warp_specialized_kernel(
         ping_bar, pong_bar,
         SUBTILE_FACTOR, num_warps
     )
+    
+    p_layout: gl.constexpr = gl.DotOperandLayout(
+        operand_index=0,
+        parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_K, num_warps),
+        k_width=32 // dtype.primitive_bitwidth,
+        meta=0,
+    )
+    
+    m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_K, num_warps))
+    s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_N, num_warps))
 
     gl.warp_specialize([
-        (fa3_consumer_wg0, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
-        (fa3_consumer_wg1, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
-        (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
-        (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM)),
+        (fa3_consumer_wg0, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
+        (fa3_consumer_wg1, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
+        (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
+        (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
     ], [num_warps, 1, 1])
 
 # ---------------------------------------------------------------------------
@@ -698,7 +693,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
         for BM in (128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
-        for warps in (4, 8)
+        for warps in (4, )
         for num_stages in (2, 3, 4, 5, 6)
         for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, num_stages, SF)
@@ -848,11 +843,18 @@ if __name__ == "__main__":
         
     NUM_HEADS = 16
     sizes = [
-        (4096, 128)
+        (4096, 128),
+        # (256, 64),
+        # (512, 128),
+        # (8192, 256)
     ]
     
     torch.set_printoptions(profile="full")
     torch.set_printoptions(linewidth=20000)
+    
+    os.environ["MLIR_ENABLE_DUMP"]="1"
+    os.environ["MLIR_DUMP_PATH"] = "/home/notming/links/scratch/attention/MLIR_DUMP/4_partition_pingpong_4096_128"
+    os.makedirs(os.path.dirname(os.environ["MLIR_DUMP_PATH"]), exist_ok=True)
 
     for SEQ_LEN, HEAD_DIM in sizes:
         BATCH = max(1, 16384 // SEQ_LEN)

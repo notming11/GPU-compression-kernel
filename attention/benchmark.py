@@ -12,7 +12,7 @@ import triton
 # ---------------------------------------------------------------------------
 # WORKSPACE & ENVIRONMENT OVERRIDES
 # ---------------------------------------------------------------------------
-SCRATCH_WORKSPACE = "compiler_scratch"
+SCRATCH_WORKSPACE = "sbatch_compiler_scratch"
 JOB_ID = str(os.getpid())
 
 os.makedirs(SCRATCH_WORKSPACE, exist_ok=True)
@@ -187,9 +187,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Dynamic Triton FA3 Kernel Benchmarking Suite")
     
     # Kernel File Paths
-    parser.add_argument("--module-3part", type=str, default="./gluon_attention_forward.py", help="3-Partition non-pingpong script")
-    parser.add_argument("--module-3part-pingpong", type=str, default="./gluon_3_partition_pingpong.py", help="3-Partition pingpong script")
-    parser.add_argument("--module-4part", type=str, default="./gluon_fa3_forward.py", help="4-Partition script")
+    parser.add_argument("--module-3part", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_forward.py", help="3-Partition non-pingpong script")
+    parser.add_argument("--module-4part", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py", help="4-Partition script")
     
     # Execution Flags
     parser.add_argument("--skip-3part", action="store_true", help="Skip 3-Partition non-pingpong kernel")
@@ -219,7 +218,6 @@ if __name__ == "__main__":
     # Load targets dynamically
     candidate_modules = {
         "3-Part (Standard)": (args.module_3part, args.skip_3part),
-        "3-Part (PingPong)": (args.module_3part_pingpong, args.skip_3part_pingpong),
         "4-Part": (args.module_4part, args.skip_4part),
     }
 
@@ -289,4 +287,5 @@ if __name__ == "__main__":
     print(df_raw[display_cols].to_string(index=False))
     
     # Plotting
-    plot_benchmark_results(df_raw, head_dim=args.head_dim, active_kernel_names=list(active_modules.keys()))
+    plot_benchmark_results(df_raw, head_dim=args.head_dim, active_kernel_names=list(active_modules.keys()), 
+                           output_dir="/home/notming/links/scratch/attention/results/plots")

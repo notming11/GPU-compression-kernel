@@ -2,6 +2,7 @@
 gluon_spmm/
 
 compiler_scratch/
+sbatch_compiler_scratch/
 .triton_cache/
 triton_env/
 

@@ -4,7 +4,7 @@ GPU kernels for **2:4 structured sparse matrix multiplication** and **sparse att
 
 ## Key Results — Sparse MatMul
 
-All benchmarks run on H100 SXM 80GB, measured in TFLOPS over 169 matrix shapes.
+All benchmarks run on H100 SXM 80GB, measured in TFLOPS over 169 matrix shapes. (Shape are sorted in descending order of their size in graphs)
 
 ### v11.1 — Two-Kernel Approach (Prune+Compress → Sparse MatMul)
 
@@ -17,7 +17,9 @@ Separates pruning/compression into a standalone kernel, then feeds into the exis
 
 - Kernel: [`compression/kernels/11.1_2_kernel_baseline.py`](compression/kernels/11.1_2_kernel_baseline.py)
 - E2E results: [`compression/results/11.1_N=8192_750942.out`](compression/results/11.1_N=8192_750942.out)
+![](./compression/results/plots/v11.1/v11.1_Benchmark_8192.png)
 - Pruning results: [`compression/results/11.1_pruning_723267.out`](compression/results/11.1_pruning_723267.out)
+![](./compression/results/plots/v11.1/v11.1_Compression_Benchmark.png)
 
 ### v10.1 — Fused Output Pruning+Compression
 
@@ -30,6 +32,8 @@ Fuses 2:4 pruning and metadata generation directly into the matmul accumulator w
 - Kernel: [`compression/kernels/10.1_prune_acc.py`](compression/kernels/10.1_prune_acc.py)
 - Results: [`compression/results/10.1_N=16384_706955.out`](compression/results/10.1_N=16384_706955.out)
 
+![](./compression/results/plots/v10.1/v10.1_Benchmark_16384.png)
+
 ### v7.8.1 — Input Pruning (Negative Result)
 
 Prunes + compresses input tiles before the matmul. The compression overhead dominates — throughput drops to ~565 TFLOPS, **worse than dense** (~660 TFLOPS).
@@ -37,12 +41,13 @@ Prunes + compresses input tiles before the matmul. The compression overhead domi
 - Kernel: [`compression/kernels/7.8.1_prune_ws.py`](compression/kernels/7.8.1_prune_ws.py)
 - Results: [`compression/results/7.8.1_N=8192_694903.out`](compression/results/7.8.1_N=8192_694903.out)
 
+![](./compression/results/plots/v7.8.1/v7.8.1_Benchmark_8192.png)
+
 ## Key Results — Attention (WIP)
 
-FlashAttention-3 style forward pass with warp specialization and ping-pong overlap, currently under active development.
+FlashAttention-3 style forward pass in Gluon with warp specialization and ping-pong overlap, currently under active development.
 
 - Active kernel: [`attention/kernels/gluon_attention_pingpong_overlap.py`](attention/kernels/gluon_attention_pingpong_overlap.py)
-- FA3 reference: [`attention/kernels/gluon_fa3_forward.py`](attention/kernels/gluon_fa3_forward.py)
 - Baseline benchmarks: [`attention/results/`](attention/results/)
 
 ## Directory Layout
@@ -74,11 +79,11 @@ FlashAttention-3 style forward pass with warp specialization and ping-pong overl
 
 ## Running
 
-Kernels run inside an Apptainer/Singularity container with Triton + PyTorch + CUDA 12.x:
+Kernels run inside an Apptainer/Singularity container with PyTorch + CUDA 12.x and a custom Triton library with sparse WGMMA operation:
 
 ```bash
 # Interactive
-apptainer exec --nv sparse.sif python compression/kernels/11.1_2_kernel_baseline.py
+apptainer exec --nvccli sparse.sif python compression/kernels/11.1_2_kernel_baseline.py
 
 # Via Slurm
 sbatch compression/sbatch_sh/trillium/11.1_benchmark.sh
