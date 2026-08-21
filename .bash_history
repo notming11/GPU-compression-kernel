@@ -8634,3 +8634,27 @@ gkill
 tpython kernels/gluon_attention_pingpong_overlap.py 
 #1787342016
 tpython benchmark.py 
+#1787342496
+load_moduke
+#1787342514
+load_module && start_gluon && cd ../attention/
+#1787342534
+tpython benchmark.py 
+#1787342966
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787343105
+tpython benchmark.py 
+#1787343447
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787343648
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_pingpong_suboptimal_4096_128 python kernels/gluon_attention_pingpong_overlap.py 
+#1787343802
+tpython benchmark.py 
+#1787339747
+load_module && start_gluon
+#1787339750
+cd ../attention/
+#1787339758
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787340030
+debugjob
