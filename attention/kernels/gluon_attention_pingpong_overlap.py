@@ -300,11 +300,10 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         S_tile = S_tile * sm_scale_log2
 
         m_old = gl.max(S_tile, axis=1)
-        P_tile_f32 = gl.exp2(S_tile - m_old[:, None])
-        l_old = gl.sum(P_tile_f32, axis=1)
+        S_tile = gl.exp2(S_tile - m_old[:, None])
+        l_old = gl.sum(S_tile, axis=1)
 
-        P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
-        P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
         # -------------------------------------------------------------------
         # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
@@ -324,27 +323,27 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             # 2. Issue O0 += P_cur * V_{j-1}
             mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+            
+            # 3. Hand off Tensor Core issue slot to WG1
+            mbarrier.arrive(p.ping_bar.index(0), count=1)
 
             # 4. Softmax math on CUDA ALUs for S_next (Overlapped with WG1 issuing WGMMA)
             S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
             S_tile = S_tile * sm_scale_log2
-            
-            # 3. Hand off Tensor Core issue slot to WG1
-            mbarrier.arrive(p.ping_bar.index(0), count=1)
 
             m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
             rescale_factor = gl.exp2(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
 
-            P_next_f32 = gl.exp2(S_tile - m_new[:, None])
-            p_sum = gl.sum(P_next_f32, axis=1)
+            S_tile = gl.exp2(S_tile - m_new[:, None])
+            p_sum = gl.sum(S_tile, axis=1)
+            
+            P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
             o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
             o_acc = o_acc * rescale_factor_m[:, None]
             l_old = l_old * rescale_factor + p_sum
             m_old = m_new
-
-            P_cur_permuted = gl.convert_layout(gl.cast(P_next_f32, dtype=dtype), p_layout)
 
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
@@ -425,11 +424,10 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         S_tile = S_tile * sm_scale_log2
 
         m_old = gl.max(S_tile, axis=1)
-        P_tile_f32 = gl.exp2(S_tile - m_old[:, None])
-        l_old = gl.sum(P_tile_f32, axis=1)
+        S_tile = gl.exp2(S_tile - m_old[:, None])
+        l_old = gl.sum(S_tile, axis=1)
 
-        P_tile_f16 = gl.cast(P_tile_f32, dtype=dtype)
-        P_cur_permuted = gl.convert_layout(P_tile_f16, p_layout)
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
         # -------------------------------------------------------------------
         # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
@@ -449,27 +447,27 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             # 3. Issue O1 += P_cur * V_{j-1}
             mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+            
+            # 4. Hand off Tensor Core issue slot back to WG0
+            mbarrier.arrive(p.pong_bar.index(0), count=1)
 
             # 5. Softmax math on CUDA ALUs for S_next (Overlapped with WG0 issuing WGMMA)
             S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
             S_tile = S_tile * sm_scale_log2
             
-            # 4. Hand off Tensor Core issue slot back to WG0
-            mbarrier.arrive(p.pong_bar.index(0), count=1)
-
             m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
             rescale_factor = gl.exp2(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
 
-            P_next_f32 = gl.exp2(S_tile - m_new[:, None])
-            p_sum = gl.sum(P_next_f32, axis=1)
+            S_tile = gl.exp2(S_tile - m_new[:, None])
+            p_sum = gl.sum(S_tile, axis=1)
+            
+            P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
             o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
             o_acc = o_acc * rescale_factor_m[:, None]
             l_old = l_old * rescale_factor + p_sum
             m_old = m_new
-
-            P_cur_permuted = gl.convert_layout(gl.cast(P_next_f32, dtype=dtype), p_layout)
 
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 

@@ -8500,3 +8500,13 @@ tpython kernels/gluon_attention_pingpong_overlap.py --tune
 gkill
 #1787255909
 tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787280399
+load_module && start_gluon && cd ../attention
+#1787280413
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787280570
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_1269287/TQRDZTJNQFS2HHVEOQFSNQRLUHHYAQUYZOAKNYUGPYY7FSGEREQQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787280843
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787280870
+tpython benchmark.py 
