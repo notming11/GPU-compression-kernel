@@ -273,12 +273,13 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
 
     pong_phase = 0
+    
+    mma_s_base = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
         
         mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
-        mma_s_dummy = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
 
         m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
         l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
@@ -289,8 +290,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         # PROLOGUE: Issue S_0 = Q0 * K_0^T
         # -------------------------------------------------------------------
         mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
-        mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-        mma_s = mma_s.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index))
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index))
 
         # Signal WG1 that WG0 has finished issuing its Prologue WGMMA
         mbarrier.arrive(p.ping_bar.index(0), count=1)
@@ -317,8 +317,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
 
             # 1. Issue S_next = Q0 * K_j^T
             mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-            mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index))
+            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index))
 
             # 2. Issue O0 += P_cur * V_{j-1}
             mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
@@ -328,23 +327,20 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mbarrier.arrive(p.ping_bar.index(0), count=1)
 
             # 4. Softmax math on CUDA ALUs for S_next (Overlapped with WG1 issuing WGMMA)
-            S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
             S_tile = S_tile * sm_scale_log2
 
             m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
             rescale_factor = gl.exp2(m_old - m_new)
-            rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
-
+            
             S_tile = gl.exp2(S_tile - m_new[:, None])
-            p_sum = gl.sum(S_tile, axis=1)
+            l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+            m_old = m_new
             
             P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
-            o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
-            o_acc = o_acc * rescale_factor_m[:, None]
-            l_old = l_old * rescale_factor + p_sum
-            m_old = m_new
-
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -393,12 +389,13 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
 
     ping_phase = 0
+    
+    mma_s_base = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
 
     for tile_idx in range(scheduler.get_num_tiles()):
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
         
         mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
-        mma_s_dummy = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
 
         m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
         l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
@@ -413,8 +410,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         # PROLOGUE: Issue S_0 = Q1 * K_0^T
         # -------------------------------------------------------------------
         mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
-        mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-        mma_s = mma_s.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index))
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index))
 
         # Hand off back to WG0
         mbarrier.arrive(p.pong_bar.index(0), count=1)
@@ -441,8 +437,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
 
             # 2. Issue S_next = Q1 * K_j^T
             mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-            mma_s = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index))
+            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index))
 
             # 3. Issue O1 += P_cur * V_{j-1}
             mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
@@ -452,23 +447,20 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mbarrier.arrive(p.pong_bar.index(0), count=1)
 
             # 5. Softmax math on CUDA ALUs for S_next (Overlapped with WG0 issuing WGMMA)
-            S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
             S_tile = S_tile * sm_scale_log2
-            
+
             m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
             rescale_factor = gl.exp2(m_old - m_new)
-            rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
-
+            
             S_tile = gl.exp2(S_tile - m_new[:, None])
-            p_sum = gl.sum(S_tile, axis=1)
+            l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+            m_old = m_new
             
             P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
-            o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
-            o_acc = o_acc * rescale_factor_m[:, None]
-            l_old = l_old * rescale_factor + p_sum
-            m_old = m_new
-
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -817,10 +809,10 @@ if __name__ == "__main__":
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="HEAD_DIM (BLOCK_SIZE_K)")
-    parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=1, help="SUBTILE_FACTOR")
+    parser.add_argument("--stages", type=int, default=5, help="Number of pipeline stages for KV")
+    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=4, help="Number of compute warps")
     
     args = parser.parse_args()

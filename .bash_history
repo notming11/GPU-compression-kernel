@@ -8510,3 +8510,53 @@ ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_1269287/TQRDZTJNQFS2HHV
 tpython kernels/gluon_attention_pingpong_overlap.py 
 #1787280870
 tpython benchmark.py 
+#1787240291
+load_module && start_gluon
+#1787240323
+tpython dev/8.11_benchmark_2_kernel.py 
+#1787240347
+tpython dev/8.11_benchmark_2_kernel.py 11.1
+#1787240362
+tpython dev/8.11_benchmark_2_kernel.py 11.1 8192
+#1787240628
+ln -s /home/notming/links/scratch/compression/kernels/7.8.1_prune_ws.py /home/notming/links/scratch/compression/dev/
+#1787240637
+ln -s /home/notming/links/scratch/compression/kernels/10.1_prune_acc.py /home/notming/links/scratch/compression/dev/
+#1787240646
+ln -s /home/notming/links/scratch/compression/kernels/11.1_2_kernel_baseline.py /home/notming/links/scratch/compression/dev/
+#1787240649
+tpython dev/8.11_benchmark_2_kernel.py 11.1 8192
+#1787240695
+debugjob
+#1787247891
+tpython dev/8.10_benchmark_post_compression.py 
+#1787247907
+tpython dev/8.10_benchmark_post_compression.py 8192
+#1787248067
+sbatch sbatch_sh/trillium/10.1_benchmark_all.sh 
+#1787248069
+sq
+#1787248249
+sbatch sbatch_sh/trillium/10.1_benchmark_all.sh 
+#1787248251
+sq
+#1787266426
+sbatch sbatch_sh/trillium/10.1_benchmark_all.sh 
+#1787272285
+debugjob
+#1787253794
+debugjob
+#1787272592
+sq
+#1787273644
+sbatch attention/sbatch_sh/benchmark_fa3_baseline.sh 
+#1787273736
+sq
+#1787273781
+scancel 816094
+#1787273791
+cd attention/
+#1787273812
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1787273819
+sq
