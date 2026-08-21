@@ -8560,3 +8560,77 @@ cd attention/
 sbatch sbatch_sh/benchmark_fa3_baseline.sh 
 #1787273819
 sq
+#1787327734
+load_module && start_gluon && cd ../attention
+#1787327741
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787328392
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3191101/6PHXUZ3SRO4BZACSACEKOEUS7KBQEZ5SJDEH4VCHPXHU62JIMRAQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787329113
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787329185
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3353382/CIGDM2USCY4GTYS4HWXSP7RHA5TQ2N4F2S272ZJJ6JBJB4KSWDLA/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787329728
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787329843
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3493453/OIC2CSK5AQYIIHAQEAJKELTPAVWTK4QU6WINU6FZLPL5GOJ4QKTQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787330139
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_pingpong_suboptimal_4096_128" python kernels/gluon_attention_pingpong_overlap.py 
+#1787330177
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_pingpong_4096_128" python kernels/gluon_attention_pingpong_overlap.py 
+#1787330664
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787330732
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3674806/ANWACPYWKU35J4JM7UEOJXU5OI24HEWD7JGFQOA73QIX47FDMYPQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787330793
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787330842
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3705875/W3OIYKSGLRC7PWZTDWU3SY5T2TNVWCGJDNRKWTEPXWDRIJ5XVUPQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787330909
+tpython benchmark.py 
+#1787331923
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787332221
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_4074329/PXQ2EYNMWQJMI5TKWMCMK3T4ZHPEVVMT5BWB3ELIOEI2QPLHMKXQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787332244
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787332304
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_4090155/CI4L63S4DZKQAV6PY6EAY2ETQJPXUFEFKKUOKXQFZOAXWKNLPUIA/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787333490
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_pingpong_suboptimal_4096_128" python kernels/gluon_attention_pingpong_overlap.py 
+#1787335334
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787335397
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_524454/QLHQDZAA3BBK3TIN6PRGC3WLJK7W47744Y3MW7TOZND3I73D6YYA/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787335461
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787335497
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_547717/I5RBP6ZX5MB7DAP7ZJ7GLGYIEQJM774P7FN3VLXSIBQEGRMOA4IQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787335507
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787335547
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_556924/JTATUPFAOQ6E2CEUAF2FK3ISGNA65OUGAXDVULZKHVKCHVQ5JG4Q/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787335562
+tpython benchmark.py 
+#1787336391
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_pingpong_suboptimal_4096_128" python kernels/gluon_attention_pingpong_overlap.py 
+#1787337243
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787326024
+cat README.md
+#1787326029
+head -n 30 compression/results/10.1_N=8192_815845.out
+#1787326035
+find compression/results -name "*815845*"
+#1787326042
+head -n 25 compression/results/logs/10.1_N=8192_815845.out
+#1787340048
+load_module && start_gluon && cd ../attention/
+#1787340063
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787340087
+gkill
+#1787340117
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787342016
+tpython benchmark.py 

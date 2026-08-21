@@ -323,6 +323,9 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
             
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+            kv_state = next_kv_state
+            
             # 3. Hand off Tensor Core issue slot to WG1
             mbarrier.arrive(p.ping_bar.index(0), count=1)
 
@@ -342,9 +345,6 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
             o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
-
-            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-            kv_state = next_kv_state
             
         # -------------------------------------------------------------------
         # EPILOGUE: Final V Tile & Store
@@ -438,10 +438,13 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             # 2. Issue S_next = Q1 * K_j^T
             mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
             mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index))
-
+            
             # 3. Issue O1 += P_cur * V_{j-1}
             mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+            kv_state = next_kv_state
             
             # 4. Hand off Tensor Core issue slot back to WG0
             mbarrier.arrive(p.pong_bar.index(0), count=1)
@@ -462,9 +465,6 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
             o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
-
-            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-            kv_state = next_kv_state
 
         # -------------------------------------------------------------------
         # EPILOGUE: Final V Tile & Store
@@ -814,7 +814,7 @@ if __name__ == "__main__":
     parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="HEAD_DIM (BLOCK_SIZE_K)")
     parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=1, help="SUBTILE_FACTOR")
+    parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=4, help="Number of compute warps")
     
     args = parser.parse_args()
