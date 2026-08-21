@@ -315,16 +315,19 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mbarrier.wait(p.pong_bar.index(0), pong_phase)
             pong_phase ^= 1
 
-            # 1. Issue S_next = Q0 * K_j^T
-            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index))
-
             # 2. Issue O0 += P_cur * V_{j-1}
             mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
             
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
             kv_state = next_kv_state
+            
+            # 1. Issue S_next = Q0 * K_j^T
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index))
+            
+            if step == num_steps-1:
+                mbarrier.arrive(p.q_empty_bar.index(0), count=1)
             
             # 3. Hand off Tensor Core issue slot to WG1
             mbarrier.arrive(p.ping_bar.index(0), count=1)
@@ -358,7 +361,6 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.arrive(p.ping_bar.index(0), count=1)
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-        mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         kv_state = kv_state.next()
         q_state = q_state.next()
 
@@ -434,10 +436,6 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             # 1. Wait for WG0 signal before issuing Tensor Core operations
             mbarrier.wait(p.ping_bar.index(0), ping_phase)
             ping_phase ^= 1
-
-            # 2. Issue S_next = Q1 * K_j^T
-            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index))
             
             # 3. Issue O1 += P_cur * V_{j-1}
             mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
@@ -445,6 +443,13 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
             kv_state = next_kv_state
+            
+            # 2. Issue S_next = Q1 * K_j^T
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index))
+            
+            if step == num_steps-1:
+                mbarrier.arrive(p.q_empty_bar.index(0), count=1)
             
             # 4. Hand off Tensor Core issue slot back to WG0
             mbarrier.arrive(p.pong_bar.index(0), count=1)
@@ -476,7 +481,6 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-        mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         kv_state = kv_state.next()
         q_state = q_state.next()
 

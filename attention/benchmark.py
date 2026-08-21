@@ -83,7 +83,7 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune
         )
         tflops_torch = to_attention_tflops(ms_torch, seq_len, head_dim, BATCH_SIZE, NUM_HEADS)
     except Exception as e:
-        print(f"PyTorch SDPA benchmark failed at SEQ_LEN={seq_len}: {e}")
+        print(f"PyTorch SDPA benchmark failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")
         ms_torch, tflops_torch = None, None
         torch.cuda.synchronize()
 
@@ -101,7 +101,7 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune
             )
             tflops = to_attention_tflops(ms, seq_len, head_dim, batch=BATCH_SIZE, num_heads=NUM_HEADS)
         except Exception as e:
-            print(f"[{name}] benchmark failed at SEQ_LEN={seq_len}: {e}")
+            print(f"[{name}] benchmark failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")
             ms, tflops = None, None
 
         results[name] = {"tflops": tflops, "ms": ms}
@@ -178,7 +178,7 @@ def plot_benchmark_results(df: pd.DataFrame, head_dim: int, active_kernel_names:
     output_image = os.path.join(output_dir, f"FA3_Benchmark_HEAD_DIM_{head_dim}.png")
     plt.savefig(output_image, dpi=300, bbox_inches="tight")
     print(f"\n[INFO] Benchmark chart saved successfully to '{output_image}'")
-    plt.show()
+    plt.close(fig)
 
 # ---------------------------------------------------------------------------
 # MAIN EXECUTION
@@ -196,9 +196,10 @@ if __name__ == "__main__":
     parser.add_argument("--skip-4part", action="store_true", help="Skip 4-Partition kernel")
     
     # Benchmark Parameters
-    parser.add_argument("--head-dim", type=int, default=128, help="Head dimension to evaluate")
+    parser.add_argument("--head-dims", type=int, nargs="+", default=[64, 128, 256], help="Head dimensions to evaluate in one shot")
     parser.add_argument("--tune", action="store_true", default=True, help="Enable Triton autotuner")
     parser.add_argument("--rep", type=int, default=1000, help="Benchmark repetitions")
+    parser.add_argument("--output-dir", type=str, default="/home/notming/links/scratch/attention/results/plots", help="Directory to save plot results")
     
     args = parser.parse_args()
 
@@ -237,55 +238,63 @@ if __name__ == "__main__":
         sys.exit(1)
 
     seq_lengths = [512, 1024, 2048, 4096, 8192, 16384]
-    data_log = []
 
-    print(f"\n{'='*70}")
-    print(f"   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM={args.head_dim})")
-    print(f"   Active Kernels: {list(active_modules.keys())}")
-    print(f"{'='*70}\n")
+    # Iterate through each head dimension in a single run
+    for head_dim in args.head_dims:
+        data_log = []
 
-    for idx, seq_len in enumerate(seq_lengths):
-        shape_str = f"SEQ_LEN={seq_len}-HEAD_DIM={args.head_dim}"
-        print(f"Start {shape_str} ({idx+1}/{len(seq_lengths)})", flush=True)
+        print(f"\n{'='*70}")
+        print(f"   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM={head_dim})")
+        print(f"   Active Kernels: {list(active_modules.keys())}")
+        print(f"{'='*70}\n")
 
-        metrics = benchmark_fa3_kernel(
-            seq_len=seq_len, 
-            head_dim=args.head_dim, 
-            active_modules=active_modules,
-            tune=args.tune, 
-            rep=args.rep
-        )
+        for idx, seq_len in enumerate(seq_lengths):
+            shape_str = f"SEQ_LEN={seq_len}-HEAD_DIM={head_dim}"
+            print(f"Start {shape_str} ({idx+1}/{len(seq_lengths)})", flush=True)
 
-        row = {"SEQ_LEN": seq_len, "HEAD_DIM": args.head_dim}
-        summary_str = []
+            metrics = benchmark_fa3_kernel(
+                seq_len=seq_len, 
+                head_dim=head_dim, 
+                active_modules=active_modules,
+                tune=args.tune, 
+                rep=args.rep
+            )
+
+            row = {"SEQ_LEN": seq_len}
+            summary_str = []
+            
+            for name, data in metrics.items():
+                row[f"{name}_TFLOPS"] = data["tflops"]
+                row[f"{name}_ms"] = data["ms"]
+                if data["tflops"] is not None:
+                    summary_str.append(f"{name}: {data['tflops']:.2f} TFLOPS")
+
+            data_log.append(row)
+
+            print(f"Finish {shape_str} -> " + ", ".join(summary_str))
+
+            # Output autotuned configurations per kernel
+            for name, module in active_modules.items():
+                cfg = get_best_config(module)
+                if isinstance(cfg, str):
+                    print(f"  [{name}] best config: {cfg}")
+                else:
+                    print(f"  [{name}] best config: {cfg.kwargs}, num_warps={getattr(cfg, 'num_warps', 'N/A')}")
+
+        df_dim = pd.DataFrame(data_log)
         
-        for name, data in metrics.items():
-            row[f"{name}_TFLOPS"] = data["tflops"]
-            row[f"{name}_ms"] = data["ms"]
-            if data["tflops"] is not None:
-                summary_str.append(f"{name}: {data['tflops']:.2f} TFLOPS")
+        # Dedicated Summary Table per HEAD_DIM
+        print(f"\n{'='*70}")
+        print(f"             BENCHMARK RESULTS TABLE (HEAD_DIM={head_dim})")
+        print(f"{'='*70}")
+        display_cols = ["SEQ_LEN"] + [f"{k}_TFLOPS" for k in ["PyTorch SDPA"] + list(active_modules.keys())]
+        print(df_dim[display_cols].to_string(index=False))
+        print(f"{'='*70}\n")
 
-        data_log.append(row)
-
-        print(f"Finish {shape_str} -> " + ", ".join(summary_str))
-
-        # Output autotuned configurations per kernel
-        for name, module in active_modules.items():
-            cfg = get_best_config(module)
-            if isinstance(cfg, str):
-                print(f"  [{name}] best config: {cfg}")
-            else:
-                print(f"  [{name}] best config: {cfg.kwargs}, num_warps={getattr(cfg, 'num_warps', 'N/A')}")
-
-    df_raw = pd.DataFrame(data_log)
-    
-    # Summary Table Output
-    print(f"\n{'='*70}")
-    print("                    SUMMARY BENCHMARK RESULTS")
-    print(f"{'='*70}")
-    display_cols = ["SEQ_LEN"] + [f"{k}_TFLOPS" for k in ["PyTorch SDPA"] + list(active_modules.keys())]
-    print(df_raw[display_cols].to_string(index=False))
-    
-    # Plotting
-    plot_benchmark_results(df_raw, head_dim=args.head_dim, active_kernel_names=list(active_modules.keys()), 
-                           output_dir="/home/notming/links/scratch/attention/results/plots")
+        # Plotting per Head Dimension
+        plot_benchmark_results(
+            df_dim, 
+            head_dim=head_dim, 
+            active_kernel_names=list(active_modules.keys()), 
+            output_dir=args.output_dir
+        )
