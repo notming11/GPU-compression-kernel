@@ -1,0 +1,1063 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+Benchmarking 49152-8192-49152 (1/169)...
+  Dense WS TFLOPS:             706.32
+  Precomp Sparse WS TFLOPS:    1095.21
+  Fused Postcomp TFLOPS:       1076.24
+  Separated Postcomp TFLOPS:   1056.91
+
+Benchmarking 32768-8192-49152 (2/169)...
+  Dense WS TFLOPS:             665.82
+  Precomp Sparse WS TFLOPS:    1070.59
+  Fused Postcomp TFLOPS:       1069.01
+  Separated Postcomp TFLOPS:   1062.21
+
+Benchmarking 49152-8192-32768 (3/169)...
+  Dense WS TFLOPS:             661.73
+  Precomp Sparse WS TFLOPS:    1072.85
+  Fused Postcomp TFLOPS:       1066.24
+  Separated Postcomp TFLOPS:   1054.13
+
+Benchmarking 24576-8192-49152 (4/169)...
+  Dense WS TFLOPS:             665.51
+  Precomp Sparse WS TFLOPS:    1071.22
+  Fused Postcomp TFLOPS:       1066.63
+  Separated Postcomp TFLOPS:   1051.07
+
+Benchmarking 49152-8192-24576 (5/169)...
+  Dense WS TFLOPS:             666.62
+  Precomp Sparse WS TFLOPS:    1068.57
+  Fused Postcomp TFLOPS:       1063.57
+  Separated Postcomp TFLOPS:   1043.71
+
+Benchmarking 32768-8192-32768 (6/169)...
+  Dense WS TFLOPS:             663.70
+  Precomp Sparse WS TFLOPS:    1068.35
+  Fused Postcomp TFLOPS:       1103.68
+  Separated Postcomp TFLOPS:   1053.22
+
+Benchmarking 16384-8192-49152 (7/169)...
+  Dense WS TFLOPS:             665.31
+  Precomp Sparse WS TFLOPS:    1062.92
+  Fused Postcomp TFLOPS:       1059.56
+  Separated Postcomp TFLOPS:   1041.34
+
+Benchmarking 24576-8192-32768 (8/169)...
+  Dense WS TFLOPS:             667.76
+  Precomp Sparse WS TFLOPS:    1072.92
+  Fused Postcomp TFLOPS:       1070.07
+  Separated Postcomp TFLOPS:   1053.23
+
+Benchmarking 32768-8192-24576 (9/169)...
+  Dense WS TFLOPS:             663.52
+  Precomp Sparse WS TFLOPS:    1063.76
+  Fused Postcomp TFLOPS:       1063.13
+  Separated Postcomp TFLOPS:   1044.45
+
+Benchmarking 49152-8192-16384 (10/169)...
+  Dense WS TFLOPS:             669.00
+  Precomp Sparse WS TFLOPS:    1062.69
+  Fused Postcomp TFLOPS:       1056.39
+  Separated Postcomp TFLOPS:   1028.58
+
+Benchmarking 12288-8192-49152 (11/169)...
+  Dense WS TFLOPS:             663.05
+  Precomp Sparse WS TFLOPS:    1062.07
+  Fused Postcomp TFLOPS:       1060.55
+  Separated Postcomp TFLOPS:   1048.74
+
+Benchmarking 24576-8192-24576 (12/169)...
+  Dense WS TFLOPS:             666.38
+  Precomp Sparse WS TFLOPS:    1072.18
+  Fused Postcomp TFLOPS:       1064.57
+  Separated Postcomp TFLOPS:   1045.12
+
+Benchmarking 49152-8192-12288 (13/169)...
+  Dense WS TFLOPS:             660.78
+  Precomp Sparse WS TFLOPS:    1051.94
+  Fused Postcomp TFLOPS:       1068.15
+  Separated Postcomp TFLOPS:   1015.48
+
+Benchmarking 16384-8192-32768 (14/169)...
+  Dense WS TFLOPS:             658.19
+  Precomp Sparse WS TFLOPS:    1057.69
+  Fused Postcomp TFLOPS:       1058.36
+  Separated Postcomp TFLOPS:   1041.92
+
+Benchmarking 32768-8192-16384 (15/169)...
+  Dense WS TFLOPS:             663.84
+  Precomp Sparse WS TFLOPS:    1059.23
+  Fused Postcomp TFLOPS:       1056.97
+  Separated Postcomp TFLOPS:   1027.57
+
+Benchmarking 8192-8192-49152 (16/169)...
+  Dense WS TFLOPS:             662.72
+  Precomp Sparse WS TFLOPS:    1064.51
+  Fused Postcomp TFLOPS:       1066.14
+  Separated Postcomp TFLOPS:   1050.04
+
+Benchmarking 12288-8192-32768 (17/169)...
+  Dense WS TFLOPS:             660.17
+  Precomp Sparse WS TFLOPS:    1065.06
+  Fused Postcomp TFLOPS:       1087.72
+  Separated Postcomp TFLOPS:   1047.67
+
+Benchmarking 16384-8192-24576 (18/169)...
+  Dense WS TFLOPS:             659.11
+  Precomp Sparse WS TFLOPS:    1060.19
+  Fused Postcomp TFLOPS:       1052.49
+  Separated Postcomp TFLOPS:   1039.09
+
+Benchmarking 24576-8192-16384 (19/169)...
+  Dense WS TFLOPS:             666.84
+  Precomp Sparse WS TFLOPS:    1067.25
+  Fused Postcomp TFLOPS:       1061.59
+  Separated Postcomp TFLOPS:   1030.74
+
+Benchmarking 32768-8192-12288 (20/169)...
+  Dense WS TFLOPS:             661.05
+  Precomp Sparse WS TFLOPS:    1060.14
+  Fused Postcomp TFLOPS:       1041.71
+  Separated Postcomp TFLOPS:   1010.68
+
+Benchmarking 49152-8192-8192 (21/169)...
+  Dense WS TFLOPS:             657.28
+  Precomp Sparse WS TFLOPS:    1044.26
+  Fused Postcomp TFLOPS:       1030.71
+  Separated Postcomp TFLOPS:   981.15
+
+Benchmarking 6144-8192-49152 (22/169)...
+  Dense WS TFLOPS:             664.79
+  Precomp Sparse WS TFLOPS:    1066.32
+  Fused Postcomp TFLOPS:       1063.39
+  Separated Postcomp TFLOPS:   1059.21
+
+Benchmarking 12288-8192-24576 (23/169)...
+  Dense WS TFLOPS:             661.96
+  Precomp Sparse WS TFLOPS:    1058.53
+  Fused Postcomp TFLOPS:       1054.04
+  Separated Postcomp TFLOPS:   1040.40
+
+Benchmarking 24576-8192-12288 (24/169)...
+  Dense WS TFLOPS:             663.82
+  Precomp Sparse WS TFLOPS:    1058.80
+  Fused Postcomp TFLOPS:       1048.19
+  Separated Postcomp TFLOPS:   1011.99
+
+Benchmarking 49152-8192-6144 (25/169)...
+  Dense WS TFLOPS:             654.49
+  Precomp Sparse WS TFLOPS:    1035.20
+  Fused Postcomp TFLOPS:       1016.56
+  Separated Postcomp TFLOPS:   952.39
+
+Benchmarking 8192-8192-32768 (26/169)...
+  Dense WS TFLOPS:             663.98
+  Precomp Sparse WS TFLOPS:    1061.33
+  Fused Postcomp TFLOPS:       1064.79
+  Separated Postcomp TFLOPS:   1048.06
+
+Benchmarking 16384-8192-16384 (27/169)...
+  Dense WS TFLOPS:             667.21
+  Precomp Sparse WS TFLOPS:    1049.63
+  Fused Postcomp TFLOPS:       1048.44
+  Separated Postcomp TFLOPS:   1018.43
+
+Benchmarking 32768-8192-8192 (28/169)...
+  Dense WS TFLOPS:             659.77
+  Precomp Sparse WS TFLOPS:    1039.50
+  Fused Postcomp TFLOPS:       1030.94
+  Separated Postcomp TFLOPS:   974.53
+
+Benchmarking 4096-8192-49152 (29/169)...
+  Dense WS TFLOPS:             666.25
+  Precomp Sparse WS TFLOPS:    1063.19
+  Fused Postcomp TFLOPS:       1066.34
+  Separated Postcomp TFLOPS:   1084.49
+
+Benchmarking 6144-8192-32768 (30/169)...
+  Dense WS TFLOPS:             661.96
+  Precomp Sparse WS TFLOPS:    1064.16
+  Fused Postcomp TFLOPS:       1063.02
+  Separated Postcomp TFLOPS:   1044.36
+
+Benchmarking 8192-8192-24576 (31/169)...
+  Dense WS TFLOPS:             660.95
+  Precomp Sparse WS TFLOPS:    1049.45
+  Fused Postcomp TFLOPS:       1048.16
+  Separated Postcomp TFLOPS:   1032.58
+
+Benchmarking 12288-8192-16384 (32/169)...
+  Dense WS TFLOPS:             657.37
+  Precomp Sparse WS TFLOPS:    1051.67
+  Fused Postcomp TFLOPS:       1051.95
+  Separated Postcomp TFLOPS:   1016.61
+
+Benchmarking 16384-8192-12288 (33/169)...
+  Dense WS TFLOPS:             657.63
+  Precomp Sparse WS TFLOPS:    1049.40
+  Fused Postcomp TFLOPS:       1018.57
+  Separated Postcomp TFLOPS:   998.33
+
+Benchmarking 24576-8192-8192 (34/169)...
+  Dense WS TFLOPS:             661.65
+  Precomp Sparse WS TFLOPS:    1047.93
+  Fused Postcomp TFLOPS:       1036.24
+  Separated Postcomp TFLOPS:   979.99
+
+Benchmarking 32768-8192-6144 (35/169)...
+  Dense WS TFLOPS:             655.38
+  Precomp Sparse WS TFLOPS:    1032.62
+  Fused Postcomp TFLOPS:       1014.79
+  Separated Postcomp TFLOPS:   949.65
+
+Benchmarking 49152-8192-4096 (36/169)...
+  Dense WS TFLOPS:             658.03
+  Precomp Sparse WS TFLOPS:    1012.43
+  Fused Postcomp TFLOPS:       986.06
+  Separated Postcomp TFLOPS:   892.61
+
+Benchmarking 3072-8192-49152 (37/169)...
+  Dense WS TFLOPS:             669.42
+  Precomp Sparse WS TFLOPS:    1068.70
+  Fused Postcomp TFLOPS:       1071.48
+  Separated Postcomp TFLOPS:   1095.70
+
+Benchmarking 6144-8192-24576 (38/169)...
+  Dense WS TFLOPS:             660.29
+  Precomp Sparse WS TFLOPS:    1066.48
+  Fused Postcomp TFLOPS:       1063.64
+  Separated Postcomp TFLOPS:   1030.07
+
+Benchmarking 12288-8192-12288 (39/169)...
+  Dense WS TFLOPS:             655.34
+  Precomp Sparse WS TFLOPS:    1047.47
+  Fused Postcomp TFLOPS:       1038.02
+  Separated Postcomp TFLOPS:   1000.09
+
+Benchmarking 24576-8192-6144 (40/169)...
+  Dense WS TFLOPS:             658.24
+  Precomp Sparse WS TFLOPS:    1034.67
+  Fused Postcomp TFLOPS:       1024.50
+  Separated Postcomp TFLOPS:   947.93
+
+Benchmarking 49152-8192-3072 (41/169)...
+  Dense WS TFLOPS:             643.28
+  Precomp Sparse WS TFLOPS:    999.58
+  Fused Postcomp TFLOPS:       967.20
+  Separated Postcomp TFLOPS:   853.01
+
+Benchmarking 4096-8192-32768 (42/169)...
+  Dense WS TFLOPS:             666.06
+  Precomp Sparse WS TFLOPS:    1066.63
+  Fused Postcomp TFLOPS:       1065.52
+  Separated Postcomp TFLOPS:   1036.84
+
+Benchmarking 8192-8192-16384 (43/169)...
+  Dense WS TFLOPS:             659.75
+  Precomp Sparse WS TFLOPS:    1054.57
+  Fused Postcomp TFLOPS:       1051.23
+  Separated Postcomp TFLOPS:   1016.34
+
+Benchmarking 16384-8192-8192 (44/169)...
+  Dense WS TFLOPS:             651.31
+  Precomp Sparse WS TFLOPS:    1015.65
+  Fused Postcomp TFLOPS:       999.66
+  Separated Postcomp TFLOPS:   966.06
+
+Benchmarking 32768-8192-4096 (45/169)...
+  Dense WS TFLOPS:             645.07
+  Precomp Sparse WS TFLOPS:    1040.23
+  Fused Postcomp TFLOPS:       978.54
+  Separated Postcomp TFLOPS:   889.43
+
+Benchmarking 2048-8192-49152 (46/169)...
+  Dense WS TFLOPS:             668.17
+  Precomp Sparse WS TFLOPS:    1077.25
+  Fused Postcomp TFLOPS:       1076.35
+  Separated Postcomp TFLOPS:   1051.04
+
+Benchmarking 3072-8192-32768 (47/169)...
+  Dense WS TFLOPS:             668.37
+  Precomp Sparse WS TFLOPS:    1072.64
+  Fused Postcomp TFLOPS:       1064.64
+  Separated Postcomp TFLOPS:   1028.82
+
+Benchmarking 4096-8192-24576 (48/169)...
+  Dense WS TFLOPS:             665.70
+  Precomp Sparse WS TFLOPS:    1068.41
+  Fused Postcomp TFLOPS:       1057.98
+  Separated Postcomp TFLOPS:   1014.45
+
+Benchmarking 6144-8192-16384 (49/169)...
+  Dense WS TFLOPS:             661.02
+  Precomp Sparse WS TFLOPS:    1059.06
+  Fused Postcomp TFLOPS:       1047.09
+  Separated Postcomp TFLOPS:   993.45
+
+Benchmarking 8192-8192-12288 (50/169)...
+  Dense WS TFLOPS:             655.12
+  Precomp Sparse WS TFLOPS:    1043.65
+  Fused Postcomp TFLOPS:       1039.33
+  Separated Postcomp TFLOPS:   995.93
+
+Benchmarking 12288-8192-8192 (51/169)...
+  Dense WS TFLOPS:             655.81
+  Precomp Sparse WS TFLOPS:    1020.06
+  Fused Postcomp TFLOPS:       998.50
+  Separated Postcomp TFLOPS:   948.56
+
+Benchmarking 16384-8192-6144 (52/169)...
+  Dense WS TFLOPS:             615.74
+  Precomp Sparse WS TFLOPS:    1001.93
+  Fused Postcomp TFLOPS:       981.49
+  Separated Postcomp TFLOPS:   927.98
+
+Benchmarking 24576-8192-4096 (53/169)...
+[W820 20:53:54.009291778 CUDAGraph.cpp:307] Warning: CUDA warning: operation not permitted when stream is capturing (function reset)
+[BENCHMARK ERROR]: CUDA error: operation failed due to a previous error during capture
+Search for `cudaErrorStreamCaptureInvalidated' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+  Dense WS TFLOPS:             651.30
+  Precomp Sparse WS TFLOPS:    0.00
+  Fused Postcomp TFLOPS:       996.97
+  Separated Postcomp TFLOPS:   896.06
+
+Benchmarking 32768-8192-3072 (54/169)...
+  Dense WS TFLOPS:             642.91
+  Precomp Sparse WS TFLOPS:    991.55
+  Fused Postcomp TFLOPS:       961.51
+  Separated Postcomp TFLOPS:   829.41
+
+Benchmarking 49152-8192-2048 (55/169)...
+  Dense WS TFLOPS:             629.59
+  Precomp Sparse WS TFLOPS:    967.99
+  Fused Postcomp TFLOPS:       911.92
+  Separated Postcomp TFLOPS:   768.89
+
+Benchmarking 1536-8192-49152 (56/169)...
+  Dense WS TFLOPS:             676.11
+  Precomp Sparse WS TFLOPS:    1060.35
+  Fused Postcomp TFLOPS:       1057.33
+  Separated Postcomp TFLOPS:   1087.96
+
+Benchmarking 3072-8192-24576 (57/169)...
+  Dense WS TFLOPS:             662.89
+  Precomp Sparse WS TFLOPS:    1063.57
+  Fused Postcomp TFLOPS:       1064.57
+  Separated Postcomp TFLOPS:   1022.93
+
+Benchmarking 6144-8192-12288 (58/169)...
+  Dense WS TFLOPS:             660.32
+  Precomp Sparse WS TFLOPS:    1053.68
+  Fused Postcomp TFLOPS:       1045.08
+  Separated Postcomp TFLOPS:   981.03
+
+Benchmarking 12288-8192-6144 (59/169)...
+  Dense WS TFLOPS:             627.99
+  Precomp Sparse WS TFLOPS:    1007.86
+  Fused Postcomp TFLOPS:       987.21
+  Separated Postcomp TFLOPS:   923.52
+
+Benchmarking 24576-8192-3072 (60/169)...
+  Dense WS TFLOPS:             640.89
+  Precomp Sparse WS TFLOPS:    1004.31
+  Fused Postcomp TFLOPS:       954.89
+  Separated Postcomp TFLOPS:   829.51
+
+Benchmarking 49152-8192-1536 (61/169)...
+  Dense WS TFLOPS:             625.15
+  Precomp Sparse WS TFLOPS:    930.55
+  Fused Postcomp TFLOPS:       886.81
+  Separated Postcomp TFLOPS:   699.19
+
+Benchmarking 2048-8192-32768 (62/169)...
+  Dense WS TFLOPS:             670.87
+  Precomp Sparse WS TFLOPS:    1077.34
+  Fused Postcomp TFLOPS:       1074.48
+  Separated Postcomp TFLOPS:   1029.26
+
+Benchmarking 4096-8192-16384 (63/169)...
+  Dense WS TFLOPS:             662.90
+  Precomp Sparse WS TFLOPS:    1072.87
+  Fused Postcomp TFLOPS:       1057.79
+  Separated Postcomp TFLOPS:   1003.10
+
+Benchmarking 8192-8192-8192 (64/169)...
+  Dense WS TFLOPS:             651.85
+  Precomp Sparse WS TFLOPS:    1044.35
+  Fused Postcomp TFLOPS:       1023.58
+  Separated Postcomp TFLOPS:   952.57
+
+Benchmarking 16384-8192-4096 (65/169)...
+  Dense WS TFLOPS:             621.83
+  Precomp Sparse WS TFLOPS:    988.31
+  Fused Postcomp TFLOPS:       956.70
+  Separated Postcomp TFLOPS:   866.58
+
+Benchmarking 32768-8192-2048 (66/169)...
+  Dense WS TFLOPS:             629.89
+  Precomp Sparse WS TFLOPS:    959.94
+  Fused Postcomp TFLOPS:       914.45
+  Separated Postcomp TFLOPS:   760.15
+
+Benchmarking 1024-8192-49152 (67/169)...
+  Dense WS TFLOPS:             674.51
+  Precomp Sparse WS TFLOPS:    1098.04
+  Fused Postcomp TFLOPS:       1087.89
+  Separated Postcomp TFLOPS:   1091.43
+
+Benchmarking 1536-8192-32768 (68/169)...
+  Dense WS TFLOPS:             670.46
+  Precomp Sparse WS TFLOPS:    1083.59
+  Fused Postcomp TFLOPS:       1060.37
+  Separated Postcomp TFLOPS:   1026.75
+
+Benchmarking 2048-8192-24576 (69/169)...
+  Dense WS TFLOPS:             669.26
+  Precomp Sparse WS TFLOPS:    1079.39
+  Fused Postcomp TFLOPS:       1061.44
+  Separated Postcomp TFLOPS:   1019.56
+
+Benchmarking 3072-8192-16384 (70/169)...
+  Dense WS TFLOPS:             662.90
+  Precomp Sparse WS TFLOPS:    1068.11
+  Fused Postcomp TFLOPS:       1066.25
+  Separated Postcomp TFLOPS:   1000.10
+
+Benchmarking 4096-8192-12288 (71/169)...
+  Dense WS TFLOPS:             659.93
+  Precomp Sparse WS TFLOPS:    1056.51
+  Fused Postcomp TFLOPS:       1056.21
+  Separated Postcomp TFLOPS:   983.64
+
+Benchmarking 6144-8192-8192 (72/169)...
+  Dense WS TFLOPS:             656.61
+  Precomp Sparse WS TFLOPS:    1035.53
+  Fused Postcomp TFLOPS:       1051.97
+  Separated Postcomp TFLOPS:   959.74
+
+Benchmarking 8192-8192-6144 (73/169)...
+  Dense WS TFLOPS:             648.20
+  Precomp Sparse WS TFLOPS:    1021.28
+  Fused Postcomp TFLOPS:       986.95
+  Separated Postcomp TFLOPS:   931.41
+
+Benchmarking 12288-8192-4096 (74/169)...
+  Dense WS TFLOPS:             628.05
+  Precomp Sparse WS TFLOPS:    998.86
+  Fused Postcomp TFLOPS:       960.88
+  Separated Postcomp TFLOPS:   870.34
+
+Benchmarking 16384-8192-3072 (75/169)...
+  Dense WS TFLOPS:             627.02
+  Precomp Sparse WS TFLOPS:    972.36
+  Fused Postcomp TFLOPS:       929.13
+  Separated Postcomp TFLOPS:   820.11
+
+Benchmarking 24576-8192-2048 (76/169)...
+  Dense WS TFLOPS:             635.56
+  Precomp Sparse WS TFLOPS:    970.98
+  Fused Postcomp TFLOPS:       928.48
+  Separated Postcomp TFLOPS:   759.41
+
+Benchmarking 32768-8192-1536 (77/169)...
+  Dense WS TFLOPS:             617.25
+  Precomp Sparse WS TFLOPS:    935.08
+  Fused Postcomp TFLOPS:       889.02
+  Separated Postcomp TFLOPS:   683.85
+
+Benchmarking 49152-8192-1024 (78/169)...
+  Dense WS TFLOPS:             608.08
+  Precomp Sparse WS TFLOPS:    896.25
+  Fused Postcomp TFLOPS:       819.13
+  Separated Postcomp TFLOPS:   604.38
+
+Benchmarking 768-8192-49152 (79/169)...
+  Dense WS TFLOPS:             664.59
+  Precomp Sparse WS TFLOPS:    973.99
+  Fused Postcomp TFLOPS:       856.68
+  Separated Postcomp TFLOPS:   949.49
+
+Benchmarking 1536-8192-24576 (80/169)...
+  Dense WS TFLOPS:             675.17
+  Precomp Sparse WS TFLOPS:    1072.35
+  Fused Postcomp TFLOPS:       1073.40
+  Separated Postcomp TFLOPS:   1023.88
+
+Benchmarking 3072-8192-12288 (81/169)...
+  Dense WS TFLOPS:             666.27
+  Precomp Sparse WS TFLOPS:    1065.49
+  Fused Postcomp TFLOPS:       1065.52
+  Separated Postcomp TFLOPS:   987.12
+
+Benchmarking 6144-8192-6144 (82/169)...
+  Dense WS TFLOPS:             646.95
+  Precomp Sparse WS TFLOPS:    1039.26
+  Fused Postcomp TFLOPS:       1017.70
+  Separated Postcomp TFLOPS:   919.71
+
+Benchmarking 12288-8192-3072 (83/169)...
+  Dense WS TFLOPS:             620.80
+  Precomp Sparse WS TFLOPS:    977.80
+  Fused Postcomp TFLOPS:       932.10
+  Separated Postcomp TFLOPS:   816.40
+
+Benchmarking 24576-8192-1536 (84/169)...
+  Dense WS TFLOPS:             621.25
+  Precomp Sparse WS TFLOPS:    948.23
+  Fused Postcomp TFLOPS:       888.94
+  Separated Postcomp TFLOPS:   694.35
+
+Benchmarking 49152-8192-768 (85/169)...
+  Dense WS TFLOPS:             587.76
+  Precomp Sparse WS TFLOPS:    833.08
+  Fused Postcomp TFLOPS:       755.92
+  Separated Postcomp TFLOPS:   528.21
+
+Benchmarking 1024-8192-32768 (86/169)...
+  Dense WS TFLOPS:             677.14
+  Precomp Sparse WS TFLOPS:    1090.29
+  Fused Postcomp TFLOPS:       1079.32
+  Separated Postcomp TFLOPS:   1035.68
+
+Benchmarking 2048-8192-16384 (87/169)...
+  Dense WS TFLOPS:             677.76
+  Precomp Sparse WS TFLOPS:    1060.08
+  Fused Postcomp TFLOPS:       1065.14
+  Separated Postcomp TFLOPS:   1015.51
+
+Benchmarking 4096-8192-8192 (88/169)...
+  Dense WS TFLOPS:             663.41
+  Precomp Sparse WS TFLOPS:    1054.34
+  Fused Postcomp TFLOPS:       1042.99
+  Separated Postcomp TFLOPS:   941.18
+
+Benchmarking 8192-8192-4096 (89/169)...
+  Dense WS TFLOPS:             646.39
+  Precomp Sparse WS TFLOPS:    1010.39
+  Fused Postcomp TFLOPS:       994.36
+  Separated Postcomp TFLOPS:   865.42
+
+Benchmarking 16384-8192-2048 (90/169)...
+  Dense WS TFLOPS:             619.60
+  Precomp Sparse WS TFLOPS:    958.64
+  Fused Postcomp TFLOPS:       893.08
+  Separated Postcomp TFLOPS:   743.92
+
+Benchmarking 32768-8192-1024 (91/169)...
+  Dense WS TFLOPS:             612.03
+  Precomp Sparse WS TFLOPS:    899.49
+  Fused Postcomp TFLOPS:       829.94
+  Separated Postcomp TFLOPS:   602.57
+
+Benchmarking 768-8192-32768 (92/169)...
+  Dense WS TFLOPS:             650.50
+  Precomp Sparse WS TFLOPS:    982.52
+  Fused Postcomp TFLOPS:       857.48
+  Separated Postcomp TFLOPS:   932.42
+
+Benchmarking 1024-8192-24576 (93/169)...
+  Dense WS TFLOPS:             678.39
+  Precomp Sparse WS TFLOPS:    1101.20
+  Fused Postcomp TFLOPS:       1074.50
+  Separated Postcomp TFLOPS:   1046.00
+
+Benchmarking 1536-8192-16384 (94/169)...
+  Dense WS TFLOPS:             676.24
+  Precomp Sparse WS TFLOPS:    1082.71
+  Fused Postcomp TFLOPS:       1044.80
+  Separated Postcomp TFLOPS:   993.42
+
+Benchmarking 2048-8192-12288 (95/169)...
+  Dense WS TFLOPS:             667.32
+  Precomp Sparse WS TFLOPS:    1080.54
+  Fused Postcomp TFLOPS:       1080.83
+  Separated Postcomp TFLOPS:   998.61
+
+Benchmarking 3072-8192-8192 (96/169)...
+  Dense WS TFLOPS:             667.33
+  Precomp Sparse WS TFLOPS:    1060.82
+  Fused Postcomp TFLOPS:       1040.16
+  Separated Postcomp TFLOPS:   952.50
+
+Benchmarking 4096-8192-6144 (97/169)...
+  Dense WS TFLOPS:             669.79
+  Precomp Sparse WS TFLOPS:    1068.03
+  Fused Postcomp TFLOPS:       1005.32
+  Separated Postcomp TFLOPS:   920.96
+
+Benchmarking 6144-8192-4096 (98/169)...
+  Dense WS TFLOPS:             648.55
+  Precomp Sparse WS TFLOPS:    1013.16
+  Fused Postcomp TFLOPS:       985.50
+  Separated Postcomp TFLOPS:   866.39
+
+Benchmarking 8192-8192-3072 (99/169)...
+  Dense WS TFLOPS:             640.84
+  Precomp Sparse WS TFLOPS:    990.49
+  Fused Postcomp TFLOPS:       970.00
+  Separated Postcomp TFLOPS:   815.24
+
+Benchmarking 12288-8192-2048 (100/169)...
+  Dense WS TFLOPS:             618.30
+  Precomp Sparse WS TFLOPS:    971.58
+  Fused Postcomp TFLOPS:       914.46
+  Separated Postcomp TFLOPS:   750.48
+
+Benchmarking 16384-8192-1536 (101/169)...
+  Dense WS TFLOPS:             592.97
+  Precomp Sparse WS TFLOPS:    902.96
+  Fused Postcomp TFLOPS:       860.91
+  Separated Postcomp TFLOPS:   688.39
+
+Benchmarking 24576-8192-1024 (102/169)...
+  Dense WS TFLOPS:             614.35
+  Precomp Sparse WS TFLOPS:    904.14
+  Fused Postcomp TFLOPS:       830.62
+  Separated Postcomp TFLOPS:   598.30
+
+Benchmarking 32768-8192-768 (103/169)...
+  Dense WS TFLOPS:             593.70
+  Precomp Sparse WS TFLOPS:    847.07
+  Fused Postcomp TFLOPS:       762.53
+  Separated Postcomp TFLOPS:   532.25
+
+Benchmarking 768-8192-24576 (104/169)...
+  Dense WS TFLOPS:             649.82
+  Precomp Sparse WS TFLOPS:    972.94
+  Fused Postcomp TFLOPS:       864.80
+  Separated Postcomp TFLOPS:   929.59
+
+Benchmarking 1536-8192-12288 (105/169)...
+  Dense WS TFLOPS:             677.44
+  Precomp Sparse WS TFLOPS:    1062.40
+  Fused Postcomp TFLOPS:       1054.54
+  Separated Postcomp TFLOPS:   973.83
+
+Benchmarking 3072-8192-6144 (106/169)...
+  Dense WS TFLOPS:             672.22
+  Precomp Sparse WS TFLOPS:    1049.18
+  Fused Postcomp TFLOPS:       1019.00
+  Separated Postcomp TFLOPS:   917.81
+
+Benchmarking 6144-8192-3072 (107/169)...
+  Dense WS TFLOPS:             648.78
+  Precomp Sparse WS TFLOPS:    998.20
+  Fused Postcomp TFLOPS:       971.72
+  Separated Postcomp TFLOPS:   815.21
+
+Benchmarking 12288-8192-1536 (108/169)...
+  Dense WS TFLOPS:             621.03
+  Precomp Sparse WS TFLOPS:    938.14
+  Fused Postcomp TFLOPS:       879.32
+  Separated Postcomp TFLOPS:   685.46
+
+Benchmarking 24576-8192-768 (109/169)...
+  Dense WS TFLOPS:             584.69
+  Precomp Sparse WS TFLOPS:    840.41
+  Fused Postcomp TFLOPS:       737.57
+  Separated Postcomp TFLOPS:   525.31
+
+Benchmarking 1024-8192-16384 (110/169)...
+  Dense WS TFLOPS:             682.94
+  Precomp Sparse WS TFLOPS:    1090.53
+  Fused Postcomp TFLOPS:       1077.04
+  Separated Postcomp TFLOPS:   1019.04
+
+Benchmarking 2048-8192-8192 (111/169)...
+  Dense WS TFLOPS:             700.07
+  Precomp Sparse WS TFLOPS:    1042.41
+  Fused Postcomp TFLOPS:       1041.92
+  Separated Postcomp TFLOPS:   951.69
+
+Benchmarking 4096-8192-4096 (112/169)...
+  Dense WS TFLOPS:             657.42
+  Precomp Sparse WS TFLOPS:    1030.71
+  Fused Postcomp TFLOPS:       1002.43
+  Separated Postcomp TFLOPS:   852.96
+
+Benchmarking 8192-8192-2048 (113/169)...
+  Dense WS TFLOPS:             634.09
+  Precomp Sparse WS TFLOPS:    971.79
+  Fused Postcomp TFLOPS:       932.45
+  Separated Postcomp TFLOPS:   741.40
+
+Benchmarking 16384-8192-1024 (114/169)...
+  Dense WS TFLOPS:             618.58
+  Precomp Sparse WS TFLOPS:    894.57
+  Fused Postcomp TFLOPS:       832.29
+  Separated Postcomp TFLOPS:   597.74
+
+Benchmarking 768-8192-16384 (115/169)...
+  Dense WS TFLOPS:             654.66
+  Precomp Sparse WS TFLOPS:    968.96
+  Fused Postcomp TFLOPS:       856.50
+  Separated Postcomp TFLOPS:   921.60
+
+Benchmarking 1024-8192-12288 (116/169)...
+  Dense WS TFLOPS:             694.17
+  Precomp Sparse WS TFLOPS:    1089.42
+  Fused Postcomp TFLOPS:       1073.64
+  Separated Postcomp TFLOPS:   1004.57
+
+Benchmarking 1536-8192-8192 (117/169)...
+  Dense WS TFLOPS:             661.88
+  Precomp Sparse WS TFLOPS:    1048.61
+  Fused Postcomp TFLOPS:       1027.78
+  Separated Postcomp TFLOPS:   940.59
+
+Benchmarking 2048-8192-6144 (118/169)...
+  Dense WS TFLOPS:             659.69
+  Precomp Sparse WS TFLOPS:    1047.33
+  Fused Postcomp TFLOPS:       1044.37
+  Separated Postcomp TFLOPS:   921.00
+
+Benchmarking 3072-8192-4096 (119/169)...
+  Dense WS TFLOPS:             669.09
+  Precomp Sparse WS TFLOPS:    1022.71
+  Fused Postcomp TFLOPS:       1007.47
+  Separated Postcomp TFLOPS:   855.71
+
+Benchmarking 4096-8192-3072 (120/169)...
+  Dense WS TFLOPS:             650.16
+  Precomp Sparse WS TFLOPS:    1013.72
+  Fused Postcomp TFLOPS:       974.12
+  Separated Postcomp TFLOPS:   806.44
+
+Benchmarking 6144-8192-2048 (121/169)...
+  Dense WS TFLOPS:             632.29
+  Precomp Sparse WS TFLOPS:    968.37
+  Fused Postcomp TFLOPS:       918.29
+  Separated Postcomp TFLOPS:   738.99
+
+Benchmarking 8192-8192-1536 (122/169)...
+  Dense WS TFLOPS:             626.31
+  Precomp Sparse WS TFLOPS:    924.65
+  Fused Postcomp TFLOPS:       889.92
+  Separated Postcomp TFLOPS:   675.58
+
+Benchmarking 12288-8192-1024 (123/169)...
+  Dense WS TFLOPS:             613.87
+  Precomp Sparse WS TFLOPS:    881.28
+  Fused Postcomp TFLOPS:       826.80
+  Separated Postcomp TFLOPS:   587.93
+
+Benchmarking 16384-8192-768 (124/169)...
+  Dense WS TFLOPS:             584.17
+  Precomp Sparse WS TFLOPS:    804.77
+  Fused Postcomp TFLOPS:       762.23
+  Separated Postcomp TFLOPS:   517.66
+
+Benchmarking 768-8192-12288 (125/169)...
+  Dense WS TFLOPS:             648.92
+  Precomp Sparse WS TFLOPS:    979.38
+  Fused Postcomp TFLOPS:       854.85
+  Separated Postcomp TFLOPS:   906.45
+
+Benchmarking 1536-8192-6144 (126/169)...
+  Dense WS TFLOPS:             695.06
+  Precomp Sparse WS TFLOPS:    1040.44
+  Fused Postcomp TFLOPS:       1011.59
+  Separated Postcomp TFLOPS:   917.49
+
+Benchmarking 3072-8192-3072 (127/169)...
+  Dense WS TFLOPS:             648.56
+  Precomp Sparse WS TFLOPS:    987.66
+  Fused Postcomp TFLOPS:       957.31
+  Separated Postcomp TFLOPS:   803.64
+
+Benchmarking 6144-8192-1536 (128/169)...
+  Dense WS TFLOPS:             615.58
+  Precomp Sparse WS TFLOPS:    927.99
+  Fused Postcomp TFLOPS:       876.58
+  Separated Postcomp TFLOPS:   669.56
+
+Benchmarking 12288-8192-768 (129/169)...
+  Dense WS TFLOPS:             598.25
+  Precomp Sparse WS TFLOPS:    828.76
+  Fused Postcomp TFLOPS:       753.65
+  Separated Postcomp TFLOPS:   514.45
+
+Benchmarking 1024-8192-8192 (130/169)...
+  Dense WS TFLOPS:             673.91
+  Precomp Sparse WS TFLOPS:    1094.15
+  Fused Postcomp TFLOPS:       1052.10
+  Separated Postcomp TFLOPS:   976.54
+
+Benchmarking 2048-8192-4096 (131/169)...
+  Dense WS TFLOPS:             648.31
+  Precomp Sparse WS TFLOPS:    1018.04
+  Fused Postcomp TFLOPS:       990.45
+  Separated Postcomp TFLOPS:   855.49
+
+Benchmarking 4096-8192-2048 (132/169)...
+  Dense WS TFLOPS:             636.28
+  Precomp Sparse WS TFLOPS:    956.22
+  Fused Postcomp TFLOPS:       915.22
+  Separated Postcomp TFLOPS:   730.64
+
+Benchmarking 8192-8192-1024 (133/169)...
+  Dense WS TFLOPS:             597.21
+  Precomp Sparse WS TFLOPS:    879.26
+  Fused Postcomp TFLOPS:       821.16
+  Separated Postcomp TFLOPS:   579.47
+
+Benchmarking 768-8192-8192 (134/169)...
+  Dense WS TFLOPS:             662.98
+  Precomp Sparse WS TFLOPS:    946.01
+  Fused Postcomp TFLOPS:       848.71
+  Separated Postcomp TFLOPS:   856.82
+
+Benchmarking 1024-8192-6144 (135/169)...
+  Dense WS TFLOPS:             667.61
+  Precomp Sparse WS TFLOPS:    1040.94
+  Fused Postcomp TFLOPS:       1077.46
+  Separated Postcomp TFLOPS:   930.02
+
+Benchmarking 1536-8192-4096 (136/169)...
+  Dense WS TFLOPS:             662.70
+  Precomp Sparse WS TFLOPS:    1018.93
+  Fused Postcomp TFLOPS:       966.58
+  Separated Postcomp TFLOPS:   873.43
+
+Benchmarking 2048-8192-3072 (137/169)...
+  Dense WS TFLOPS:             656.72
+  Precomp Sparse WS TFLOPS:    983.43
+  Fused Postcomp TFLOPS:       998.36
+  Separated Postcomp TFLOPS:   798.03
+
+Benchmarking 3072-8192-2048 (138/169)...
+  Dense WS TFLOPS:             648.35
+  Precomp Sparse WS TFLOPS:    928.12
+  Fused Postcomp TFLOPS:       914.79
+  Separated Postcomp TFLOPS:   725.07
+
+Benchmarking 4096-8192-1536 (139/169)...
+  Dense WS TFLOPS:             633.76
+  Precomp Sparse WS TFLOPS:    914.32
+  Fused Postcomp TFLOPS:       863.27
+  Separated Postcomp TFLOPS:   655.14
+
+Benchmarking 6144-8192-1024 (140/169)...
+  Dense WS TFLOPS:             612.45
+  Precomp Sparse WS TFLOPS:    873.22
+  Fused Postcomp TFLOPS:       817.83
+  Separated Postcomp TFLOPS:   568.21
+
+Benchmarking 8192-8192-768 (141/169)...
+  Dense WS TFLOPS:             579.05
+  Precomp Sparse WS TFLOPS:    790.95
+  Fused Postcomp TFLOPS:       743.49
+  Separated Postcomp TFLOPS:   500.88
+
+Benchmarking 768-8192-6144 (142/169)...
+  Dense WS TFLOPS:             633.23
+  Precomp Sparse WS TFLOPS:    964.43
+  Fused Postcomp TFLOPS:       877.82
+  Separated Postcomp TFLOPS:   838.41
+
+Benchmarking 1536-8192-3072 (143/169)...
+  Dense WS TFLOPS:             668.48
+  Precomp Sparse WS TFLOPS:    1005.42
+  Fused Postcomp TFLOPS:       950.15
+  Separated Postcomp TFLOPS:   794.32
+
+Benchmarking 3072-8192-1536 (144/169)...
+  Dense WS TFLOPS:             640.51
+  Precomp Sparse WS TFLOPS:    920.78
+  Fused Postcomp TFLOPS:       920.56
+  Separated Postcomp TFLOPS:   645.71
+
+Benchmarking 6144-8192-768 (145/169)...
+  Dense WS TFLOPS:             582.39
+  Precomp Sparse WS TFLOPS:    838.37
+  Fused Postcomp TFLOPS:       744.54
+  Separated Postcomp TFLOPS:   487.33
+
+Benchmarking 1024-8192-4096 (146/169)...
+  Dense WS TFLOPS:             672.80
+  Precomp Sparse WS TFLOPS:    1078.61
+  Fused Postcomp TFLOPS:       1026.32
+  Separated Postcomp TFLOPS:   870.76
+
+Benchmarking 2048-8192-2048 (147/169)...
+  Dense WS TFLOPS:             631.88
+  Precomp Sparse WS TFLOPS:    952.49
+  Fused Postcomp TFLOPS:       940.37
+  Separated Postcomp TFLOPS:   712.01
+
+Benchmarking 4096-8192-1024 (148/169)...
+  Dense WS TFLOPS:             612.41
+  Precomp Sparse WS TFLOPS:    888.70
+  Fused Postcomp TFLOPS:       820.23
+  Separated Postcomp TFLOPS:   551.46
+
+Benchmarking 768-8192-4096 (149/169)...
+  Dense WS TFLOPS:             653.67
+  Precomp Sparse WS TFLOPS:    932.55
+  Fused Postcomp TFLOPS:       830.37
+  Separated Postcomp TFLOPS:   796.08
+
+Benchmarking 1024-8192-3072 (150/169)...
+  Dense WS TFLOPS:             638.13
+  Precomp Sparse WS TFLOPS:    989.27
+  Fused Postcomp TFLOPS:       996.86
+  Separated Postcomp TFLOPS:   821.02
+
+Benchmarking 1536-8192-2048 (151/169)...
+  Dense WS TFLOPS:             643.64
+  Precomp Sparse WS TFLOPS:    971.41
+  Fused Postcomp TFLOPS:       951.25
+  Separated Postcomp TFLOPS:   723.81
+
+Benchmarking 2048-8192-1536 (152/169)...
+  Dense WS TFLOPS:             628.80
+  Precomp Sparse WS TFLOPS:    980.19
+  Fused Postcomp TFLOPS:       894.44
+  Separated Postcomp TFLOPS:   645.20
+
+Benchmarking 3072-8192-1024 (153/169)...
+  Dense WS TFLOPS:             612.56
+  Precomp Sparse WS TFLOPS:    888.29
+  Fused Postcomp TFLOPS:       830.72
+  Separated Postcomp TFLOPS:   543.33
+
+Benchmarking 4096-8192-768 (154/169)...
+  Dense WS TFLOPS:             591.99
+  Precomp Sparse WS TFLOPS:    842.20
+  Fused Postcomp TFLOPS:       770.96
+  Separated Postcomp TFLOPS:   474.31
+
+Benchmarking 768-8192-3072 (155/169)...
+  Dense WS TFLOPS:             619.55
+  Precomp Sparse WS TFLOPS:    937.89
+  Fused Postcomp TFLOPS:       789.49
+  Separated Postcomp TFLOPS:   741.92
+
+Benchmarking 1536-8192-1536 (156/169)...
+  Dense WS TFLOPS:             649.79
+  Precomp Sparse WS TFLOPS:    949.19
+  Fused Postcomp TFLOPS:       904.45
+  Separated Postcomp TFLOPS:   635.75
+
+Benchmarking 3072-8192-768 (157/169)...
+  Dense WS TFLOPS:             598.51
+  Precomp Sparse WS TFLOPS:    809.57
+  Fused Postcomp TFLOPS:       757.28
+  Separated Postcomp TFLOPS:   459.43
+
+Benchmarking 1024-8192-2048 (158/169)...
+  Dense WS TFLOPS:             652.12
+  Precomp Sparse WS TFLOPS:    1000.36
+  Fused Postcomp TFLOPS:       934.71
+  Separated Postcomp TFLOPS:   723.44
+
+Benchmarking 2048-8192-1024 (159/169)...
+  Dense WS TFLOPS:             604.27
+  Precomp Sparse WS TFLOPS:    880.14
+  Fused Postcomp TFLOPS:       832.04
+  Separated Postcomp TFLOPS:   529.29
+
+Benchmarking 768-8192-2048 (160/169)...
+  Dense WS TFLOPS:             617.62
+  Precomp Sparse WS TFLOPS:    879.95
+  Fused Postcomp TFLOPS:       730.35
+  Separated Postcomp TFLOPS:   662.42
+
+Benchmarking 1024-8192-1536 (161/169)...
+  Dense WS TFLOPS:             652.29
+  Precomp Sparse WS TFLOPS:    961.58
+  Fused Postcomp TFLOPS:       910.95
+  Separated Postcomp TFLOPS:   646.35
+
+Benchmarking 1536-8192-1024 (162/169)...
+  Dense WS TFLOPS:             610.09
+  Precomp Sparse WS TFLOPS:    877.66
+  Fused Postcomp TFLOPS:       833.09
+  Separated Postcomp TFLOPS:   519.37
+
+Benchmarking 2048-8192-768 (163/169)...
+  Dense WS TFLOPS:             580.79
+  Precomp Sparse WS TFLOPS:    824.17
+  Fused Postcomp TFLOPS:       757.13
+  Separated Postcomp TFLOPS:   446.84
+
+Benchmarking 768-8192-1536 (164/169)...
+  Dense WS TFLOPS:             633.51
+  Precomp Sparse WS TFLOPS:    873.10
+  Fused Postcomp TFLOPS:       716.28
+  Separated Postcomp TFLOPS:   585.02
+
+Benchmarking 1536-8192-768 (165/169)...
+  Dense WS TFLOPS:             580.47
+  Precomp Sparse WS TFLOPS:    808.94
+  Fused Postcomp TFLOPS:       746.73
+  Separated Postcomp TFLOPS:   474.12
+
+Benchmarking 1024-8192-1024 (166/169)...
+  Dense WS TFLOPS:             619.58
+  Precomp Sparse WS TFLOPS:    862.46
+  Fused Postcomp TFLOPS:       802.68
+  Separated Postcomp TFLOPS:   522.46
+
+Benchmarking 768-8192-1024 (167/169)...
+  Dense WS TFLOPS:             614.19
+  Precomp Sparse WS TFLOPS:    831.51
+  Fused Postcomp TFLOPS:       621.11
+  Separated Postcomp TFLOPS:   498.57
+
+Benchmarking 1024-8192-768 (168/169)...
+  Dense WS TFLOPS:             594.62
+  Precomp Sparse WS TFLOPS:    815.25
+  Fused Postcomp TFLOPS:       715.33
+  Separated Postcomp TFLOPS:   451.79
+
+Benchmarking 768-8192-768 (169/169)...
+  Dense WS TFLOPS:             579.51
+  Precomp Sparse WS TFLOPS:    750.46
+  Fused Postcomp TFLOPS:       541.05
+  Separated Postcomp TFLOPS:   430.81
+
+
+[INFO] Benchmark plot successfully saved to '/home/notming/links/scratch/compression/results/plots/v10.1/v10.1_benchmark_8192.png'
+
+scontrol show job 815845
+JobId=815845 JobName=10.1_N=8192
+   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
+   Priority=1312874 Nice=0 Account=rrg-mmehride QOS=normal
+   JobState=COMPLETING Reason=None Dependency=(null)
+   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
+   RunTime=05:12:49 TimeLimit=06:00:00 TimeMin=N/A
+   SubmitTime=2026-08-20T18:53:46 EligibleTime=2026-08-20T18:53:46
+   AccrueTime=2026-08-20T18:53:46
+   StartTime=2026-08-20T18:53:47 EndTime=2026-08-21T00:06:36 Deadline=N/A
+   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-08-20T18:53:47 Scheduler=Main
+   Partition=compute AllocNode:Sid=trig-login01:1383262
+   ReqNodeList=(null) ExcNodeList=(null)
+   NodeList=trig0038
+   BatchHost=trig0038
+   NumNodes=1 NumCPUs=24 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
+   ReqTRES=cpu=1,mem=187.50G,node=1,billing=1,gres/gpu=1
+   AllocTRES=cpu=24,mem=187.50G,node=1,billing=1,gres/gpu=1
+   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
+   MinCPUsNode=1 MinMemoryNode=187.50G MinTmpDiskNode=0
+   Features=(null) DelayBoot=00:00:00
+   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
+   Command=/scratch/notming/compression/sbatch_sh/trillium/10.1_benchmark_all.sh
+   SubmitLine=SBATCH --comment /opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/trillium/10.1_benchmark_all.sh --export=NONE --get-user-env sbatch_sh/trillium/10.1_benchmark_all.sh
+   WorkDir=/scratch/notming/compression
+   Comment=/opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/trillium/10.1_benchmark_all.sh
+   StdErr=
+   StdIn=/dev/null
+   StdOut=/scratch/notming/compression/10.1_N=8192815845.out
+   CpusPerTres=gpu:24
+   TresPerNode=gres/gpu:1
+
+sacct -j 815845
+JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
+------------ ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
+815845       10.1_N=81+ rrg-mmehr+   05:12:49                         00:00:00   00:00:00      0:0 
+815845.batch      batch rrg-mmehr+   05:12:49                         00:00:00   00:00:00      0:0 
+815845.exte+     extern rrg-mmehr+   05:12:49                         00:00:00   00:00:00      0:0 
+
