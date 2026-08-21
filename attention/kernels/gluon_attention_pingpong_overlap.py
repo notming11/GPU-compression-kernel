@@ -610,7 +610,7 @@ def fa3_warp_specialized_kernel(
         (fa3_consumer_wg1, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
-    ], [num_warps, 1, 1])
+    ], [num_warps, 1, 1], [168, 24, 24])
 
 # ---------------------------------------------------------------------------
 # AUTOTUNER & CONFIG HOOKS
@@ -679,6 +679,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
             num_warps=warps,
             num_stages=num_stages,
             pre_hook=pre_hook,
+            maxnreg=168
         )
         for BM in (128, 256)
         for BN in (64, 128, 256)
@@ -799,7 +800,8 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             BLOCK_SIZE_K=manual_config["BK"],
             num_stages=manual_config["num_stages"],
             SUBTILE_FACTOR=manual_config["SF"],
-            num_warps=manual_config["warps"]
+            num_warps=manual_config["warps"],
+            maxnreg=168
         )
 
         return O, manual_config
@@ -809,10 +811,10 @@ if __name__ == "__main__":
     parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
-    parser.add_argument("--bn", type=int, default=64, help="BLOCK_SIZE_N")
+    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
     parser.add_argument("--bk", type=int, default=128, help="HEAD_DIM (BLOCK_SIZE_K)")
-    parser.add_argument("--stages", type=int, default=5, help="Number of pipeline stages for KV")
-    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
+    parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
+    parser.add_argument("--sf", type=int, default=1, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=4, help="Number of compute warps")
     
     args = parser.parse_args()
