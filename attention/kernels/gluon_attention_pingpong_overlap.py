@@ -610,7 +610,7 @@ def fa3_warp_specialized_kernel(
         (fa3_consumer_wg1, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
-    ], [num_warps, 1, 1], [168, 24, 24])
+    ], [num_warps, 1, 1], [190, 24, 24])
 
 # ---------------------------------------------------------------------------
 # AUTOTUNER & CONFIG HOOKS
