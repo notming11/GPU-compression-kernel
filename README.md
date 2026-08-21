@@ -3,36 +3,27 @@
 GPU kernels for **2:4 structured sparse matrix multiplication** and **sparse attention** on NVIDIA Hopper (H100), written with [Triton](https://github.com/triton-lang/triton) and [Gluon](https://github.com/triton-lang/triton/tree/main/python/triton/experimental/gluon) (Triton's experimental low-level API for warp specialization, TMA, and explicit shared memory management).
 
 ## Key Results — Sparse MatMul
-
-All benchmarks run on H100 SXM 80GB, measured in TFLOPS over 169 matrix shapes. (Shape are sorted in descending order of their size in graphs)
-
+All benchmarks run on NVIDIA H100 SXM 80GB, measured over 169 matrix shapes ($N = 8192$, varying $M, K$). Throughput numbers below reflect the **peak sustained throughput on large, compute-bound shapes** ($M, K \ge 8192$).
 ### v11.1 — Two-Kernel Approach (Prune+Compress → Sparse MatMul)
-
 Separates pruning/compression into a standalone kernel, then feeds into the existing sparse WGMMA matmul.
-
-| Metric | Typical Value | Comparison |
-|--------|--------------|------------|
+| Metric | Peak Sustained ($M,K \ge 8\text{k}$) | Comparison |
+|--------|--------------------------------------|------------|
 | **E2E throughput** | ~990 TFLOPS | **1.5× dense WS** (~660 TFLOPS) |
-| **Standalone prune+compress** | ~2750 GB/s | **3.2× TorchAO** C++ (~855 GB/s) |
-
+| **Standalone prune+compress** | ~2750 GB/s | **3.2× TorchAO** CuSparselt (~855 GB/s) |
 - Kernel: [`compression/kernels/11.1_2_kernel_baseline.py`](compression/kernels/11.1_2_kernel_baseline.py)
-- E2E results: [`compression/results/11.1_N=8192_750942.out`](compression/results/11.1_N=8192_750942.out)
+- E2E results: [`compression/results/logs/11.1_N=8192_750942.out`](compression/results/logs/11.1_N=8192_750942.out)
 ![](./compression/results/plots/v11.1/v11.1_Benchmark_8192.png)
-- Pruning results: [`compression/results/11.1_pruning_723267.out`](compression/results/11.1_pruning_723267.out)
+- Pruning results: [`compression/results/logs/11.1_pruning_723267.out`](compression/results/logs/11.1_pruning_723267.out)
 ![](./compression/results/plots/v11.1/v11.1_Compression_Benchmark.png)
-
 ### v10.1 — Fused Output Pruning+Compression
-
-Fuses 2:4 pruning and metadata generation directly into the matmul accumulator writeback. Near-zero overhead compared to the pre-computed sparse baseline. Reduced overhead compare to 2 kernels soluton.
-
-| Metric | Typical Value | Comparison |
-|--------|--------------|------------|
-| **E2E throughput** | ~1060 TFLOPS | **~99% of precomp sparse** (~1070 TFLOPS) / **> than 2 kernel** (~1050 TFLOPS)|
-
+Fuses 2:4 pruning and metadata generation directly into the matmul accumulator writeback. Near-zero overhead compared to the pre-computed sparse baseline.
+| Metric | Peak Sustained ($M,K \ge 8\text{k}$) | Comparison |
+|--------|--------------------------------------|------------|
+| **E2E throughput** | ~1060 TFLOPS | **~99% of precomp sparse** (~1070 TFLOPS) / **> 2-kernel** (~990–1050 TFLOPS) |
 - Kernel: [`compression/kernels/10.1_prune_acc.py`](compression/kernels/10.1_prune_acc.py)
-- Results: [`compression/results/10.1_N=8192_815845.out`](compression/results/10.1_N=8192_815845.out)
-
+- Results: [`compression/results/logs/10.1_N=8192_815845.out`](compression/results/logs/10.1_N=8192_815845.out)
 ![](./compression/results/plots/v10.1/v10.1_benchmark_8192.png)
+
 
 ### v7.8.1 — Input Pruning (Negative Result)
 
