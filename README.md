@@ -8,8 +8,8 @@ All benchmarks run on NVIDIA H100 SXM 80GB, measured over 169 matrix shapes ($N 
 Separates pruning/compression into a standalone kernel, then feeds into the existing sparse WGMMA matmul.
 | Metric | Peak Sustained ($M,K \ge 8\text{k}$) | Comparison |
 |--------|--------------------------------------|------------|
-| **E2E throughput** | ~990 TFLOPS | **1.5× dense WS** (~660 TFLOPS) |
-| **Standalone prune+compress** | ~2750 GB/s | **3.2× TorchAO** CuSparselt (~855 GB/s) |
+| **E2E throughput** | ~990 TFLOPS | **1.5× dense WS** (~660 TFLOPS) / **~93% of sparse WS** (~1064 TFLOPS, only ~7% overhead) |
+| **Standalone prune+compress** | ~2750 GB/s | **3.2× TorchAO** CuSparselt (~855 GB/s) / **~82% of H100 theoretical peak** (3.35 TB/s) |
 - Kernel: [`compression/kernels/11.1_2_kernel_baseline.py`](compression/kernels/11.1_2_kernel_baseline.py)
 - E2E results: [`compression/results/logs/11.1_N=8192_750942.out`](compression/results/logs/11.1_N=8192_750942.out)
 ![](./compression/results/plots/v11.1/v11.1_Benchmark_8192.png)
