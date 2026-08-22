@@ -8658,3 +8658,161 @@ cd ../attention/
 tpython kernels/gluon_attention_pingpong_overlap.py 
 #1787340030
 debugjob
+#1787351908
+load_module && start_gluon
+#1787351911
+cd ../attention/
+#1787351949
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787351982
+tpython kernels/gluon_attention_pingpong_overlap.py
+#1787352050
+gkill
+#1787352141
+tpython kernels/gluon_attention_pingpong_overlap.py
+#1787352176
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787352230
+tpython kernels/gluon_attention_pingpong_overlap.py
+#1787352245
+gkill
+#1787352249
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787352284
+gkill
+#1787352380
+tpython kernels/gluon_attention_pingpong_overlap.py
+#1787352399
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787352426
+gkill
+#1787352439
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787352459
+gkill
+#1787352474
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787352497
+gkill
+#1787352570
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787352591
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787352823
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python kernels/gluon_attention_pingpong_overlap.py 
+#1787353113
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787353130
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787353168
+gkill
+#1787353184
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787353209
+gkill
+#1787353545
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787353747
+gkill
+#1787353748
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787353796
+gkill
+#1787354072
+tpython kernels/gluon_attention_pingpong_overlap.py
+#1787354097
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787354137
+gkill
+#1787354202
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787354350
+gkill
+#1787354904
+tpython kernels/gluon_attention_pingpong_overlap.py
+#1787354985
+gkil
+#1787354986
+gkill
+#1787354988
+tpython kernels/gluon_attention_pingpong_overlap.py
+#1787355042
+gkill
+#1787355141
+tpython kernels/gluon_attention_pingpong_overlap.py
+#1787355159
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787345451
+load_module && start_gluon && cd ../attention
+#1787345487
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1787345499
+sq
+#1787347712
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787348611
+tpython benchmark.py 
+#1787351347
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1787351352
+scancel --me
+#1787351354
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787351450
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python kernels/gluon_attention_pingpong_overlap.py 
+#1787351549
+tpython benchmark.py --head-dim=128
+#1787351883
+debugjob
+#1787352948
+sbatch attention/sbatch_sh/benchmark_fa3_baseline.sh 
+#1787352956
+sq
+#1787364707
+load_module && start_gluon && cd ../attention
+#1787364721
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787364747
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787364771
+gkill
+#1787364789
+tpython kernels/gluon_attention_pingpong_overlap.py --bn=64
+#1787364826
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787364844
+gkill
+#1787364911
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787364927
+gkill
+#1787364950
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787364971
+tpython kernels/gluon_attention_pingpong_overlap.py --bn=64
+#1787365000
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787365042
+tpython kernels/gluon_attention_pingpong_overlap.py --tune > test.txt
+#1787365075
+gkill
+#1787365146
+nvidia-smi
+#1787365149
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787365230
+gkill
+#1787364688
+debugjob
+#1787373567
+sq
+#1787373579
+sq --time
+#1787373583
+squeue --help
+#1787373598
+sq -t
+#1787373645
+sq --start
+#1787373794
+debugjob --account=rrg-mmehride
