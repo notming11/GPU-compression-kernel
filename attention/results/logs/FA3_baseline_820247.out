@@ -1,136 +1,127 @@
 INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
 INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+[INFO] Skipping '3-Part (Standard)' via CLI flag.
 
 ======================================================================
    STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=64)
-   Active Kernels: ['3-Part (Standard)', '4-Part']
+   Active Kernels: ['4-Part']
 ======================================================================
 
 Start SEQ_LEN=512-HEAD_DIM=64 (1/6)
-Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 341.01 TFLOPS, 3-Part (Standard): 118.00 TFLOPS, 4-Part: 119.07 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 2}, num_warps=4
+Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 341.68 TFLOPS, 4-Part: 344.74 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=1024-HEAD_DIM=64 (2/6)
-Finish SEQ_LEN=1024-HEAD_DIM=64 -> PyTorch SDPA: 386.86 TFLOPS, 3-Part (Standard): 186.13 TFLOPS, 4-Part: 189.82 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 4}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 2}, num_warps=4
+Finish SEQ_LEN=1024-HEAD_DIM=64 -> PyTorch SDPA: 386.36 TFLOPS, 4-Part: 379.35 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=2048-HEAD_DIM=64 (3/6)
-Finish SEQ_LEN=2048-HEAD_DIM=64 -> PyTorch SDPA: 414.02 TFLOPS, 3-Part (Standard): 260.02 TFLOPS, 4-Part: 265.11 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 2}, num_warps=4
+Finish SEQ_LEN=2048-HEAD_DIM=64 -> PyTorch SDPA: 414.64 TFLOPS, 4-Part: 394.17 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 5, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=4096-HEAD_DIM=64 (4/6)
-Finish SEQ_LEN=4096-HEAD_DIM=64 -> PyTorch SDPA: 427.09 TFLOPS, 3-Part (Standard): 318.72 TFLOPS, 4-Part: 319.69 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+Finish SEQ_LEN=4096-HEAD_DIM=64 -> PyTorch SDPA: 427.86 TFLOPS, 4-Part: 403.07 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=8192-HEAD_DIM=64 (5/6)
-Finish SEQ_LEN=8192-HEAD_DIM=64 -> PyTorch SDPA: 433.12 TFLOPS, 3-Part (Standard): 357.64 TFLOPS, 4-Part: 364.94 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+Finish SEQ_LEN=8192-HEAD_DIM=64 -> PyTorch SDPA: 433.14 TFLOPS, 4-Part: 410.32 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=16384-HEAD_DIM=64 (6/6)
-Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 435.26 TFLOPS, 3-Part (Standard): 381.14 TFLOPS, 4-Part: 391.47 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 2}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 2}, num_warps=4
+Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 436.20 TFLOPS, 4-Part: 413.78 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
 
 ======================================================================
-                    SUMMARY BENCHMARK RESULTS
+             BENCHMARK RESULTS TABLE (HEAD_DIM=64)
 ======================================================================
- SEQ_LEN  PyTorch SDPA_TFLOPS  3-Part (Standard)_TFLOPS  4-Part_TFLOPS
-     512           341.006496                118.001731     119.070228
-    1024           386.863268                186.127412     189.821055
-    2048           414.020646                260.019299     265.113462
-    4096           427.085257                318.717893     319.689028
-    8192           433.120120                357.641817     364.943028
-   16384           435.261128                381.135067     391.471972
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part_TFLOPS
+     512           341.680857     344.739347
+    1024           386.361765     379.346867
+    2048           414.643116     394.166653
+    4096           427.858821     403.068739
+    8192           433.138598     410.322362
+   16384           436.203339     413.784179
+======================================================================
+
 
 [INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_HEAD_DIM_64.png'
 INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
 INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+[INFO] Skipping '3-Part (Standard)' via CLI flag.
 
 ======================================================================
    STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=128)
-   Active Kernels: ['3-Part (Standard)', '4-Part']
+   Active Kernels: ['4-Part']
 ======================================================================
 
 Start SEQ_LEN=512-HEAD_DIM=128 (1/6)
-Finish SEQ_LEN=512-HEAD_DIM=128 -> PyTorch SDPA: 443.63 TFLOPS, 3-Part (Standard): 128.95 TFLOPS, 4-Part: 129.26 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 128, 'num_stages': 5, 'SUBTILE_FACTOR': 2}, num_warps=4
+Finish SEQ_LEN=512-HEAD_DIM=128 -> PyTorch SDPA: 445.99 TFLOPS, 4-Part: 452.64 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=1024-HEAD_DIM=128 (2/6)
-Finish SEQ_LEN=1024-HEAD_DIM=128 -> PyTorch SDPA: 513.07 TFLOPS, 3-Part (Standard): 210.51 TFLOPS, 4-Part: 212.11 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 128, 'num_stages': 3, 'SUBTILE_FACTOR': 2}, num_warps=4
+Finish SEQ_LEN=1024-HEAD_DIM=128 -> PyTorch SDPA: 513.14 TFLOPS, 4-Part: 517.85 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=2048-HEAD_DIM=128 (3/6)
-Finish SEQ_LEN=2048-HEAD_DIM=128 -> PyTorch SDPA: 552.03 TFLOPS, 3-Part (Standard): 297.28 TFLOPS, 4-Part: 308.53 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+Finish SEQ_LEN=2048-HEAD_DIM=128 -> PyTorch SDPA: 552.62 TFLOPS, 4-Part: 547.17 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=4096-HEAD_DIM=128 (4/6)
-Finish SEQ_LEN=4096-HEAD_DIM=128 -> PyTorch SDPA: 564.73 TFLOPS, 3-Part (Standard): 374.59 TFLOPS, 4-Part: 405.39 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Finish SEQ_LEN=4096-HEAD_DIM=128 -> PyTorch SDPA: 571.46 TFLOPS, 4-Part: 565.50 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
 Start SEQ_LEN=8192-HEAD_DIM=128 (5/6)
-Finish SEQ_LEN=8192-HEAD_DIM=128 -> PyTorch SDPA: 584.31 TFLOPS, 3-Part (Standard): 438.22 TFLOPS, 4-Part: 475.93 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
+Finish SEQ_LEN=8192-HEAD_DIM=128 -> PyTorch SDPA: 584.22 TFLOPS, 4-Part: 575.67 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=16384-HEAD_DIM=128 (6/6)
-Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 587.13 TFLOPS, 3-Part (Standard): 474.10 TFLOPS, 4-Part: 507.86 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 586.95 TFLOPS, 4-Part: 581.22 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
 
 ======================================================================
-                    SUMMARY BENCHMARK RESULTS
+             BENCHMARK RESULTS TABLE (HEAD_DIM=128)
 ======================================================================
- SEQ_LEN  PyTorch SDPA_TFLOPS  3-Part (Standard)_TFLOPS  4-Part_TFLOPS
-     512           443.630093                128.946843     129.263444
-    1024           513.069375                210.508005     212.108231
-    2048           552.029778                297.280111     308.529218
-    4096           564.727839                374.592723     405.385303
-    8192           584.313887                438.222536     475.929756
-   16384           587.133774                474.097277     507.855098
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part_TFLOPS
+     512           445.991044     452.638389
+    1024           513.139259     517.845961
+    2048           552.619862     547.165948
+    4096           571.460176     565.501157
+    8192           584.216819     575.671288
+   16384           586.947405     581.219905
+======================================================================
+
 
 [INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_HEAD_DIM_128.png'
 INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
 INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+[INFO] Skipping '3-Part (Standard)' via CLI flag.
 
 ======================================================================
    STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=256)
-   Active Kernels: ['3-Part (Standard)', '4-Part']
+   Active Kernels: ['4-Part']
 ======================================================================
 
 Start SEQ_LEN=512-HEAD_DIM=256 (1/6)
-Finish SEQ_LEN=512-HEAD_DIM=256 -> PyTorch SDPA: 467.37 TFLOPS, 3-Part (Standard): 131.12 TFLOPS, 4-Part: 107.28 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+Finish SEQ_LEN=512-HEAD_DIM=256 -> PyTorch SDPA: 470.15 TFLOPS, 4-Part: 465.33 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=1024-HEAD_DIM=256 (2/6)
-Finish SEQ_LEN=1024-HEAD_DIM=256 -> PyTorch SDPA: 544.55 TFLOPS, 3-Part (Standard): 218.61 TFLOPS, 4-Part: 161.12 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
+Finish SEQ_LEN=1024-HEAD_DIM=256 -> PyTorch SDPA: 547.35 TFLOPS, 4-Part: 546.86 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=2048-HEAD_DIM=256 (3/6)
-Finish SEQ_LEN=2048-HEAD_DIM=256 -> PyTorch SDPA: 578.80 TFLOPS, 3-Part (Standard): 320.08 TFLOPS, 4-Part: 213.20 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+Finish SEQ_LEN=2048-HEAD_DIM=256 -> PyTorch SDPA: 589.14 TFLOPS, 4-Part: 591.87 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=4096-HEAD_DIM=256 (4/6)
-Finish SEQ_LEN=4096-HEAD_DIM=256 -> PyTorch SDPA: 615.94 TFLOPS, 3-Part (Standard): 413.62 TFLOPS, 4-Part: 254.02 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+Finish SEQ_LEN=4096-HEAD_DIM=256 -> PyTorch SDPA: 617.79 TFLOPS, 4-Part: 617.06 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=8192-HEAD_DIM=256 (5/6)
-Finish SEQ_LEN=8192-HEAD_DIM=256 -> PyTorch SDPA: 631.44 TFLOPS, 3-Part (Standard): 483.42 TFLOPS, 4-Part: 277.69 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+Finish SEQ_LEN=8192-HEAD_DIM=256 -> PyTorch SDPA: 631.00 TFLOPS, 4-Part: 629.10 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=16384-HEAD_DIM=256 (6/6)
-Finish SEQ_LEN=16384-HEAD_DIM=256 -> PyTorch SDPA: 635.42 TFLOPS, 3-Part (Standard): 527.78 TFLOPS, 4-Part: 286.65 TFLOPS
-  [3-Part (Standard)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=8
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+Finish SEQ_LEN=16384-HEAD_DIM=256 -> PyTorch SDPA: 636.25 TFLOPS, 4-Part: 634.45 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 
 ======================================================================
-                    SUMMARY BENCHMARK RESULTS
+             BENCHMARK RESULTS TABLE (HEAD_DIM=256)
 ======================================================================
- SEQ_LEN  PyTorch SDPA_TFLOPS  3-Part (Standard)_TFLOPS  4-Part_TFLOPS
-     512           467.369652                131.119554     107.275134
-    1024           544.554303                218.607906     161.121730
-    2048           578.804234                320.081620     213.200972
-    4096           615.940458                413.618149     254.021345
-    8192           631.440638                483.418547     277.689529
-   16384           635.420303                527.778383     286.649040
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part_TFLOPS
+     512           470.147259     465.329500
+    1024           547.352569     546.861406
+    2048           589.138389     591.871719
+    4096           617.791651     617.064406
+    8192           630.998679     629.099601
+   16384           636.253181     634.449235
+======================================================================
+
 
 [INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_HEAD_DIM_256.png'
 

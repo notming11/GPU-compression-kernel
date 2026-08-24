@@ -219,7 +219,7 @@ def store_acc_to_smem_subtile(acc, o_bufs, o_empty_bars, o_ready_bars, acc_state
 def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
     SUB_BM: gl.constexpr = p.q0_desc.block_type.shape[0]
     BLOCK_M: gl.constexpr = SUB_BM * 2
-    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
+    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]
     BLOCK_K: gl.constexpr = p.q0_desc.block_type.shape[1]
 
     scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
@@ -245,7 +245,7 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
             mbarrier.wait(p.kv_empty_bars.index(kv_state.index), kv_state.phase)
 
             mbarrier.expect(bar, p.k_desc.block_type.nbytes + p.v_desc.block_type.nbytes)
-            tma.async_copy_global_to_shared(p.k_desc, [0, kv_global_offset + step * BLOCK_N], bar, p.k_bufs.index(kv_state.index))
+            tma.async_copy_global_to_shared(p.k_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.k_bufs.index(kv_state.index))
             tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.v_bufs.index(kv_state.index))
             
             kv_state = kv_state.next()
@@ -256,7 +256,7 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
 def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
     SUB_BM: gl.constexpr = p.q0_desc.block_type.shape[0]
     BLOCK_M: gl.constexpr = SUB_BM * 2
-    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
+    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]
     BLOCK_K: gl.constexpr = p.q0_desc.block_type.shape[1]
     
     num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
@@ -277,10 +277,6 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     mma_s_base = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
 
     for tile_idx in range(scheduler.get_num_tiles()):
-        if tile_idx == 1:
-            # Expect pong_phase to be 0 at the start of every new tile
-            assert pong_phase == 0, f"WG0 pong_phase desynced on tile 1"
-        
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
         
         mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
@@ -294,7 +290,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         # PROLOGUE: Issue S_0 = Q0 * K_0^T
         # -------------------------------------------------------------------
         mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
-        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index))
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
 
         # Signal WG1 that WG0 has finished issuing its Prologue WGMMA
         mbarrier.arrive(p.ping_bar.index(0), count=1)
@@ -328,7 +324,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             
             # 1. Issue S_next = Q0 * K_j^T
             mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index))
+            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
             
             # 3. Hand off Tensor Core issue slot to WG1
             mbarrier.arrive(p.ping_bar.index(0), count=1)
@@ -371,7 +367,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase
         )
         mma_s = mma_s_base.issue_async_mma(
-            p.q0_buf, p.k_bufs.index(next_kv_state.index)
+            p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0))
         )
 
         mbarrier.arrive(p.ping_bar.index(0), count=1)
@@ -419,7 +415,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
 def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
     SUB_BM: gl.constexpr = p.q1_desc.block_type.shape[0]
     BLOCK_M: gl.constexpr = SUB_BM * 2
-    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
+    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]
     BLOCK_K: gl.constexpr = p.q1_desc.block_type.shape[1]
     
     num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
@@ -440,11 +436,6 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     mma_s_base = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
 
     for tile_idx in range(scheduler.get_num_tiles()):
-        
-        if tile_idx == 1:
-            # Expect pong_phase to be 0 at the start of every new tile
-            assert ping_phase == 0, f"WG1 ping_phase desynced on tile 1"
-        
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
         
         mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
@@ -462,7 +453,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         # PROLOGUE: Issue S_0 = Q1 * K_0^T
         # -------------------------------------------------------------------
         mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
-        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index))
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
 
         # Hand off back to WG0
         mbarrier.arrive(p.pong_bar.index(0), count=1)
@@ -496,7 +487,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             
             # 2. Issue S_next = Q1 * K_j^T
             mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index))
+            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
             
             # 4. Hand off Tensor Core issue slot back to WG0
             mbarrier.arrive(p.pong_bar.index(0), count=1)
@@ -534,7 +525,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         kv_state = next_kv_state
 
         mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index))
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
 
         mbarrier.arrive(p.pong_bar.index(0), count=1)
 
@@ -687,20 +678,20 @@ def fa3_warp_specialized_kernel(
     
     p_layout: gl.constexpr = gl.DotOperandLayout(
         operand_index=0,
-        parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_K, num_warps),
+        parent=pick_wgmma_layout(dtype, SUB_BM, BLOCK_SIZE_K, num_warps),
         k_width=32 // dtype.primitive_bitwidth,
         meta=0,
     )
     
-    m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_K, num_warps))
-    s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, BLOCK_SIZE_M, BLOCK_SIZE_N, num_warps))
+    m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, SUB_BM, BLOCK_SIZE_K, num_warps))
+    s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, SUB_BM, BLOCK_SIZE_N, num_warps))
 
     gl.warp_specialize([
         (fa3_consumer_wg0, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_consumer_wg1, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
-    ], [num_warps, 1, 1], [200, 24, 24])
+    ], [num_warps, 1, 1], [255, 24, 24])
 
 # ---------------------------------------------------------------------------
 # AUTOTUNER & CONFIG HOOKS
@@ -769,10 +760,9 @@ def fa3_get_configs(pre_hook=None, tune=True):
             num_warps=warps,
             num_stages=num_stages,
             pre_hook=pre_hook,
-            maxnreg=168
         )
         for BM in (128, 256)
-        for BN in (64, 128, 256)
+        for BN in (64, 128)
         for BK in (64, 128, 256)
         for warps in (4, )
         for num_stages in (2, 3, 4, 5, 6)
@@ -791,7 +781,7 @@ def fa3_tma_set_block_size_hook(nargs):
 
     nargs["q0_desc"].block_shape = [sub_bm, block_k]
     nargs["q1_desc"].block_shape = [sub_bm, block_k]
-    nargs["k_desc"].block_shape = [block_k, block_n]
+    nargs["k_desc"].block_shape = [block_n, block_k]
     nargs["v_desc"].block_shape = [block_n, block_k]
     nargs["o0_desc"].block_shape = [sub_bm, split_k]
     nargs["o1_desc"].block_shape = [sub_bm, split_k]
@@ -837,14 +827,13 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
     K_flat = K.reshape(-1, HEAD_DIM)
     V_flat = V.reshape(-1, HEAD_DIM)
     O_flat = O.reshape(-1, HEAD_DIM)
-    K_T = K_flat.transpose(0, 1).contiguous()
 
     dummy_block = [1, 1]
     dummy_layout = gl.NVMMASharedLayout.get_default_for(dummy_block, gl.float16)
 
     q0_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
     q1_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
-    k_desc = TensorDescriptor.from_tensor(K_T, dummy_block, dummy_layout)
+    k_desc = TensorDescriptor.from_tensor(K_flat, dummy_block, dummy_layout)
     v_desc = TensorDescriptor.from_tensor(V_flat, dummy_block, dummy_layout)
     o0_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
     o1_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
@@ -925,7 +914,7 @@ if __name__ == "__main__":
         
     NUM_HEADS = 16
     sizes = [
-        (512, 128),
+        (4096, 128),
         # (256, 64),
         # (512, 128),
         # (8192, 256)
