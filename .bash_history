@@ -8816,3 +8816,177 @@ sq -t
 sq --start
 #1787373794
 debugjob --account=rrg-mmehride
+#1787436959
+load_module && start_gluon && cd ../attention
+#1787437014
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python kernels/gluon_attention_pingpong_overlap.py 
+#1787437564
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --launch-count 1 --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python kernels/gluon_attention_pingpong_overlap.py
+#1787437592
+nvidia-smi
+#1787437696
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python kernels/gluon_attention_pingpong_overlap.py 
+#1787439129
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_256_128 python kernels/gluon_attention_pingpong_overlap.py 
+#1787439160
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_512_128 python kernels/gluon_attention_pingpong_overlap.py 
+#1787440390
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787441868
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_512_128 python kernels/gluon_attention_pingpong_overlap_profile.py 
+#1787441886
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python kernels/gluon_attention_pingpong_overlap_profile.py 
+#1787441926
+tpython kernels/gluon_attention_pingpong_overlap_profile.py 
+#1787442042
+gkill
+#1787442043
+tpython kernels/gluon_attention_pingpong_overlap_profile.py 
+#1787442058
+gkill
+#1787442095
+tpython kernels/gluon_attention_pingpong_overlap_profile.py 
+#1787442117
+gkill
+#1787442139
+tpython kernels/gluon_attention_pingpong_overlap_profile.py 
+#1787442272
+gkill
+#1787442273
+tpython kernels/gluon_attention_pingpong_overlap_profile.py 
+#1787442400
+tpython kernels/gluon_attention_pingpong_overlap_profile.py --tune
+#1787442445
+gkill
+#1787442452
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o Profiling/4_partition_4096_128 python kernels/gluon_attention_pingpong_overlap_profile.py 
+#1787446517
+load_module && start_gluon && cd ../attention
+#1787446529
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787446631
+gkill
+#1787446686
+tpython kernels/gluon_attention_pingpong_overlap.py --bm=128 --bn=256 --bk=64
+#1787446807
+tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1787446911
+gkill
+#1787446921
+tpython benchmark.py --head-dim=128
+#1787447915
+tpython benchmark.py --head-dim=256
+#1787448263
+tpython benchmark.py --head-dim=64
+#1787448585
+gkill
+#1787436925
+debugjob --account=rrg-mmerhide
+#1787436934
+debugjob --account=rrg-mmehride
+#1787446485
+debugjob
+#1787452753
+load_module && start_gluon && cd ../attention
+#1787452791
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787443135
+load_module && start_gluon && cd ../attention
+#1787443142
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1787445433
+sq
+#1787446449
+scancel
+#1787446452
+scancel --me
+#1787437256
+head -n 100 README.md
+#1787437259
+head -n 40 compression/results/logs/11.1_N=8192_750942.out
+#1787437263
+head -n 40 compression/results/logs/11.1_pruning_723267.out
+#1787437271
+cat -n README.md
+#1787437279
+grep -ri "3.35" note/ compression/ || grep -ri "theoretical" note/ compression/
+#1787437294
+python3 -c "
+#1787437294
+with open('README.md', 'r') as f:
+#1787437294
+    content = f.read()
+#1787437294
+
+#1787437294
+old_block = '''| Metric | Peak Sustained ($M,K \ge 8\\text{k}$) | Comparison |
+#1787437294
+|--------|--------------------------------------|------------|
+#1787437294
+| **E2E throughput** | ~990 TFLOPS | **1.5× dense WS** (~660 TFLOPS) |
+#1787437294
+| **Standalone prune+compress** | ~2750 GB/s | **3.2× TorchAO** CuSparselt (~855 GB/s) |'''
+#1787437294
+
+#1787437294
+new_block = '''| Metric | Peak Sustained ($M,K \ge 8\\text{k}$) | Comparison |
+#1787437294
+|--------|--------------------------------------|------------|
+#1787437295
+| **E2E throughput** | ~990 TFLOPS | **1.5× dense WS** (~660 TFLOPS) / **~93% of sparse WS** (~1064 TFLOPS, only ~7% overhead) |
+#1787437295
+| **Standalone prune+compress** | ~2750 GB/s | **3.2× TorchAO** CuSparselt (~855 GB/s) / **~82% of H100 theoretical peak** (3.35 TB/s) |'''
+#1787437295
+
+#1787437295
+assert old_block in content, 'old block not found!'
+#1787437295
+updated = content.replace(old_block, new_block)
+#1787437295
+with open('README.md', 'w') as f:
+#1787437295
+    f.write(updated)
+#1787437295
+print('Successfully updated README.md')
+#1787437295
+"
+#1787437303
+python3 -c "
+#1787437303
+with open('README.md', 'r') as f:
+#1787437303
+    lines = f.readlines()
+#1787437303
+print(''.join(lines[6:15]))
+#1787437303
+"
+#1787437310
+python3 -c "
+#1787437310
+with open('README.md', 'r') as f:
+#1787437310
+    lines = f.readlines()
+#1787437310
+
+#1787437310
+for i, line in enumerate(lines):
+#1787437310
+    if '| **E2E throughput** | ~990 TFLOPS |' in line:
+#1787437310
+        lines[i] = '| **E2E throughput** | ~990 TFLOPS | **1.5× dense WS** (~660 TFLOPS) / **~93% of sparse WS** (~1064 TFLOPS, only ~7% overhead) |\n'
+#1787437310
+    elif '| **Standalone prune+compress** | ~2750 GB/s |' in line:
+#1787437310
+        lines[i] = '| **Standalone prune+compress** | ~2750 GB/s | **3.2× TorchAO** CuSparselt (~855 GB/s) / **~82% of H100 theoretical peak** (3.35 TB/s) |\n'
+#1787437310
+
+#1787437310
+with open('README.md', 'w') as f:
+#1787437310
+    f.writelines(lines)
+#1787437310
+print('Successfully updated README.md')
+#1787437310
+"
+#1787437319
+git diff README.md
