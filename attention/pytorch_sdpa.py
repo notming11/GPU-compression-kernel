@@ -6,7 +6,7 @@ def main():
     # 1. Target Shape Configuration
     NUM_HEADS = 16
     SEQ_LEN = 4096
-    HEAD_DIM = 128
+    HEAD_DIM = 64
     BATCH = max(1, 16384//SEQ_LEN)
 
     print(f"[INFO] Allocating tensors for PyTorch SDPA (BATCH={BATCH}, NUM_HEADS={NUM_HEADS}, SEQ_LEN={SEQ_LEN}, HEAD_DIM={HEAD_DIM})...")
@@ -25,7 +25,7 @@ def main():
     profiler.start()
     
     # NVTX range allows NCU to target ONLY this execution
-    torch.cuda.nvtx.range_push("PyTorch_SDPA_4096_128")
+    torch.cuda.nvtx.range_push("PyTorch_SDPA")
     _ = F.scaled_dot_product_attention(Q, K, V)
     torch.cuda.nvtx.range_pop()
     

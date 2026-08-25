@@ -1,0 +1,466 @@
+[INFO] Skipping '3-Part (Standard)' via CLI flag.
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=64)
+   Active Kernels: ['4-Part']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=64 (1/6)
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 346.26 TFLOPS, 4-Part: 348.18 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=1024-HEAD_DIM=64 (2/6)
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+Finish SEQ_LEN=1024-HEAD_DIM=64 -> PyTorch SDPA: 392.23 TFLOPS, 4-Part: 384.68 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=2048-HEAD_DIM=64 (3/6)
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+Finish SEQ_LEN=2048-HEAD_DIM=64 -> PyTorch SDPA: 420.70 TFLOPS, 4-Part: 401.58 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=4096-HEAD_DIM=64 (4/6)
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+Finish SEQ_LEN=4096-HEAD_DIM=64 -> PyTorch SDPA: 433.31 TFLOPS, 4-Part: 409.25 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=8192-HEAD_DIM=64 (5/6)
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+Finish SEQ_LEN=8192-HEAD_DIM=64 -> PyTorch SDPA: 438.10 TFLOPS, 4-Part: 414.54 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 5, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=16384-HEAD_DIM=64 (6/6)
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 5, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 1, warp: 4
+BM: 256, BN: 64, BK: 64, buf: 6, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 1, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 4, SF: 2, warp: 4
+BM: 256, BN: 128, BK: 64, buf: 5, SF: 2, warp: 4
+Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 441.40 TFLOPS, 4-Part: 419.50 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+
+======================================================================
+             BENCHMARK RESULTS TABLE (HEAD_DIM=64)
+======================================================================
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part_TFLOPS
+     512           346.259328     348.177043
+    1024           392.228974     384.678981
+    2048           420.697425     401.578226
+    4096           433.311591     409.249361
+    8192           438.101615     414.541256
+   16384           441.398150     419.501314
+======================================================================
+
+
+[INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_HEAD_DIM_64.png'
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=128)
+   Active Kernels: ['4-Part']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=128 (1/6)
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 4, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 256, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+Finish SEQ_LEN=512-HEAD_DIM=128 -> PyTorch SDPA: 453.89 TFLOPS, 4-Part: 465.47 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=1024-HEAD_DIM=128 (2/6)
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 4, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 256, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+Finish SEQ_LEN=1024-HEAD_DIM=128 -> PyTorch SDPA: 518.56 TFLOPS, 4-Part: 524.56 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=2048-HEAD_DIM=128 (3/6)
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 4, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 256, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+Finish SEQ_LEN=2048-HEAD_DIM=128 -> PyTorch SDPA: 555.53 TFLOPS, 4-Part: 548.90 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+Start SEQ_LEN=4096-HEAD_DIM=128 (4/6)
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 4, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 256, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+Finish SEQ_LEN=4096-HEAD_DIM=128 -> PyTorch SDPA: 576.68 TFLOPS, 4-Part: 571.15 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=8192-HEAD_DIM=128 (5/6)
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 4, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 256, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+Finish SEQ_LEN=8192-HEAD_DIM=128 -> PyTorch SDPA: 596.05 TFLOPS, 4-Part: 584.94 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=16384-HEAD_DIM=128 (6/6)
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 1, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 2, warp: 4
+BM: 128, BN: 64, BK: 128, buf: 5, SF: 4, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 1, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 128, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 2, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 2, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 3, SF: 4, warp: 4
+BM: 256, BN: 64, BK: 128, buf: 4, SF: 4, warp: 4
+BM: 256, BN: 128, BK: 128, buf: 2, SF: 4, warp: 4
+Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 598.45 TFLOPS, 4-Part: 587.77 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+
+======================================================================
+             BENCHMARK RESULTS TABLE (HEAD_DIM=128)
+======================================================================
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part_TFLOPS
+     512           453.886173     465.470653
+    1024           518.557662     524.561808
+    2048           555.532285     548.899292
+    4096           576.677976     571.149252
+    8192           596.047729     584.937949
+   16384           598.453876     587.769190
+======================================================================
+
+
+[INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_HEAD_DIM_128.png'
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=256)
+   Active Kernels: ['4-Part']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=256 (1/6)
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 8, warp: 4
+Finish SEQ_LEN=512-HEAD_DIM=256 -> PyTorch SDPA: 473.96 TFLOPS, 4-Part: 467.20 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+Start SEQ_LEN=1024-HEAD_DIM=256 (2/6)
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 8, warp: 4
+Finish SEQ_LEN=1024-HEAD_DIM=256 -> PyTorch SDPA: 550.71 TFLOPS, 4-Part: 555.17 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+Start SEQ_LEN=2048-HEAD_DIM=256 (3/6)
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 8, warp: 4
+Finish SEQ_LEN=2048-HEAD_DIM=256 -> PyTorch SDPA: 589.06 TFLOPS, 4-Part: 586.95 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+Start SEQ_LEN=4096-HEAD_DIM=256 (4/6)
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 8, warp: 4
+Finish SEQ_LEN=4096-HEAD_DIM=256 -> PyTorch SDPA: 626.15 TFLOPS, 4-Part: 621.95 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+Start SEQ_LEN=8192-HEAD_DIM=256 (5/6)
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 8, warp: 4
+Finish SEQ_LEN=8192-HEAD_DIM=256 -> PyTorch SDPA: 640.91 TFLOPS, 4-Part: 634.67 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+Start SEQ_LEN=16384-HEAD_DIM=256 (6/6)
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 4, warp: 4
+BM: 128, BN: 64, BK: 256, buf: 2, SF: 8, warp: 4
+Finish SEQ_LEN=16384-HEAD_DIM=256 -> PyTorch SDPA: 645.44 TFLOPS, 4-Part: 640.58 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+
+======================================================================
+             BENCHMARK RESULTS TABLE (HEAD_DIM=256)
+======================================================================
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part_TFLOPS
+     512           473.958008     467.200415
+    1024           550.712755     555.169996
+    2048           589.056177     586.948914
+    4096           626.147678     621.951583
+    8192           640.911897     634.670010
+   16384           645.438703     640.575090
+======================================================================
+
+
+[INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_HEAD_DIM_256.png'

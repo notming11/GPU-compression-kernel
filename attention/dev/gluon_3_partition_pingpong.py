@@ -625,12 +625,16 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
 
         return O, manual_config
 
-def get_best_config(module):
+def get_best_config(module, head_dim: int = None):
     """Extracts best_config from module autotuner cache or direct attributes."""
     cache = getattr(module, "_autotune_cache", {})
-    for autotuner in cache.values():
-        if getattr(autotuner, "best_config", None) is not None:
-            return autotuner.best_config
+    if head_dim is not None:
+        if head_dim in cache and getattr(cache[head_dim], "best_config", None) is not None:
+            return cache[head_dim].best_config
+    else:
+        for autotuner in cache.values():
+            if getattr(autotuner, "best_config", None) is not None:
+                return autotuner.best_config
 
     for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
         obj = getattr(module, name, None)

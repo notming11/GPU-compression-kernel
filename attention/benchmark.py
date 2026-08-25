@@ -8,6 +8,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import torch
 import triton
+from triton.experimental import gluon
+from triton.experimental.gluon import language as gl
+
+from triton.experimental.gluon.nvidia.hopper import TensorDescriptor
+from triton.language.core import _aggregate as aggregate
 
 # ---------------------------------------------------------------------------
 # WORKSPACE & ENVIRONMENT OVERRIDES
@@ -37,12 +42,16 @@ def to_attention_tflops(ms: float, seq_len: int, head_dim: int, batch: int = 1, 
     flops = 4.0 * batch * num_heads * (seq_len ** 2) * head_dim
     return flops / (ms * 1e-3 * 1e12)
 
-def get_best_config(module):
+def get_best_config(module, head_dim: int = None):
     """Extracts best_config from module autotuner cache or direct attributes."""
     cache = getattr(module, "_autotune_cache", {})
-    for autotuner in cache.values():
-        if getattr(autotuner, "best_config", None) is not None:
-            return autotuner.best_config
+    if head_dim is not None:
+        if head_dim in cache and getattr(cache[head_dim], "best_config", None) is not None:
+            return cache[head_dim].best_config
+    else:
+        for autotuner in cache.values():
+            if getattr(autotuner, "best_config", None) is not None:
+                return autotuner.best_config
 
     for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
         obj = getattr(module, name, None)
@@ -51,105 +60,148 @@ def get_best_config(module):
 
     return "Kernel Failed / Not Set"
 
-def setup_fa3_kernel_launch(module, Q, K, V, tune: bool = True):
+def prepare_kernel_runner(module, Q, K, V, tune=True, manual_config=None):
     """
-    Pre-allocates buffers, transposes matrices, builds TMA descriptors, 
-    and triggers autotuning ONCE outside the benchmark loop.
-    Returns a zero-overhead closure executing ONLY the GPU kernel grid.
+    Pre-allocates host TMA descriptors and output memory once, returning a pure 
+    GPU launch closure compatible with CUDA Graphs, along with O and best_config.
     """
     BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM = Q.shape
     O = torch.empty_like(Q)
+    
+    # Warmup and autotune/run once to determine best config and verify shapes
+    O_ref, config = module.run_fa3_kernel(Q, K, V, tune=tune, manual_config=manual_config)
+    torch.cuda.synchronize()
 
-    # 1. Reshape & Transpose ONCE (Eliminates extra PyTorch transpose CUDA kernels inside timer)
+    # Extract kernel object and configuration kwargs
+    if tune:
+        kernel_jit = module.get_autotuned_kernel(HEAD_DIM)
+        best_cfg = kernel_jit.best_config
+        cfg_kwargs = best_cfg.kwargs
+        num_warps = best_cfg.num_warps
+    else:
+        kernel_jit = module.fa3_warp_specialized_kernel
+        best_cfg = manual_config
+        cfg_kwargs = manual_config
+        num_warps = manual_config["warps"]
+
+    bm = cfg_kwargs["BLOCK_SIZE_M"]
+    bn = cfg_kwargs["BLOCK_SIZE_N"]
+    bk = cfg_kwargs["BLOCK_SIZE_K"]
+    sf = cfg_kwargs["SUBTILE_FACTOR"]
+    stages = cfg_kwargs["num_stages"]
+
+    # Flatten tensors for TMA Descriptor allocation
     Q_flat = Q.reshape(-1, HEAD_DIM)
     K_flat = K.reshape(-1, HEAD_DIM)
     V_flat = V.reshape(-1, HEAD_DIM)
     O_flat = O.reshape(-1, HEAD_DIM)
 
-    # 2. Construct TMA Descriptors ONCE (Eliminates C++ Host Descriptor creation overhead)
     dummy_block = [1, 1]
-    dummy_layout = module.gl.NVMMASharedLayout.get_default_for(dummy_block, module.gl.float16)
+    dummy_layout = gluon.language.NVMMASharedLayout.get_default_for(dummy_block, gluon.language.float16)
 
-    q0_desc = module.TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
-    q1_desc = module.TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
-    k_desc = module.TensorDescriptor.from_tensor(K_flat, dummy_block, dummy_layout)
-    v_desc = module.TensorDescriptor.from_tensor(V_flat, dummy_block, dummy_layout)
-    o0_desc = module.TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
-    o1_desc = module.TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
+    # Detect 4-partition (split Q0/Q1, O0/O1) vs 3-partition (single Q, O) by signature
+    is_4_partition = "q0_desc" in getattr(module.fa3_warp_specialized_kernel, "arg_names", module.fa3_warp_specialized_kernel.fn.__code__.co_varnames)
+
+    if is_4_partition:
+        q0_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
+        q1_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
+        k_desc = TensorDescriptor.from_tensor(K_flat, dummy_block, dummy_layout)
+        v_desc = TensorDescriptor.from_tensor(V_flat, dummy_block, dummy_layout)
+        o0_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
+        o1_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
+
+        hook_args = {
+            "BLOCK_SIZE_M": bm, "BLOCK_SIZE_N": bn, "BLOCK_SIZE_K": bk, "SUBTILE_FACTOR": sf,
+            "q0_desc": q0_desc, "q1_desc": q1_desc, "k_desc": k_desc, "v_desc": v_desc,
+            "o0_desc": o0_desc, "o1_desc": o1_desc
+        }
+        descriptors = (q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc)
+    else:
+        q_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
+        k_desc = TensorDescriptor.from_tensor(K_flat, dummy_block, dummy_layout)
+        v_desc = TensorDescriptor.from_tensor(V_flat, dummy_block, dummy_layout)
+        o_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
+
+        hook_args = {
+            "BLOCK_SIZE_M": bm, "BLOCK_SIZE_N": bn, "BLOCK_SIZE_K": bk, "SUBTILE_FACTOR": sf,
+            "q_desc": q_desc, "k_desc": k_desc, "v_desc": v_desc, "o_desc": o_desc
+        }
+        descriptors = (q_desc, k_desc, v_desc, o_desc)
+
+    # Apply TMA layout and block shape hook
+    module.fa3_tma_set_block_size_hook(hook_args)
+
+    # Calculate Grid Dimensions
+    num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
+    num_pid = triton.cdiv(SEQ_LEN, bm)
+    total_tiles = num_pid * BATCH * NUM_HEADS
+    grid = (min(num_sms, total_tiles),)
 
     scheduler = module.GroupedPersistentTileScheduler(8)
 
-    # 3. Resolve Autotuned Kernel & Grid Function
-    if hasattr(module, "get_autotuned_kernel") and tune:
-        kernel = module.get_autotuned_kernel(HEAD_DIM)
-    elif hasattr(module, "fa3_warp_specialized_kernel"):
-        kernel = module.fa3_warp_specialized_kernel
+    # Construct zero-host-overhead GPU launch closure
+    if is_4_partition:
+        def launch_fn():
+            module.fa3_warp_specialized_kernel[grid](
+                *descriptors,
+                scheduler,
+                SEQ_LEN, HEAD_DIM, NUM_HEADS,
+                BLOCK_SIZE_M=bm, BLOCK_SIZE_N=bn, BLOCK_SIZE_K=bk,
+                num_stages=stages, SUBTILE_FACTOR=sf, num_warps=num_warps,
+            )
     else:
-        raise AttributeError(f"Could not find kernel in module '{module.__name__}'")
+        def launch_fn():
+            module.fa3_warp_specialized_kernel[grid](
+                *descriptors,
+                scheduler,
+                SEQ_LEN, HEAD_DIM, NUM_HEADS,
+                BLOCK_SIZE_M=bm, BLOCK_SIZE_N=bn, BLOCK_SIZE_K=bk,
+                num_stages=stages, SUBTILE_FACTOR=sf, num_warps=num_warps
+            )
 
-    def grid(meta):
-        num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
-        num_pid = triton.cdiv(SEQ_LEN, meta["BLOCK_SIZE_M"])
-        total_tiles = num_pid * BATCH * NUM_HEADS
-        return (min(num_sms, total_tiles), )
+    return launch_fn, O_ref, best_cfg
 
-    # 4. Trigger Warmup and Autotuning Pass ONCE before timing
-    _ = kernel[grid](
-        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
-        scheduler,
-        SEQ_LEN, HEAD_DIM, NUM_HEADS
-    )
-    torch.cuda.synchronize()
-
-    # 5. Return clean zero-overhead execution lambda for timing
-    return lambda: kernel[grid](
-        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
-        scheduler,
-        SEQ_LEN, HEAD_DIM, NUM_HEADS
-    )
-
-
-def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune: bool = True, rep: int = 1000):
+def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune: bool = True, rep: int = 100):
     NUM_HEADS = 16
     BATCH_SIZE = max(1, 16384 // seq_len)
     
-    Q_4d = torch.randn((BATCH_SIZE, NUM_HEADS, seq_len, head_dim), device="cuda", dtype=torch.float16)
-    K_4d = torch.randn((BATCH_SIZE, NUM_HEADS, seq_len, head_dim), device="cuda", dtype=torch.float16)
-    V_4d = torch.randn((BATCH_SIZE, NUM_HEADS, seq_len, head_dim), device="cuda", dtype=torch.float16)
+    Q = torch.randn((BATCH_SIZE, NUM_HEADS, seq_len, head_dim), device="cuda", dtype=torch.float16)
+    K = torch.randn((BATCH_SIZE, NUM_HEADS, seq_len, head_dim), device="cuda", dtype=torch.float16)
+    V = torch.randn((BATCH_SIZE, NUM_HEADS, seq_len, head_dim), device="cuda", dtype=torch.float16)
 
     results = {}
 
-    # 1. Benchmark PyTorch SDPA Baseline
+    # PyTorch Baseline
     try:
         ms_torch = triton.testing.do_bench_cudagraph(
-            lambda: torch.nn.functional.scaled_dot_product_attention(Q_4d, K_4d, V_4d),
+            lambda: torch.nn.functional.scaled_dot_product_attention(Q, K, V),
             rep=rep
         )
         tflops_torch = to_attention_tflops(ms_torch, seq_len, head_dim, BATCH_SIZE, NUM_HEADS)
     except Exception as e:
-        print(f"PyTorch SDPA benchmark failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")
-        ms_torch, tflops_torch = None, None
-        torch.cuda.synchronize()
+        print(f"PyTorch SDPA failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")
+        tflops_torch, ms_torch = None, None
 
     results["PyTorch SDPA"] = {"tflops": tflops_torch, "ms": ms_torch}
 
-    # 2. Benchmark Active Custom Triton Kernels (Raw Execution Only)
+    # Evaluate registered modules (both 3-Partition and 4-Partition)
     for name, module in active_modules.items():
         try:
-            # Pre-allocate resources and autotune outside timing
-            kernel_launch_fn = setup_fa3_kernel_launch(module, Q_4d, K_4d, V_4d, tune=tune)
+            # 1. Pre-allocate descriptors and build isolated execution closure
+            launch_fn, O_triton, best_config = prepare_kernel_runner(module, Q, K, V, tune=tune)
             
-            # Benchmark strictly the GPU kernel execution
-            ms = triton.testing.do_bench_cudagraph(
-                kernel_launch_fn, 
-                rep=rep
-            )
+            # 2. Correctness check against PyTorch reference
+            O_torch = torch.nn.functional.scaled_dot_product_attention(Q, K, V)
+            torch.testing.assert_close(O_torch, O_triton, rtol=1e-2, atol=1e-2)
+
+            # 3. Benchmark pure GPU time with CUDA Graphs
+            ms = triton.testing.do_bench_cudagraph(launch_fn, rep=rep)
             tflops = to_attention_tflops(ms, seq_len, head_dim, batch=BATCH_SIZE, num_heads=NUM_HEADS)
         except Exception as e:
             print(f"[{name}] benchmark failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")
-            ms, tflops = None, None
+            ms, tflops, best_config = None, None, "Kernel Failed / Not Set"
 
-        results[name] = {"tflops": tflops, "ms": ms}
+        results[name] = {"tflops": tflops, "ms": ms, "config": best_config}
 
     return results
 
@@ -320,11 +372,17 @@ if __name__ == "__main__":
 
             # Output autotuned configurations per kernel
             for name, module in active_modules.items():
-                cfg = get_best_config(module)
+                cfg = metrics.get(name, {}).get("config")
+                if cfg is None or (isinstance(cfg, str) and cfg == "Kernel Failed / Not Set"):
+                    cfg = get_best_config(module, head_dim)
                 if isinstance(cfg, str):
                     print(f"  [{name}] best config: {cfg}")
-                else:
+                elif cfg is not None and hasattr(cfg, "kwargs"):
                     print(f"  [{name}] best config: {cfg.kwargs}, num_warps={getattr(cfg, 'num_warps', 'N/A')}")
+                elif isinstance(cfg, dict):
+                    print(f"  [{name}] best config: {cfg}, num_warps={cfg.get('warps', cfg.get('num_warps', 'N/A'))}")
+                else:
+                    print(f"  [{name}] best config: {cfg}")
 
         df_dim = pd.DataFrame(data_log)
         
