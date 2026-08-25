@@ -8990,3 +8990,405 @@ print('Successfully updated README.md')
 "
 #1787437319
 git diff README.md
+#1787609876
+load_module && start_gluon && cd ../attention
+#1787609889
+tpython benchmark.py --skip-4part
+#1787610170
+tpython kernels/gluon_attention_forward.py 
+#1787610318
+tpython benchmark.py --skip-4part
+#1787609762
+load_module && start_gluon && cd ../att
+#1787609766
+load_module && start_gluon && cd ../attention
+#1787609803
+tpython benchmark.py --skip-3part
+#1787610251
+gkill
+#1787610283
+tpython benchmark.py --skip-3part
+#1787610823
+tpython benchmark.py 
+#1787611443
+tpython kernels/gluon_attention_forward.py --tune
+#1787612362
+tpython benchmark.py 
+#1787612771
+gkill
+#1787612773
+tpython benchmark.py 
+#1787613006
+tpython benchmark.py > log.txt
+#1787614648
+gkill
+#1787596665
+debugjob
+#1787614636
+sq
+#1787611259
+grep -n -C 10 "run_fa3_kernel" /home/notming/links/scratch/attention/benchmark.py
+#1787611263
+sed -n '50,150p' /home/notming/links/scratch/attention/benchmark.py
+#1787611266
+sed -n '140,190p' /home/notming/links/scratch/attention/benchmark.py
+#1787611277
+sed -n '500,600p' /home/notming/links/scratch/attention/kernels/gluon_attention_forward.py
+#1787611281
+grep -n -C 20 "def fa3_warp_specialized_kernel" /home/notming/links/scratch/attention/kernels/gluon_attention_forward.py
+#1787611284
+grep -n -C 20 "def fa3_get_configs" /home/notming/links/scratch/attention/kernels/gluon_attention_forward.py
+#1787611287
+sed -n '430,490p' /home/notming/links/scratch/attention/kernels/gluon_attention_forward.py
+#1787611297
+sed -n '390,412p' /home/notming/links/scratch/attention/kernels/gluon_attention_forward.py
+#1787611299
+grep -n -C 5 "warp_specialize" /home/notming/links/scratch/attention/kernels/*.py
+#1787611338
+source ~/.bashrc && load_module && start_gluon && cd ../attention && tpython -c "import kernels.gluon_attention_pingpong_overlap as p; print(p)"
+#1787611357
+cd /home/notming/links/scratch
+#1787611358
+source ~/.bashrc && load_module && start_gluon && cd ../attention && tpython -c "import kernels.gluon_attention_forward as f; import torch; Q = torch.randn((1, 16, 512, 64), device='cuda', dtype=torch.float16); K = torch.randn((1, 16, 512, 64), device='cuda', dtype=torch.float16); V = torch.randn((1, 16, 512, 64), device='cuda', dtype=torch.float16); f.run_fa3_kernel(Q, K, V, tune=True)"
+#1787611480
+cd /home/notming/links/scratch
+#1787611482
+source ~/.bashrc && load_module && start_gluon && cd ../attention && tpython benchmark.py --skip-4part
+#1787612131
+cd /home/notming/links/scratch
+#1787612132
+python3 -c "
+#1787612132
+path = '/home/notming/links/scratch/attention/benchmark.py'
+#1787612132
+with open(path, 'r') as f:
+#1787612132
+    content = f.read()
+#1787612132
+
+#1787612132
+new_content = content.replace(
+#1787612132
+    'dummy_layout = gluon.language.NVMMASharedLayout.get_default_for(dummy_block, torch.float16)',
+#1787612132
+    'dummy_layout = gluon.language.NVMMASharedLayout.get_default_for(dummy_block, gluon.language.float16)'
+#1787612132
+)
+#1787612132
+
+#1787612132
+with open(path, 'w') as f:
+#1787612132
+    f.write(new_content)
+#1787612132
+print('Replacement done, modified:', content != new_content)
+#1787612132
+"
+#1787612145
+source ~/.bashrc && load_module && start_gluon && cd ../attention && tpython -c "
+#1787612145
+import benchmark
+#1787612145
+import torch
+#1787612145
+import kernels.gluon_attention_forward as module_3part
+#1787612145
+
+#1787612145
+active_modules = {'3-Part (Standard)': module_3part}
+#1787612145
+res = benchmark.benchmark_fa3_kernel(512, 64, active_modules, tune=True, rep=10)
+#1787612145
+print('Benchmark result for 512, 64:', res)
+#1787612145
+"
+#1787612228
+cd /home/notming/links/scratch
+#1787612230
+source ~/.bashrc && load_module && start_gluon && cd ../attention && tpython -c "
+#1787612230
+import kernels.gluon_attention_forward as f
+#1787612230
+import kernels.gluon_attention_pingpong_overlap as p
+#1787612230
+print('f.fa3_warp_specialized_kernel:', type(f.fa3_warp_specialized_kernel), dir(f.fa3_warp_specialized_kernel))
+#1787612230
+print('f.fn:', type(getattr(f.fa3_warp_specialized_kernel, 'fn', None)))
+#1787612230
+if hasattr(f.fa3_warp_specialized_kernel, 'fn'):
+#1787612230
+    print('f.fn code varnames:', f.fa3_warp_specialized_kernel.fn.__code__.co_varnames[:6])
+#1787612230
+if hasattr(p.fa3_warp_specialized_kernel, 'fn'):
+#1787612230
+    print('p.fn code varnames:', p.fa3_warp_specialized_kernel.fn.__code__.co_varnames[:6])
+#1787612230
+"
+#1787612249
+cd /home/notming/links/scratch
+#1787612250
+python3 -c "
+#1787612250
+path = '/home/notming/links/scratch/attention/benchmark.py'
+#1787612250
+with open(path, 'r') as f:
+#1787612250
+    content = f.read()
+#1787612250
+
+#1787612250
+new_content = content.replace(
+#1787612251
+    'is_4_partition = \"q0_desc\" in module.fa3_warp_specialized_kernel.fn.arg_names',
+#1787612251
+    'is_4_partition = \"q0_desc\" in getattr(module.fa3_warp_specialized_kernel, \"arg_names\", module.fa3_warp_specialized_kernel.fn.__code__.co_varnames)'
+#1787612251
+)
+#1787612251
+
+#1787612251
+with open(path, 'w') as f:
+#1787612251
+    f.write(new_content)
+#1787612251
+print('Replacement done, modified:', content != new_content)
+#1787612251
+"
+#1787612262
+source ~/.bashrc && load_module && start_gluon && cd ../attention && tpython -c "
+#1787612262
+import benchmark
+#1787612262
+import torch
+#1787612262
+import kernels.gluon_attention_forward as module_3part
+#1787612262
+
+#1787612262
+active_modules = {'3-Part (Standard)': module_3part}
+#1787612262
+res = benchmark.benchmark_fa3_kernel(512, 64, active_modules, tune=True, rep=10)
+#1787612262
+print('Benchmark result for 512, 64:', res)
+#1787612262
+"
+#1787618639
+cd /home/notming/links/scratch
+#1787618640
+grep -n -C 5 "CUDA_LAUNCH_BLOCKING" /home/notming/links/scratch/attention/benchmark.py
+#1787618649
+source ~/.bashrc && load_module && start_gluon && cd ../attention && tpython -c "
+#1787618649
+import inspect
+#1787618649
+import triton.testing
+#1787618649
+print(inspect.getsource(triton.testing.do_bench_cudagraph))
+#1787618649
+"
+#1787618667
+cd /home/notming/links/scratch
+#1787618668
+sed -n '620,700p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1787618882
+python3 -c "
+#1787618882
+with open('/home/notming/links/scratch/compression/dev/8.7_benchmark_persistent.py') as f:
+#1787618882
+    print('--- 8.7_benchmark_persistent.py ---')
+#1787618882
+    print(''.join(f.readlines()[:120]))
+#1787618882
+"
+#1787618893
+python3 -c "
+#1787618893
+with open('/home/notming/links/scratch/compression/kernels/7.8.1_prune_ws.py') as f:
+#1787618893
+    print('--- 7.8.1_prune_ws.py ---')
+#1787618893
+    print(''.join(f.readlines()[:120]))
+#1787618893
+"
+#1787618902
+python3 -c "
+#1787618902
+with open('/home/notming/links/scratch/compression/kernels/7.8.1_prune_ws.py') as f:
+#1787618902
+    lines = f.readlines()
+#1787618902
+    print('Total lines:', len(lines))
+#1787618902
+    print(''.join(lines[300:450]))
+#1787618902
+"
+#1787618911
+python3 -c "
+#1787618911
+with open('/home/notming/links/scratch/compression/kernels/7.8.1_prune_ws.py') as f:
+#1787618911
+    lines = f.readlines()
+#1787618911
+    print(''.join(lines[500:650]))
+#1787618911
+"
+#1787618922
+python3 -c "
+#1787618922
+with open('/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py') as f:
+#1787618922
+    lines = f.readlines()
+#1787618922
+    print(''.join(lines[350:500]))
+#1787618922
+"
+#1787618933
+python3 -c "
+#1787618933
+with open('/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py') as f:
+#1787618933
+    lines = f.readlines()
+#1787618933
+    print(''.join(lines[240:370]))
+#1787618933
+"
+#1787618948
+python3 -c "
+#1787618948
+with open('/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py') as f:
+#1787618948
+    lines = f.readlines()
+#1787618949
+    print(''.join(lines[210:255]))
+#1787618949
+"
+#1787618969
+python3 -c "
+#1787618969
+with open('/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py') as f:
+#1787618969
+    lines = f.readlines()
+#1787618969
+    print(''.join(lines[440:530]))
+#1787618969
+"
+#1787618984
+python3 -c "
+#1787618984
+with open('/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py') as f:
+#1787618984
+    lines = f.readlines()
+#1787618984
+    print(''.join(lines[530:570]))
+#1787618984
+"
+#1787618995
+python3 -c "
+#1787618995
+with open('/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py') as f:
+#1787618995
+    lines = f.readlines()
+#1787618995
+    print(''.join(lines[700:780]))
+#1787618995
+"
+#1787619195
+grep -n -C 20 "class GroupedPersistentTileScheduler" /home/notming/links/scratch/attention/kernels/common.py /home/notming/links/scratch/attention/common.py /home/notming/links/scratch/compression/kernels/common.py
+#1787619217
+sed -n '145,185p' /home/notming/links/scratch/attention/kernels/common.py
+#1787619223
+grep -n -C 10 "def get_tile" /home/notming/links/scratch/attention/kernels/*.py /home/notming/links/scratch/attention/*.py
+#1787619229
+sed -n '50,90p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1787619238
+source ~/.bashrc && load_module && start_gluon && cd ../attention && tpython -c "
+#1787619238
+import triton
+#1787619238
+import triton.language as tl
+#1787619238
+import torch
+#1787619238
+
+#1787619238
+@triton.jit
+#1787619238
+def test_cdiv_kernel(out_ptr, a, b):
+#1787619238
+    # test cdiv with negative or zero
+#1787619238
+    out_ptr[0] = tl.cdiv(a, b)
+#1787619238
+
+#1787619238
+out = torch.zeros(1, dtype=torch.int32, device='cuda')
+#1787619238
+# test a = -5, b = 8
+#1787619238
+test_cdiv_kernel[(1,)](out, -5, 8)
+#1787619238
+torch.cuda.synchronize()
+#1787619239
+print('tl.cdiv(-5, 8) =', out.item())
+#1787619239
+"
+#1787619263
+cd /home/notming/links/scratch
+#1787619265
+python3 -c "
+#1787619265
+with open('/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py') as f:
+#1787619265
+    lines = f.readlines()
+#1787619265
+    print(''.join(lines[560:615]))
+#1787619265
+"
+#1787619273
+sed -n '180,220p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1787619289
+source ~/.bashrc && load_module && start_gluon && cd ../attention && tpython -c "
+#1787619289
+import time
+#1787619289
+import torch
+#1787619289
+import kernels.gluon_attention_pingpong_overlap as p
+#1787619289
+
+#1787619289
+manual_config = {'BM': 128, 'BN': 128, 'BK': 64, 'warps': 4, 'num_stages': 3, 'SF': 1}
+#1787619289
+Q = torch.randn((1, 16, 512, 64), device='cuda', dtype=torch.float16)
+#1787619289
+K = torch.randn((1, 16, 512, 64), device='cuda', dtype=torch.float16)
+#1787619289
+V = torch.randn((1, 16, 512, 64), device='cuda', dtype=torch.float16)
+#1787619289
+
+#1787619289
+print('Starting compilation & run for config:', manual_config)
+#1787619289
+t0 = time.time()
+#1787619289
+O, _ = p.run_fa3_kernel(Q, K, V, tune=False, manual_config=manual_config)
+#1787619289
+torch.cuda.synchronize()
+#1787619289
+t1 = time.time()
+#1787619289
+print(f'Finished successfully in {t1 - t0:.2f}s!')
+#1787619289
+"
+#1787612088
+grep -n -C 5 "primitive_bitwidth" /home/notming/links/scratch/attention/kernels/*.py /home/notming/links/scratch/attention/*.py
+#1787612095
+sed -n '615,640p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1787612103
+sed -n '75,120p' /home/notming/links/scratch/attention/benchmark.py
+#1787612108
+grep -n -C 3 "NVMMASharedLayout" /home/notming/links/scratch/attention/benchmark.py /home/notming/links/scratch/attention/kernels/*.py
+#1787612113
+ls -la /home/notming/links/scratch/attention/benchmark.py /home/notming/links/scratch/attention/kernels/benchmark.py
+#1787612119
+sed -n '90,105p' /home/notming/links/scratch/attention/benchmark.py

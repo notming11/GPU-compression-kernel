@@ -621,7 +621,7 @@ def fa3_warp_specialized_kernel(
     num_stages: gl.constexpr, SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr
 ):
     
-    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush = True)
+    gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush=True)
     dtype: gl.constexpr = q0_desc.dtype
     SUB_BM: gl.constexpr = BLOCK_SIZE_M // 2
 
@@ -691,7 +691,7 @@ def fa3_warp_specialized_kernel(
         (fa3_consumer_wg1, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
         (fa3_store_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
-    ], [num_warps, 1, 1], [255, 24, 24])
+    ], [num_warps, 1, 1], [240, 24, 24])
 
 # ---------------------------------------------------------------------------
 # AUTOTUNER & CONFIG HOOKS
@@ -809,7 +809,7 @@ def get_autotuned_kernel(head_dim: int):
             configs=configs,
             key=["SEQ_LEN"],
             do_bench=lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
-                kernel_call, rep=100, quantiles=quantiles
+                kernel_call, rep=50, quantiles=quantiles
             ),
         )(fa3_warp_specialized_kernel)
         
@@ -848,7 +848,7 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
 
         kernel[grid](
             q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
-            GroupedPersistentTileScheduler(8),
+            GroupedPersistentTileScheduler(4),
             SEQ_LEN, HEAD_DIM, NUM_HEADS
         )
         
@@ -880,7 +880,6 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             num_stages=manual_config["num_stages"],
             SUBTILE_FACTOR=manual_config["SF"],
             num_warps=manual_config["warps"],
-            maxnreg=168
         )
 
         return O, manual_config
@@ -891,7 +890,7 @@ if __name__ == "__main__":
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
     parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
-    parser.add_argument("--bk", type=int, default=128, help="HEAD_DIM (BLOCK_SIZE_K)")
+    parser.add_argument("--bk", type=int, default=64, help="HEAD_DIM (BLOCK_SIZE_K)")
     parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
     parser.add_argument("--sf", type=int, default=1, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=4, help="Number of compute warps")
@@ -914,7 +913,7 @@ if __name__ == "__main__":
         
     NUM_HEADS = 16
     sizes = [
-        (4096, 128),
+        (4096, 64),
         # (256, 64),
         # (512, 128),
         # (8192, 256)

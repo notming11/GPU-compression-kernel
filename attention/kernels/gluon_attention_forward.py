@@ -24,8 +24,12 @@ from common import (
 )
 
 # ---------------------------------------------------------------------------
-# WORKSPACE & ENVIRONMENT OVERRIDES
+# WORKSPACE & HASHING FIX
 # ---------------------------------------------------------------------------
+# FIX: Enable Triton Autotuner to hash TensorDescriptor objects
+if not hasattr(TensorDescriptor, "__hash__") or TensorDescriptor.__hash__ is None:
+    TensorDescriptor.__hash__ = lambda self: id(self)
+
 SCRATCH_WORKSPACE = "compiler_scratch"
 JOB_ID = str(os.getpid())
 
@@ -39,7 +43,6 @@ os.environ["TMP"] = SCRATCH_WORKSPACE
 os.environ["TEMP"] = SCRATCH_WORKSPACE
 os.environ["CUDA_CACHE_PATH"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
 os.environ["TORCH_HOME"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
-os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 
 # ---------------------------------------------------------------------------
 # SHARED HELPERS & ARGS
@@ -164,7 +167,7 @@ class Counter:
 
 @gluon.jit
 def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
-    split_count: gl.constexpr = SUBTILE_FACTOR.bit_length() - 1  # log2
+    split_count: gl.constexpr = SUBTILE_FACTOR.bit_length() - 1
     xs = (x, )
     for _ in gl.static_range(split_count):
         next_xs = ()
@@ -196,7 +199,7 @@ def store_acc_to_smem_subtile(p, acc, acc_state):
 @gluon.jit
 def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
-    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
+    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]  # Fixed: shape[0] is BLOCK_N
     BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
 
     scheduler = SchedulerImpl.initialize(p.o_desc.shape[0], p.o_desc.shape[1], BLOCK_M, BLOCK_K)
@@ -222,7 +225,7 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
 
             mbarrier.expect(bar, p.k_desc.block_type.nbytes + p.v_desc.block_type.nbytes)
 
-            tma.async_copy_global_to_shared(p.k_desc, [0, kv_global_offset + step * BLOCK_N], bar, p.k_bufs.index(kv_state.index))
+            tma.async_copy_global_to_shared(p.k_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.k_bufs.index(kv_state.index))
             tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.v_bufs.index(kv_state.index))
             
             kv_state = kv_state.next()
@@ -232,8 +235,8 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
 @gluon.jit
 def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
     BLOCK_M: gl.constexpr = p.q_desc.block_type.shape[0]
-    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[1]
-    BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]  # Dynamically equals HEAD_DIM
+    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]  # Fixed: shape[0] is BLOCK_N
+    BLOCK_K: gl.constexpr = p.q_desc.block_type.shape[1]
     dtype: gl.constexpr = p.q_desc.dtype
 
     scheduler = SchedulerImpl.initialize(p.o_desc.shape[0], p.o_desc.shape[1], BLOCK_M, BLOCK_K)
@@ -244,7 +247,6 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
     
     num_steps = SEQ_LEN // BLOCK_N
 
-    # Pre-scale with log2(e) for fast hardware MUFU.EX2 (exp2) intrinsics
     LOG2E: gl.constexpr = 1.4426950408889634
     sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
     
@@ -252,7 +254,6 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)  
         
         mma_o = WGMMA.initialize(dtype, BLOCK_M, BLOCK_K, p.num_warps)
-        mma_s_dummy = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
 
         m_old = gl.full((BLOCK_M,), -float('inf'), dtype=gl.float32, layout=s_layout)
         l_old = gl.zeros((BLOCK_M,), dtype=gl.float32, layout=s_layout)
@@ -262,9 +263,9 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         for step in range(num_steps):
             mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
 
-            # 1. First WGMMA (S = Q * K^T)
+            # 1. First WGMMA (S = Q * K^T) - Transpose K in SMEM view
             mma_s = WGMMA.initialize(dtype, BLOCK_M, BLOCK_N, p.num_warps)
-            mma_s = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(kv_state.index))
+            mma_s = mma_s.issue_async_mma(p.q_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
             mma_s = mma_s.wait_num_outstanding(0)
             
             S_tile, mma_s = mma_s.take_result()
@@ -277,7 +278,6 @@ def fa3_consumer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
             rescale_factor = gl.exp2(m_old - m_new)
             rescale_factor_m = gl.convert_layout(rescale_factor, m_layout)
             
-            # Unconditional accumulator scaling (on step 0, 0 * rescale = 0)
             mma_o = mma_o.wait_num_outstanding(0)
             o_acc, mma_o = mma_o.take_result()
             o_acc = o_acc * rescale_factor_m[:, None]
@@ -345,7 +345,7 @@ def fa3_store_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: 
     tma.store_wait(0)
 
 # ---------------------------------------------------------------------------
-# KERNEL LAUNCHER
+# KERNEL LAUNCHER & AUTOTUNING
 # ---------------------------------------------------------------------------
 @gluon.jit
 def fa3_warp_specialized_kernel(
@@ -410,21 +410,17 @@ def fa3_warp_specialized_kernel(
 
 def fa3_get_configs(pre_hook=None, tune=True):
     def valid(BM, BN, BK, warps, num_stages, SF):
-        # if BM == 128 and BN == 256:
-        #     return False
-
-        # Shared Memory Calculation for 3-partition layout
         fp16_elements = (
-            (1 * BM * BK) +                # q_buf (single resident tile)
-            (num_stages * BK * BN) +       # k_bufs (circular)
-            (num_stages * BN * BK) +       # v_bufs (circular)
-            (2 * BM * (BK // SF))          # o_bufs (subtitled output)
+            (1 * BM * BK) +
+            (num_stages * BK * BN) +
+            (num_stages * BN * BK) +
+            (2 * BM * (BK // SF))
         )
         fp16_smem_bytes = 2 * fp16_elements
         barrier_bytes = 8 * (1 + (2 * num_stages) + 4)
 
         total_smem_bytes = fp16_smem_bytes + barrier_bytes
-        if total_smem_bytes > 232448:      # Hopper SMEM Ceiling (~227 KB)
+        if total_smem_bytes > 232448:
             return False
 
         if BK % SF != 0:
@@ -434,7 +430,6 @@ def fa3_get_configs(pre_hook=None, tune=True):
         if split_k < 16:
             return False
 
-        # Warp allocation bounds
         warps_m = 4
         warps_n = 1
         m = 16
@@ -449,7 +444,6 @@ def fa3_get_configs(pre_hook=None, tune=True):
         if BM < warps_m * 16 or BN < warps_n * 16:
             return False
 
-        # Register pressure check
         elements_per_thread = (BM * max(BN, BK)) / (warps * 32)
         required_regs = elements_per_thread + 64 
         max_regs_per_thread = min(255, 65536 // (warps * 32))
@@ -475,9 +469,9 @@ def fa3_get_configs(pre_hook=None, tune=True):
         for BM in (64, 128, 256)
         for BN in (64, 128, 256)
         for BK in (64, 128, 256)
-        for warps in (4, 8, )
+        for warps in (4, 8)
         for num_stages in (2, 4)
-        for SF in (1, 2, 4, 8, )
+        for SF in (1, 2, 4, 8)
         if valid(BM, BN, BK, warps, num_stages, SF)
     ]
     
@@ -491,7 +485,7 @@ def fa3_tma_set_block_size_hook(nargs):
     split_k = nargs["BLOCK_SIZE_K"] // nargs["SUBTILE_FACTOR"]
 
     nargs["q_desc"].block_shape = [block_m, block_k]
-    nargs["k_desc"].block_shape = [block_k, block_n]
+    nargs["k_desc"].block_shape = [block_n, block_k]  # Fixed: [block_n, block_k]
     nargs["v_desc"].block_shape = [block_n, block_k]
     nargs["o_desc"].block_shape = [block_m, split_k]
 
@@ -505,7 +499,6 @@ _autotune_cache = {}
 
 def get_autotuned_kernel(head_dim: int):
     if head_dim not in _autotune_cache:
-        # Filter configurations matching the dynamic HEAD_DIM
         configs = [
             config for config in fa3_get_configs(pre_hook=fa3_tma_set_block_size_hook, tune=True)
             if config.kwargs["BLOCK_SIZE_K"] == head_dim
@@ -530,13 +523,12 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
     K_flat = K.reshape(-1, HEAD_DIM)
     V_flat = V.reshape(-1, HEAD_DIM)
     O_flat = O.reshape(-1, HEAD_DIM)
-    K_T = K_flat.transpose(0, 1).contiguous()
 
     dummy_block = [1, 1]
     dummy_layout = gl.NVMMASharedLayout.get_default_for(dummy_block, gl.float16)
 
     q_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
-    k_desc = TensorDescriptor.from_tensor(K_T, dummy_block, dummy_layout)
+    k_desc = TensorDescriptor.from_tensor(K_flat, dummy_block, dummy_layout)  # Fixed: Direct K_flat pointer
     v_desc = TensorDescriptor.from_tensor(V_flat, dummy_block, dummy_layout)
     o_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
 
@@ -553,6 +545,7 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             GroupedPersistentTileScheduler(8),
             SEQ_LEN, HEAD_DIM, NUM_HEADS
         )
+        return O, getattr(kernel, "best_config", None)
     else:
         manual_config["BK"] = HEAD_DIM
         hook_kwargs = {
@@ -581,7 +574,7 @@ def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
             num_warps=manual_config["warps"]
         )
 
-    return O
+        return O, manual_config
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run FlashAttention-3 Warp-Specialized Kernel")
@@ -633,7 +626,7 @@ if __name__ == "__main__":
         K = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         V = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         
-        O_triton = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
+        O_triton, _ = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
         O_torch = torch.nn.functional.scaled_dot_product_attention(Q, K, V)
         
         torch.testing.assert_close(O_torch, O_triton, rtol=1e-2, atol=1e-2)
