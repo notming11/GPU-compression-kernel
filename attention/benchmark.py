@@ -295,7 +295,7 @@ if __name__ == "__main__":
     # Benchmark Parameters
     parser.add_argument("--head-dims", type=int, nargs="+", default=[64, 128, 256], help="Head dimensions to evaluate in one shot")
     parser.add_argument("--tune", action="store_true", default=True, help="Enable Triton autotuner")
-    parser.add_argument("--rep", type=int, default=200, help="Benchmark repetitions")
+    parser.add_argument("--rep", type=int, default=500, help="Benchmark repetitions")
     parser.add_argument("--output-dir", type=str, default="/home/notming/links/scratch/attention/results/plots", help="Directory to save plot results")
     
     args = parser.parse_args()
