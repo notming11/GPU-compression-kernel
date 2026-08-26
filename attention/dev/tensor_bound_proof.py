@@ -855,7 +855,7 @@ if __name__ == "__main__":
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
     parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
-    parser.add_argument("--bk", type=int, default=64, help="HEAD_DIM (BLOCK_SIZE_K)")
+    parser.add_argument("--bk", type=int, default=128, help="HEAD_DIM (BLOCK_SIZE_K)")
     parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
     parser.add_argument("--sf", type=int, default=1, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=4, help="Number of compute warps")
@@ -878,7 +878,7 @@ if __name__ == "__main__":
         
     NUM_HEADS = 16
     sizes = [
-        (4096, 64),
+        (4096, 128),
         # (256, 64),
         # (512, 128),
         # (8192, 256)
