@@ -761,7 +761,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
             num_stages=num_stages,
             pre_hook=pre_hook,
         )
-        for BM in (128, 256)
+        for BM in (128, )
         for BN in (64, 128)
         for BK in (64, 128, 256)
         for warps in (4, )
