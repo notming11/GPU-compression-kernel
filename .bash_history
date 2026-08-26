@@ -9392,3 +9392,5210 @@ grep -n -C 3 "NVMMASharedLayout" /home/notming/links/scratch/attention/benchmark
 ls -la /home/notming/links/scratch/attention/benchmark.py /home/notming/links/scratch/attention/kernels/benchmark.py
 #1787612119
 sed -n '90,105p' /home/notming/links/scratch/attention/benchmark.py
+#1787669167
+load_module && start_gluon && cd ../attention
+#1787669183
+tpython benchmark.py --skip-3part > log.txt
+#1787669584
+tpython benchmark.py --skip-3part --head-dim=128 > log.txt
+#1787669832
+tpython benchmark.py --skip-3part > log.txt
+#1787670278
+gkill
+#1787670279
+tpython benchmark.py --skip-3part > log.txt
+#1787670733
+gkill
+#1787670743
+tpython benchmark.py --skip-3part > log.txt
+#1787672027
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787672114
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3870207/XQ2GJFTK7NPDRBH4NNQK5F33LX5NXHAOGXTMTILKN7P6BXX64FZA/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787672599
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787672641
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3890316/WZQYYNUPNJGXNGJ3RK2D23ET7VBN4VWS5L3ISSC3A4MDMIYWMHRQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787672669
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787672717
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3893639/UWP2UTP7E7W76DB6ZJGNBCG5MPRC6MOVP7KQY2E7N5WY56MBZYRA/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787672743
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787672778
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3896752/63FVQFFCENE6BWL5I6JATAJC73OPTI4Y4XO3CMG3RXV4D2CBRBAA/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787672799
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787672831
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3898809/OT4YK3YYSSTQMOT3IPMEVTXZ2ANVXARLTYNN66EI5M52ZKU7SSNQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787672852
+rmdir compiler_scratch/
+#1787672858
+rm com
+#1787672860
+rm compiler_scratch/
+#1787672877
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787672907
+ptxas -v --gpu-name=sm_90a compiler_scratch/triton_cache_3899933/5WUQCZR63AQBSHLUYIYA4Q2UJWWJFM6CVYQG7DMEDQOLOHYYJMTQ/fa3_warp_specialized_kernel.ptx -o /dev/null
+#1787673099
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -nvtx --nvtx-include "PyTorch_SDPA_4096_128" -o Profiling/pytorch_sdpa_4096_128 python pytorch_sdpa.py 
+#1787673117
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full --nvtx --nvtx-include "PyTorch_SDPA_4096_128" -o Profiling/pytorch_sdpa_4096_128 python pytorch_sdpa.py 
+#1787673129
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full --nvtx --nvtx-include "PyTorch_SDPA_4096_128" -o Profiling/pytorch_sdpa_4096_128 -f python pytorch_sdpa.py 
+#1787673180
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full --nvtx --nvtx-include "PyTorch_SDPA" -o Profiling/pytorch_sdpa_4096_64 -f python pytorch_sdpa.py 
+#1787673208
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full --start-later --nvtx --nvtx-include "PyTorch_SDPA" -o Profiling/pytorch_sdpa_4096_64 -f python pytorch_sdpa.py 
+#1787673273
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full --profile-from-start off --nvtx --nvtx-include "PyTorch_SDPA" -o Profiling/pytorch_sdpa_4096_64 -f python pytorch_sdpa.py 
+#1787673340
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full --nvtx --nvtx-include "PyTorch_SDPA/" -o Profiling/pytorch_sdpa_4096_64 -f python pytorch_sdpa.py 
+#1787673413
+apptainer exec --nvccli $SCRATCH/sparse.sif ncu --set full -f -k "fa3_warp_specialized_kernel" -o "Profiling/4_partition_4096_64" python kernels/gluon_attention_pingpong_overlap.py 
+#1787673539
+git reset HEAD~1
+#1787668981
+debugjob
+#1787720569
+load_module && start_gluon && cd ../attention
+#1787720581
+tpython kernels/gluon_attention_pingpong_overlap.py 
+#1787668838
+cat /home/notming/links/scratch/attention/benchmark.py
+#1787668843
+cat /home/notming/links/scratch/attention/log.txt
+#1787668854
+cat -n /home/notming/links/scratch/attention/benchmark.py
+#1787668857
+head -n 232 /home/notming/links/scratch/attention/benchmark.py
+#1787668860
+head -n 65 /home/notming/links/scratch/attention/benchmark.py
+#1787668862
+cat /home/notming/links/scratch/attention/kernels/gluon_attention_forward.py | grep -E "autotune|_autotune_cache|get_autotuned_kernel|best_config" -A 5 -B 2
+#1787668869
+grep -rn "get_best_config" /home/notming/links/scratch/attention/
+#1787669001
+sed -n '625,645p' /home/notming/links/scratch/attention/dev/gluon_3_partition_pingpong.py
+#1787669006
+python3 - << 'EOF'
+#1787669006
+path = "/home/notming/links/scratch/attention/dev/gluon_3_partition_pingpong.py"
+
+#1787669006
+with open(path, "r") as f:
+
+#1787669006
+    content = f.read()
+
+#1787669006
+
+
+#1787669006
+old_get_best_config = """def get_best_config(module):
+
+#1787669006
+    \"\"\"Extracts best_config from module autotuner cache or direct attributes.\"\"\"
+
+#1787669006
+    cache = getattr(module, "_autotune_cache", {})
+
+#1787669006
+    for autotuner in cache.values():
+
+#1787669006
+        if getattr(autotuner, "best_config", None) is not None:
+
+#1787669006
+            return autotuner.best_config
+
+#1787669006
+
+
+#1787669006
+    for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
+
+#1787669006
+        obj = getattr(module, name, None)
+
+#1787669006
+        if obj and getattr(obj, "best_config", None) is not None:
+
+#1787669006
+            return obj.best_config
+
+#1787669006
+
+
+#1787669006
+    return "Kernel Failed / Not Set\""""
+
+#1787669006
+
+
+#1787669006
+new_get_best_config = """def get_best_config(module, head_dim: int = None):
+
+#1787669006
+    \"\"\"Extracts best_config from module autotuner cache or direct attributes.\"\"\"
+
+#1787669006
+    cache = getattr(module, "_autotune_cache", {})
+
+#1787669006
+    if head_dim is not None:
+
+#1787669006
+        if head_dim in cache and getattr(cache[head_dim], "best_config", None) is not None:
+
+#1787669006
+            return cache[head_dim].best_config
+
+#1787669006
+    else:
+
+#1787669006
+        for autotuner in cache.values():
+
+#1787669006
+            if getattr(autotuner, "best_config", None) is not None:
+
+#1787669006
+                return autotuner.best_config
+
+#1787669006
+
+
+#1787669006
+    for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
+
+#1787669006
+        obj = getattr(module, name, None)
+
+#1787669006
+        if obj and getattr(obj, "best_config", None) is not None:
+
+#1787669006
+            return obj.best_config
+
+#1787669006
+
+
+#1787669006
+    return "Kernel Failed / Not Set\""""
+
+#1787669006
+
+
+#1787669006
+if old_get_best_config in content:
+
+#1787669006
+    content = content.replace(old_get_best_config, new_get_best_config)
+
+#1787669006
+    with open(path, "w") as f:
+
+#1787669006
+        f.write(content)
+
+#1787669006
+    print("Updated dev/gluon_3_partition_pingpong.py")
+
+#1787669006
+EOF
+
+#1787669349
+python3 - << 'EOF'
+#1787669349
+path = "/home/notming/links/scratch/attention/benchmark.py"
+
+#1787669349
+with open(path, "r") as f:
+
+#1787669349
+    lines = f.readlines()
+
+#1787669349
+
+
+#1787669349
+for i, line in enumerate(lines[365:390], 366):
+
+#1787669349
+    print(f"{i}: {line}", end="")
+
+#1787669349
+EOF
+
+#1787669359
+python3 - << 'EOF'
+#1787669359
+path = "/home/notming/links/scratch/attention/benchmark.py"
+
+#1787669359
+with open(path, "r") as f:
+
+#1787669359
+    content = f.read()
+
+#1787669359
+
+
+#1787669359
+target = 'if cfg is None or cfg == "Kernel Failed / Not Set":'
+
+#1787669359
+replacement = 'if cfg is None or (isinstance(cfg, str) and cfg == "Kernel Failed / Not Set"):'
+
+#1787669359
+
+
+#1787669359
+assert target in content, "Target string not found"
+
+#1787669359
+content = content.replace(target, replacement)
+
+#1787669359
+
+
+#1787669359
+with open(path, "w") as f:
+
+#1787669359
+    f.write(content)
+
+#1787669359
+
+
+#1787669359
+print("Fix applied successfully!")
+
+#1787669359
+EOF
+
+#1787669385
+python3 -m py_compile /home/notming/links/scratch/attention/benchmark.py
+#1787672380
+sed -n '550,705p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1787672384
+grep -rn "warp_specialize" /home/notming/links/scratch/attention/
+#1787672393
+sed -n '390,420p' /home/notming/links/scratch/attention/kernels/gluon_attention_forward.py
+#1787672404
+sed -n '300,550p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1787675398
+sed -n '1,120p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1787675404
+sed -n '121,300p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1787669044
+sq --start
+#1787668881
+grep -rn "_autotune_cache" /home/notming/links/scratch/attention/
+#1787668889
+sed -n '40,65p;360,385p' /home/notming/links/scratch/attention/benchmark.py
+#1787668896
+cat /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py | grep -E "run_fa3_kernel|get_autotuned_kernel|_autotune_cache" -A 10 -B 2
+#1787668905
+python3 -c '
+#1787668905
+with open("/home/notming/links/scratch/attention/benchmark.py", "r") as f:
+#1787668905
+    content = f.read()
+#1787668905
+
+#1787668905
+# 1. Update get_best_config
+#1787668905
+old_get_best_config = """def get_best_config(module):
+#1787668905
+    \"\"\"Extracts best_config from module autotuner cache or direct attributes.\"\"\"
+#1787668905
+    cache = getattr(module, "_autotune_cache", {})
+#1787668905
+    for autotuner in cache.values():
+#1787668905
+        if getattr(autotuner, "best_config", None) is not None:
+#1787668905
+            return autotuner.best_config
+#1787668905
+
+#1787668905
+    for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
+#1787668905
+        obj = getattr(module, name, None)
+#1787668905
+        if obj and getattr(obj, "best_config", None) is not None:
+#1787668905
+            return obj.best_config
+#1787668905
+
+#1787668905
+    return "Kernel Failed / Not Set\""""
+#1787668905
+
+#1787668905
+new_get_best_config = """def get_best_config(module, head_dim: int = None):
+#1787668905
+    \"\"\"Extracts best_config from module autotuner cache or direct attributes.\"\"\"
+#1787668905
+    cache = getattr(module, "_autotune_cache", {})
+#1787668905
+    if head_dim is not None:
+#1787668905
+        if head_dim in cache and getattr(cache[head_dim], "best_config", None) is not None:
+#1787668906
+            return cache[head_dim].best_config
+#1787668906
+    else:
+#1787668906
+        for autotuner in cache.values():
+#1787668906
+            if getattr(autotuner, "best_config", None) is not None:
+#1787668906
+                return autotuner.best_config
+#1787668906
+
+#1787668906
+    for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
+#1787668906
+        obj = getattr(module, name, None)
+#1787668906
+        if obj and getattr(obj, "best_config", None) is not None:
+#1787668906
+            return obj.best_config
+#1787668906
+
+#1787668906
+    return "Kernel Failed / Not Set\""""
+#1787668906
+
+#1787668906
+assert old_get_best_config in content, "old_get_best_config not found"
+#1787668906
+content = content.replace(old_get_best_config, new_get_best_config, 1)
+#1787668906
+
+#1787668906
+# 2. Update prepare_kernel_runner return value if needed
+#1787668906
+old_return = "return launch_fn, O_ref, config"
+#1787668906
+new_return = "return launch_fn, O_ref, best_cfg"
+#1787668906
+if old_return in content:
+#1787668906
+    content = content.replace(old_return, new_return, 1)
+#1787668906
+
+#1787668906
+# 3. Update main loop call
+#1787668906
+old_loop_call = """            # Output autotuned configurations per kernel
+#1787668906
+            for name, module in active_modules.items():
+#1787668906
+                cfg = get_best_config(module)
+#1787668906
+                if isinstance(cfg, str):
+#1787668906
+                    print(f"  [{name}] best config: {cfg}")
+#1787668906
+                else:
+#1787668906
+                    print(f"  [{name}] best config: {cfg.kwargs}, num_warps={getattr(cfg, 'num_warps', 'N/A')}")"""
+#1787668906
+
+#1787668906
+new_loop_call = """            # Output autotuned configurations per kernel
+#1787668906
+            for name, module in active_modules.items():
+#1787668906
+                cfg = metrics.get(name, {}).get("config")
+#1787668906
+                if cfg is None or cfg == "Kernel Failed / Not Set":
+#1787668906
+                    cfg = get_best_config(module, head_dim)
+#1787668906
+                if isinstance(cfg, str):
+#1787668906
+                    print(f"  [{name}] best config: {cfg}")
+#1787668906
+                elif cfg is not None and hasattr(cfg, "kwargs"):
+#1787668906
+                    print(f"  [{name}] best config: {cfg.kwargs}, num_warps={getattr(cfg, 'num_warps', \'N/A\')}")
+#1787668906
+                elif isinstance(cfg, dict):
+#1787668906
+                    print(f"  [{name}] best config: {cfg}, num_warps={cfg.get(\'warps\', cfg.get(\'num_warps\', \'N/A\'))}")
+#1787668906
+                else:
+#1787668906
+                    print(f"  [{name}] best config: {cfg}")"""
+#1787668906
+assert old_loop_call in content, "old_loop_call not found"
+#1787668906
+content = content.replace(old_loop_call, new_loop_call, 1)
+#1787668906
+with open("/home/notming/links/scratch/attention/benchmark.py", "w") as f:
+#1787668906
+    f.write(content)
+#1787668906
+print("Updated benchmark.py successfully!")
+#1787668906
+'
+#1787668921
+python3 - << 'EOF'
+#1787668921
+path = "/home/notming/links/scratch/attention/benchmark.py"
+
+#1787668921
+with open(path, "r") as f:
+
+#1787668921
+    content = f.read()
+
+#1787668921
+
+
+#1787668921
+old_get_best_config = """def get_best_config(module):
+
+#1787668921
+    \"\"\"Extracts best_config from module autotuner cache or direct attributes.\"\"\"
+
+#1787668921
+    cache = getattr(module, "_autotune_cache", {})
+
+#1787668921
+    for autotuner in cache.values():
+
+#1787668921
+        if getattr(autotuner, "best_config", None) is not None:
+
+#1787668921
+            return autotuner.best_config
+
+#1787668921
+
+
+#1787668921
+    for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
+
+#1787668921
+        obj = getattr(module, name, None)
+
+#1787668921
+        if obj and getattr(obj, "best_config", None) is not None:
+
+#1787668921
+            return obj.best_config
+
+#1787668921
+
+
+#1787668921
+    return "Kernel Failed / Not Set\""""
+
+#1787668921
+
+
+#1787668921
+new_get_best_config = """def get_best_config(module, head_dim: int = None):
+
+#1787668921
+    \"\"\"Extracts best_config from module autotuner cache or direct attributes.\"\"\"
+
+#1787668921
+    cache = getattr(module, "_autotune_cache", {})
+
+#1787668921
+    if head_dim is not None:
+
+#1787668921
+        if head_dim in cache and getattr(cache[head_dim], "best_config", None) is not None:
+
+#1787668921
+            return cache[head_dim].best_config
+
+#1787668921
+    else:
+
+#1787668921
+        for autotuner in cache.values():
+
+#1787668921
+            if getattr(autotuner, "best_config", None) is not None:
+
+#1787668921
+                return autotuner.best_config
+
+#1787668921
+
+
+#1787668921
+    for name in ["fa3_autotune_kernel", "sparse_ws_kernel_autotune", "fa3_warp_specialized_kernel"]:
+
+#1787668921
+        obj = getattr(module, name, None)
+
+#1787668921
+        if obj and getattr(obj, "best_config", None) is not None:
+
+#1787668921
+            return obj.best_config
+
+#1787668921
+
+
+#1787668921
+    return "Kernel Failed / Not Set\""""
+
+#1787668921
+
+
+#1787668921
+old_loop_call = """            # Output autotuned configurations per kernel
+
+#1787668921
+            for name, module in active_modules.items():
+
+#1787668921
+                cfg = get_best_config(module)
+
+#1787668921
+                if isinstance(cfg, str):
+
+#1787668921
+                    print(f"  [{name}] best config: {cfg}")
+
+#1787668921
+                else:
+
+#1787668921
+                    print(f"  [{name}] best config: {cfg.kwargs}, num_warps={getattr(cfg, 'num_warps', 'N/A')}")"""
+
+#1787668921
+
+
+#1787668921
+new_loop_call = """            # Output autotuned configurations per kernel
+
+#1787668921
+            for name, module in active_modules.items():
+
+#1787668921
+                cfg = metrics.get(name, {}).get("config")
+
+#1787668921
+                if cfg is None or cfg == "Kernel Failed / Not Set":
+
+#1787668921
+                    cfg = get_best_config(module, head_dim)
+
+#1787668921
+                if isinstance(cfg, str):
+
+#1787668921
+                    print(f"  [{name}] best config: {cfg}")
+
+#1787668921
+                elif cfg is not None and hasattr(cfg, "kwargs"):
+
+#1787668921
+                    print(f"  [{name}] best config: {cfg.kwargs}, num_warps={getattr(cfg, 'num_warps', 'N/A')}")
+
+#1787668921
+                elif isinstance(cfg, dict):
+
+#1787668921
+                    print(f"  [{name}] best config: {cfg}, num_warps={cfg.get('warps', cfg.get('num_warps', 'N/A'))}")
+
+#1787668921
+                else:
+
+#1787668921
+                    print(f"  [{name}] best config: {cfg}")"""
+
+#1787668921
+
+
+#1787668921
+if old_get_best_config in content:
+
+#1787668921
+    content = content.replace(old_get_best_config, new_get_best_config)
+
+#1787668921
+    print("Replaced get_best_config")
+
+#1787668921
+
+
+#1787668921
+if old_loop_call in content:
+
+#1787668921
+    content = content.replace(old_loop_call, new_loop_call)
+
+#1787668921
+    print("Replaced loop call")
+
+#1787668921
+
+
+#1787668921
+old_return = "return launch_fn, O_ref, config"
+
+#1787668921
+new_return = "return launch_fn, O_ref, best_cfg"
+
+#1787668921
+if old_return in content:
+
+#1787668921
+    content = content.replace(old_return, new_return)
+
+#1787668921
+    print("Replaced prepare_kernel_runner return")
+
+#1787668921
+
+
+#1787668921
+with open(path, "w") as f:
+
+#1787668921
+    f.write(content)
+
+#1787668921
+
+
+#1787668921
+print("Modification complete.")
+
+#1787668921
+EOF
+
+#1787668947
+git diff /home/notming/links/scratch/attention/benchmark.py
+#1787668956
+git diff -U5 /home/notming/links/scratch/attention/benchmark.py | head -n 40
+#1787668960
+python3 -m py_compile /home/notming/links/scratch/attention/benchmark.py
+#1787764751
+load_module && start_gluon && cd ../attention
+#1787764766
+tpython kernels/gluon_no_store_partition.py --tune
+#1787764838
+gkill
+#1787764840
+tpython kernels/gluon_no_store_partition.py --tune
+#1787764897
+gkill
+#1787764898
+tpython kernels/gluon_no_store_partition.py --tune
+#1787764954
+tpython benchmark.py 
+#1787765324
+tpython kernels/gluon_no_store_partition.py
+#1787765354
+tpython kernels/gluon_no_store_partition.py --tune
+#1787765474
+gkill
+#1787765610
+tpython benchmark.py 
+#1787766163
+gkill
+#1787766222
+load_module && start_gluon && cd ../attention
+#1787766228
+tpython benchmark.py 
+#1787766375
+gkill
+#1787766378
+tpython benchmark.py 
+#1787766621
+gkill
+#1787766622
+tpython benchmark.py 
+#1787766783
+gkill
+#1787766810
+load_module && start_gluon
+#1787766813
+cd ../attention
+#1787766819
+tpython benchmark.py 
+#1787766999
+gkill
+#1787767006
+tpython benchmark.py 
+#1787767816
+tpython benchmark.py --skip-3part
+#1787768441
+gkill
+#1787768442
+tpython benchmark.py --skip-3part
+#1787768534
+gkill
+#1787769615
+tpython kernels/gluon_attention_alu_xu_pipeline.py 
+#1787769947
+tpython benchmark.py 
+#1787771580
+tpython kernels/gluon_attention_alu_xu_pipeline.py 
+#1787771597
+tpython benchmark.py 
+#1787764697
+load_module && start_gluon && cd ../attention
+#1787764706
+tpython kernels/gluon_no_store_partition.py 
+#1787764727
+debugjob
+#1787766792
+debugjob --exclude=trig0007
+#1787764211
+ls -la /home/notming/links/scratch/attention/kernels/
+#1787764214
+cat /home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py
+#1787764220
+python3 -c '
+#1787764220
+with open("/home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py") as f:
+#1787764220
+    lines = f.readlines()
+#1787764220
+print(f"Total lines: {len(lines)}")
+#1787764220
+for i, line in enumerate(lines[:250]):
+#1787764220
+    print(f"{i+1:04d}: {line}", end="")
+#1787764220
+'
+#1787764250
+python3 -c '
+#1787764250
+with open("/home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py") as f:
+#1787764250
+    lines = f.readlines()
+#1787764250
+for i, line in enumerate(lines[240:480], start=241):
+#1787764250
+    print(f"{i:04d}: {line}", end="")
+#1787764250
+'
+#1787764258
+python3 -c '
+#1787764258
+with open("/home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py") as f:
+#1787764258
+    lines = f.readlines()
+#1787764258
+for i, line in enumerate(lines[470:], start=471):
+#1787764258
+    print(f"{i:04d}: {line}", end="")
+#1787764258
+'
+#1787764267
+python3 -c '
+#1787764267
+with open("/home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py") as f:
+#1787764267
+    lines = f.readlines()
+#1787764267
+for i, line in enumerate(lines[500:750], start=501):
+#1787764267
+    print(f"{i:04d}: {line}", end="")
+#1787764267
+'
+#1787764287
+python3 -c '
+#1787764287
+with open("/home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py") as f:
+#1787764287
+    lines = f.readlines()
+#1787764287
+print("=== lines 250-320 ===")
+#1787764287
+for i, line in enumerate(lines[250:320], start=251):
+#1787764287
+    print(f"{i:04d}: {line}", end="")
+#1787764287
+print("\n=== lines 480-600 ===")
+#1787764287
+for i, line in enumerate(lines[480:600], start=481):
+#1787764287
+    print(f"{i:04d}: {line}", end="")
+#1787764287
+'
+#1787764295
+python3 -c '
+#1787764295
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_forward.py") as f:
+#1787764295
+    print(f.read()[:3000])
+#1787764295
+'
+#1787764303
+python3 -c '
+#1787764303
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_forward.py") as f:
+#1787764303
+    lines = f.readlines()
+#1787764303
+for i, line in enumerate(lines[200:450], start=201):
+#1787764303
+    print(f"{i:04d}: {line}", end="")
+#1787764303
+'
+#1787764312
+python3 -c '
+#1787764312
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py") as f1, open("/home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py") as f2:
+#1787764312
+    print("f1 == f2 ?", f1.read() == f2.read())
+#1787764312
+'
+#1787764323
+python3 -c '
+#1787764323
+import os
+#1787764323
+for root, dirs, files in os.walk("/home/notming/links/scratch/attention"):
+#1787764323
+    for f in files:
+#1787764323
+        if f.endswith(".py"):
+#1787764323
+            p = os.path.join(root, f)
+#1787764323
+            with open(p) as fp:
+#1787764323
+                c = fp.read()
+#1787764323
+                if "warp_specialize" in c:
+#1787764323
+                    print(f"=== {p} ===")
+#1787764323
+                    for line in c.splitlines():
+#1787764323
+                        if "warp_specialize" in line:
+#1787764323
+                            print(line)
+#1787764323
+'
+#1787764329
+cat /home/notming/links/scratch/attention/dev/gluon_3_partition_pingpong.py
+#1787764339
+python3 -c '
+#1787764339
+with open("/home/notming/links/scratch/attention/dev/gluon_3_partition_pingpong.py") as f:
+#1787764339
+    lines = f.readlines()
+#1787764339
+for i, line in enumerate(lines[:300], start=1):
+#1787764339
+    print(f"{i:04d}: {line}", end="")
+#1787764339
+'
+#1787764348
+python3 -c '
+#1787764348
+with open("/home/notming/links/scratch/attention/dev/gluon_3_partition_pingpong.py") as f:
+#1787764348
+    lines = f.readlines()
+#1787764348
+for i, line in enumerate(lines[300:420], start=301):
+#1787764348
+    print(f"{i:04d}: {line}", end="")
+#1787764348
+'
+#1787764361
+python3 -c '
+#1787764361
+import os
+#1787764361
+for root, dirs, files in os.walk("/home/notming/links/scratch/attention"):
+#1787764361
+    for f in files:
+#1787764361
+        if f.endswith(".py"):
+#1787764361
+            p = os.path.join(root, f)
+#1787764361
+            with open(p) as fp:
+#1787764361
+                c = fp.read()
+#1787764361
+                if "async_copy_shared_to_global" in c or "store_wait" in c:
+#1787764361
+                    print(f"=== {p} ===")
+#1787764361
+                    for i, line in enumerate(c.splitlines()):
+#1787764361
+                        if "async_copy_shared_to_global" in line or "store_wait" in line:
+#1787764361
+                            print(f"{i+1}: {line}")
+#1787764361
+'
+#1787764375
+python3 -c '
+#1787764375
+import triton
+#1787764375
+import inspect
+#1787764375
+from triton.experimental.gluon.language.nvidia.hopper import tma
+#1787764375
+print("tma members:", dir(tma))
+#1787764375
+'
+#1787764426
+cd /home/notming/links/scratch/attention
+#1787764428
+bash -ic "source ~/.bashrc 2>/dev/null; type load_module; type start_gluon; type tpython"
+#1787764434
+bash -ic "source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython kernels/gluon_no_store_partition.py"
+#1787764475
+bash -ic "source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython -c '
+#1787764475
+import triton, inspect
+#1787764475
+import triton.experimental.gluon as gluon
+#1787764475
+import os
+#1787764475
+
+#1787764475
+pkg_dir = os.path.dirname(gluon.__file__)
+#1787764475
+print(\"Gluon dir:\", pkg_dir)
+#1787764475
+for root, dirs, files in os.walk(pkg_dir):
+#1787764475
+    for f in files:
+#1787764475
+        if f.endswith(\".py\"):
+#1787764475
+            p = os.path.join(root, f)
+#1787764475
+            with open(p) as fp:
+#1787764475
+                c = fp.read()
+#1787764475
+                if \"async_copy_shared_to_global\" in c or \"store_wait\" in c:
+#1787764475
+                    print(\"Match in:\", p)
+#1787764475
+'"
+#1787764497
+cd /home/notming/links/scratch
+#1787764498
+find /home/notming/links/scratch -name "*.py" | grep -v "/\." | head -n 50
+#1787764502
+ls -la /home/notming/links/scratch
+#1787764505
+ls -la /home/notming/links/scratch/
+#1787764511
+find /home/notming/links/scratch/gluon_spmm /home/notming/links/scratch/compression -name "*.py" | head -n 30
+#1787764516
+python3 -c '
+#1787764516
+with open("/home/notming/links/scratch/gluon_spmm/gluon_warp_specialize_subtile.py") as f:
+#1787764516
+    print(f.read()[:2000])
+#1787764516
+'
+#1787764524
+python3 -c '
+#1787764524
+with open("/home/notming/links/scratch/gluon_spmm/gluon_warp_specialize_subtile.py") as f:
+#1787764524
+    lines = f.readlines()
+#1787764524
+for i, line in enumerate(lines[50:150], start=51):
+#1787764524
+    print(f"{i:04d}: {line}", end="")
+#1787764524
+'
+#1787764534
+python3 -c '
+#1787764534
+with open("/home/notming/links/scratch/gluon_spmm/stoicc/kernels/a_sparse/persistent.py") as f:
+#1787764534
+    print(f.read()[:2000])
+#1787764534
+'
+#1787764557
+cd /home/notming/links/scratch/attention
+#1787764558
+bash -ic "source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython -c '
+#1787764558
+from triton.experimental.gluon.language.nvidia.hopper import tma
+#1787764558
+import inspect
+#1787764558
+print(inspect.getsource(tma.async_copy_shared_to_global))
+#1787764558
+print(inspect.getsource(tma.store_wait))
+#1787764558
+'"
+#1787764585
+cd /home/notming/links/scratch
+#1787764586
+python3 -c '
+#1787764586
+import os
+#1787764586
+for root, dirs, files in os.walk("/home/notming/links/scratch/attention"):
+#1787764586
+    for f in files:
+#1787764586
+        if f.endswith(".py"):
+#1787764586
+            p = os.path.join(root, f)
+#1787764586
+            with open(p) as fp:
+#1787764586
+                c = fp.read()
+#1787764586
+                if "is_4_partition" in c or "store_partition" in c:
+#1787764586
+                    print(f"=== {p} ===")
+#1787764586
+                    for line in c.splitlines():
+#1787764586
+                        if "is_4_partition" in line or "store_partition" in line:
+#1787764586
+                            print(line)
+#1787764586
+'
+#1787764632
+python3 -c '
+#1787764632
+code = """import argparse
+#1787764632
+import importlib.util
+#1787764632
+import os
+#1787764632
+import sys
+#1787764632
+import math
+#1787764632
+import torch
+#1787764632
+import triton
+#1787764632
+
+#1787764632
+from triton.experimental import gluon
+#1787764632
+from triton.experimental.gluon import language as gl
+#1787764632
+
+#1787764632
+from triton.experimental.gluon.nvidia.hopper import TensorDescriptor
+#1787764632
+from triton.language.core import _aggregate as aggregate
+#1787764632
+
+#1787764632
+from triton.experimental.gluon.language.nvidia.hopper import (
+#1787764632
+    tma,
+#1787764632
+    mbarrier,
+#1787764632
+    fence_async_shared,
+#1787764632
+)
+#1787764632
+
+#1787764632
+from common import (
+#1787764632
+    WGMMA,
+#1787764632
+    pick_wgmma_layout,
+#1787764632
+)
+#1787764632
+
+#1787764632
+# ---------------------------------------------------------------------------
+#1787764632
+# WORKSPACE & HASHING FIX
+#1787764632
+# ---------------------------------------------------------------------------
+#1787764632
+if not hasattr(TensorDescriptor, "__hash__") or TensorDescriptor.__hash__ is None:
+#1787764632
+    TensorDescriptor.__hash__ = lambda self: id(self)
+#1787764632
+
+#1787764632
+SCRATCH_WORKSPACE = "compiler_scratch"
+#1787764632
+JOB_ID = str(os.getpid())
+#1787764632
+
+#1787764632
+os.makedirs(SCRATCH_WORKSPACE, exist_ok=True)
+#1787764632
+os.makedirs(os.path.join(SCRATCH_WORKSPACE, f"triton_cache_{JOB_ID}"), exist_ok=True)
+#1787764632
+os.makedirs(os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}"), exist_ok=True)
+#1787764632
+
+#1787764632
+os.environ["TRITON_CACHE_DIR"] = os.path.join(SCRATCH_WORKSPACE, f"triton_cache_{JOB_ID}")
+#1787764632
+os.environ["TMPDIR"] = SCRATCH_WORKSPACE
+#1787764632
+os.environ["TMP"] = SCRATCH_WORKSPACE
+#1787764632
+os.environ["TEMP"] = SCRATCH_WORKSPACE
+#1787764632
+os.environ["CUDA_CACHE_PATH"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
+#1787764632
+os.environ["TORCH_HOME"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
+#1787764632
+
+#1787764632
+# ---------------------------------------------------------------------------
+#1787764632
+# SHARED HELPERS & ARGS
+#1787764632
+# ---------------------------------------------------------------------------
+#1787764632
+
+#1787764632
+def GroupedPersistentTileScheduler(GROUP_SIZE_M):
+#1787764632
+    GROUP_SIZE_M = gl.constexpr(GROUP_SIZE_M)
+#1787764632
+
+#1787764632
+    @aggregate
+#1787764632
+    class GroupedPersistentTileSchedulerImpl:
+#1787764632
+        start_pid: gl.tensor
+#1787764632
+        num_pid_m: gl.tensor
+#1787764632
+        num_pid_in_group: gl.tensor
+#1787764632
+        num_pid: gl.tensor
+#1787764632
+
+#1787764632
+        @gluon.constexpr_function
+#1787764632
+        def __init__(self, start_pid, num_pid_m, num_pid_in_group, num_pid):
+#1787764632
+            self.start_pid = start_pid
+#1787764632
+            self.num_pid_m = num_pid_m
+#1787764632
+            self.num_pid_in_group = num_pid_in_group
+#1787764632
+            self.num_pid = num_pid
+#1787764632
+
+#1787764632
+        @gluon.jit
+#1787764632
+        def initialize(M, N, BLOCK_M: gl.constexpr, BLOCK_N: gl.constexpr):
+#1787764632
+            start_pid = gl.program_id(axis=0)
+#1787764632
+            num_pid_m = gl.cdiv(M, BLOCK_M)
+#1787764632
+            num_pid_n = gl.cdiv(N, BLOCK_N)
+#1787764632
+            num_pid_in_group = GROUP_SIZE_M * num_pid_n
+#1787764632
+            num_pid = num_pid_m * num_pid_n
+#1787764632
+            return GroupedPersistentTileSchedulerImpl(start_pid, num_pid_m, num_pid_in_group, num_pid)
+#1787764632
+
+#1787764632
+        @gluon.jit
+#1787764632
+        def get_num_tiles(self):
+#1787764632
+            return gl.cdiv(self.num_pid - self.start_pid, gl.num_programs(axis=0))
+#1787764632
+
+#1787764632
+        @gluon.jit
+#1787764632
+        def get_tile(self, idx, SEQ_LEN: gl.constexpr, BLOCK_M: gl.constexpr, NUM_HEADS: gl.constexpr):
+#1787764632
+            tile_id = self.start_pid + idx * gl.num_programs(axis=0)
+#1787764632
+            num_pid_m = SEQ_LEN // BLOCK_M
+#1787764632
+            pid_m = tile_id % num_pid_m
+#1787764632
+            batch_head_idx = tile_id // num_pid_m
+#1787764632
+            global_m_offset = (batch_head_idx * SEQ_LEN) + (pid_m * BLOCK_M)
+#1787764632
+            return pid_m, batch_head_idx, global_m_offset
+#1787764632
+
+#1787764632
+    GroupedPersistentTileSchedulerImpl.__name__ = f"GroupedPersistentTileScheduler({GROUP_SIZE_M.value})"
+#1787764632
+    return GroupedPersistentTileSchedulerImpl
+#1787764632
+
+#1787764632
+@aggregate 
+#1787764632
+class PartitionArgs:
+#1787764632
+    q0_desc: tma.tensor_descriptor
+#1787764632
+    q1_desc: tma.tensor_descriptor
+#1787764632
+    k_desc: tma.tensor_descriptor
+#1787764632
+    v_desc: tma.tensor_descriptor
+#1787764632
+    o0_desc: tma.tensor_descriptor
+#1787764632
+    o1_desc: tma.tensor_descriptor
+#1787764632
+
+#1787764632
+    q0_buf: gl.shared_memory_descriptor
+#1787764632
+    q1_buf: gl.shared_memory_descriptor
+#1787764632
+    k_bufs: gl.shared_memory_descriptor
+#1787764632
+    v_bufs: gl.shared_memory_descriptor
+#1787764632
+    o0_bufs: gl.shared_memory_descriptor
+#1787764632
+    o1_bufs: gl.shared_memory_descriptor
+#1787764632
+
+#1787764632
+    q_ready_bar: gl.shared_memory_descriptor
+#1787764632
+    q_empty_bar: gl.shared_memory_descriptor
+#1787764632
+    kv_empty_bars: gl.shared_memory_descriptor
+#1787764632
+    kv_ready_bars: gl.shared_memory_descriptor
+#1787764632
+
+#1787764632
+    ping_bar: gl.shared_memory_descriptor
+#1787764632
+    pong_bar: gl.shared_memory_descriptor
+#1787764632
+
+#1787764632
+    SUBTILE_FACTOR: gl.constexpr
+#1787764632
+    num_warps: gl.constexpr
+#1787764632
+    
+#1787764632
+    @gluon.constexpr_function
+#1787764632
+    def __init__(
+#1787764632
+        self, 
+#1787764632
+        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc, 
+#1787764632
+        q0_buf, q1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs, 
+#1787764632
+        q_ready_bar, q_empty_bar, 
+#1787764632
+        kv_empty_bars, kv_ready_bars,
+#1787764632
+        ping_bar, pong_bar,
+#1787764632
+        SUBTILE_FACTOR: gl.constexpr, 
+#1787764632
+        num_warps: gl.constexpr
+#1787764632
+    ):
+#1787764632
+        self.q0_desc = q0_desc
+#1787764632
+        self.q1_desc = q1_desc
+#1787764632
+        self.k_desc = k_desc
+#1787764632
+        self.v_desc = v_desc
+#1787764632
+        self.o0_desc = o0_desc
+#1787764632
+        self.o1_desc = o1_desc
+#1787764632
+        
+#1787764632
+        self.q0_buf = q0_buf
+#1787764632
+        self.q1_buf = q1_buf
+#1787764632
+        self.k_bufs = k_bufs
+#1787764632
+        self.v_bufs = v_bufs
+#1787764632
+        self.o0_bufs = o0_bufs
+#1787764632
+        self.o1_bufs = o1_bufs
+#1787764632
+        
+#1787764632
+        self.q_ready_bar = q_ready_bar
+#1787764632
+        self.q_empty_bar = q_empty_bar
+#1787764632
+        self.kv_empty_bars = kv_empty_bars
+#1787764632
+        self.kv_ready_bars = kv_ready_bars
+#1787764632
+        
+#1787764632
+        self.ping_bar = ping_bar
+#1787764632
+        self.pong_bar = pong_bar
+#1787764632
+
+#1787764632
+        self.SUBTILE_FACTOR = gl.constexpr(SUBTILE_FACTOR)
+#1787764632
+        self.num_warps = gl.constexpr(num_warps)
+#1787764632
+
+#1787764632
+@aggregate
+#1787764632
+class Counter:
+#1787764632
+    index: gl.tensor
+#1787764632
+    phase: gl.tensor
+#1787764632
+    num_barriers: gl.constexpr
+#1787764632
+
+#1787764632
+    @gluon.constexpr_function
+#1787764632
+    def __init__(self, index, phase, num_barriers):
+#1787764632
+        self.index = index
+#1787764632
+        self.phase = phase
+#1787764632
+        self.num_barriers = gl.constexpr(num_barriers)
+#1787764632
+
+#1787764632
+    @gluon.jit
+#1787764632
+    def create(phase, num_barriers: gl.constexpr):
+#1787764633
+        return Counter(gl.to_tensor(0), gl.to_tensor(phase), num_barriers)
+#1787764633
+
+#1787764633
+    @gluon.must_use_result
+#1787764633
+    @gluon.jit
+#1787764633
+    def next(self, pred=True):
+#1787764633
+        incr = self.index + gl.where(pred, 1, 0)
+#1787764633
+        rollover = incr == self.num_barriers
+#1787764633
+        index = gl.where(rollover, 0, incr)
+#1787764633
+        phase = gl.where(rollover, self.phase ^ 1, self.phase)
+#1787764633
+        return Counter(index, phase, self.num_barriers)
+#1787764633
+
+#1787764633
+@gluon.jit
+#1787764633
+def _split_n(x, SUBTILE_FACTOR: gl.constexpr):
+#1787764633
+    split_count: gl.constexpr = SUBTILE_FACTOR.bit_length() - 1
+#1787764633
+    xs = (x, )
+#1787764633
+    for _ in gl.static_range(split_count):
+#1787764633
+        next_xs = ()
+#1787764633
+        for j in gl.static_range(len(xs)):
+#1787764633
+            x = xs[j]
+#1787764633
+            next_xs += x.reshape(x.shape[0], 2, x.shape[1] // 2).permute(0, 2, 1).split()
+#1787764633
+        xs = next_xs
+#1787764633
+    return xs
+#1787764633
+
+#1787764633
+# ---------------------------------------------------------------------------
+#1787764633
+# ATTENTION PARTITIONS (PRODUCER / CONSUMERS)
+#1787764633
+# ---------------------------------------------------------------------------
+#1787764633
+
+#1787764633
+@gluon.jit
+#1787764633
+def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
+#1787764633
+    SUB_BM: gl.constexpr = p.q0_desc.block_type.shape[0]
+#1787764633
+    BLOCK_M: gl.constexpr = SUB_BM * 2
+#1787764633
+    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]
+#1787764633
+    BLOCK_K: gl.constexpr = p.q0_desc.block_type.shape[1]
+#1787764633
+
+#1787764633
+    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
+#1787764633
+
+#1787764633
+    kv_state = Counter.create(1, p.kv_empty_bars.shape[0])
+#1787764633
+    q_state = Counter.create(1, p.q_empty_bar.shape[0])
+#1787764633
+
+#1787764633
+    for tile_idx in range(scheduler.get_num_tiles()):
+#1787764633
+        pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)      
+#1787764633
+        
+#1787764633
+        mbarrier.wait(p.q_empty_bar.index(0), q_state.phase)
+#1787764633
+        q_bar = p.q_ready_bar.index(0)
+#1787764633
+        
+#1787764633
+        mbarrier.expect(q_bar, p.q0_desc.block_type.nbytes + p.q1_desc.block_type.nbytes)
+#1787764633
+        tma.async_copy_global_to_shared(p.q0_desc, [global_m_offset, 0], q_bar, p.q0_buf)
+#1787764633
+        tma.async_copy_global_to_shared(p.q1_desc, [global_m_offset + SUB_BM, 0], q_bar, p.q1_buf)
+#1787764633
+        
+#1787764633
+        kv_global_offset = bh_idx * SEQ_LEN
+#1787764633
+        num_steps = SEQ_LEN // BLOCK_N
+#1787764633
+
+#1787764633
+        for step in range(num_steps):
+#1787764633
+            bar = p.kv_ready_bars.index(kv_state.index)
+#1787764633
+            mbarrier.wait(p.kv_empty_bars.index(kv_state.index), kv_state.phase)
+#1787764633
+
+#1787764633
+            mbarrier.expect(bar, p.k_desc.block_type.nbytes + p.v_desc.block_type.nbytes)
+#1787764633
+            tma.async_copy_global_to_shared(p.k_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.k_bufs.index(kv_state.index))
+#1787764633
+            tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.v_bufs.index(kv_state.index))
+#1787764633
+            
+#1787764633
+            kv_state = kv_state.next()
+#1787764633
+            
+#1787764633
+        q_state = q_state.next()
+#1787764633
+
+#1787764633
+@gluon.jit
+#1787764633
+def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
+#1787764633
+    SUB_BM: gl.constexpr = p.q0_desc.block_type.shape[0]
+#1787764633
+    BLOCK_M: gl.constexpr = SUB_BM * 2
+#1787764633
+    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]
+#1787764633
+    BLOCK_K: gl.constexpr = p.q0_desc.block_type.shape[1]
+#1787764633
+    SPLIT_K: gl.constexpr = BLOCK_K // p.SUBTILE_FACTOR
+#1787764633
+    
+#1787764633
+    num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
+#1787764633
+    dtype: gl.constexpr = p.q0_desc.dtype
+#1787764633
+
+#1787764633
+    scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
+#1787764633
+
+#1787764633
+    store_state = Counter.create(0, p.o0_bufs.shape[0])
+#1787764633
+    q_state = Counter.create(0, p.q_empty_bar.shape[0])
+#1787764633
+    kv_state = Counter.create(0, num_stages)
+#1787764633
+    
+#1787764633
+    num_buffers: gl.constexpr = p.o0_bufs.shape[0]
+#1787764633
+    outstanding_stores: gl.constexpr = num_buffers - 1
+#1787764633
+    store_iter = 0
+#1787764633
+
+#1787764633
+    num_steps = SEQ_LEN // BLOCK_N
+#1787764633
+    LOG2E: gl.constexpr = 1.4426950408889634
+#1787764633
+    sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
+#1787764633
+
+#1787764633
+    pong_phase = 0
+#1787764633
+    
+#1787764633
+    mma_s_base = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
+#1787764633
+
+#1787764633
+    for tile_idx in range(scheduler.get_num_tiles()):
+#1787764633
+        pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)
+#1787764633
+        
+#1787764633
+        mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
+#1787764633
+
+#1787764633
+        m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
+#1787764633
+        l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
+#1787764633
+
+#1787764633
+        mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
+#1787764633
+
+#1787764633
+        # -------------------------------------------------------------------
+#1787764633
+        # PROLOGUE: Issue S_0 = Q0 * K_0^T
+#1787764633
+        # -------------------------------------------------------------------
+#1787764633
+        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+#1787764633
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1787764633
+
+#1787764633
+        # Hand off Tensor Core issue slot to WG1
+#1787764633
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1787764633
+
+#1787764633
+        # Compute initial Softmax math for S_0
+#1787764633
+        S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+#1787764633
+        S_tile = S_tile * sm_scale_log2
+#1787764633
+
+#1787764633
+        m_old = gl.max(S_tile, axis=1)
+#1787764633
+        S_tile = gl.exp2(S_tile - m_old[:, None])
+#1787764633
+        l_old = gl.sum(S_tile, axis=1)
+#1787764633
+
+#1787764633
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+#1787764633
+
+#1787764633
+        # -------------------------------------------------------------------
+#1787764633
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+#1787764633
+        # -------------------------------------------------------------------
+#1787764633
+        for step in range(1, num_steps - 1):
+#1787764633
+            next_kv_state = kv_state.next()
+#1787764633
+            
+#1787764633
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0
+#1787764633
+            mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1787764633
+            pong_phase ^= 1
+#1787764633
+
+#1787764633
+            # 2. Issue O0 += P_cur * V_{j-1}
+#1787764633
+            mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+#1787764633
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1787764633
+            
+#1787764633
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1787764633
+            kv_state = next_kv_state
+#1787764633
+            
+#1787764633
+            # 1. Issue S_next = Q0 * K_j^T
+#1787764633
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1787764633
+            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1787764633
+            
+#1787764633
+            # 3. Hand off Tensor Core issue slot to WG1
+#1787764633
+            mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1787764633
+
+#1787764633
+            # 4. Softmax math on CUDA ALUs for S_next (Overlapped with WG1 issuing WGMMA)
+#1787764633
+            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
+#1787764633
+            S_tile = S_tile * sm_scale_log2
+#1787764633
+
+#1787764633
+            m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+#1787764633
+            rescale_factor = gl.exp2(m_old - m_new)
+#1787764633
+            
+#1787764633
+            S_tile = gl.exp2(S_tile - m_new[:, None])
+#1787764633
+            l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+#1787764633
+            m_old = m_new
+#1787764633
+            
+#1787764633
+            P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+#1787764633
+
+#1787764633
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+#1787764633
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+#1787764633
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+#1787764633
+            
+#1787764633
+        # -------------------------------------------------------------------
+#1787764633
+        # Unroll the last iteration for efficient q release
+#1787764633
+        # -------------------------------------------------------------------
+#1787764633
+        next_kv_state = kv_state.next()
+#1787764633
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1787764633
+        pong_phase ^= 1
+#1787764633
+
+#1787764633
+        mma_o = WGMMA(
+#1787764633
+            mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K
+#1787764633
+        )
+#1787764633
+        mma_o = mma_o.issue_async_mma(
+#1787764633
+            P_cur_permuted, p.v_bufs.index(kv_state.index)
+#1787764633
+        )
+#1787764633
+
+#1787764633
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1787764633
+        kv_state = next_kv_state
+#1787764633
+
+#1787764633
+        mbarrier.wait(
+#1787764633
+            p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase
+#1787764633
+        )
+#1787764633
+        mma_s = mma_s_base.issue_async_mma(
+#1787764633
+            p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0))
+#1787764633
+        )
+#1787764633
+
+#1787764633
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1787764633
+
+#1787764633
+        S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
+#1787764633
+        S_tile = S_tile * sm_scale_log2
+#1787764633
+            
+#1787764633
+        mbarrier.arrive(p.q_empty_bar.index(0), count=1)
+#1787764633
+        
+#1787764633
+        m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+#1787764633
+        rescale_factor = gl.exp2(m_old - m_new)
+#1787764633
+            
+#1787764633
+        S_tile = gl.exp2(S_tile - m_new[:, None])
+#1787764633
+        l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+#1787764633
+        m_old = m_new
+#1787764633
+            
+#1787764633
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+#1787764633
+
+#1787764633
+        o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+#1787764633
+        o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+#1787764633
+        mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+#1787764633
+        # -------------------------------------------------------------------
+#1787764633
+        # EPILOGUE: Final V Tile & Store
+#1787764633
+        # -------------------------------------------------------------------
+#1787764633
+        
+#1787764633
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1787764633
+        pong_phase ^= 1
+#1787764633
+        
+#1787764633
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+#1787764633
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1787764633
+        
+#1787764633
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1787764633
+
+#1787764633
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1787764633
+        kv_state = kv_state.next()
+#1787764633
+        q_state = q_state.next()
+#1787764633
+
+#1787764634
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+#1787764634
+        l_final_m = gl.convert_layout(l_old, m_layout)
+#1787764634
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
+#1787764634
+
+#1787764634
+        accs = _split_n(acc_final, p.SUBTILE_FACTOR)
+#1787764634
+        for i in gl.static_range(p.SUBTILE_FACTOR):
+#1787764634
+            if store_iter >= outstanding_stores:
+#1787764634
+                tma.store_wait(outstanding_stores)
+#1787764634
+            o0_buf = p.o0_bufs.index(store_state.index)
+#1787764634
+            o0_buf.store(accs[i])
+#1787764634
+            fence_async_shared()
+#1787764634
+            tma.async_copy_shared_to_global(p.o0_desc, [global_m_offset, i * SPLIT_K], o0_buf)
+#1787764634
+            store_state = store_state.next()
+#1787764634
+            store_iter += 1
+#1787764634
+
+#1787764634
+    tma.store_wait(0)
+#1787764634
+
+#1787764634
+@gluon.jit
+#1787764634
+def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
+#1787764634
+    SUB_BM: gl.constexpr = p.q1_desc.block_type.shape[0]
+#1787764634
+    BLOCK_M: gl.constexpr = SUB_BM * 2
+#1787764634
+    BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]
+#1787764634
+    BLOCK_K: gl.constexpr = p.q1_desc.block_type.shape[1]
+#1787764634
+    SPLIT_K: gl.constexpr = BLOCK_K // p.SUBTILE_FACTOR
+#1787764634
+    
+#1787764634
+    num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
+#1787764634
+    dtype: gl.constexpr = p.q1_desc.dtype
+#1787764634
+
+#1787764634
+    scheduler = SchedulerImpl.initialize(p.o1_desc.shape[0], p.o1_desc.shape[1], BLOCK_M, BLOCK_K)
+#1787764634
+
+#1787764634
+    store_state = Counter.create(0, p.o1_bufs.shape[0])
+#1787764634
+    q_state = Counter.create(0, p.q_empty_bar.shape[0])
+#1787764634
+    kv_state = Counter.create(0, num_stages)
+#1787764634
+    
+#1787764634
+    num_buffers: gl.constexpr = p.o1_bufs.shape[0]
+#1787764634
+    outstanding_stores: gl.constexpr = num_buffers - 1
+#1787764634
+    store_iter = 0
+#1787764634
+
+#1787764634
+    num_steps = SEQ_LEN // BLOCK_N
+#1787764634
+    LOG2E: gl.constexpr = 1.4426950408889634
+#1787764634
+    sm_scale_log2: gl.constexpr = (1.0 / math.sqrt(HEAD_DIM)) * LOG2E
+#1787764634
+
+#1787764634
+    ping_phase = 0
+#1787764634
+    
+#1787764634
+    mma_s_base = WGMMA.initialize(dtype, SUB_BM, BLOCK_N, p.num_warps)
+#1787764634
+
+#1787764634
+    for tile_idx in range(scheduler.get_num_tiles()):
+#1787764634
+        pid_m, bh_idx, global_m_offset = scheduler.get_tile(tile_idx, SEQ_LEN, BLOCK_M, NUM_HEADS)   
+#1787764634
+        
+#1787764634
+        mma_o = WGMMA.initialize(dtype, SUB_BM, BLOCK_K, p.num_warps)
+#1787764634
+
+#1787764634
+        m_old = gl.full((SUB_BM,), -float('inf'), dtype=gl.float32, layout=s_layout)
+#1787764634
+        l_old = gl.zeros((SUB_BM,), dtype=gl.float32, layout=s_layout)
+#1787764634
+
+#1787764634
+        # Wait for WG0 to complete its Prologue WGMMA issue
+#1787764634
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1787764634
+        ping_phase ^= 1
+#1787764634
+
+#1787764634
+        mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
+#1787764634
+
+#1787764634
+        # -------------------------------------------------------------------
+#1787764634
+        # PROLOGUE: Issue S_0 = Q1 * K_0^T
+#1787764634
+        # -------------------------------------------------------------------
+#1787764634
+        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+#1787764634
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1787764634
+
+#1787764634
+        # Hand off back to WG0
+#1787764634
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1787764634
+
+#1787764634
+        # Compute initial Softmax math for S_0
+#1787764634
+        S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+#1787764634
+        S_tile = S_tile * sm_scale_log2
+#1787764634
+
+#1787764634
+        m_old = gl.max(S_tile, axis=1)
+#1787764634
+        S_tile = gl.exp2(S_tile - m_old[:, None])
+#1787764634
+        l_old = gl.sum(S_tile, axis=1)
+#1787764634
+
+#1787764634
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+#1787764634
+
+#1787764634
+        # -------------------------------------------------------------------
+#1787764634
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+#1787764634
+        # -------------------------------------------------------------------
+#1787764634
+        for step in range(1, num_steps - 1):
+#1787764634
+            next_kv_state = kv_state.next()
+#1787764634
+
+#1787764634
+            # 1. Wait for WG0 signal before issuing Tensor Core operations
+#1787764634
+            mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1787764634
+            ping_phase ^= 1
+#1787764634
+
+#1787764634
+            # 3. Issue O1 += P_cur * V_{j-1}
+#1787764634
+            mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+#1787764634
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1787764634
+
+#1787764634
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1787764634
+            kv_state = next_kv_state
+#1787764634
+            
+#1787764634
+            # 2. Issue S_next = Q1 * K_j^T
+#1787764634
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1787764634
+            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1787764634
+            
+#1787764634
+            # 4. Hand off Tensor Core issue slot back to WG0
+#1787764634
+            mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1787764634
+
+#1787764634
+            # 5. Softmax math on CUDA ALUs for S_next (Overlapped with WG0 issuing WGMMA)
+#1787764634
+            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
+#1787764634
+            S_tile = S_tile * sm_scale_log2
+#1787764634
+
+#1787764634
+            m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+#1787764634
+            rescale_factor = gl.exp2(m_old - m_new)
+#1787764634
+            
+#1787764634
+            S_tile = gl.exp2(S_tile - m_new[:, None])
+#1787764634
+            l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+#1787764634
+            m_old = m_new
+#1787764634
+            
+#1787764634
+            P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+#1787764634
+
+#1787764634
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+#1787764634
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+#1787764634
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+#1787764634
+            
+#1787764634
+        # -------------------------------------------------------------------
+#1787764634
+        # Unroll last iteration for efficient q release
+#1787764634
+        # -------------------------------------------------------------------
+#1787764634
+        next_kv_state = kv_state.next()
+#1787764634
+
+#1787764634
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1787764634
+        ping_phase ^= 1
+#1787764634
+
+#1787764634
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+#1787764634
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1787764634
+
+#1787764634
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1787764634
+        kv_state = next_kv_state
+#1787764634
+
+#1787764634
+        mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1787764634
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1787764634
+
+#1787764634
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1787764634
+
+#1787764634
+        S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
+#1787764634
+        S_tile = S_tile * sm_scale_log2
+#1787764634
+
+#1787764634
+        mbarrier.arrive(p.q_empty_bar.index(0), count=1)
+#1787764634
+        
+#1787764634
+        m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+#1787764634
+        rescale_factor = gl.exp2(m_old - m_new)
+#1787764634
+        
+#1787764634
+        S_tile = gl.exp2(S_tile - m_new[:, None])
+#1787764634
+        l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+#1787764634
+        m_old = m_new
+#1787764634
+            
+#1787764634
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+#1787764634
+        
+#1787764634
+        o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+#1787764634
+        o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+#1787764634
+        mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+#1787764634
+        
+#1787764634
+        # -------------------------------------------------------------------
+#1787764634
+        # EPILOGUE: Final V Tile & Store
+#1787764634
+        # -------------------------------------------------------------------
+#1787764634
+        
+#1787764634
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1787764634
+        ping_phase ^= 1
+#1787764634
+        
+#1787764634
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+#1787764634
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1787764634
+
+#1787764634
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1787764634
+        kv_state = kv_state.next()
+#1787764634
+        q_state = q_state.next()
+#1787764634
+
+#1787764634
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+#1787764634
+        l_final_m = gl.convert_layout(l_old, m_layout)
+#1787764634
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o1_desc.dtype)
+#1787764634
+
+#1787764634
+        accs = _split_n(acc_final, p.SUBTILE_FACTOR)
+#1787764634
+        for i in gl.static_range(p.SUBTILE_FACTOR):
+#1787764634
+            if store_iter >= outstanding_stores:
+#1787764634
+                tma.store_wait(outstanding_stores)
+#1787764634
+            o1_buf = p.o1_bufs.index(store_state.index)
+#1787764634
+            o1_buf.store(accs[i])
+#1787764634
+            fence_async_shared()
+#1787764634
+            tma.async_copy_shared_to_global(p.o1_desc, [global_m_offset + SUB_BM, i * SPLIT_K], o1_buf)
+#1787764634
+            store_state = store_state.next()
+#1787764634
+            store_iter += 1
+#1787764634
+
+#1787764634
+    tma.store_wait(0)
+#1787764634
+
+#1787764634
+# ---------------------------------------------------------------------------
+#1787764634
+# KERNEL LAUNCHER
+#1787764634
+# ---------------------------------------------------------------------------
+#1787764634
+@gluon.jit
+#1787764634
+def fa3_warp_specialized_kernel(
+#1787764634
+    q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
+#1787764634
+    SchedulerImpl: gl.constexpr,
+#1787764634
+    SEQ_LEN: gl.constexpr, HEAD_DIM: gl.constexpr, NUM_HEADS: gl.constexpr, 
+#1787764634
+    BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
+#1787764634
+    num_stages: gl.constexpr, SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr
+#1787764634
+):
+#1787764634
+    
+#1787764634
+    gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush=True)
+#1787764634
+    dtype: gl.constexpr = q0_desc.dtype
+#1787764634
+    SUB_BM: gl.constexpr = BLOCK_SIZE_M // 2
+#1787764634
+
+#1787764634
+    q0_buf = gl.allocate_shared_memory(dtype, q0_desc.block_type.shape, q0_desc.layout)
+#1787764634
+    q1_buf = gl.allocate_shared_memory(dtype, q1_desc.block_type.shape, q1_desc.layout)
+#1787764634
+    
+#1787764634
+    k_bufs = gl.allocate_shared_memory(dtype, [num_stages] + k_desc.block_type.shape, k_desc.layout)
+#1787764634
+    v_bufs = gl.allocate_shared_memory(dtype, [num_stages] + v_desc.block_type.shape, v_desc.layout)
+#1787764634
+    
+#1787764634
+    o0_bufs = gl.allocate_shared_memory(dtype, [2] + o0_desc.block_type.shape, o0_desc.layout)
+#1787764634
+    o1_bufs = gl.allocate_shared_memory(dtype, [2] + o1_desc.block_type.shape, o1_desc.layout)
+#1787764634
+
+#1787764634
+    q_ready_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
+#1787764634
+    q_empty_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
+#1787764634
+    
+#1787764635
+    kv_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1787764635
+    kv_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1787764635
+
+#1787764635
+    ping_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
+#1787764635
+    pong_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
+#1787764635
+
+#1787764635
+    mbarrier.init(q_ready_bar.index(0), count=1)
+#1787764635
+    mbarrier.init(q_empty_bar.index(0), count=2)
+#1787764635
+
+#1787764635
+    mbarrier.init(ping_bar.index(0), count=1)
+#1787764635
+    mbarrier.init(pong_bar.index(0), count=1)
+#1787764635
+
+#1787764635
+    for i in gl.static_range(num_stages):
+#1787764635
+        mbarrier.init(kv_ready_bars.index(i), count=1)
+#1787764635
+        mbarrier.init(kv_empty_bars.index(i), count=2)
+#1787764635
+
+#1787764635
+    p = PartitionArgs(
+#1787764635
+        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
+#1787764635
+        q0_buf, q1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs,
+#1787764635
+        q_ready_bar, q_empty_bar, 
+#1787764635
+        kv_empty_bars, kv_ready_bars,
+#1787764635
+        ping_bar, pong_bar,
+#1787764635
+        SUBTILE_FACTOR, num_warps
+#1787764635
+    )
+#1787764635
+    
+#1787764635
+    p_layout: gl.constexpr = gl.DotOperandLayout(
+#1787764635
+        operand_index=0,
+#1787764635
+        parent=pick_wgmma_layout(dtype, SUB_BM, BLOCK_SIZE_K, num_warps),
+#1787764635
+        k_width=32 // dtype.primitive_bitwidth,
+#1787764635
+        meta=0,
+#1787764635
+    )
+#1787764635
+    
+#1787764635
+    m_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, SUB_BM, BLOCK_SIZE_K, num_warps))
+#1787764635
+    s_layout: gl.constexpr = gl.SliceLayout(dim=1, parent=pick_wgmma_layout(dtype, SUB_BM, BLOCK_SIZE_N, num_warps))
+#1787764635
+
+#1787764635
+    gl.warp_specialize([
+#1787764635
+        (fa3_consumer_wg0, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
+#1787764635
+        (fa3_consumer_wg1, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
+#1787764635
+        (fa3_producer_partition, (p, SchedulerImpl, SEQ_LEN, NUM_HEADS, HEAD_DIM, p_layout, m_layout, s_layout)),
+#1787764635
+    ], [num_warps, 1], [240, 24])
+#1787764635
+
+#1787764635
+# ---------------------------------------------------------------------------
+#1787764635
+# AUTOTUNER & CONFIG HOOKS
+#1787764635
+# ---------------------------------------------------------------------------
+#1787764635
+
+#1787764635
+def fa3_get_configs(pre_hook=None, tune=True):
+#1787764635
+    def valid(BM, BN, BK, warps, num_stages, SF):
+#1787764635
+        if BM == 256 and BN == 256:
+#1787764635
+            return False
+#1787764635
+        SUB_BM = BM // 2
+#1787764635
+        if SUB_BM % 64 != 0:
+#1787764635
+            return False
+#1787764635
+
+#1787764635
+        fp16_elements = (
+#1787764635
+            (2 * SUB_BM * BK) +
+#1787764635
+            (2 * num_stages * BK * BN) +
+#1787764635
+            (2 * 2 * SUB_BM * (BK // SF))
+#1787764635
+        )
+#1787764635
+        fp16_smem_bytes = 2 * fp16_elements
+#1787764635
+        num_barriers = 2 + (2 * num_stages) + 2
+#1787764635
+        barrier_bytes = 8 * num_barriers
+#1787764635
+
+#1787764635
+        total_smem_bytes = fp16_smem_bytes + barrier_bytes
+#1787764635
+        if total_smem_bytes > 232448:
+#1787764635
+            return False
+#1787764635
+
+#1787764635
+        if BK % SF != 0:
+#1787764635
+            return False
+#1787764635
+
+#1787764635
+        split_k = BK // SF
+#1787764635
+        if split_k < 32:
+#1787764635
+            return False
+#1787764635
+
+#1787764635
+        warps_m = 4
+#1787764635
+        warps_n = 1
+#1787764635
+        m = 16
+#1787764635
+        while (warps_m * warps_n) != warps:
+#1787764635
+            if SUB_BM > m * warps_m:
+#1787764635
+                warps_m *= 2
+#1787764635
+            else:
+#1787764635
+                warps_n *= 2
+#1787764635
+
+#1787764635
+        if SF > 1 and warps_n > 1:
+#1787764635
+            return False
+#1787764635
+        if SUB_BM < warps_m * 16 or BN < warps_n * 16:
+#1787764635
+            return False
+#1787764635
+
+#1787764635
+        elements_per_thread = (SUB_BM * max(BN, BK)) / (warps * 32)
+#1787764635
+        required_regs = elements_per_thread + 64 
+#1787764635
+        max_regs_per_thread = min(255, 65536 // (warps * 32))
+#1787764635
+
+#1787764635
+        if required_regs > max_regs_per_thread or elements_per_thread < 16:
+#1787764635
+            return False
+#1787764635
+        
+#1787764635
+        return True
+#1787764635
+
+#1787764635
+    configs = [
+#1787764635
+        triton.Config(
+#1787764635
+            {
+#1787764635
+                "BLOCK_SIZE_M": BM,
+#1787764635
+                "BLOCK_SIZE_N": BN,
+#1787764635
+                "BLOCK_SIZE_K": BK,
+#1787764635
+                "num_stages": num_stages,
+#1787764635
+                "SUBTILE_FACTOR": SF,
+#1787764635
+            },
+#1787764635
+            num_warps=warps,
+#1787764635
+            num_stages=num_stages,
+#1787764635
+            pre_hook=pre_hook,
+#1787764635
+        )
+#1787764635
+        for BM in (128, 256)
+#1787764635
+        for BN in (64, 128)
+#1787764635
+        for BK in (64, 128, 256)
+#1787764635
+        for warps in (4, )
+#1787764635
+        for num_stages in (2, 3, 4, 5, 6)
+#1787764635
+        for SF in (1, 2, 4, 8)
+#1787764635
+        if valid(BM, BN, BK, warps, num_stages, SF)
+#1787764635
+    ]
+#1787764635
+    
+#1787764635
+    return configs if tune else configs[:1]
+#1787764635
+
+#1787764635
+def fa3_tma_set_block_size_hook(nargs):
+#1787764635
+    block_m = nargs["BLOCK_SIZE_M"]
+#1787764635
+    sub_bm = block_m // 2
+#1787764635
+    block_n = nargs["BLOCK_SIZE_N"]
+#1787764635
+    block_k = nargs["BLOCK_SIZE_K"]
+#1787764635
+    split_k = nargs["BLOCK_SIZE_K"] // nargs["SUBTILE_FACTOR"]
+#1787764635
+
+#1787764635
+    nargs["q0_desc"].block_shape = [sub_bm, block_k]
+#1787764635
+    nargs["q1_desc"].block_shape = [sub_bm, block_k]
+#1787764635
+    nargs["k_desc"].block_shape = [block_n, block_k]
+#1787764635
+    nargs["v_desc"].block_shape = [block_n, block_k]
+#1787764635
+    nargs["o0_desc"].block_shape = [sub_bm, split_k]
+#1787764635
+    nargs["o1_desc"].block_shape = [sub_bm, split_k]
+#1787764635
+
+#1787764635
+    layout_q = gl.NVMMASharedLayout.get_default_for(nargs["q0_desc"].block_shape, gl.float16)
+#1787764635
+    layout_o = gl.NVMMASharedLayout.get_default_for(nargs["o0_desc"].block_shape, gl.float16)
+#1787764635
+
+#1787764635
+    nargs["q0_desc"].layout = layout_q
+#1787764635
+    nargs["q1_desc"].layout = layout_q
+#1787764635
+    nargs["k_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["k_desc"].block_shape, gl.float16)
+#1787764635
+    nargs["v_desc"].layout = gl.NVMMASharedLayout.get_default_for(nargs["v_desc"].block_shape, gl.float16)
+#1787764635
+    nargs["o0_desc"].layout = layout_o
+#1787764635
+    nargs["o1_desc"].layout = layout_o
+#1787764635
+
+#1787764635
+_autotune_cache = {}
+#1787764635
+
+#1787764635
+def get_autotuned_kernel(head_dim: int):
+#1787764635
+    if head_dim not in _autotune_cache:
+#1787764635
+        configs = [
+#1787764635
+            config for config in fa3_get_configs(pre_hook=fa3_tma_set_block_size_hook, tune=True)
+#1787764635
+            if config.kwargs["BLOCK_SIZE_K"] == head_dim
+#1787764635
+        ]
+#1787764635
+        
+#1787764635
+        _autotune_cache[head_dim] = triton.autotune(
+#1787764635
+            configs=configs,
+#1787764635
+            key=["SEQ_LEN"],
+#1787764635
+            do_bench=lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
+#1787764635
+                kernel_call, rep=50, quantiles=quantiles
+#1787764635
+            ),
+#1787764635
+        )(fa3_warp_specialized_kernel)
+#1787764635
+        
+#1787764635
+    return _autotune_cache[head_dim]
+#1787764635
+
+#1787764635
+# ---------------------------------------------------------------------------
+#1787764635
+# CPU HOST CALLER
+#1787764635
+# ---------------------------------------------------------------------------
+#1787764635
+
+#1787764635
+def run_fa3_kernel(Q, K, V, tune=True, manual_config=None):
+#1787764635
+    BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM = Q.shape
+#1787764635
+    O = torch.empty_like(Q)
+#1787764635
+    
+#1787764635
+    Q_flat = Q.reshape(-1, HEAD_DIM)
+#1787764635
+    K_flat = K.reshape(-1, HEAD_DIM)
+#1787764635
+    V_flat = V.reshape(-1, HEAD_DIM)
+#1787764635
+    O_flat = O.reshape(-1, HEAD_DIM)
+#1787764635
+
+#1787764635
+    dummy_block = [1, 1]
+#1787764635
+    dummy_layout = gl.NVMMASharedLayout.get_default_for(dummy_block, gl.float16)
+#1787764635
+
+#1787764635
+    q0_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
+#1787764635
+    q1_desc = TensorDescriptor.from_tensor(Q_flat, dummy_block, dummy_layout)
+#1787764635
+    k_desc = TensorDescriptor.from_tensor(K_flat, dummy_block, dummy_layout)
+#1787764635
+    v_desc = TensorDescriptor.from_tensor(V_flat, dummy_block, dummy_layout)
+#1787764635
+    o0_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
+#1787764635
+    o1_desc = TensorDescriptor.from_tensor(O_flat, dummy_block, dummy_layout)
+#1787764635
+
+#1787764635
+    if tune:
+#1787764635
+        kernel = get_autotuned_kernel(HEAD_DIM)
+#1787764635
+        def grid(meta):
+#1787764635
+            num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
+#1787764635
+            num_pid = triton.cdiv(SEQ_LEN, meta["BLOCK_SIZE_M"])
+#1787764635
+            total_tiles = num_pid * BATCH * NUM_HEADS
+#1787764635
+            return (min(num_sms, total_tiles), )
+#1787764635
+
+#1787764635
+        kernel[grid](
+#1787764635
+            q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
+#1787764635
+            GroupedPersistentTileScheduler(4),
+#1787764635
+            SEQ_LEN, HEAD_DIM, NUM_HEADS
+#1787764635
+        )
+#1787764635
+        
+#1787764635
+        return O, kernel.best_config
+#1787764635
+    else:
+#1787764635
+        hook_kwargs = {
+#1787764635
+            "BLOCK_SIZE_M": manual_config["BM"],
+#1787764635
+            "BLOCK_SIZE_N": manual_config["BN"],
+#1787764635
+            "BLOCK_SIZE_K": manual_config["BK"],
+#1787764635
+            "SUBTILE_FACTOR": manual_config["SF"],
+#1787764635
+            "q0_desc": q0_desc, "q1_desc": q1_desc,
+#1787764635
+            "k_desc": k_desc, "v_desc": v_desc,
+#1787764635
+            "o0_desc": o0_desc, "o1_desc": o1_desc
+#1787764635
+        }
+#1787764635
+        fa3_tma_set_block_size_hook(hook_kwargs)
+#1787764635
+
+#1787764635
+        num_sms = torch.cuda.get_device_properties("cuda").multi_processor_count
+#1787764635
+        num_pid = triton.cdiv(SEQ_LEN, manual_config["BM"])
+#1787764635
+        total_tiles = num_pid * BATCH * NUM_HEADS
+#1787764635
+        grid = (min(num_sms, total_tiles), )
+#1787764635
+
+#1787764635
+        fa3_warp_specialized_kernel[grid](
+#1787764635
+            q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
+#1787764635
+            GroupedPersistentTileScheduler(8),
+#1787764635
+            SEQ_LEN, HEAD_DIM, NUM_HEADS,
+#1787764635
+            BLOCK_SIZE_M=manual_config["BM"],
+#1787764635
+            BLOCK_SIZE_N=manual_config["BN"],
+#1787764635
+            BLOCK_SIZE_K=manual_config["BK"],
+#1787764635
+            num_stages=manual_config["num_stages"],
+#1787764635
+            SUBTILE_FACTOR=manual_config["SF"],
+#1787764635
+            num_warps=manual_config["warps"],
+#1787764635
+        )
+#1787764635
+
+#1787764635
+        return O, manual_config
+#1787764635
+
+#1787764635
+if __name__ == "__main__":
+#1787764635
+    parser = argparse.ArgumentParser(description="Run FlashAttention-3 Ping-Pong + 2-Stage Async Kernel")
+#1787764635
+    parser.add_argument("--tune", action="store_true", help="Enable Triton autotuning")
+#1787764635
+    
+#1787764635
+    parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
+#1787764635
+    parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
+#1787764635
+    parser.add_argument("--bk", type=int, default=64, help="HEAD_DIM (BLOCK_SIZE_K)")
+#1787764635
+    parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
+#1787764635
+    parser.add_argument("--sf", type=int, default=1, help="SUBTILE_FACTOR")
+#1787764635
+    parser.add_argument("--warps", type=int, default=4, help="Number of compute warps")
+#1787764635
+    
+#1787764635
+    args = parser.parse_args()
+#1787764635
+
+#1787764635
+    manual_config = {
+#1787764635
+        "BM": args.bm,
+#1787764635
+        "BN": args.bn,
+#1787764635
+        "BK": args.bk,
+#1787764635
+        "num_stages": args.stages,
+#1787764635
+        "SF": args.sf,
+#1787764635
+        "warps": args.warps,
+#1787764635
+    }
+#1787764635
+
+#1787764635
+    if args.tune:
+#1787764635
+        print("Running FlashAttention-3. Autotuning enabled.", flush=True)
+#1787764635
+    else:
+#1787764635
+        print(f"Running FlashAttention-3 with manual config: {manual_config}", flush=True)
+#1787764636
+        
+#1787764636
+    NUM_HEADS = 16
+#1787764636
+    sizes = [
+#1787764636
+        (4096, 64),
+#1787764636
+        # (256, 64),
+#1787764636
+        # (512, 128),
+#1787764636
+        # (8192, 256)
+#1787764636
+    ]
+#1787764636
+    
+#1787764636
+    torch.set_printoptions(profile="full")
+#1787764636
+    torch.set_printoptions(linewidth=20000)
+#1787764636
+    
+#1787764636
+    os.environ["MLIR_ENABLE_DUMP"]="1"
+#1787764636
+    os.environ["MLIR_DUMP_PATH"] = "/home/notming/links/scratch/attention/MLIR_DUMP/3_partition_pingpong_4096_128"
+#1787764636
+    os.makedirs(os.path.dirname(os.environ["MLIR_DUMP_PATH"]), exist_ok=True)
+#1787764636
+
+#1787764636
+    for SEQ_LEN, HEAD_DIM in sizes:
+#1787764636
+        BATCH = max(1, 16384 // SEQ_LEN)
+#1787764636
+        print(f"\\nTesting BATCH={BATCH}, NUM_HEADS={NUM_HEADS}, SEQ_LEN={SEQ_LEN}, HEAD_DIM={HEAD_DIM}", flush=True)
+#1787764636
+        
+#1787764636
+        Q = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
+#1787764636
+        K = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
+#1787764636
+        V = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
+#1787764636
+        
+#1787764636
+        O_triton, config = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
+#1787764636
+        O_torch = torch.nn.functional.scaled_dot_product_attention(Q, K, V)
+#1787764636
+        
+#1787764636
+        torch.testing.assert_close(O_torch, O_triton, rtol=1e-2, atol=1e-2)
+#1787764636
+        print("PASS: PyTorch reference matches Triton Gluon FA3!")
+#1787764636
+        
+#1787764636
+        if args.tune:
+#1787764636
+            print(f"best config: {config}")
+#1787764636
+    
+#1787764636
+    print("\\nDone. All test cases passed successfully!", flush=True)
+#1787764636
+"""
+#1787764636
+with open("/home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py", "w") as f:
+#1787764636
+    f.write(code)
+#1787764636
+print("File written successfully.")
+#1787764636
+'
+#1787764644
+cd /home/notming/links/scratch/attention
+#1787764645
+bash -ic "source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython kernels/gluon_no_store_partition.py"
+#1787764669
+cd /home/notming/links/scratch
+#1787764670
+python3 -c '
+#1787764670
+with open("/home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py") as f:
+#1787764670
+    c = f.read()
+#1787764670
+
+#1787764670
+c = c.replace("-float(inf)", "-float(\"inf\")")
+#1787764670
+with open("/home/notming/links/scratch/attention/kernels/gluon_no_store_partition.py", "w") as f:
+#1787764670
+    f.write(c)
+#1787764670
+print("Replaced successfully.")
+#1787764670
+'
+#1787768824
+python3 -c '
+#1787768824
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py") as f:
+#1787768824
+    lines = f.readlines()
+#1787768824
+for i, line in enumerate(lines[240:350], start=241):
+#1787768824
+    print(f"{i:04d}: {line}", end="")
+#1787768824
+'
+#1787768860
+python3 -c '
+#1787768860
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py") as f:
+#1787768860
+    lines = f.readlines()
+#1787768860
+print("Total lines:", len(lines))
+#1787768860
+# Find all lines with exp2 / softmax patterns to understand the code structure
+#1787768860
+for i, line in enumerate(lines):
+#1787768860
+    if any(x in line for x in ["exp2", "gl.max", "gl.sum", "convert_layout", "m_new", "m_old", "l_old", "rescale"]):
+#1787768860
+        print(f"{i+1:04d}: {line}", end="")
+#1787768860
+'
+#1787768884
+python3 -c '
+#1787768884
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py") as f:
+#1787768884
+    lines = f.readlines()
+#1787768884
+# Show the sections that need modification more carefully
+#1787768884
+# PROLOGUE wg0 (lines 298-306)
+#1787768884
+print("=== WG0 PROLOGUE ===")
+#1787768884
+for i, line in enumerate(lines[295:310], start=296):
+#1787768884
+    print(f"{i:04d}: {line}", end="")
+#1787768884
+# MAIN LOOP wg0 (lines 333-347)
+#1787768884
+print("\n=== WG0 MAIN LOOP softmax block ===")
+#1787768884
+for i, line in enumerate(lines[330:350], start=331):
+#1787768884
+    print(f"{i:04d}: {line}", end="")
+#1787768884
+# UNROLL wg0 (lines 380-392)
+#1787768884
+print("\n=== WG0 UNROLL softmax block ===")
+#1787768884
+for i, line in enumerate(lines[376:395], start=377):
+#1787768884
+    print(f"{i:04d}: {line}", end="")
+#1787768884
+'
+#1787768933
+python3 -c '
+#1787768933
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py") as f:
+#1787768933
+    content = f.read()
+#1787768933
+
+#1787768933
+# The new softmax helper to add after _split_n
+#1787768933
+new_helper = """
+#1787768933
+@gluon.jit
+#1787768933
+def _split_s_tile(S_scaled, BLOCK_N: gl.constexpr):
+#1787768933
+    \"\"\"Split S_scaled [SUB_BM, BLOCK_N] into two halves [SUB_BM, BLOCK_N//2] along N.\"\"\"
+#1787768933
+    HALF_N: gl.constexpr = BLOCK_N // 2
+#1787768933
+    S_reshaped = S_scaled.reshape(S_scaled.shape[0], 2, HALF_N)
+#1787768933
+    S_h0 = S_reshaped[:, 0, :]
+#1787768933
+    S_h1 = S_reshaped[:, 1, :]
+#1787768933
+    return S_h0, S_h1
+#1787768933
+
+#1787768933
+@gluon.jit
+#1787768933
+def softmax_pipelined(S_tile, m_old, l_old, sm_scale_log2, dtype, p_layout, m_layout, s_layout):
+#1787768933
+    \"\"\"
+#1787768933
+    Pipelined softmax: overlaps SFU (exp2) on S_half1 with ALU (cast+sum) on S_half0.
+#1787768933
+    Returns: P_cur_permuted (layout-converted, cast P tile), m_new, l_new (updated running sum)
+#1787768933
+    \"\"\"
+#1787768933
+    S_scaled = S_tile * sm_scale_log2
+#1787768933
+
+#1787768933
+    # Phase 1: ALU - row max on both halves (fully serial, needed for numerics)
+#1787768933
+    S_h0, S_h1 = _split_s_tile(S_scaled, S_scaled.shape[1])
+#1787768933
+    m_new = gl.maximum(m_old, gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1)))
+#1787768933
+    rescale_factor = gl.exp2(m_old - m_new)
+#1787768933
+
+#1787768933
+    # Phase 2: Issue exp2 on first half (SFU)
+#1787768933
+    P_h0 = gl.exp2(S_h0 - m_new[:, None])
+#1787768933
+
+#1787768933
+    # Phase 3: Issue exp2 on second half (SFU) and ALU on first half simultaneously
+#1787768933
+    # The compiler/hardware can overlap SFU(P_h1) with ALU(cast+sum of P_h0)
+#1787768933
+    P_h1 = gl.exp2(S_h1 - m_new[:, None])
+#1787768933
+    l_h0 = gl.sum(P_h0, axis=1)                                          # ALU: overlaps SFU
+#1787768933
+    P_h0_cast = gl.cast(P_h0, dtype=dtype)                               # ALU: overlaps SFU
+#1787768933
+
+#1787768933
+    # Phase 4: ALU on second half (SFU is done by now)
+#1787768933
+    l_h1 = gl.sum(P_h1, axis=1)
+#1787768933
+    P_h1_cast = gl.cast(P_h1, dtype=dtype)
+#1787768933
+
+#1787768933
+    l_old = l_old * rescale_factor + l_h0 + l_h1
+#1787768933
+    m_old = m_new
+#1787768933
+
+#1787768933
+    # Reconstruct and convert layout for full P tile
+#1787768933
+    P_full = gl.cat([P_h0_cast, P_h1_cast], axis=1)
+#1787768933
+    P_cur_permuted = gl.convert_layout(P_full, p_layout)
+#1787768933
+
+#1787768933
+    return P_cur_permuted, m_old, l_old, rescale_factor
+#1787768933
+
+#1787768933
+@gluon.jit
+#1787768933
+def softmax_pipelined_prologue(S_tile, sm_scale_log2, dtype, p_layout, s_layout):
+#1787768933
+    \"\"\"Pipelined softmax for the prologue (no running m_old/l_old).\"\"\"
+#1787768933
+    S_scaled = S_tile * sm_scale_log2
+#1787768933
+    S_h0, S_h1 = _split_s_tile(S_scaled, S_scaled.shape[1])
+#1787768933
+
+#1787768933
+    m_new = gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1))
+#1787768933
+
+#1787768933
+    P_h0 = gl.exp2(S_h0 - m_new[:, None])
+#1787768933
+    P_h1 = gl.exp2(S_h1 - m_new[:, None])
+#1787768933
+    l_h0 = gl.sum(P_h0, axis=1)
+#1787768933
+    P_h0_cast = gl.cast(P_h0, dtype=dtype)
+#1787768933
+    l_h1 = gl.sum(P_h1, axis=1)
+#1787768933
+    P_h1_cast = gl.cast(P_h1, dtype=dtype)
+#1787768933
+
+#1787768933
+    l_new = l_h0 + l_h1
+#1787768933
+
+#1787768933
+    P_full = gl.cat([P_h0_cast, P_h1_cast], axis=1)
+#1787768933
+    P_cur_permuted = gl.convert_layout(P_full, p_layout)
+#1787768933
+
+#1787768933
+    return P_cur_permuted, m_new, l_new
+#1787768933
+
+#1787768933
+"""
+#1787768933
+
+#1787768933
+# Check if gl.cat exists or we need a different approach
+#1787768933
+print("Checking gl.cat usage in codebase...")
+#1787768933
+import subprocess
+#1787768933
+result = subprocess.run(["grep", "-r", "gl.cat", "/home/notming/links/scratch/"], capture_output=True, text=True)
+#1787768933
+print("gl.cat:", result.stdout[:500])
+#1787768933
+result2 = subprocess.run(["grep", "-r", "\.cat\|concatenate", "/home/notming/links/scratch/gluon_spmm/"], capture_output=True, text=True)
+#1787768933
+print("cat in spmm:", result2.stdout[:500])
+#1787768933
+'
+#1787768963
+grep -r "gl\.cat\|gl\.concatenate\|gl\.join" /home/notming/links/scratch/gluon_spmm/ 2>/dev/null | head -20; grep -r "\.split\b" /home/notming/links/scratch/gluon_spmm/ 2>/dev/null | head -10
+#1787768988
+cd /home/notming/links/scratch/attention
+#1787768989
+bash -ic "source ~/.bashrc 2>/dev/null; load_module && start_gluon && cd ../attention && tpython -c '
+#1787768989
+from triton.experimental.gluon import language as gl
+#1787768989
+print([x for x in dir(gl) if not x.startswith(\"_\")])
+#1787768989
+'" 2>&1 | tail -20
+#1787769072
+cd /home/notming/links/scratch
+#1787769073
+python3 -c '
+#1787769073
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py") as f:
+#1787769073
+    lines = f.readlines()
+#1787769073
+for i, line in enumerate(lines[168:220], start=169):
+#1787769073
+    print(f"{i:04d}: {line}", end="")
+#1787769073
+'
+#1787769141
+python3 << 'PYEOF'
+#1787769141
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py") as f:
+
+#1787769141
+    content = f.read()
+
+#1787769141
+
+
+#1787769141
+# --- Insert helper after _split_n ---
+
+#1787769141
+OLD_SPLIT_N_END = """    return xs
+
+#1787769141
+
+
+#1787769141
+@gluon.jit
+
+#1787769141
+def store_acc_to_smem_subtile"""
+
+#1787769141
+
+
+#1787769141
+NEW_SPLIT_N_END = """    return xs
+
+#1787769141
+
+
+#1787769141
+@gluon.jit
+
+#1787769141
+def _s_tile_split(x):
+
+#1787769141
+    \"\"\"Split [M, N] -> two [M, N//2] using interleaved columns (same pattern as _split_n).\"\"\"
+
+#1787769141
+    return x.reshape(x.shape[0], 2, x.shape[1] // 2).permute(0, 2, 1).split()
+
+#1787769141
+
+
+#1787769141
+@gluon.jit
+
+#1787769141
+def _s_tile_join(h0, h1):
+
+#1787769141
+    \"\"\"Join two [M, N//2] -> [M, N] (inverse of _s_tile_split).\"\"\"
+
+#1787769141
+    return gl.join(h0, h1).permute(0, 2, 1).reshape(h0.shape[0], h0.shape[1] * 2)
+
+#1787769141
+
+
+#1787769141
+@gluon.jit
+
+#1787769141
+def store_acc_to_smem_subtile"""
+
+#1787769141
+
+
+#1787769141
+assert OLD_SPLIT_N_END in content, "Pattern not found: OLD_SPLIT_N_END"
+
+#1787769141
+content = content.replace(OLD_SPLIT_N_END, NEW_SPLIT_N_END, 1)
+
+#1787769141
+
+
+#1787769141
+# --- Helper: the pipelined softmax inline block (main loop variant) ---
+
+#1787769141
+# OLD main loop softmax (appears 4x: WG0 main, WG0 unroll, WG1 main, WG1 unroll)
+
+#1787769141
+# They all have this pattern but with slightly different surroundings.
+
+#1787769141
+# We'll replace each one precisely.
+
+#1787769141
+
+
+#1787769141
+# WG0 PROLOGUE softmax (lines ~299-306):
+
+#1787769141
+OLD_PROLOGUE_WG0 = """        # Compute initial Softmax math for S_0
+
+#1787769141
+        S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+
+#1787769141
+        S_tile = S_tile * sm_scale_log2
+
+#1787769141
+
+
+#1787769141
+        m_old = gl.max(S_tile, axis=1)
+
+#1787769141
+        S_tile = gl.exp2(S_tile - m_old[:, None])
+
+#1787769141
+        l_old = gl.sum(S_tile, axis=1)
+
+#1787769141
+
+
+#1787769141
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+
+#1787769141
+
+
+#1787769141
+        # -------------------------------------------------------------------
+
+#1787769141
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+
+#1787769141
+        # -------------------------------------------------------------------
+
+#1787769141
+        for step in range(1, num_steps - 1):
+
+#1787769141
+            next_kv_state = kv_state.next()
+
+#1787769141
+            
+
+#1787769141
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0"""
+
+#1787769141
+
+
+#1787769141
+NEW_PROLOGUE_WG0 = """        # Compute initial Softmax math for S_0 (pipelined SFU/ALU)
+
+#1787769142
+        S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+
+#1787769142
+        S_scaled = S_tile * sm_scale_log2
+
+#1787769142
+        S_h0, S_h1 = _s_tile_split(S_scaled)
+
+#1787769142
+
+
+#1787769142
+        m_old = gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1))
+
+#1787769142
+
+
+#1787769142
+        # SFU: exp2 on h0, then h1 while ALU works on h0
+
+#1787769142
+        P_h0 = gl.exp2(S_h0 - m_old[:, None])
+
+#1787769142
+        P_h1 = gl.exp2(S_h1 - m_old[:, None])   # SFU on h1...
+
+#1787769142
+        l_h0 = gl.sum(P_h0, axis=1)              # ...ALU on h0 (overlaps SFU)
+
+#1787769142
+        P_h0_cast = gl.cast(P_h0, dtype=dtype)   # ...ALU on h0 (overlaps SFU)
+
+#1787769142
+        l_h1 = gl.sum(P_h1, axis=1)
+
+#1787769142
+        P_h1_cast = gl.cast(P_h1, dtype=dtype)
+
+#1787769142
+        l_old = l_h0 + l_h1
+
+#1787769142
+
+
+#1787769142
+        P_cur_permuted = gl.convert_layout(_s_tile_join(P_h0_cast, P_h1_cast), p_layout)
+
+#1787769142
+
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        for step in range(1, num_steps - 1):
+
+#1787769142
+            next_kv_state = kv_state.next()
+
+#1787769142
+            
+
+#1787769142
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0"""
+
+#1787769142
+
+
+#1787769142
+assert OLD_PROLOGUE_WG0 in content, "WG0 PROLOGUE not found"
+
+#1787769142
+content = content.replace(OLD_PROLOGUE_WG0, NEW_PROLOGUE_WG0, 1)
+
+#1787769142
+
+
+#1787769142
+# WG0 MAIN LOOP softmax block
+
+#1787769142
+OLD_MAIN_WG0 = """            # 4. Softmax math on CUDA ALUs for S_next (Overlapped with WG1 issuing WGMMA)
+
+#1787769142
+            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
+
+#1787769142
+            S_tile = S_tile * sm_scale_log2
+
+#1787769142
+
+
+#1787769142
+            m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+
+#1787769142
+            rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769142
+            
+
+#1787769142
+            S_tile = gl.exp2(S_tile - m_new[:, None])
+
+#1787769142
+            l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+
+#1787769142
+            m_old = m_new
+
+#1787769142
+            
+
+#1787769142
+            P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+
+#1787769142
+
+
+#1787769142
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769142
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769142
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769142
+            
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        # Unroll the last iteration for efficient q release
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        next_kv_state = kv_state.next()
+
+#1787769142
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+
+#1787769142
+        pong_phase ^= 1"""
+
+#1787769142
+
+
+#1787769142
+NEW_MAIN_WG0 = """            # 4. Softmax math: pipelined SFU/ALU (overlapped with WG1 issuing WGMMA)
+
+#1787769142
+            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
+
+#1787769142
+            S_scaled = S_tile * sm_scale_log2
+
+#1787769142
+            S_h0, S_h1 = _s_tile_split(S_scaled)
+
+#1787769142
+
+
+#1787769142
+            m_new = gl.maximum(m_old, gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1)))
+
+#1787769142
+            rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769142
+
+
+#1787769142
+            # SFU exp2 on h0, then h1; ALU cast+sum on h0 overlaps SFU on h1
+
+#1787769142
+            P_h0 = gl.exp2(S_h0 - m_new[:, None])
+
+#1787769142
+            P_h1 = gl.exp2(S_h1 - m_new[:, None])   # SFU on h1...
+
+#1787769142
+            l_h0 = gl.sum(P_h0, axis=1)              # ...ALU on h0 (overlaps SFU)
+
+#1787769142
+            P_h0_cast = gl.cast(P_h0, dtype=dtype)   # ...ALU on h0 (overlaps SFU)
+
+#1787769142
+            l_h1 = gl.sum(P_h1, axis=1)
+
+#1787769142
+            P_h1_cast = gl.cast(P_h1, dtype=dtype)
+
+#1787769142
+            l_old = l_old * rescale_factor + l_h0 + l_h1
+
+#1787769142
+            m_old = m_new
+
+#1787769142
+
+
+#1787769142
+            P_cur_permuted = gl.convert_layout(_s_tile_join(P_h0_cast, P_h1_cast), p_layout)
+
+#1787769142
+
+
+#1787769142
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769142
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769142
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769142
+            
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        # Unroll the last iteration for efficient q release
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        next_kv_state = kv_state.next()
+
+#1787769142
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+
+#1787769142
+        pong_phase ^= 1"""
+
+#1787769142
+
+
+#1787769142
+assert OLD_MAIN_WG0 in content, "WG0 MAIN LOOP not found"
+
+#1787769142
+content = content.replace(OLD_MAIN_WG0, NEW_MAIN_WG0, 1)
+
+#1787769142
+
+
+#1787769142
+# WG0 UNROLL softmax block
+
+#1787769142
+OLD_UNROLL_WG0 = """        m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+
+#1787769142
+        rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769142
+            
+
+#1787769142
+        S_tile = gl.exp2(S_tile - m_new[:, None])
+
+#1787769142
+        l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+
+#1787769142
+        m_old = m_new
+
+#1787769142
+            
+
+#1787769142
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+
+#1787769142
+
+
+#1787769142
+        o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769142
+        o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769142
+        mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        # EPILOGUE: Final V Tile & Store
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        
+
+#1787769142
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+
+#1787769142
+        pong_phase ^= 1
+
+#1787769142
+        
+
+#1787769142
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769142
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+#1787769142
+        
+
+#1787769142
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+
+#1787769142
+
+
+#1787769142
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+
+#1787769142
+        kv_state = kv_state.next()
+
+#1787769142
+        q_state = q_state.next()
+
+#1787769142
+
+
+#1787769142
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769142
+        l_final_m = gl.convert_layout(l_old, m_layout)
+
+#1787769142
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
+
+#1787769142
+
+
+#1787769142
+        acc_state = store_acc_to_smem_subtile(acc_final, p.o0_bufs, p.o0_empty_bars, p.o0_ready_bars, acc_state, p.SUBTILE_FACTOR)"""
+
+#1787769142
+
+
+#1787769142
+NEW_UNROLL_WG0 = """        S_h0, S_h1 = _s_tile_split(S_tile * sm_scale_log2)
+
+#1787769142
+        m_new = gl.maximum(m_old, gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1)))
+
+#1787769142
+        rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769142
+
+
+#1787769142
+        P_h0 = gl.exp2(S_h0 - m_new[:, None])
+
+#1787769142
+        P_h1 = gl.exp2(S_h1 - m_new[:, None])
+
+#1787769142
+        l_h0 = gl.sum(P_h0, axis=1)
+
+#1787769142
+        P_h0_cast = gl.cast(P_h0, dtype=dtype)
+
+#1787769142
+        l_h1 = gl.sum(P_h1, axis=1)
+
+#1787769142
+        P_h1_cast = gl.cast(P_h1, dtype=dtype)
+
+#1787769142
+        l_old = l_old * rescale_factor + l_h0 + l_h1
+
+#1787769142
+        m_old = m_new
+
+#1787769142
+
+
+#1787769142
+        P_cur_permuted = gl.convert_layout(_s_tile_join(P_h0_cast, P_h1_cast), p_layout)
+
+#1787769142
+
+
+#1787769142
+        o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769142
+        o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769142
+        mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        # EPILOGUE: Final V Tile & Store
+
+#1787769142
+        # -------------------------------------------------------------------
+
+#1787769142
+        
+
+#1787769142
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+
+#1787769142
+        pong_phase ^= 1
+
+#1787769142
+        
+
+#1787769142
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769142
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+#1787769142
+        
+
+#1787769142
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+
+#1787769142
+
+
+#1787769142
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+
+#1787769142
+        kv_state = kv_state.next()
+
+#1787769142
+        q_state = q_state.next()
+
+#1787769142
+
+
+#1787769142
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769142
+        l_final_m = gl.convert_layout(l_old, m_layout)
+
+#1787769142
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
+
+#1787769142
+
+
+#1787769142
+        acc_state = store_acc_to_smem_subtile(acc_final, p.o0_bufs, p.o0_empty_bars, p.o0_ready_bars, acc_state, p.SUBTILE_FACTOR)"""
+
+#1787769142
+
+
+#1787769142
+# The unroll block doesn't have "S_tile = S_tile * sm_scale_log2" as a separate line --
+
+#1787769142
+# the S_tile already comes from mma_s.wait. Let me check...
+
+#1787769142
+# Actually the unroll is preceded by:
+
+#1787769142
+#   S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
+
+#1787769142
+#   S_tile = S_tile * sm_scale_log2
+
+#1787769142
+# but looking at task output, the unroll starts at line 380 with m_new directly.
+
+#1787769142
+# Let me check what's before it.
+
+#1787769142
+
+
+#1787769142
+print("Searching for WG0 unroll block...")
+
+#1787769142
+idx = content.find("        m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))\n        rescale_factor = gl.exp2(m_old - m_new)\n            \n        S_tile = gl.exp2(S_tile - m_new[:, None])\n        l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)\n        m_old = m_new\n            \n        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)\n\n        o_acc, _ = mma_o.wait_num_outstanding(0).take_result()\n        o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]\n        mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)\n        # -------------------------------------------------------------------\n        # EPILOGUE: Final V Tile & Store\n        # -------------------------------------------------------------------\n        \n        mbarrier.wait(p.pong_bar.index(0), pong_phase)")
+
+#1787769142
+print("WG0 unroll found at:", idx)
+
+#1787769142
+
+
+#1787769142
+# Show context around it
+
+#1787769142
+if idx != -1:
+
+#1787769142
+    print(content[idx-200:idx+20])
+
+#1787769142
+PYEOF
+
+#1787769244
+cat > /tmp/patch_softmax.py << 'PYEOF'
+#1787769244
+with open("/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py") as f:
+
+#1787769244
+    content = f.read()
+
+#1787769244
+
+
+#1787769244
+orig_content = content
+
+#1787769244
+
+
+#1787769244
+# ─── 1. Add _s_tile_split / _s_tile_join helpers after _split_n ───────────
+
+#1787769244
+OLD = """    return xs
+
+#1787769244
+
+
+#1787769244
+@gluon.jit
+
+#1787769244
+def store_acc_to_smem_subtile"""
+
+#1787769244
+
+
+#1787769244
+NEW = """    return xs
+
+#1787769244
+
+
+#1787769244
+@gluon.jit
+
+#1787769244
+def _s_tile_split(x):
+
+#1787769244
+    """
+
+#1787769244
+NEW += '    """Split [M, N] -> two [M, N//2] (interleaved columns, inverse of _s_tile_join)."""\n'
+
+#1787769244
+NEW += """    return x.reshape(x.shape[0], 2, x.shape[1] // 2).permute(0, 2, 1).split()
+
+#1787769244
+
+
+#1787769244
+@gluon.jit
+
+#1787769244
+def _s_tile_join(h0, h1):
+
+#1787769244
+"""
+
+#1787769244
+NEW += '    """Join two [M, N//2] -> [M, N] (inverse of _s_tile_split)."""\n'
+
+#1787769244
+NEW += """    return gl.join(h0, h1).permute(0, 2, 1).reshape(h0.shape[0], h0.shape[1] * 2)
+
+#1787769244
+
+
+#1787769244
+@gluon.jit
+
+#1787769244
+def store_acc_to_smem_subtile"""
+
+#1787769244
+
+
+#1787769245
+assert content.count(OLD) == 1, f"Expected 1 occurrence, got {content.count(OLD)}"
+
+#1787769245
+content = content.replace(OLD, NEW, 1)
+
+#1787769245
+
+
+#1787769245
+# ─── Helper to build pipelined softmax replacement ────────────────────────
+
+#1787769245
+
+
+#1787769245
+def make_prologue_sm(indent, has_m_old=False):
+
+#1787769245
+    """Generate pipelined prologue softmax (no running m_old/l_old)."""
+
+#1787769245
+    i = indent
+
+#1787769245
+    lines = [
+
+#1787769245
+        f"{i}# Compute initial Softmax math for S_0 (pipelined SFU/ALU overlap)",
+
+#1787769245
+        f"{i}S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()",
+
+#1787769245
+        f"{i}S_scaled = S_tile * sm_scale_log2",
+
+#1787769245
+        f"{i}S_h0, S_h1 = _s_tile_split(S_scaled)",
+
+#1787769245
+        f"",
+
+#1787769245
+        f"{i}m_old = gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1))",
+
+#1787769245
+        f"",
+
+#1787769245
+        f"{i}# Issue exp2 on h0 (SFU), then h1 (SFU); do cast+sum on h0 while SFU runs h1",
+
+#1787769245
+        f"{i}P_h0 = gl.exp2(S_h0 - m_old[:, None])",
+
+#1787769245
+        f"{i}P_h1 = gl.exp2(S_h1 - m_old[:, None])   # SFU: h1...",
+
+#1787769245
+        f"{i}l_h0 = gl.sum(P_h0, axis=1)              # ALU: overlaps SFU",
+
+#1787769245
+        f"{i}P_h0_cast = gl.cast(P_h0, dtype=dtype)   # ALU: overlaps SFU",
+
+#1787769245
+        f"{i}l_h1 = gl.sum(P_h1, axis=1)",
+
+#1787769245
+        f"{i}P_h1_cast = gl.cast(P_h1, dtype=dtype)",
+
+#1787769245
+        f"{i}l_old = l_h0 + l_h1",
+
+#1787769245
+        f"",
+
+#1787769245
+        f"{i}P_cur_permuted = gl.convert_layout(_s_tile_join(P_h0_cast, P_h1_cast), p_layout)",
+
+#1787769245
+    ]
+
+#1787769245
+    return "\n".join(lines)
+
+#1787769245
+
+
+#1787769245
+def make_step_sm(indent):
+
+#1787769245
+    """Generate pipelined main-loop softmax."""
+
+#1787769245
+    i = indent
+
+#1787769245
+    lines = [
+
+#1787769245
+        f"{i}# Pipelined softmax: SFU exp2 on h1 overlaps with ALU cast+sum on h0",
+
+#1787769245
+        f"{i}S_tile, _ = mma_s.wait_num_outstanding(0).take_result()",
+
+#1787769245
+        f"{i}S_scaled = S_tile * sm_scale_log2",
+
+#1787769245
+        f"{i}S_h0, S_h1 = _s_tile_split(S_scaled)",
+
+#1787769245
+        f"",
+
+#1787769245
+        f"{i}m_new = gl.maximum(m_old, gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1)))",
+
+#1787769245
+        f"{i}rescale_factor = gl.exp2(m_old - m_new)",
+
+#1787769245
+        f"",
+
+#1787769245
+        f"{i}P_h0 = gl.exp2(S_h0 - m_new[:, None])",
+
+#1787769245
+        f"{i}P_h1 = gl.exp2(S_h1 - m_new[:, None])   # SFU: h1...",
+
+#1787769245
+        f"{i}l_h0 = gl.sum(P_h0, axis=1)              # ALU: overlaps SFU",
+
+#1787769245
+        f"{i}P_h0_cast = gl.cast(P_h0, dtype=dtype)   # ALU: overlaps SFU",
+
+#1787769245
+        f"{i}l_h1 = gl.sum(P_h1, axis=1)",
+
+#1787769245
+        f"{i}P_h1_cast = gl.cast(P_h1, dtype=dtype)",
+
+#1787769245
+        f"{i}l_old = l_old * rescale_factor + l_h0 + l_h1",
+
+#1787769245
+        f"{i}m_old = m_new",
+
+#1787769245
+        f"",
+
+#1787769245
+        f"{i}P_cur_permuted = gl.convert_layout(_s_tile_join(P_h0_cast, P_h1_cast), p_layout)",
+
+#1787769245
+    ]
+
+#1787769245
+    return "\n".join(lines)
+
+#1787769245
+
+
+#1787769245
+def make_unroll_sm(indent, already_scaled=False):
+
+#1787769245
+    """Generate pipelined unroll softmax (S_tile already fetched and scaled before this block)."""
+
+#1787769245
+    i = indent
+
+#1787769245
+    scale_line = f"{i}S_scaled = S_tile * sm_scale_log2\n" if not already_scaled else ""
+
+#1787769245
+    lines = [
+
+#1787769245
+        f"{scale_line}{i}S_h0, S_h1 = _s_tile_split(S_scaled)",
+
+#1787769245
+        f"{i}m_new = gl.maximum(m_old, gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1)))",
+
+#1787769245
+        f"{i}rescale_factor = gl.exp2(m_old - m_new)",
+
+#1787769245
+        f"",
+
+#1787769245
+        f"{i}P_h0 = gl.exp2(S_h0 - m_new[:, None])",
+
+#1787769245
+        f"{i}P_h1 = gl.exp2(S_h1 - m_new[:, None])   # SFU: h1...",
+
+#1787769245
+        f"{i}l_h0 = gl.sum(P_h0, axis=1)              # ALU: overlaps SFU",
+
+#1787769245
+        f"{i}P_h0_cast = gl.cast(P_h0, dtype=dtype)   # ALU: overlaps SFU",
+
+#1787769245
+        f"{i}l_h1 = gl.sum(P_h1, axis=1)",
+
+#1787769245
+        f"{i}P_h1_cast = gl.cast(P_h1, dtype=dtype)",
+
+#1787769245
+        f"{i}l_old = l_old * rescale_factor + l_h0 + l_h1",
+
+#1787769245
+        f"{i}m_old = m_new",
+
+#1787769245
+        f"",
+
+#1787769245
+        f"{i}P_cur_permuted = gl.convert_layout(_s_tile_join(P_h0_cast, P_h1_cast), p_layout)",
+
+#1787769245
+    ]
+
+#1787769245
+    return "\n".join(lines)
+
+#1787769245
+
+
+#1787769245
+# ─── 2. WG0 PROLOGUE ──────────────────────────────────────────────────────
+
+#1787769245
+OLD_P0 = \
+
+#1787769245
+"""        # Compute initial Softmax math for S_0
+
+#1787769245
+        S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+
+#1787769245
+        S_tile = S_tile * sm_scale_log2
+
+#1787769245
+
+
+#1787769245
+        m_old = gl.max(S_tile, axis=1)
+
+#1787769245
+        S_tile = gl.exp2(S_tile - m_old[:, None])
+
+#1787769245
+        l_old = gl.sum(S_tile, axis=1)
+
+#1787769245
+
+
+#1787769245
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+
+#1787769245
+
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        for step in range(1, num_steps - 1):
+
+#1787769245
+            next_kv_state = kv_state.next()
+
+#1787769245
+            
+
+#1787769245
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0"""
+
+#1787769245
+
+
+#1787769245
+NEW_P0 = make_prologue_sm("        ") + """
+
+#1787769245
+
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        for step in range(1, num_steps - 1):
+
+#1787769245
+            next_kv_state = kv_state.next()
+
+#1787769245
+            
+
+#1787769245
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0"""
+
+#1787769245
+
+
+#1787769245
+assert content.count(OLD_P0) == 1, f"WG0 PROLOGUE: expected 1, got {content.count(OLD_P0)}"
+
+#1787769245
+content = content.replace(OLD_P0, NEW_P0, 1)
+
+#1787769245
+
+
+#1787769245
+# ─── 3. WG0 MAIN LOOP ─────────────────────────────────────────────────────
+
+#1787769245
+OLD_M0 = \
+
+#1787769245
+"""            # 4. Softmax math on CUDA ALUs for S_next (Overlapped with WG1 issuing WGMMA)
+
+#1787769245
+            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
+
+#1787769245
+            S_tile = S_tile * sm_scale_log2
+
+#1787769245
+
+
+#1787769245
+            m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+
+#1787769245
+            rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769245
+            
+
+#1787769245
+            S_tile = gl.exp2(S_tile - m_new[:, None])
+
+#1787769245
+            l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+
+#1787769245
+            m_old = m_new
+
+#1787769245
+            
+
+#1787769245
+            P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+
+#1787769245
+
+
+#1787769245
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769245
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769245
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769245
+            
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        # Unroll the last iteration for efficient q release
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        next_kv_state = kv_state.next()
+
+#1787769245
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+
+#1787769245
+        pong_phase ^= 1"""
+
+#1787769245
+
+
+#1787769245
+NEW_M0 = \
+
+#1787769245
+"""            # 4. Pipelined softmax: SFU/ALU overlap (WG1 issuing WGMMA in parallel)
+
+#1787769245
+""" + make_step_sm("            ") + """
+
+#1787769245
+
+
+#1787769245
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769245
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769245
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769245
+            
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        # Unroll the last iteration for efficient q release
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        next_kv_state = kv_state.next()
+
+#1787769245
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+
+#1787769245
+        pong_phase ^= 1"""
+
+#1787769245
+
+
+#1787769245
+assert content.count(OLD_M0) == 1, f"WG0 MAIN: expected 1, got {content.count(OLD_M0)}"
+
+#1787769245
+content = content.replace(OLD_M0, NEW_M0, 1)
+
+#1787769245
+
+
+#1787769245
+# ─── 4. WG0 UNROLL ────────────────────────────────────────────────────────
+
+#1787769245
+# Context: preceded by `S_tile = S_tile * sm_scale_log2` and `mbarrier.arrive(p.q_empty_bar...)`
+
+#1787769245
+OLD_U0 = \
+
+#1787769245
+"""        m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+
+#1787769245
+        rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769245
+            
+
+#1787769245
+        S_tile = gl.exp2(S_tile - m_new[:, None])
+
+#1787769245
+        l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+
+#1787769245
+        m_old = m_new
+
+#1787769245
+            
+
+#1787769245
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+
+#1787769245
+
+
+#1787769245
+        o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769245
+        o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769245
+        mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        # EPILOGUE: Final V Tile & Store
+
+#1787769245
+        # -------------------------------------------------------------------
+
+#1787769245
+        
+
+#1787769245
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+
+#1787769245
+        pong_phase ^= 1
+
+#1787769245
+        
+
+#1787769245
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769245
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+#1787769245
+        
+
+#1787769245
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+
+#1787769245
+
+
+#1787769245
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+
+#1787769245
+        kv_state = kv_state.next()
+
+#1787769245
+        q_state = q_state.next()
+
+#1787769245
+
+
+#1787769245
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769245
+        l_final_m = gl.convert_layout(l_old, m_layout)
+
+#1787769245
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
+
+#1787769245
+
+
+#1787769245
+        acc_state = store_acc_to_smem_subtile(acc_final, p.o0_bufs, p.o0_empty_bars, p.o0_ready_bars, acc_state, p.SUBTILE_FACTOR)"""
+
+#1787769245
+
+
+#1787769245
+NEW_U0 = \
+
+#1787769245
+"""        S_h0, S_h1 = _s_tile_split(S_tile)
+
+#1787769245
+        m_new = gl.maximum(m_old, gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1)))
+
+#1787769245
+        rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769245
+
+
+#1787769245
+        P_h0 = gl.exp2(S_h0 - m_new[:, None])
+
+#1787769245
+        P_h1 = gl.exp2(S_h1 - m_new[:, None])   # SFU: h1...
+
+#1787769245
+        l_h0 = gl.sum(P_h0, axis=1)              # ALU: overlaps SFU
+
+#1787769245
+        P_h0_cast = gl.cast(P_h0, dtype=dtype)   # ALU: overlaps SFU
+
+#1787769245
+        l_h1 = gl.sum(P_h1, axis=1)
+
+#1787769245
+        P_h1_cast = gl.cast(P_h1, dtype=dtype)
+
+#1787769245
+        l_old = l_old * rescale_factor + l_h0 + l_h1
+
+#1787769245
+        m_old = m_new
+
+#1787769245
+
+
+#1787769245
+        P_cur_permuted = gl.convert_layout(_s_tile_join(P_h0_cast, P_h1_cast), p_layout)
+
+#1787769245
+
+
+#1787769245
+        o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769245
+        o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769245
+        mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        # EPILOGUE: Final V Tile & Store
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        
+
+#1787769246
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+
+#1787769246
+        pong_phase ^= 1
+
+#1787769246
+        
+
+#1787769246
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769246
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+#1787769246
+        
+
+#1787769246
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+
+#1787769246
+
+
+#1787769246
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+
+#1787769246
+        kv_state = kv_state.next()
+
+#1787769246
+        q_state = q_state.next()
+
+#1787769246
+
+
+#1787769246
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769246
+        l_final_m = gl.convert_layout(l_old, m_layout)
+
+#1787769246
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
+
+#1787769246
+
+
+#1787769246
+        acc_state = store_acc_to_smem_subtile(acc_final, p.o0_bufs, p.o0_empty_bars, p.o0_ready_bars, acc_state, p.SUBTILE_FACTOR)"""
+
+#1787769246
+
+
+#1787769246
+# Note: in the unroll, S_tile was already scaled: "S_tile = S_tile * sm_scale_log2"
+
+#1787769246
+# So OLD_U0 starts immediately after that line. Let's verify:
+
+#1787769246
+count_u0 = content.count(OLD_U0)
+
+#1787769246
+print(f"WG0 UNROLL count: {count_u0}")
+
+#1787769246
+if count_u0 == 1:
+
+#1787769246
+    content = content.replace(OLD_U0, NEW_U0, 1)
+
+#1787769246
+else:
+
+#1787769246
+    # Show surroundings
+
+#1787769246
+    idx = content.find("        m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))")
+
+#1787769246
+    print("Context:", repr(content[idx-100:idx+50]))
+
+#1787769246
+
+
+#1787769246
+# ─── 5. WG1 PROLOGUE ──────────────────────────────────────────────────────
+
+#1787769246
+OLD_P1 = \
+
+#1787769246
+"""        # Compute initial Softmax math for S_0
+
+#1787769246
+        S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
+
+#1787769246
+        S_tile = S_tile * sm_scale_log2
+
+#1787769246
+
+
+#1787769246
+        m_old = gl.max(S_tile, axis=1)
+
+#1787769246
+        S_tile = gl.exp2(S_tile - m_old[:, None])
+
+#1787769246
+        l_old = gl.sum(S_tile, axis=1)
+
+#1787769246
+
+
+#1787769246
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+
+#1787769246
+
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        for step in range(1, num_steps - 1):
+
+#1787769246
+            next_kv_state = kv_state.next()
+
+#1787769246
+
+
+#1787769246
+            # 1. Wait for WG0 signal before issuing Tensor Core operations"""
+
+#1787769246
+
+
+#1787769246
+NEW_P1 = make_prologue_sm("        ") + """
+
+#1787769246
+
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        # MAIN LOOP: Ping-Pong Staggered 2-Stage Pipeline
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        for step in range(1, num_steps - 1):
+
+#1787769246
+            next_kv_state = kv_state.next()
+
+#1787769246
+
+
+#1787769246
+            # 1. Wait for WG0 signal before issuing Tensor Core operations"""
+
+#1787769246
+
+
+#1787769246
+count_p1 = content.count(OLD_P1)
+
+#1787769246
+print(f"WG1 PROLOGUE count: {count_p1}")
+
+#1787769246
+assert count_p1 == 1, f"WG1 PROLOGUE: {count_p1}"
+
+#1787769246
+content = content.replace(OLD_P1, NEW_P1, 1)
+
+#1787769246
+
+
+#1787769246
+# ─── 6. WG1 MAIN LOOP ─────────────────────────────────────────────────────
+
+#1787769246
+OLD_M1 = \
+
+#1787769246
+"""            # 5. Softmax math on CUDA ALUs for S_next (Overlapped with WG0 issuing WGMMA)
+
+#1787769246
+            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
+
+#1787769246
+            S_tile = S_tile * sm_scale_log2
+
+#1787769246
+
+
+#1787769246
+            m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+
+#1787769246
+            rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769246
+            
+
+#1787769246
+            S_tile = gl.exp2(S_tile - m_new[:, None])
+
+#1787769246
+            l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+
+#1787769246
+            m_old = m_new
+
+#1787769246
+            
+
+#1787769246
+            P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+
+#1787769246
+
+
+#1787769246
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769246
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769246
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769246
+            
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        # Unroll last iteration for efficient q release
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        next_kv_state = kv_state.next()
+
+#1787769246
+
+
+#1787769246
+
+
+#1787769246
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+
+#1787769246
+        ping_phase ^= 1"""
+
+#1787769246
+
+
+#1787769246
+NEW_M1 = \
+
+#1787769246
+"""            # 5. Pipelined softmax: SFU/ALU overlap (WG0 issuing WGMMA in parallel)
+
+#1787769246
+""" + make_step_sm("            ") + """
+
+#1787769246
+
+
+#1787769246
+            o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769246
+            o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769246
+            mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769246
+            
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        # Unroll last iteration for efficient q release
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        next_kv_state = kv_state.next()
+
+#1787769246
+
+
+#1787769246
+
+
+#1787769246
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+
+#1787769246
+        ping_phase ^= 1"""
+
+#1787769246
+
+
+#1787769246
+count_m1 = content.count(OLD_M1)
+
+#1787769246
+print(f"WG1 MAIN count: {count_m1}")
+
+#1787769246
+assert count_m1 == 1, f"WG1 MAIN: {count_m1}"
+
+#1787769246
+content = content.replace(OLD_M1, NEW_M1, 1)
+
+#1787769246
+
+
+#1787769246
+# ─── 7. WG1 UNROLL ────────────────────────────────────────────────────────
+
+#1787769246
+OLD_U1 = \
+
+#1787769246
+"""        m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
+
+#1787769246
+        rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769246
+        
+
+#1787769246
+        S_tile = gl.exp2(S_tile - m_new[:, None])
+
+#1787769246
+        l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
+
+#1787769246
+        m_old = m_new
+
+#1787769246
+            
+
+#1787769246
+        P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
+
+#1787769246
+        
+
+#1787769246
+        o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769246
+        o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769246
+        mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769246
+        
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        # EPILOGUE: Final V Tile & Store
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        
+
+#1787769246
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+
+#1787769246
+        ping_phase ^= 1
+
+#1787769246
+        
+
+#1787769246
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769246
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+#1787769246
+
+
+#1787769246
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+
+#1787769246
+        kv_state = kv_state.next()
+
+#1787769246
+        q_state = q_state.next()
+
+#1787769246
+
+
+#1787769246
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769246
+        l_final_m = gl.convert_layout(l_old, m_layout)
+
+#1787769246
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o1_desc.dtype)
+
+#1787769246
+
+
+#1787769246
+        acc_state = store_acc_to_smem_subtile(acc_final, p.o1_bufs, p.o1_empty_bars, p.o1_ready_bars, acc_state, p.SUBTILE_FACTOR)"""
+
+#1787769246
+
+
+#1787769246
+NEW_U1 = \
+
+#1787769246
+"""        S_h0, S_h1 = _s_tile_split(S_tile)
+
+#1787769246
+        m_new = gl.maximum(m_old, gl.maximum(gl.max(S_h0, axis=1), gl.max(S_h1, axis=1)))
+
+#1787769246
+        rescale_factor = gl.exp2(m_old - m_new)
+
+#1787769246
+
+
+#1787769246
+        P_h0 = gl.exp2(S_h0 - m_new[:, None])
+
+#1787769246
+        P_h1 = gl.exp2(S_h1 - m_new[:, None])   # SFU: h1...
+
+#1787769246
+        l_h0 = gl.sum(P_h0, axis=1)              # ALU: overlaps SFU
+
+#1787769246
+        P_h0_cast = gl.cast(P_h0, dtype=dtype)   # ALU: overlaps SFU
+
+#1787769246
+        l_h1 = gl.sum(P_h1, axis=1)
+
+#1787769246
+        P_h1_cast = gl.cast(P_h1, dtype=dtype)
+
+#1787769246
+        l_old = l_old * rescale_factor + l_h0 + l_h1
+
+#1787769246
+        m_old = m_new
+
+#1787769246
+
+
+#1787769246
+        P_cur_permuted = gl.convert_layout(_s_tile_join(P_h0_cast, P_h1_cast), p_layout)
+
+#1787769246
+
+
+#1787769246
+        o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769246
+        o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
+
+#1787769246
+        mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769246
+        
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        # EPILOGUE: Final V Tile & Store
+
+#1787769246
+        # -------------------------------------------------------------------
+
+#1787769246
+        
+
+#1787769246
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+
+#1787769246
+        ping_phase ^= 1
+
+#1787769246
+        
+
+#1787769246
+        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
+
+#1787769246
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+#1787769246
+
+
+#1787769246
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+
+#1787769246
+        kv_state = kv_state.next()
+
+#1787769246
+        q_state = q_state.next()
+
+#1787769246
+
+
+#1787769246
+        o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
+
+#1787769246
+        l_final_m = gl.convert_layout(l_old, m_layout)
+
+#1787769246
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o1_desc.dtype)
+
+#1787769246
+
+
+#1787769246
+        acc_state = store_acc_to_smem_subtile(acc_final, p.o1_bufs, p.o1_empty_bars, p.o1_ready_bars, acc_state, p.SUBTILE_FACTOR)"""
+
+#1787769246
+
+
+#1787769246
+count_u1 = content.count(OLD_U1)
+
+#1787769246
+print(f"WG1 UNROLL count: {count_u1}")
+
+#1787769246
+assert count_u1 == 1, f"WG1 UNROLL: {count_u1}"
+
+#1787769246
+content = content.replace(OLD_U1, NEW_U1, 1)
+
+#1787769246
+
+
+#1787769246
+# ─── Verify no original softmax patterns remain ───────────────────────────
+
+#1787769246
+remaining = content.count("gl.exp2(S_tile - m")
+
+#1787769246
+print(f"Remaining old-style exp2(S_tile - m...) patterns: {remaining}")
+
+#1787769246
+remaining2 = content.count("gl.sum(S_tile, axis=1)")
+
+#1787769246
+print(f"Remaining old-style gl.sum(S_tile, axis=1) patterns: {remaining2}")
+
+#1787769246
+
+
+#1787769246
+if content != orig_content:
+
+#1787769246
+    with open("/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py", "w") as f:
+
+#1787769246
+        f.write(content)
+
+#1787769246
+    print("File written successfully.")
+
+#1787769246
+else:
+
+#1787769246
+    print("ERROR: No changes made!")
+
+#1787769246
+PYEOF
+
+#1787769246
+python3 /tmp/patch_softmax.py

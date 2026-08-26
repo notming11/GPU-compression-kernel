@@ -284,7 +284,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Dynamic Triton FA3 Kernel Benchmarking Suite")
     
     # Kernel File Paths
-    parser.add_argument("--module-3part", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_forward.py", help="3-Partition non-pingpong script")
+    parser.add_argument("--module-3part", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py", help="3-Partition non-pingpong script")
     parser.add_argument("--module-4part", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py", help="4-Partition script")
     
     # Execution Flags
@@ -295,7 +295,7 @@ if __name__ == "__main__":
     # Benchmark Parameters
     parser.add_argument("--head-dims", type=int, nargs="+", default=[64, 128, 256], help="Head dimensions to evaluate in one shot")
     parser.add_argument("--tune", action="store_true", default=True, help="Enable Triton autotuner")
-    parser.add_argument("--rep", type=int, default=1000, help="Benchmark repetitions")
+    parser.add_argument("--rep", type=int, default=200, help="Benchmark repetitions")
     parser.add_argument("--output-dir", type=str, default="/home/notming/links/scratch/attention/results/plots", help="Directory to save plot results")
     
     args = parser.parse_args()
