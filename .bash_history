@@ -14599,3 +14599,9 @@ PYEOF
 
 #1787769246
 python3 /tmp/patch_softmax.py
+#1787777348
+git reset HEAD~1
+#1787780818
+deubugjob
+#1787780821
+debugjob
