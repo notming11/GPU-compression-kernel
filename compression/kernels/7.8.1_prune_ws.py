@@ -663,7 +663,7 @@ if __name__ == "__main__":
     parser.add_argument("--bk", type=int, default=64, help="BLOCK_SIZE_K")
     parser.add_argument("--warps", type=int, default=8, help="Number of warps")
     parser.add_argument("--buffers", type=int, default=3, help="Number of buffers")
-    parser.add_argument("--sf", type=int, default=4, help="SUBTILE_FACTOR")
+    parser.add_argument("--sf", type=int, default=2, help="SUBTILE_FACTOR")
     
     args = parser.parse_args()
 
