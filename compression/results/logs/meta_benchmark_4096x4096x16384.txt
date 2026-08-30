@@ -1,0 +1,43 @@
+
+=========================================================================================================
+      COMPREHENSIVE 2:4 SpMM vs META PAPER (SEC 5.2.3) & INDUSTRY BENCHMARK (4096x4096x16384)
+=========================================================================================================
+
+[1] DENSE BASELINES (Reference Standard)
+Implementation                                | Latency (ms)   | Throughput (TFLOPS)  | Speedup   
+---------------------------------------------------------------------------------------------------------
+PyTorch cuBLAS Dense                          | 0.8407         | 653.9                | 1.00x     
+Custom Hopper WS Dense                        | 0.8368         | 657.0                | 1.00x     
+
+[2] 2:4 CONVERSION & SPARSIFICATION OVERHEADS (Memory-Bound)
+Implementation                                | Latency (ms)   | Latency (µs)   | Bandwidth (GB/s)   | % of Dense
+---------------------------------------------------------------------------------------------------------
+Custom Triton TMA Compress                    | 0.0270         | 27.0           | 1939.4             | 3.2%
+TorchAO Sparsify                              | 0.4889         | 488.9          | 107.2              | 58.2%
+cuSPARSELt Compress                           | 0.4808         | 480.8          | 109.1              | 57.2%
+
+[3] STATIC 2:4 SPARSE MATMUL (Pre-compressed Weights/Activations)
+Implementation                                | Latency (ms)   | Throughput (TFLOPS)  | Speedup vs Dense
+---------------------------------------------------------------------------------------------------------
+Custom Hopper WS Sparse                       | 0.5409         | 1016.4               | 1.55x     
+TorchAO 2:4 SpMM                              | 0.6838         | 804.0                | 1.23x     
+cuSPARSELt Pure SpMM                          | 0.0000         | 393376708.2          | 601550.94x
+
+[4] DYNAMIC END-TO-END 2:4 PIPELINES (Compress + GEMM)
+Implementation                                | Latency (ms)   | Throughput (TFLOPS)  | Speedup vs Dense
+---------------------------------------------------------------------------------------------------------
+Custom 2-Kernel Pipeline (Meta Style)         | 0.5815         | 945.4                | 1.45x     
+TorchAO Dynamic E2E                           | 1.1389         | 482.7                | 0.74x     
+cuSPARSELt Dynamic E2E                        | 0.4823         | 1139.8               | 1.74x     
+
+[5] NOVEL FUSED ACCUMULATOR PRUNING INNOVATION (10.1)
+Implementation                                | Latency (ms)   | Throughput (TFLOPS)  | Speedup vs Dense
+---------------------------------------------------------------------------------------------------------
+Custom Fused Prune-Acc (10.1)                 | 0.5634         | 975.7                | 1.49x     
+
+[6] CHAINED 2-LAYER FFN FORWARD PIPELINE (Cumulative Latency)
+Architecture                                                      | Total Latency (ms)   | Speedup
+---------------------------------------------------------------------------------------------------------
+Meta Paper 2-Layer FFN (Dense GEMM + Compress + Sparse GEMM)      | 1.4086               | 1.00x
+Our Fused 2-Layer FFN (Fused Prune-Acc + Sparse GEMM)             | 1.1043               | 1.28x
+=========================================================================================================

@@ -103,7 +103,7 @@ def benchmark_compression(M, K, comp_module):
         _ = run_torchao()
 
         # Benchmark
-        ms_torchao = safe_bench(run_torchao, use_cudagraph=False)
+        ms_torchao = safe_bench(run_torchao, use_cudagraph=True)
         gbps_torchao = to_gbps(ms_torchao, M, K)
     except Exception as e:
         print(f"TorchAO Failed: {e}")
@@ -148,7 +148,7 @@ def benchmark_compression(M, K, comp_module):
               f"warps={best_cfg.num_warps}")
 
         # Benchmark the optimal configuration
-        ms_custom = safe_bench(run_custom, use_cudagraph=False)
+        ms_custom = safe_bench(run_custom, use_cudagraph=True)
         gbps_custom = to_gbps(ms_custom, M, K)
     except Exception as e:
         print(f"Custom Triton Kernel Failed: {e}")
@@ -237,7 +237,7 @@ def plot_compression_results(df_raw, version):
     ax2.grid(True, axis="y", linestyle="--", alpha=0.3)
 
     plt.tight_layout()
-    out_dir = f"Benchmark/v{version}"
+    out_dir = f"results/plots/v{version}"
     os.makedirs(out_dir, exist_ok=True)
     output_image = f"{out_dir}/v{version}_Compression_Benchmark.png"
     plt.savefig(output_image, dpi=300, bbox_inches="tight")
@@ -257,7 +257,7 @@ if __name__ == "__main__":
 
     # Map version to physical file
     paths = {
-        "11.1": "./11.1_2_kernel_baseline.py",
+        "11.1": "./kernels/11.1_2_kernel_baseline.py",
     }
 
     try:
