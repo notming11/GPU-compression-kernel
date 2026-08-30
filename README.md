@@ -9,7 +9,7 @@ Separates pruning/compression into a standalone kernel, then feeds into the exis
 | Metric | Peak Sustained ($M,K \ge 8\text{k}$) | Comparison |
 |--------|--------------------------------------|------------|
 | **E2E throughput** | ~990 TFLOPS | **1.5× dense WS** (~660 TFLOPS) / **~93% of sparse WS** (~1064 TFLOPS, only ~7% overhead) |
-| **Standalone prune+compress** | ~2750 GB/s | **3.2× TorchAO** CuSparselt (~855 GB/s) / **~82% of H100 theoretical peak** (3.35 TB/s) |
+| **Standalone prune+compress** | ~2850 GB/s | **3.2× TorchAO** CuSparselt (~900 GB/s) / **~85% of H100 theoretical peak** (3.35 TB/s) |
 - Kernel: [`compression/kernels/11.1_2_kernel_baseline.py`](compression/kernels/11.1_2_kernel_baseline.py)
 - E2E results: [`compression/results/logs/11.1_N=8192_750942.out`](compression/results/logs/11.1_N=8192_750942.out)
 ![](./compression/results/plots/v11.1/v11.1_Benchmark_8192.png)
@@ -52,6 +52,7 @@ Custom 4-Part FlashAttention-3 kernel implementation achieving near-native parit
 ![](./attention/results/plots/FA3_Benchmark_HEAD_DIM_128.png)
 ![](./attention/results/plots/FA3_Benchmark_HEAD_DIM_256.png)
 
+### Sparse FlashAttention-3 (WIP)
 
 ## Directory Layout
 

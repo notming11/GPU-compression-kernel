@@ -175,9 +175,10 @@ def ws_tma_compress_2_4_kernel(
     BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
     num_warps: gl.constexpr,
 ):  
+    dtype: gl.constexpr = a_desc.dtype
     # 1. Allocate SMEM
-    a_smem = gl.allocate_shared_memory(gl.float16, [BLOCK_SIZE_M, BLOCK_SIZE_K], a_desc.layout)
-    a_comp_smem = gl.allocate_shared_memory(gl.float16, [BLOCK_SIZE_M, BLOCK_SIZE_K // 2], a_compressed_desc.layout)
+    a_smem = gl.allocate_shared_memory(dtype, [BLOCK_SIZE_M, BLOCK_SIZE_K], a_desc.layout)
+    a_comp_smem = gl.allocate_shared_memory(dtype, [BLOCK_SIZE_M, BLOCK_SIZE_K // 2], a_compressed_desc.layout)
     e_smem = gl.allocate_shared_memory(gl.int16, [BLOCK_SIZE_M // 16, BLOCK_SIZE_K], e_desc.layout)
     
     # 2. Setup MBarriers
