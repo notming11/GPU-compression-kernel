@@ -15,18 +15,19 @@ def main():
     V = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
 
     # 2. Warmup Iterations (forces cuDNN / FlashAttention backend initialization)
-    # print("[INFO] Warming up PyTorch SDPA backend...")
-    # for _ in range(5):
-    #     _ = F.scaled_dot_product_attention(Q, K, V)
-    # torch.cuda.synchronize()
+    print("[INFO] Warming up PyTorch SDPA backend...")
+    for _ in range(5):
+        _ = F.scaled_dot_product_attention(Q, K, V)
+    torch.cuda.synchronize()
 
-    # # 3. Profiled Iteration
-    # print("[INFO] Executing profiled PyTorch SDPA iteration...")
+    # 3. Profiled Iteration
+    print("[INFO] Executing profiled PyTorch SDPA iteration...")
     profiler.start()
     
     # NVTX range allows NCU to target ONLY this execution
-    torch.cuda.nvtx.range_push("PyTorch_SDPA")
+    torch.cuda.nvtx.range_push("test")
     _ = F.scaled_dot_product_attention(Q, K, V)
+    torch.cuda.synchronize()
     torch.cuda.nvtx.range_pop()
     
     torch.cuda.synchronize()
