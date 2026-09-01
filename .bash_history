@@ -17979,3 +17979,11 @@ tpython benchmark_sparse.py
 tpython kernels/gluon_attention_qk_sparse.py 
 #1788225214
 tpython benchmark_sparse.py 
+#1788199855
+sq --start
+#1788204067
+sq
+#1788224175
+degubjob
+#1788224177
+debugjob
