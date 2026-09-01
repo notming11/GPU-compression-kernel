@@ -17841,3 +17841,141 @@ print('Successfully written /scratch/notming/compression/dev/12,1_meta_compariso
 cat /home/notming/.gemini/antigravity-ide/brain/b0406c7d-5fd4-4bf4-a06d-51ba52d574c9/.system_generated/tasks/task-175.log
 #1787941383
 export APPTAINER_BINDPATH="/scratch:/scratch" && cd /scratch/notming/compression && tpython dev/12,1_meta_comparison.py --m 4096 --k 4096 --n 16384 --rep 20
+#1788148797
+load_module && start_gluon && cd ../attention
+#1788148818
+tpython kernels/gluon_attention_qk_sparse.py 
+#1788148913
+ln -s kernels/sparsifier.py sparsifier.py 
+#1788148924
+ln -s sparsifier.py kernels/sparsifier.py 
+#1788149008
+ln -s kernels sparsifier.py 
+#1788149017
+ln -s sparsifier.py kernels
+#1788149030
+dir
+#1788149032
+cd kernels/
+#1788149033
+dir
+#1788149040
+tpython kernels/gluon_attention_qk_sparse.py 
+#1788149049
+cd ..
+#1788149050
+tpython kernels/gluon_attention_qk_sparse.py 
+#1788149092
+tpython sparsifier.py 
+#1788149117
+tpython kernels/gluon_attention_qk_sparse.py 
+#1788149174
+dir kernels/
+#1788149179
+tpython kernels/gluon_attention_qk_sparse.py 
+#1788149247
+ls -l kernels/sparsifier.py
+#1788149257
+cd kernels/
+#1788149267
+ln -sf ../sparsifier.py sparsifier.py 
+#1788149270
+ cd ..
+#1788149274
+ls -l kernels/sparsifier.py
+#1788149284
+tpython kernels/gluon_attention_qk_sparse.py 
+#1788149549
+ls -l kernels/sparsifier.py
+#1788149552
+tpython kernels/gluon_attention_qk_sparse.py 
+#1788152721
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788152760
+gkill
+#1788152771
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788152781
+tpython kernels/gluon_attention_qk_sparse.py 
+#1788152834
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788152867
+gkill
+#1788152871
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788152927
+gkill
+#1788152932
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788152985
+gkill
+#1788152986
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788153044
+gkill
+#1788153045
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788153148
+gkill
+#1788153174
+gkill && tpython kernels/gluon_attention_qk_sparse.py 
+#1788153224
+gkill && tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788153831
+gkill && TRITON_PRINT_AUTOTUNING=1 && tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788153927
+gkill && tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788154342
+gkill
+#1788148773
+debugjob
+#1788200002
+load_module && start_gluon && ../atten
+#1788200006
+cd ../attention/
+#1788200021
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788200825
+source .bashrc
+#1788200831
+source
+#1788200839
+source ./bachrc
+#1788200842
+source ./bashrc
+#1788200895
+source ~/.bashrc
+#1788200905
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788201374
+tpython benchmark.py 
+#1788202028
+tpython kernels/gluon_attention_qk_sparse.py --tune
+#1788202031
+tpython benchmark.py 
+#1788203117
+tpython benchmark_sparse.py 
+#1788203732
+tpython benchmark.py 
+#1788203738
+tpython benchmark_sparse.py 
+#1788224214
+load_module && start_gluon
+#1788224219
+cd ../attention
+#1788224262
+tpython benchmark_sparse.py 
+#1788224282
+load_module && start_gluon && cd ../attention
+#1788224285
+tpython benchmark_sparse.py 
+#1788224294
+tpython benchmark.py
+#1788224332
+source ~/.bashrc
+#1788224336
+tpython benchmark_sparse.py 
+#1788225030
+tpython kernels/gluon_attention_qk_sparse.py 
+#1788225214
+tpython benchmark_sparse.py 
