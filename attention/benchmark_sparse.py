@@ -429,7 +429,7 @@ if __name__ == "__main__":
     
     # Kernel File Paths
     parser.add_argument("--module-4part", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py", help="4-Partition Dense script")
-    parser.add_argument("--module-sparse", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_qk_sparse.py", help="4-Partition 2:4 Sparse script")
+    parser.add_argument("--module-sparse", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py", help="4-Partition 2:4 Sparse script")
     
     # Execution Flags
     parser.add_argument("--skip-4part", action="store_true", help="Skip 4-Partition Dense kernel")

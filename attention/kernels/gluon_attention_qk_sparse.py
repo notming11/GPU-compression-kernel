@@ -326,7 +326,6 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mbarrier.wait(p.pong_bar.index(0), pong_phase)
             pong_phase ^= 1
 
-            mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
             
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -357,7 +356,6 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.pong_bar.index(0), pong_phase)
         pong_phase ^= 1
 
-        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -389,7 +387,6 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.pong_bar.index(0), pong_phase)
         pong_phase ^= 1
         
-        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
         
         mbarrier.arrive(p.ping_bar.index(0), count=1)
@@ -402,6 +399,9 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
 
         acc_state = store_acc_to_smem_subtile(acc_final, p.o0_bufs, p.o0_empty_bars, p.o0_ready_bars, acc_state, p.SUBTILE_FACTOR)
+        
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+        pong_phase ^= 1
 
 @gluon.jit
 def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
@@ -460,7 +460,6 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mbarrier.wait(p.ping_bar.index(0), ping_phase)
             ping_phase ^= 1
 
-            mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -492,7 +491,6 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.ping_bar.index(0), ping_phase)
         ping_phase ^= 1
 
-        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -524,9 +522,10 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.ping_bar.index(0), ping_phase)
         ping_phase ^= 1
 
-        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+        
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
         kv_state = kv_state.next()
         q_state = q_state.next()
@@ -591,7 +590,7 @@ def fa3_warp_specialized_kernel(
     BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_N: gl.constexpr, BLOCK_SIZE_K: gl.constexpr,
     num_stages: gl.constexpr, SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr
 ):
-    gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush=True)
+    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush=True)
     dtype: gl.constexpr = q0_desc.dtype
     SUB_BM: gl.constexpr = BLOCK_SIZE_M // 2
 
@@ -936,7 +935,7 @@ if __name__ == "__main__":
     }
 
     NUM_HEADS = 16
-    sizes = [(4096, 128)]
+    sizes = [(4096, 64), (4096, 128), (4096, 256), ]
 
     for SEQ_LEN, HEAD_DIM in sizes:
         BATCH = max(1, 16384 // SEQ_LEN)

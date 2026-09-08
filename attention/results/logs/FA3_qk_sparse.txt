@@ -1,0 +1,137 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=64)
+   Active Kernels: ['4-Part (Dense)', '4-Part (Sparse 2:4)']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=64 (1/6)
+Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 347.91 TFLOPS/ 0.0988 ms, 4-Part (Dense): 360.71 TFLOPS/ 0.0953 ms, 4-Part (Sparse 2:4): 283.12 TFLOPS/ 0.1214 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=1024-HEAD_DIM=64 (2/6)
+Finish SEQ_LEN=1024-HEAD_DIM=64 -> PyTorch SDPA: 377.28 TFLOPS/ 0.1821 ms, 4-Part (Dense): 367.86 TFLOPS/ 0.1868 ms, 4-Part (Sparse 2:4): 351.73 TFLOPS/ 0.1954 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=2048-HEAD_DIM=64 (3/6)
+Finish SEQ_LEN=2048-HEAD_DIM=64 -> PyTorch SDPA: 403.23 TFLOPS/ 0.3408 ms, 4-Part (Dense): 384.81 TFLOPS/ 0.3572 ms, 4-Part (Sparse 2:4): 393.88 TFLOPS/ 0.3489 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=4096-HEAD_DIM=64 (4/6)
+Finish SEQ_LEN=4096-HEAD_DIM=64 -> PyTorch SDPA: 414.55 TFLOPS/ 0.6631 ms, 4-Part (Dense): 402.03 TFLOPS/ 0.6837 ms, 4-Part (Sparse 2:4): 418.58 TFLOPS/ 0.6567 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=8192-HEAD_DIM=64 (5/6)
+Finish SEQ_LEN=8192-HEAD_DIM=64 -> PyTorch SDPA: 420.91 TFLOPS/ 1.3061 ms, 4-Part (Dense): 402.64 TFLOPS/ 1.3654 ms, 4-Part (Sparse 2:4): 429.35 TFLOPS/ 1.2804 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=16384-HEAD_DIM=64 (6/6)
+Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 424.85 TFLOPS/ 2.5880 ms, 4-Part (Dense): 400.46 TFLOPS/ 2.7456 ms, 4-Part (Sparse 2:4): 432.36 TFLOPS/ 2.5431 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 5, 'SUBTILE_FACTOR': 1}, num_warps=4
+
+======================================================================
+             BENCHMARK RESULTS TABLE (HEAD_DIM=64)
+======================================================================
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part (Dense)_TFLOPS  4-Part (Sparse 2:4)_TFLOPS
+     512           347.908652             360.706756                  283.123117
+    1024           377.281032             367.863310                  351.729036
+    2048           403.234788             384.811215                  393.879547
+    4096           414.550442             402.028077                  418.581516
+    8192           420.909915             402.637907                  429.350519
+   16384           424.854490             400.457278                  432.358096
+======================================================================
+
+
+[INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_sparse_HEAD_DIM_64.png'
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=128)
+   Active Kernels: ['4-Part (Dense)', '4-Part (Sparse 2:4)']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=128 (1/6)
+Finish SEQ_LEN=512-HEAD_DIM=128 -> PyTorch SDPA: 436.60 TFLOPS/ 0.1574 ms, 4-Part (Dense): 456.87 TFLOPS/ 0.1504 ms, 4-Part (Sparse 2:4): 388.33 TFLOPS/ 0.1770 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=1024-HEAD_DIM=128 (2/6)
+Finish SEQ_LEN=1024-HEAD_DIM=128 -> PyTorch SDPA: 498.42 TFLOPS/ 0.2758 ms, 4-Part (Dense): 536.95 TFLOPS/ 0.2560 ms, 4-Part (Sparse 2:4): 486.81 TFLOPS/ 0.2823 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=2048-HEAD_DIM=128 (3/6)
+Finish SEQ_LEN=2048-HEAD_DIM=128 -> PyTorch SDPA: 531.50 TFLOPS/ 0.5172 ms, 4-Part (Dense): 545.50 TFLOPS/ 0.5039 ms, 4-Part (Sparse 2:4): 548.56 TFLOPS/ 0.5011 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+Start SEQ_LEN=4096-HEAD_DIM=128 (4/6)
+Finish SEQ_LEN=4096-HEAD_DIM=128 -> PyTorch SDPA: 552.35 TFLOPS/ 0.9953 ms, 4-Part (Dense): 563.78 TFLOPS/ 0.9751 ms, 4-Part (Sparse 2:4): 598.68 TFLOPS/ 0.9183 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+Start SEQ_LEN=8192-HEAD_DIM=128 (5/6)
+Finish SEQ_LEN=8192-HEAD_DIM=128 -> PyTorch SDPA: 570.13 TFLOPS/ 1.9285 ms, 4-Part (Dense): 599.52 TFLOPS/ 1.8340 ms, 4-Part (Sparse 2:4): 630.67 TFLOPS/ 1.7434 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+Start SEQ_LEN=16384-HEAD_DIM=128 (6/6)
+Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 572.21 TFLOPS/ 3.8430 ms, 4-Part (Dense): 604.61 TFLOPS/ 3.6371 ms, 4-Part (Sparse 2:4): 627.75 TFLOPS/ 3.5030 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+
+======================================================================
+             BENCHMARK RESULTS TABLE (HEAD_DIM=128)
+======================================================================
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part (Dense)_TFLOPS  4-Part (Sparse 2:4)_TFLOPS
+     512           436.600994             456.874312                  388.325546
+    1024           498.415050             536.946103                  486.808413
+    2048           531.499838             545.496389                  548.561294
+    4096           552.346914             563.783905                  598.684278
+    8192           570.127152             599.515193                  630.669384
+   16384           572.214238             604.610847                  627.751236
+======================================================================
+
+
+[INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_sparse_HEAD_DIM_128.png'
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=256)
+   Active Kernels: ['4-Part (Dense)', '4-Part (Sparse 2:4)']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=256 (1/6)
+Finish SEQ_LEN=512-HEAD_DIM=256 -> PyTorch SDPA: 459.35 TFLOPS/ 0.2992 ms, 4-Part (Dense): 463.56 TFLOPS/ 0.2965 ms, 4-Part (Sparse 2:4): 403.36 TFLOPS/ 0.3407 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+Start SEQ_LEN=1024-HEAD_DIM=256 (2/6)
+Finish SEQ_LEN=1024-HEAD_DIM=256 -> PyTorch SDPA: 527.85 TFLOPS/ 0.5207 ms, 4-Part (Dense): 542.94 TFLOPS/ 0.5063 ms, 4-Part (Sparse 2:4): 542.81 TFLOPS/ 0.5064 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+Start SEQ_LEN=2048-HEAD_DIM=256 (3/6)
+Finish SEQ_LEN=2048-HEAD_DIM=256 -> PyTorch SDPA: 572.76 TFLOPS/ 0.9598 ms, 4-Part (Dense): 581.02 TFLOPS/ 0.9462 ms, 4-Part (Sparse 2:4): 622.71 TFLOPS/ 0.8828 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+Start SEQ_LEN=4096-HEAD_DIM=256 (4/6)
+Finish SEQ_LEN=4096-HEAD_DIM=256 -> PyTorch SDPA: 599.64 TFLOPS/ 1.8336 ms, 4-Part (Dense): 609.93 TFLOPS/ 1.8027 ms, 4-Part (Sparse 2:4): 682.08 TFLOPS/ 1.6120 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+Start SEQ_LEN=8192-HEAD_DIM=256 (5/6)
+Finish SEQ_LEN=8192-HEAD_DIM=256 -> PyTorch SDPA: 614.77 TFLOPS/ 3.5770 ms, 4-Part (Dense): 652.89 TFLOPS/ 3.3681 ms, 4-Part (Sparse 2:4): 710.34 TFLOPS/ 3.0957 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+Start SEQ_LEN=16384-HEAD_DIM=256 (6/6)
+Finish SEQ_LEN=16384-HEAD_DIM=256 -> PyTorch SDPA: 618.79 TFLOPS/ 7.1076 ms, 4-Part (Dense): 660.57 TFLOPS/ 6.6579 ms, 4-Part (Sparse 2:4): 720.13 TFLOPS/ 6.1073 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+
+======================================================================
+             BENCHMARK RESULTS TABLE (HEAD_DIM=256)
+======================================================================
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part (Dense)_TFLOPS  4-Part (Sparse 2:4)_TFLOPS
+     512           459.345546             463.564482                  403.355028
+    1024           527.850192             542.944322                  542.806374
+    2048           572.756802             581.017637                  622.706857
+    4096           599.635910             609.929835                  682.079057
+    8192           614.773805             652.892072                  710.336958
+   16384           618.785013             660.571112                  720.131289
+======================================================================
+
+
+[INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_sparse_HEAD_DIM_256.png'

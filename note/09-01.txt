@@ -1,0 +1,13 @@
+in the presentation:
+mention only one matrix can be 2:4
+mention need to calculate to 2:4
+(alr mentioned) output is dense
+weight sparsity, guareentee linear layer to be 2:4, not true for attention, WQ is dense, even if W is sparse
+
+another angle: allow users to compress matrix whenever they want
+
+DIAGRAM!!!!!!!!
+
+e.g. diagram for persistent matmul for why dynamic is slower
+
+use latency instead of memory bandwidth for standalone sparsifier, maybe not
