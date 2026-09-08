@@ -316,7 +316,6 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             pong_phase ^= 1
 
             # 2. Issue O0 += P_cur * V_{j-1}
-            mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
             
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -353,22 +352,13 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.pong_bar.index(0), pong_phase)
         pong_phase ^= 1
 
-        mma_o = WGMMA(
-            mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K
-        )
-        mma_o = mma_o.issue_async_mma(
-            P_cur_permuted, p.v_bufs.index(kv_state.index)
-        )
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
         kv_state = next_kv_state
 
-        mbarrier.wait(
-            p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase
-        )
-        mma_s = mma_s_base.issue_async_mma(
-            p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0))
-        )
+        mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
 
         mbarrier.arrive(p.ping_bar.index(0), count=1)
 
@@ -396,7 +386,6 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.pong_bar.index(0), pong_phase)
         pong_phase ^= 1
         
-        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
         
         mbarrier.arrive(p.ping_bar.index(0), count=1)
@@ -410,6 +399,9 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
 
         acc_state = store_acc_to_smem_subtile(acc_final, p.o0_bufs, p.o0_empty_bars, p.o0_ready_bars, acc_state, p.SUBTILE_FACTOR)
+        
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+        pong_phase ^= 1
 
 @gluon.jit
 def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.constexpr, NUM_HEADS: gl.constexpr, HEAD_DIM: gl.constexpr, p_layout: gl.constexpr, m_layout: gl.constexpr, s_layout: gl.constexpr):
@@ -479,7 +471,6 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             ping_phase ^= 1
             
             # 3. Issue O1 += P_cur * V_{j-1}
-            mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
             mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -514,11 +505,9 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         # -------------------------------------------------------------------
         next_kv_state = kv_state.next()
 
-
         mbarrier.wait(p.ping_bar.index(0), ping_phase)
         ping_phase ^= 1
 
-        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
@@ -554,8 +543,9 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.ping_bar.index(0), ping_phase)
         ping_phase ^= 1
         
-        mma_o = WGMMA(mma_o.acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+        
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
 
         mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
         kv_state = kv_state.next()
@@ -621,7 +611,7 @@ def fa3_warp_specialized_kernel(
     num_stages: gl.constexpr, SUBTILE_FACTOR: gl.constexpr, num_warps: gl.constexpr
 ):
     
-    gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush=True)
+    # gl.static_print(f"BM: {BLOCK_SIZE_M}, BN: {BLOCK_SIZE_N}, BK: {BLOCK_SIZE_K}, buf: {num_stages}, SF: {SUBTILE_FACTOR}, warp: {num_warps}", flush=True)
     dtype: gl.constexpr = q0_desc.dtype
     SUB_BM: gl.constexpr = BLOCK_SIZE_M // 2
 
@@ -890,7 +880,7 @@ if __name__ == "__main__":
     
     parser.add_argument("--bm", type=int, default=128, help="BLOCK_SIZE_M")
     parser.add_argument("--bn", type=int, default=128, help="BLOCK_SIZE_N")
-    parser.add_argument("--bk", type=int, default=64, help="HEAD_DIM (BLOCK_SIZE_K)")
+    parser.add_argument("--bk", type=int, default=128, help="HEAD_DIM (BLOCK_SIZE_K)")
     parser.add_argument("--stages", type=int, default=2, help="Number of pipeline stages for KV")
     parser.add_argument("--sf", type=int, default=1, help="SUBTILE_FACTOR")
     parser.add_argument("--warps", type=int, default=4, help="Number of compute warps")
@@ -913,14 +903,13 @@ if __name__ == "__main__":
         
     NUM_HEADS = 16
     sizes = [
+        (4096, 64),
         (4096, 128),
+        (4096, 256),
         # (256, 64),
         # (512, 128),
         # (8192, 256)
     ]
-    
-    torch.set_printoptions(profile="full")
-    torch.set_printoptions(linewidth=20000)
     
     os.environ["MLIR_ENABLE_DUMP"]="1"
     os.environ["MLIR_DUMP_PATH"] = "/home/notming/links/scratch/attention/MLIR_DUMP/4_partition_pingpong_4096_128"

@@ -1,0 +1,13 @@
+INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
+INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
+
+======================================================================
+   STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=64)
+   Active Kernels: ['4-Part (Dense)', '4-Part (Sparse 2:4)']
+======================================================================
+
+Start SEQ_LEN=512-HEAD_DIM=64 (1/6)
+Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 345.31 TFLOPS/ 0.0995 ms, 4-Part (Dense): 364.66 TFLOPS/ 0.0942 ms, 4-Part (Sparse 2:4): 181.98 TFLOPS/ 0.1888 ms
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 5, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+Start SEQ_LEN=1024-HEAD_DIM=64 (2/6)
