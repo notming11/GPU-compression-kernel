@@ -789,7 +789,7 @@ def get_autotuned_kernel(head_dim: int):
             configs=configs,
             key=["SEQ_LEN"],
             do_bench=lambda kernel_call, quantiles: triton.testing.do_bench_cudagraph(
-                kernel_call, quantiles=quantiles
+                kernel_call, quantiles=quantiles, rep=50
             ),
         )(fa3_warp_specialized_kernel)
         
