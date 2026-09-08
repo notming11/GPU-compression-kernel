@@ -20358,3 +20358,179 @@ ls -l /tmp/cuda_coredump_pipe_*
 ssh trig0009
 #1788551565
 debugjob
+#1788839847
+ssh trig0026
+#1788845875
+git reset HEAD~1
+#1788841406
+sed -n '290,340p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788841412
+sed -n '500,560p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788841416
+grep -n -E "def fa3|ping_bar|pong_bar|num_warps" /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788841428
+sed -n '580,665p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788841431
+grep -n -C 5 "warp_specialize" /home/notming/links/scratch/attention/kernels/*.py
+#1788841436
+grep -n -C 5 "warp_specialize" /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1788841451
+sed -n '275,405p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788841455
+sed -n '405,535p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788841458
+grep -n -E "ping_bar|pong_bar" /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1788841508
+sed -n '380,410p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1788841556
+sed -n '525,560p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1788841564
+sed -n '665,740p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788841608
+grep -n -C 10 "fa3_consumer_wg0" /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1788841616
+cat /home/notming/links/scratch/note/09-01.txt
+#1788841625
+sed -n '270,335p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1788841642
+python3 -c "
+#1788841642
+with open('attention/kernels/gluon_attention_pingpong_overlap.py') as f1, open('attention/kernels/gluon_attention_qkv_sparse.py') as f2:
+#1788841642
+    lines1 = [l.strip() for l in f1 if 'ping_bar' in l or 'pong_bar' in l]
+#1788841642
+    lines2 = [l.strip() for l in f2 if 'ping_bar' in l or 'pong_bar' in l]
+#1788841642
+    print('Overlap lines:', len(lines1))
+#1788841642
+    print('Sparse lines: ', len(lines2))
+#1788841642
+    for i, (a, b) in enumerate(zip(lines1, lines2)):
+#1788841642
+        if a != b:
+#1788841642
+            print(f'{i}: {a} != {b}')
+#1788841642
+    if len(lines1) != len(lines2):
+#1788841642
+        print('Lengths differ!')
+#1788841642
+"
+#1788841666
+sed -n '430,485p' /home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py
+#1788841682
+git diff attention/kernels/gluon_attention_qkv_sparse.py attention/kernels/gluon_attention_pingpong_overlap.py
+#1788841685
+git diff attention/kernels/gluon_attention_qkv_sparse.py
+#1788841694
+git log -n 5 --oneline attention/
+#1788841698
+grep -n -C 5 "pong_bar" /home/notming/links/scratch/attention/kernels/test.py
+#1788841705
+sed -n '290,330p' /home/notming/links/scratch/attention/kernels/test.py
+#1788841718
+sed -n '385,445p' /home/notming/links/scratch/attention/kernels/test.py
+#1788843287
+grep -n -C 10 "prune_2_4_ref" /home/notming/links/scratch/attention/kernels/*.py
+#1788843297
+sed -n '340,355p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788843305
+sed -n '900,920p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788843328
+sed -n '948,962p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788843335
+grep -n "import math" /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788843357
+python3 -c "
+#1788843357
+path = 'attention/kernels/gluon_attention_qkv_sparse.py'
+#1788843357
+with open(path, 'r') as f:
+#1788843357
+    content = f.read()
+#1788843357
+
+#1788843357
+target = '''        # PyTorch Reference: Prune Q to 2:4 sparsity, then compute standard SDPA
+#1788843357
+        Q_sparse_ref = prune_2_4_ref(Q)
+#1788843357
+        O_torch = torch.nn.functional.scaled_dot_product_attention(Q_sparse_ref, K, V)'''
+#1788843357
+
+#1788843357
+replacement = '''        # PyTorch Reference: QK sparse (2:4 pruned Q) and PV sparse (2:4 pruned P)
+#1788843357
+        Q_sparse_ref = prune_2_4_ref(Q)
+#1788843357
+        S_ref = torch.matmul(Q_sparse_ref, K.transpose(-1, -2)) / math.sqrt(HEAD_DIM)
+#1788843357
+        P_ref = torch.softmax(S_ref.float(), dim=-1).to(torch.float16)
+#1788843357
+        P_sparse_ref = prune_2_4_ref(P_ref)
+#1788843357
+        O_torch = torch.matmul(P_sparse_ref, V)'''
+#1788843357
+
+#1788843357
+if target in content:
+#1788843357
+    new_content = content.replace(target, replacement)
+#1788843357
+    with open(path, 'w') as f:
+#1788843357
+        f.write(new_content)
+#1788843357
+    print('SUCCESS')
+#1788843357
+else:
+#1788843357
+    print('TARGET NOT FOUND')
+#1788843357
+"
+#1788843367
+git diff attention/kernels/gluon_attention_qkv_sparse.py
+#1788843373
+git status -s attention/kernels/gluon_attention_qkv_sparse.py
+#1788843380
+sed -n '945,965p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788843393
+python3 -c "
+#1788843393
+path = 'attention/kernels/gluon_attention_qkv_sparse.py'
+#1788843393
+with open(path, 'r') as f:
+#1788843393
+    content = f.read()
+#1788843393
+
+#1788843393
+target = 'print(\"PASS: PyTorch reference (2:4 pruned SDPA) matches Triton Gluon Sparse Q FA3!\")'
+#1788843393
+replacement = 'print(\"PASS: PyTorch reference (2:4 QK + PV sparse) matches Triton Gluon Sparse Q FA3!\")'
+#1788843393
+
+#1788843393
+if target in content:
+#1788843393
+    with open(path, 'w') as f:
+#1788843393
+        f.write(content.replace(target, replacement))
+#1788843393
+    print('SUCCESS')
+#1788843393
+"
+#1788843405
+sed -n '948,963p' /home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py
+#1788845761
+load_module && start_gluon && cd ../attention
+#1788845789
+sbatch sbatch_sh/benchmark_fa3_sparse.sh 
+#1788845795
+sq
+#1788872325
+load_module && start_gluon && cd ../attention
+#1788872338
+sbatch sbatch_sh/benchmark_fa3_sparse.sh 
+#1788872363
+sq
