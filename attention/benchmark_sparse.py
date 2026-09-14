@@ -340,7 +340,7 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune
                 )
 
             # Benchmark pure GPU execution time with CUDA Graphs
-            ms = triton.testing.do_bench_cudagraph(launch_fn)
+            ms = triton.testing.do_bench_cudagraph(launch_fn, rep=rep)
             tflops = to_attention_tflops(ms, seq_len, head_dim, batch=BATCH_SIZE, num_heads=NUM_HEADS)
         except Exception as e:
             print(f"[{name}] benchmark failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")

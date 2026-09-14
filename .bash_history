@@ -20534,3 +20534,1787 @@ load_module && start_gluon && cd ../attention
 sbatch sbatch_sh/benchmark_fa3_sparse.sh 
 #1788872363
 sq
+#1789350570
+load_module && start_gluon
+#1789350574
+cd ../attention
+#1789350670
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1789350762
+sbatch sbatch_sh/benchmark_fa3_sparse.sh 
+#1789350766
+sq
+#1789350883
+scancel 913977
+#1789351309
+sbatch sbatch_sh/benchmark_fa3_baseline.sh 
+#1789351333
+sq
+#1789352336
+debugjob
+#1789360240
+tpython kernels/gluon_attention_qkv_sparse.py 
+#1789360252
+nvidia-smi
+#1789360267
+ssh trig-login02
+#1789360360
+gkill
+#1789360365
+nvidia-smi
+#1789360505
+debugjob
+#1789350939
+cd /home/notming/links/scratch/attention
+#1789350940
+head -n 50 benchmark.py
+#1789350954
+python3 -c '
+#1789350954
+with open("benchmark.py") as f:
+#1789350954
+    b1 = f.read()
+#1789350954
+with open("benchmark_sparse.py") as f:
+#1789350954
+    b2 = f.read()
+#1789350954
+
+#1789350954
+import re
+#1789350954
+print("--- benchmark.py to_attention_tflops / flops ---")
+#1789350954
+for line in b1.splitlines():
+#1789350954
+    if "flops" in line.lower() or "tflops" in line.lower():
+#1789350954
+        print("  b1:", line)
+#1789350954
+
+#1789350954
+print("--- benchmark_sparse.py to_attention_tflops / flops ---")
+#1789350954
+for line in b2.splitlines():
+#1789350954
+    if "flops" in line.lower() or "tflops" in line.lower():
+#1789350954
+        print("  b2:", line)
+#1789350954
+'
+#1789350960
+diff -u benchmark.py benchmark_sparse.py
+#1789350962
+diff -u benchmark.py benchmark_sparse.py | head -n 45
+#1789350965
+cat FA3_baseline_913977.out
+#1789350968
+tail -n 50 results/logs/FA3_qkv_sparse.txt
+#1789350971
+head -n 40 results/logs/FA3_qkv_sparse.txt
+#1789350990
+wc -l benchmark.py benchmark_sparse.py
+#1789350993
+diff -u benchmark.py benchmark_sparse.py
+#1789350997
+diff -u benchmark.py benchmark_sparse.py | head -n 30
+#1789351066
+python3 -c '
+#1789351066
+with open("benchmark.py") as f:
+#1789351066
+    lines = f.readlines()
+#1789351066
+print("".join(lines[80:170]))
+#1789351066
+'
+#1789351072
+cat /home/notming/.gemini/antigravity-ide/brain/82a9a5fd-5839-4ecf-b447-93fa443ff0b4/.system_generated/tasks/task-30.log
+#1789351075
+cat sbatch_sh/benchmark_fa3_baseline.sh
+#1789351078
+cat sbatch_sh/benchmark_fa3_sparse.sh
+#1789351088
+python3 -c '
+#1789351088
+import difflib
+#1789351088
+
+#1789351088
+with open("benchmark.py") as f1, open("benchmark_sparse.py") as f2:
+#1789351088
+    lines1 = f1.readlines()
+#1789351088
+    lines2 = f2.readlines()
+#1789351088
+
+#1789351089
+diff = list(difflib.unified_diff(lines1, lines2, fromfile="benchmark.py", tofile="benchmark_sparse.py"))
+#1789351089
+for l in diff:
+#1789351089
+    print(l, end="")
+#1789351089
+'
+#1789351100
+python3 -c '
+#1789351100
+with open("benchmark.py") as f1, open("benchmark_sparse.py") as f2:
+#1789351100
+    b1 = f1.read()
+#1789351100
+    b2 = f2.read()
+#1789351100
+
+#1789351100
+import ast
+#1789351100
+
+#1789351100
+def get_fn_code(src, fn_name):
+#1789351100
+    tree = ast.parse(src)
+#1789351100
+    for node in tree.body:
+#1789351100
+        if isinstance(node, ast.FunctionDef) and node.name == fn_name:
+#1789351100
+            lines = src.splitlines(keepends=True)
+#1789351100
+            return "".join(lines[node.lineno - 1 : node.end_lineno])
+#1789351100
+    return None
+#1789351100
+
+#1789351100
+fn1 = get_fn_code(b1, "prepare_kernel_runner")
+#1789351100
+fn2 = get_fn_code(b2, "prepare_kernel_runner")
+#1789351100
+
+#1789351100
+print("prepare_kernel_runner identical?", fn1 == fn2)
+#1789351100
+'
+#1789351113
+git log -n 5 --stat kernels/gluon_attention_pingpong_overlap.py
+#1789351119
+git show 9444093fce0c8d4ec330568d35585952514ddae7 kernels/gluon_attention_pingpong_overlap.py
+#1789351124
+git status
+#1789351127
+git diff benchmark_sparse.py
+#1789351130
+cat FA3_baseline_913981.out
+#1789351137
+python3 -c '
+#1789351137
+with open("kernels/gluon_attention_pingpong_overlap.py") as f:
+#1789351137
+    s = f.read()
+#1789351137
+import re
+#1789351137
+for m in re.finditer(r"def (run_fa3_warp_specialized_kernel|get_autotuned_kernel)", s):
+#1789351137
+    idx = m.start()
+#1789351137
+    print(s[idx:idx+800])
+#1789351137
+    print("="*40)
+#1789351137
+'
+#1789351147
+python3 -c '
+#1789351147
+with open("kernels/gluon_attention_pingpong_overlap.py") as f:
+#1789351147
+    s = f.read()
+#1789351147
+import re
+#1789351147
+idx = s.find("def fa3_get_configs")
+#1789351147
+print(s[idx:idx+700])
+#1789351147
+'
+#1789351168
+python3 -c '
+#1789351168
+with open("benchmark.py") as f1, open("benchmark_sparse.py") as f2:
+#1789351168
+    lines1 = f1.readlines()[:100]
+#1789351168
+    lines2 = f2.readlines()[:100]
+#1789351168
+import difflib
+#1789351168
+print("".join(difflib.unified_diff(lines1, lines2)))
+#1789351168
+'
+#1789359425
+wc -l kernels/gluon_attention_pingpong_overlap.py
+#1789359431
+cat kernels/gluon_attention_pingpong_overlap.py
+#1789359443
+sed -n '1,250p' kernels/gluon_attention_pingpong_overlap.py
+#1789359452
+sed -n '250,550p' kernels/gluon_attention_pingpong_overlap.py
+#1789359462
+sed -n '550,700p' kernels/gluon_attention_pingpong_overlap.py
+#1789359476
+grep -n 'kv_empty_bars\|kv_ready_bars\|k_bufs\|v_bufs' kernels/gluon_attention_pingpong_overlap.py
+#1789359626
+cat -n kernels/gluon_attention_pingpong_overlap.py | head -170
+#1789359703
+cat -n kernels/gluon_attention_pingpong_overlap.py | sed -n '220,260p'
+#1789359717
+cat -n kernels/gluon_attention_pingpong_overlap.py | sed -n '260,410p'
+#1789359735
+cat -n kernels/gluon_attention_pingpong_overlap.py | sed -n '410,570p'
+#1789359745
+cat -n kernels/gluon_attention_pingpong_overlap.py | sed -n '605,680p'
+#1789359785
+grep -n 'num_barriers' kernels/gluon_attention_pingpong_overlap.py
+#1789359887
+grep -n "empty_bars" kernels/gluon_attention_pingpong_overlap.py
+#1789359895
+sed -n '100,165p' kernels/gluon_attention_pingpong_overlap.py
+#1789359898
+sed -n '220,265p' kernels/gluon_attention_pingpong_overlap.py
+#1789359912
+sed -n '260,340p' kernels/gluon_attention_pingpong_overlap.py
+#1789359915
+sed -n '340,420p' kernels/gluon_attention_pingpong_overlap.py
+#1789359919
+sed -n '420,500p' kernels/gluon_attention_pingpong_overlap.py
+#1789359924
+sed -n '500,570p' kernels/gluon_attention_pingpong_overlap.py
+#1789359928
+sed -n '610,740p' kernels/gluon_attention_pingpong_overlap.py
+#1789359964
+grep -n "kv_" kernels/gluon_attention_pingpong_overlap.py
+#1789359982
+python3 -c "with open('kernels/gluon_attention_pingpong_overlap.py', 'r') as f: print('Lines:', len(f.readlines()))"
+#1789359985
+git status -s kernels/gluon_attention_pingpong_overlap.py
+#1789360021
+python3 -c "
+#1789360021
+with open('kernels/gluon_attention_pingpong_overlap.py', 'r') as f:
+#1789360021
+    content = f.read()
+#1789360021
+
+#1789360021
+replacements = [
+#1789360021
+    # 1. PartitionArgs fields
+#1789360021
+    ('''    q_ready_bar: gl.shared_memory_descriptor
+#1789360021
+    q_empty_bar: gl.shared_memory_descriptor
+#1789360021
+    kv_empty_bars: gl.shared_memory_descriptor
+#1789360021
+    kv_ready_bars: gl.shared_memory_descriptor''',
+#1789360021
+     '''    q_ready_bar: gl.shared_memory_descriptor
+#1789360021
+    q_empty_bar: gl.shared_memory_descriptor
+#1789360021
+    k_empty_bars: gl.shared_memory_descriptor
+#1789360021
+    k_ready_bars: gl.shared_memory_descriptor
+#1789360021
+    v_empty_bars: gl.shared_memory_descriptor
+#1789360021
+    v_ready_bars: gl.shared_memory_descriptor'''),
+#1789360021
+
+#1789360021
+    # 2. PartitionArgs __init__ args
+#1789360021
+    ('''        q_ready_bar, q_empty_bar, 
+#1789360021
+        kv_empty_bars, kv_ready_bars,
+#1789360021
+        o0_empty_bars, o0_ready_bars,''',
+#1789360021
+     '''        q_ready_bar, q_empty_bar, 
+#1789360021
+        k_empty_bars, k_ready_bars,
+#1789360021
+        v_empty_bars, v_ready_bars,
+#1789360021
+        o0_empty_bars, o0_ready_bars,'''),
+#1789360021
+
+#1789360021
+    # 3. PartitionArgs __init__ assignments
+#1789360021
+    ('''        self.q_ready_bar = q_ready_bar
+#1789360021
+        self.q_empty_bar = q_empty_bar
+#1789360021
+        self.kv_empty_bars = kv_empty_bars
+#1789360021
+        self.kv_ready_bars = kv_ready_bars''',
+#1789360021
+     '''        self.q_ready_bar = q_ready_bar
+#1789360021
+        self.q_empty_bar = q_empty_bar
+#1789360021
+        self.k_empty_bars = k_empty_bars
+#1789360021
+        self.k_ready_bars = k_ready_bars
+#1789360021
+        self.v_empty_bars = v_empty_bars
+#1789360021
+        self.v_ready_bars = v_ready_bars'''),
+#1789360021
+
+#1789360021
+    # 4. Producer kv_state
+#1789360021
+    ('''    kv_state = Counter.create(1, p.kv_empty_bars.shape[0])''',
+#1789360021
+     '''    kv_state = Counter.create(1, p.k_empty_bars.shape[0])'''),
+#1789360021
+
+#1789360021
+    # 5. Producer loop
+#1789360021
+    ('''        for step in range(num_steps):
+#1789360021
+            bar = p.kv_ready_bars.index(kv_state.index)
+#1789360021
+            mbarrier.wait(p.kv_empty_bars.index(kv_state.index), kv_state.phase)
+#1789360021
+
+#1789360021
+            mbarrier.expect(bar, p.k_desc.block_type.nbytes + p.v_desc.block_type.nbytes)
+#1789360021
+            tma.async_copy_global_to_shared(p.k_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.k_bufs.index(kv_state.index))
+#1789360021
+            tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.v_bufs.index(kv_state.index))
+#1789360021
+            
+#1789360021
+            kv_state = kv_state.next()''',
+#1789360021
+     '''        for step in range(num_steps):
+#1789360021
+            k_bar = p.k_ready_bars.index(kv_state.index)
+#1789360021
+            mbarrier.wait(p.k_empty_bars.index(kv_state.index), kv_state.phase)
+#1789360021
+            mbarrier.expect(k_bar, p.k_desc.block_type.nbytes)
+#1789360021
+            tma.async_copy_global_to_shared(p.k_desc, [kv_global_offset + step * BLOCK_N, 0], k_bar, p.k_bufs.index(kv_state.index))
+#1789360021
+
+#1789360021
+            v_bar = p.v_ready_bars.index(kv_state.index)
+#1789360021
+            mbarrier.wait(p.v_empty_bars.index(kv_state.index), kv_state.phase)
+#1789360021
+            mbarrier.expect(v_bar, p.v_desc.block_type.nbytes)
+#1789360021
+            tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], v_bar, p.v_bufs.index(kv_state.index))
+#1789360021
+            
+#1789360021
+            kv_state = kv_state.next()'''),
+#1789360021
+
+#1789360021
+    # 6. Consumer WG0 num_stages
+#1789360021
+    ('''    num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
+#1789360021
+    dtype: gl.constexpr = p.q0_desc.dtype''',
+#1789360021
+     '''    num_stages: gl.constexpr = p.k_ready_bars.shape[0]
+#1789360021
+    dtype: gl.constexpr = p.q0_desc.dtype'''),
+#1789360021
+
+#1789360021
+    # 7. Consumer WG0 Prologue
+#1789360021
+    ('''        # -------------------------------------------------------------------
+#1789360021
+        # PROLOGUE: Issue S_0 = Q0 * K_0^T
+#1789360021
+        # -------------------------------------------------------------------
+#1789360021
+        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360021
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1789360021
+
+#1789360021
+        # Signal WG1 that WG0 has finished issuing its Prologue WGMMA
+#1789360021
+        mbarrier.arrive(p.ping_bar.index(0), count=1)''',
+#1789360021
+     '''        # -------------------------------------------------------------------
+#1789360021
+        # PROLOGUE: Issue S_0 = Q0 * K_0^T
+#1789360021
+        # -------------------------------------------------------------------
+#1789360021
+        mbarrier.wait(p.k_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360021
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1789360021
+
+#1789360021
+        # Signal WG1 that WG0 has finished issuing its Prologue WGMMA
+#1789360021
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360021
+
+#1789360021
+        mbarrier.arrive(p.k_empty_bars.index(kv_state.index), count=1)'''),
+#1789360021
+
+#1789360022
+    # 8. Consumer WG0 Main loop
+#1789360022
+    ('''        for step in range(1, num_steps - 1):
+#1789360022
+            next_kv_state = kv_state.next()
+#1789360022
+            
+#1789360022
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0
+#1789360022
+            mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360022
+            pong_phase ^= 1
+#1789360022
+
+#1789360022
+            # 2. Issue O0 += P_cur * V_{j-1}
+#1789360022
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+            
+#1789360022
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1789360022
+            kv_state = next_kv_state
+#1789360022
+            
+#1789360022
+            # 1. Issue S_next = Q0 * K_j^T
+#1789360022
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360022
+            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360022
+            
+#1789360022
+            # 3. Hand off Tensor Core issue slot to WG1
+#1789360022
+            mbarrier.arrive(p.ping_bar.index(0), count=1)''',
+#1789360022
+     '''        for step in range(1, num_steps - 1):
+#1789360022
+            next_kv_state = kv_state.next()
+#1789360022
+            
+#1789360022
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0
+#1789360022
+            mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360022
+            pong_phase ^= 1
+#1789360022
+
+#1789360022
+            # 2. Issue O0 += P_cur * V_{j-1}
+#1789360022
+            mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360022
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+            
+#1789360022
+            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
+#1789360022
+            kv_state = next_kv_state
+#1789360022
+            
+#1789360022
+            # 1. Issue S_next = Q0 * K_j^T
+#1789360022
+            mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360022
+            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360022
+            
+#1789360022
+            # 3. Hand off Tensor Core issue slot to WG1
+#1789360022
+            mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360022
+
+#1789360022
+            mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)'''),
+#1789360022
+
+#1789360022
+    # 9. Consumer WG0 unrolled last iteration
+#1789360022
+    ('''        next_kv_state = kv_state.next()
+#1789360022
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360022
+        pong_phase ^= 1
+#1789360022
+
+#1789360022
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1789360022
+        kv_state = next_kv_state
+#1789360022
+
+#1789360022
+        mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360022
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.ping_bar.index(0), count=1)''',
+#1789360022
+     '''        next_kv_state = kv_state.next()
+#1789360022
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360022
+        pong_phase ^= 1
+#1789360022
+
+#1789360022
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360022
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
+#1789360022
+        kv_state = next_kv_state
+#1789360022
+
+#1789360022
+        mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360022
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)'''),
+#1789360022
+
+#1789360022
+    # 10. Consumer WG0 epilogue
+#1789360022
+    ('''        # -------------------------------------------------------------------
+#1789360022
+        # EPILOGUE: Final V Tile & Store
+#1789360022
+        # -------------------------------------------------------------------
+#1789360022
+        
+#1789360022
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360022
+        pong_phase ^= 1
+#1789360022
+        
+#1789360022
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+        
+#1789360022
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)''',
+#1789360022
+     '''        # -------------------------------------------------------------------
+#1789360022
+        # EPILOGUE: Final V Tile & Store
+#1789360022
+        # -------------------------------------------------------------------
+#1789360022
+        
+#1789360022
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360022
+        pong_phase ^= 1
+#1789360022
+        
+#1789360022
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360022
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+        
+#1789360022
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)'''),
+#1789360022
+
+#1789360022
+    # 11. Consumer WG1 num_stages
+#1789360022
+    ('''    num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
+#1789360022
+    dtype: gl.constexpr = p.q1_desc.dtype''',
+#1789360022
+     '''    num_stages: gl.constexpr = p.k_ready_bars.shape[0]
+#1789360022
+    dtype: gl.constexpr = p.q1_desc.dtype'''),
+#1789360022
+
+#1789360022
+    # 12. Consumer WG1 Prologue
+#1789360022
+    ('''        # -------------------------------------------------------------------
+#1789360022
+        # PROLOGUE: Issue S_0 = Q1 * K_0^T
+#1789360022
+        # -------------------------------------------------------------------
+#1789360022
+        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360022
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1789360022
+
+#1789360022
+        # Hand off back to WG0
+#1789360022
+        mbarrier.arrive(p.pong_bar.index(0), count=1)''',
+#1789360022
+     '''        # -------------------------------------------------------------------
+#1789360022
+        # PROLOGUE: Issue S_0 = Q1 * K_0^T
+#1789360022
+        # -------------------------------------------------------------------
+#1789360022
+        mbarrier.wait(p.k_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360022
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1789360022
+
+#1789360022
+        # Hand off back to WG0
+#1789360022
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.k_empty_bars.index(kv_state.index), count=1)'''),
+#1789360022
+
+#1789360022
+    # 13. Consumer WG1 Main loop
+#1789360022
+    ('''        for step in range(1, num_steps - 1):
+#1789360022
+            next_kv_state = kv_state.next()
+#1789360022
+
+#1789360022
+            # 1. Wait for WG0 signal before issuing Tensor Core operations
+#1789360022
+            mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360022
+            ping_phase ^= 1
+#1789360022
+            
+#1789360022
+            # 3. Issue O1 += P_cur * V_{j-1}
+#1789360022
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+
+#1789360022
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1789360022
+            kv_state = next_kv_state
+#1789360022
+            
+#1789360022
+            # 2. Issue S_next = Q1 * K_j^T
+#1789360022
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360022
+            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360022
+            
+#1789360022
+            # 4. Hand off Tensor Core issue slot back to WG0
+#1789360022
+            mbarrier.arrive(p.pong_bar.index(0), count=1)''',
+#1789360022
+     '''        for step in range(1, num_steps - 1):
+#1789360022
+            next_kv_state = kv_state.next()
+#1789360022
+
+#1789360022
+            # 1. Wait for WG0 signal before issuing Tensor Core operations
+#1789360022
+            mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360022
+            ping_phase ^= 1
+#1789360022
+            
+#1789360022
+            # 3. Issue O1 += P_cur * V_{j-1}
+#1789360022
+            mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360022
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+
+#1789360022
+            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
+#1789360022
+            kv_state = next_kv_state
+#1789360022
+            
+#1789360022
+            # 2. Issue S_next = Q1 * K_j^T
+#1789360022
+            mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360022
+            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360022
+            
+#1789360022
+            # 4. Hand off Tensor Core issue slot back to WG0
+#1789360022
+            mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360022
+
+#1789360022
+            mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)'''),
+#1789360022
+
+#1789360022
+    # 14. Consumer WG1 unrolled last iteration
+#1789360022
+    ('''        next_kv_state = kv_state.next()
+#1789360022
+
+#1789360022
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360022
+        ping_phase ^= 1
+#1789360022
+
+#1789360022
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1789360022
+        kv_state = next_kv_state
+#1789360022
+
+#1789360022
+        mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360022
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.pong_bar.index(0), count=1)''',
+#1789360022
+     '''        next_kv_state = kv_state.next()
+#1789360022
+
+#1789360022
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360022
+        ping_phase ^= 1
+#1789360022
+
+#1789360022
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360022
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
+#1789360022
+        kv_state = next_kv_state
+#1789360022
+
+#1789360022
+        mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360022
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)'''),
+#1789360022
+
+#1789360022
+    # 15. Consumer WG1 epilogue
+#1789360022
+    ('''        # -------------------------------------------------------------------
+#1789360022
+        # EPILOGUE: Final V Tile & Store
+#1789360022
+        # -------------------------------------------------------------------
+#1789360022
+        
+#1789360022
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360022
+        ping_phase ^= 1
+#1789360022
+        
+#1789360022
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360022
+        
+#1789360022
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360022
+
+#1789360022
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)''',
+#1789360023
+     '''        # -------------------------------------------------------------------
+#1789360023
+        # EPILOGUE: Final V Tile & Store
+#1789360023
+        # -------------------------------------------------------------------
+#1789360023
+        
+#1789360023
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360023
+        ping_phase ^= 1
+#1789360023
+        
+#1789360023
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360023
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360023
+        
+#1789360023
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360023
+
+#1789360023
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)'''),
+#1789360023
+
+#1789360023
+    # 16. Kernel launcher allocations
+#1789360023
+    ('''    kv_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1789360023
+    kv_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())''',
+#1789360023
+     '''    k_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1789360023
+    k_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1789360023
+    v_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1789360023
+    v_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())'''),
+#1789360023
+
+#1789360023
+    # 17. Kernel launcher barrier inits
+#1789360023
+    ('''    for i in gl.static_range(num_stages):
+#1789360023
+        mbarrier.init(kv_ready_bars.index(i), count=1)
+#1789360023
+        mbarrier.init(kv_empty_bars.index(i), count=2)''',
+#1789360023
+     '''    for i in gl.static_range(num_stages):
+#1789360023
+        mbarrier.init(k_ready_bars.index(i), count=1)
+#1789360023
+        mbarrier.init(k_empty_bars.index(i), count=2)
+#1789360023
+        mbarrier.init(v_ready_bars.index(i), count=1)
+#1789360023
+        mbarrier.init(v_empty_bars.index(i), count=2)'''),
+#1789360023
+
+#1789360023
+    # 18. Kernel launcher PartitionArgs instantiation
+#1789360023
+    ('''        q_ready_bar, q_empty_bar, 
+#1789360023
+        kv_empty_bars, kv_ready_bars,
+#1789360023
+        o0_empty_bars, o0_ready_bars,''',
+#1789360023
+     '''        q_ready_bar, q_empty_bar, 
+#1789360023
+        k_empty_bars, k_ready_bars,
+#1789360023
+        v_empty_bars, v_ready_bars,
+#1789360023
+        o0_empty_bars, o0_ready_bars,'''),
+#1789360023
+
+#1789360023
+    # 19. Configs num_barriers
+#1789360023
+    ('''        num_barriers = 2 + (2 * num_stages) + 8 + 2''',
+#1789360023
+     '''        num_barriers = 2 + (4 * num_stages) + 8 + 2'''),
+#1789360023
+]
+#1789360023
+
+#1789360023
+for idx, (target, repl) in enumerate(replacements):
+#1789360023
+    cnt = content.count(target)
+#1789360023
+    if cnt != 1:
+#1789360023
+        print(f'ERROR at replacement {idx+1}: count is {cnt}')
+#1789360023
+        exit(1)
+#1789360023
+    content = content.replace(target, repl)
+#1789360023
+
+#1789360023
+with open('kernels/gluon_attention_pingpong_overlap.py', 'w') as f:
+#1789360023
+    f.write(content)
+#1789360023
+
+#1789360023
+print('SUCCESS! All 19 replacements applied cleanly.')
+#1789360023
+"
+#1789360066
+python3 -c "
+#1789360066
+with open('kernels/gluon_attention_pingpong_overlap.py', 'r') as f:
+#1789360066
+    content = f.read()
+#1789360066
+
+#1789360066
+replacements = [
+#1789360066
+    # 1. PartitionArgs fields
+#1789360066
+    ('''    q_ready_bar: gl.shared_memory_descriptor
+#1789360066
+    q_empty_bar: gl.shared_memory_descriptor
+#1789360066
+    kv_empty_bars: gl.shared_memory_descriptor
+#1789360066
+    kv_ready_bars: gl.shared_memory_descriptor''',
+#1789360066
+     '''    q_ready_bar: gl.shared_memory_descriptor
+#1789360066
+    q_empty_bar: gl.shared_memory_descriptor
+#1789360066
+    k_empty_bars: gl.shared_memory_descriptor
+#1789360066
+    k_ready_bars: gl.shared_memory_descriptor
+#1789360066
+    v_empty_bars: gl.shared_memory_descriptor
+#1789360066
+    v_ready_bars: gl.shared_memory_descriptor'''),
+#1789360066
+
+#1789360066
+    # 2. PartitionArgs __init__ args
+#1789360066
+    ('''    def __init__(
+#1789360066
+        self, 
+#1789360066
+        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc, 
+#1789360066
+        q0_buf, q1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs, 
+#1789360066
+        q_ready_bar, q_empty_bar, 
+#1789360066
+        kv_empty_bars, kv_ready_bars,
+#1789360066
+        o0_empty_bars, o0_ready_bars,''',
+#1789360066
+     '''    def __init__(
+#1789360066
+        self, 
+#1789360066
+        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc, 
+#1789360066
+        q0_buf, q1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs, 
+#1789360066
+        q_ready_bar, q_empty_bar, 
+#1789360066
+        k_empty_bars, k_ready_bars,
+#1789360066
+        v_empty_bars, v_ready_bars,
+#1789360066
+        o0_empty_bars, o0_ready_bars,'''),
+#1789360066
+
+#1789360066
+    # 3. PartitionArgs __init__ assignments
+#1789360066
+    ('''        self.q_ready_bar = q_ready_bar
+#1789360066
+        self.q_empty_bar = q_empty_bar
+#1789360066
+        self.kv_empty_bars = kv_empty_bars
+#1789360066
+        self.kv_ready_bars = kv_ready_bars''',
+#1789360066
+     '''        self.q_ready_bar = q_ready_bar
+#1789360066
+        self.q_empty_bar = q_empty_bar
+#1789360066
+        self.k_empty_bars = k_empty_bars
+#1789360066
+        self.k_ready_bars = k_ready_bars
+#1789360066
+        self.v_empty_bars = v_empty_bars
+#1789360066
+        self.v_ready_bars = v_ready_bars'''),
+#1789360066
+
+#1789360066
+    # 4. Producer kv_state
+#1789360066
+    ('''    kv_state = Counter.create(1, p.kv_empty_bars.shape[0])''',
+#1789360066
+     '''    kv_state = Counter.create(1, p.k_empty_bars.shape[0])'''),
+#1789360066
+
+#1789360066
+    # 5. Producer loop
+#1789360066
+    ('''        for step in range(num_steps):
+#1789360066
+            bar = p.kv_ready_bars.index(kv_state.index)
+#1789360066
+            mbarrier.wait(p.kv_empty_bars.index(kv_state.index), kv_state.phase)
+#1789360066
+
+#1789360066
+            mbarrier.expect(bar, p.k_desc.block_type.nbytes + p.v_desc.block_type.nbytes)
+#1789360066
+            tma.async_copy_global_to_shared(p.k_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.k_bufs.index(kv_state.index))
+#1789360066
+            tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.v_bufs.index(kv_state.index))
+#1789360066
+            
+#1789360066
+            kv_state = kv_state.next()''',
+#1789360066
+     '''        for step in range(num_steps):
+#1789360066
+            k_bar = p.k_ready_bars.index(kv_state.index)
+#1789360066
+            mbarrier.wait(p.k_empty_bars.index(kv_state.index), kv_state.phase)
+#1789360066
+            mbarrier.expect(k_bar, p.k_desc.block_type.nbytes)
+#1789360066
+            tma.async_copy_global_to_shared(p.k_desc, [kv_global_offset + step * BLOCK_N, 0], k_bar, p.k_bufs.index(kv_state.index))
+#1789360066
+
+#1789360066
+            v_bar = p.v_ready_bars.index(kv_state.index)
+#1789360066
+            mbarrier.wait(p.v_empty_bars.index(kv_state.index), kv_state.phase)
+#1789360066
+            mbarrier.expect(v_bar, p.v_desc.block_type.nbytes)
+#1789360066
+            tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], v_bar, p.v_bufs.index(kv_state.index))
+#1789360066
+            
+#1789360066
+            kv_state = kv_state.next()'''),
+#1789360066
+
+#1789360066
+    # 6. Consumer WG0 num_stages
+#1789360066
+    ('''    num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
+#1789360066
+    dtype: gl.constexpr = p.q0_desc.dtype''',
+#1789360066
+     '''    num_stages: gl.constexpr = p.k_ready_bars.shape[0]
+#1789360066
+    dtype: gl.constexpr = p.q0_desc.dtype'''),
+#1789360066
+
+#1789360066
+    # 7. Consumer WG0 Prologue
+#1789360066
+    ('''        # -------------------------------------------------------------------
+#1789360066
+        # PROLOGUE: Issue S_0 = Q0 * K_0^T
+#1789360066
+        # -------------------------------------------------------------------
+#1789360066
+        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360066
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1789360066
+
+#1789360066
+        # Signal WG1 that WG0 has finished issuing its Prologue WGMMA
+#1789360066
+        mbarrier.arrive(p.ping_bar.index(0), count=1)''',
+#1789360066
+     '''        # -------------------------------------------------------------------
+#1789360066
+        # PROLOGUE: Issue S_0 = Q0 * K_0^T
+#1789360066
+        # -------------------------------------------------------------------
+#1789360066
+        mbarrier.wait(p.k_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360066
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1789360066
+
+#1789360066
+        # Signal WG1 that WG0 has finished issuing its Prologue WGMMA
+#1789360066
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360066
+
+#1789360066
+        mbarrier.arrive(p.k_empty_bars.index(kv_state.index), count=1)'''),
+#1789360066
+
+#1789360066
+    # 8. Consumer WG0 Main loop
+#1789360066
+    ('''        for step in range(1, num_steps - 1):
+#1789360066
+            next_kv_state = kv_state.next()
+#1789360066
+            
+#1789360066
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0
+#1789360066
+            mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360066
+            pong_phase ^= 1
+#1789360066
+
+#1789360066
+            # 2. Issue O0 += P_cur * V_{j-1}
+#1789360066
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360066
+            
+#1789360066
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1789360066
+            kv_state = next_kv_state
+#1789360066
+            
+#1789360066
+            # 1. Issue S_next = Q0 * K_j^T
+#1789360066
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360066
+            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360066
+            
+#1789360066
+            # 3. Hand off Tensor Core issue slot to WG1
+#1789360066
+            mbarrier.arrive(p.ping_bar.index(0), count=1)''',
+#1789360066
+     '''        for step in range(1, num_steps - 1):
+#1789360066
+            next_kv_state = kv_state.next()
+#1789360066
+            
+#1789360066
+            # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0
+#1789360066
+            mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360066
+            pong_phase ^= 1
+#1789360066
+
+#1789360066
+            # 2. Issue O0 += P_cur * V_{j-1}
+#1789360066
+            mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360066
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360066
+            
+#1789360066
+            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
+#1789360066
+            kv_state = next_kv_state
+#1789360066
+            
+#1789360066
+            # 1. Issue S_next = Q0 * K_j^T
+#1789360066
+            mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360066
+            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360066
+            
+#1789360066
+            # 3. Hand off Tensor Core issue slot to WG1
+#1789360066
+            mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360066
+
+#1789360066
+            mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)'''),
+#1789360066
+
+#1789360066
+    # 9. Consumer WG0 unrolled last iteration
+#1789360066
+    ('''        next_kv_state = kv_state.next()
+#1789360066
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360066
+        pong_phase ^= 1
+#1789360066
+
+#1789360066
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360066
+
+#1789360066
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1789360066
+        kv_state = next_kv_state
+#1789360066
+
+#1789360066
+        mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360066
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360066
+
+#1789360066
+        mbarrier.arrive(p.ping_bar.index(0), count=1)''',
+#1789360066
+     '''        next_kv_state = kv_state.next()
+#1789360066
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360066
+        pong_phase ^= 1
+#1789360066
+
+#1789360066
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360066
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360066
+
+#1789360066
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
+#1789360066
+        kv_state = next_kv_state
+#1789360066
+
+#1789360066
+        mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360066
+        mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360066
+
+#1789360066
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360066
+
+#1789360066
+        mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)'''),
+#1789360066
+
+#1789360066
+    # 10. Consumer WG0 epilogue
+#1789360066
+    ('''        # -------------------------------------------------------------------
+#1789360066
+        # EPILOGUE: Final V Tile & Store
+#1789360066
+        # -------------------------------------------------------------------
+#1789360066
+        
+#1789360066
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360066
+        pong_phase ^= 1
+#1789360066
+        
+#1789360066
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360066
+        
+#1789360066
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360066
+
+#1789360066
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)''',
+#1789360067
+     '''        # -------------------------------------------------------------------
+#1789360067
+        # EPILOGUE: Final V Tile & Store
+#1789360067
+        # -------------------------------------------------------------------
+#1789360067
+        
+#1789360067
+        mbarrier.wait(p.pong_bar.index(0), pong_phase)
+#1789360067
+        pong_phase ^= 1
+#1789360067
+        
+#1789360067
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360067
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360067
+        
+#1789360067
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
+#1789360067
+
+#1789360067
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)'''),
+#1789360067
+
+#1789360067
+    # 11. Consumer WG1 num_stages
+#1789360067
+    ('''    num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
+#1789360067
+    dtype: gl.constexpr = p.q1_desc.dtype''',
+#1789360067
+     '''    num_stages: gl.constexpr = p.k_ready_bars.shape[0]
+#1789360067
+    dtype: gl.constexpr = p.q1_desc.dtype'''),
+#1789360067
+
+#1789360067
+    # 12. Consumer WG1 Prologue
+#1789360067
+    ('''        # -------------------------------------------------------------------
+#1789360067
+        # PROLOGUE: Issue S_0 = Q1 * K_0^T
+#1789360067
+        # -------------------------------------------------------------------
+#1789360067
+        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360067
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1789360067
+
+#1789360067
+        # Hand off back to WG0
+#1789360067
+        mbarrier.arrive(p.pong_bar.index(0), count=1)''',
+#1789360067
+     '''        # -------------------------------------------------------------------
+#1789360067
+        # PROLOGUE: Issue S_0 = Q1 * K_0^T
+#1789360067
+        # -------------------------------------------------------------------
+#1789360067
+        mbarrier.wait(p.k_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360067
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(kv_state.index).permute((1, 0)))
+#1789360067
+
+#1789360067
+        # Hand off back to WG0
+#1789360067
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360067
+
+#1789360067
+        mbarrier.arrive(p.k_empty_bars.index(kv_state.index), count=1)'''),
+#1789360067
+
+#1789360067
+    # 13. Consumer WG1 Main loop
+#1789360067
+    ('''        for step in range(1, num_steps - 1):
+#1789360067
+            next_kv_state = kv_state.next()
+#1789360067
+
+#1789360067
+            # 1. Wait for WG0 signal before issuing Tensor Core operations
+#1789360067
+            mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360067
+            ping_phase ^= 1
+#1789360067
+            
+#1789360067
+            # 3. Issue O1 += P_cur * V_{j-1}
+#1789360067
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360067
+
+#1789360067
+            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1789360067
+            kv_state = next_kv_state
+#1789360067
+            
+#1789360067
+            # 2. Issue S_next = Q1 * K_j^T
+#1789360067
+            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360067
+            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360067
+            
+#1789360067
+            # 4. Hand off Tensor Core issue slot back to WG0
+#1789360067
+            mbarrier.arrive(p.pong_bar.index(0), count=1)''',
+#1789360067
+     '''        for step in range(1, num_steps - 1):
+#1789360067
+            next_kv_state = kv_state.next()
+#1789360067
+
+#1789360067
+            # 1. Wait for WG0 signal before issuing Tensor Core operations
+#1789360067
+            mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360067
+            ping_phase ^= 1
+#1789360067
+            
+#1789360067
+            # 3. Issue O1 += P_cur * V_{j-1}
+#1789360067
+            mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360067
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360067
+
+#1789360067
+            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
+#1789360067
+            kv_state = next_kv_state
+#1789360067
+            
+#1789360067
+            # 2. Issue S_next = Q1 * K_j^T
+#1789360067
+            mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360067
+            mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360067
+            
+#1789360067
+            # 4. Hand off Tensor Core issue slot back to WG0
+#1789360067
+            mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360067
+
+#1789360067
+            mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)'''),
+#1789360067
+
+#1789360067
+    # 14. Consumer WG1 unrolled last iteration
+#1789360067
+    ('''        next_kv_state = kv_state.next()
+#1789360067
+
+#1789360067
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360067
+        ping_phase ^= 1
+#1789360067
+
+#1789360067
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360067
+
+#1789360067
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+#1789360067
+        kv_state = next_kv_state
+#1789360067
+
+#1789360067
+        mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360067
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360067
+
+#1789360067
+        mbarrier.arrive(p.pong_bar.index(0), count=1)''',
+#1789360067
+     '''        next_kv_state = kv_state.next()
+#1789360067
+
+#1789360067
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360067
+        ping_phase ^= 1
+#1789360067
+
+#1789360067
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360067
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360067
+
+#1789360067
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
+#1789360067
+        kv_state = next_kv_state
+#1789360067
+
+#1789360067
+        mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+#1789360067
+        mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
+#1789360067
+
+#1789360067
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360067
+
+#1789360067
+        mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)'''),
+#1789360067
+
+#1789360067
+    # 15. Consumer WG1 epilogue
+#1789360067
+    ('''        # -------------------------------------------------------------------
+#1789360067
+        # EPILOGUE: Final V Tile & Store
+#1789360067
+        # -------------------------------------------------------------------
+#1789360067
+        
+#1789360067
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360067
+        ping_phase ^= 1
+#1789360067
+        
+#1789360067
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360067
+        
+#1789360067
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360067
+
+#1789360067
+        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)''',
+#1789360067
+     '''        # -------------------------------------------------------------------
+#1789360067
+        # EPILOGUE: Final V Tile & Store
+#1789360067
+        # -------------------------------------------------------------------
+#1789360067
+        
+#1789360067
+        mbarrier.wait(p.ping_bar.index(0), ping_phase)
+#1789360067
+        ping_phase ^= 1
+#1789360067
+        
+#1789360067
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+#1789360067
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+#1789360067
+        
+#1789360067
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+#1789360067
+
+#1789360067
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)'''),
+#1789360067
+
+#1789360067
+    # 16. Kernel launcher allocations
+#1789360067
+    ('''    kv_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1789360067
+    kv_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())''',
+#1789360067
+     '''    k_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1789360067
+    k_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1789360067
+    v_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+#1789360067
+    v_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())'''),
+#1789360067
+
+#1789360067
+    # 17. Kernel launcher barrier inits
+#1789360067
+    ('''    for i in gl.static_range(num_stages):
+#1789360067
+        mbarrier.init(kv_ready_bars.index(i), count=1)
+#1789360067
+        mbarrier.init(kv_empty_bars.index(i), count=2)''',
+#1789360067
+     '''    for i in gl.static_range(num_stages):
+#1789360067
+        mbarrier.init(k_ready_bars.index(i), count=1)
+#1789360067
+        mbarrier.init(k_empty_bars.index(i), count=2)
+#1789360067
+        mbarrier.init(v_ready_bars.index(i), count=1)
+#1789360067
+        mbarrier.init(v_empty_bars.index(i), count=2)'''),
+#1789360067
+
+#1789360067
+    # 18. Kernel launcher PartitionArgs instantiation
+#1789360067
+    ('''    p = PartitionArgs(
+#1789360067
+        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
+#1789360067
+        q0_buf, q1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs,
+#1789360067
+        q_ready_bar, q_empty_bar, 
+#1789360067
+        kv_empty_bars, kv_ready_bars,
+#1789360067
+        o0_empty_bars, o0_ready_bars,''',
+#1789360067
+     '''    p = PartitionArgs(
+#1789360067
+        q0_desc, q1_desc, k_desc, v_desc, o0_desc, o1_desc,
+#1789360067
+        q0_buf, q1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs,
+#1789360067
+        q_ready_bar, q_empty_bar, 
+#1789360067
+        k_empty_bars, k_ready_bars,
+#1789360067
+        v_empty_bars, v_ready_bars,
+#1789360067
+        o0_empty_bars, o0_ready_bars,'''),
+#1789360067
+
+#1789360067
+    # 19. Configs num_barriers
+#1789360067
+    ('''        num_barriers = 2 + (2 * num_stages) + 8 + 2''',
+#1789360067
+     '''        num_barriers = 2 + (4 * num_stages) + 8 + 2'''),
+#1789360067
+]
+#1789360067
+
+#1789360067
+for idx, (target, repl) in enumerate(replacements):
+#1789360067
+    cnt = content.count(target)
+#1789360067
+    if cnt != 1:
+#1789360067
+        print(f'ERROR at replacement {idx+1}: count is {cnt}')
+#1789360067
+        exit(1)
+#1789360067
+    content = content.replace(target, repl)
+#1789360067
+
+#1789360067
+with open('kernels/gluon_attention_pingpong_overlap.py', 'w') as f:
+#1789360067
+    f.write(content)
+#1789360067
+
+#1789360067
+print('SUCCESS! All 19 replacements applied cleanly.')
+#1789360067
+"
+#1789360074
+git diff kernels/gluon_attention_pingpong_overlap.py
+#1789360077
+git diff kernels/gluon_attention_pingpong_overlap.py | head -85
+#1789360109
+tail -n 60 kernels/gluon_attention_pingpong_overlap.py
+#1789360112
+load_module && start_gluon && tpython kernels/gluon_attention_pingpong_overlap.py --tune
+#1789360134
+cd /home/notming/links/scratch/attention
+#1789360135
+hostname; squeue -u notming
+#1789360139
+type debugjob
+#1789360143
+type start_gluon; type load_module; type tpython
+#1789360147
+apptainer exec $SCRATCH/sparse.sif python -m py_compile kernels/gluon_attention_pingpong_overlap.py
+#1789410556
+nvidia-smi
+#1789410535
+sq
+#1789410538
+nvidia-smi
+#1789410550
+debugjob
+#1789410355
+sq
+#1789410358
+dir
+#1789410867
+debugjob -g 1

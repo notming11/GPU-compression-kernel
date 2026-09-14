@@ -199,6 +199,10 @@ class WGMMA:
             pack=1,
         )
 
+        return a_compressed, meta_reordered
+    
+    @gluon.jit
+    def mma_convert_layout(self, a_compressed, meta_reordered):
         a_compressed = gl.convert_layout(
             a_compressed,
             gl.DotOperandLayout(
