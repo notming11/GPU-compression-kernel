@@ -39,14 +39,15 @@ Prunes + compresses input tiles before the matmul. The compression overhead domi
 ### Dense FlashAttention-3
 Custom 4-Part FlashAttention-3 kernel implementation achieving near-native parity with PyTorch SDPA across standard Transformer head dimensions ($D \in \{64, 128, 256\}$) and sequence lengths up to $16\text{k}$.
 
-- Kernel: [`attention/kernels/gluon_attention_pingpong_overlap.py`](attention/kernels/gluon_attention_pingpong_overlap.py)
-- Results: [`attention/results/logs/FA3_baseline_820247`](attention/results/logs/FA3_baseline_820247.out)
+- Kernel: [here](attention/kernels/gluon_attention_pingpong_overlap.py)
+- Results: [here](attention/results/logs/FA3_baseline.txt)
 
 | Head Dim ($D$) | Peak Sustained ($N \ge 8\text{k}$) | Parity vs. PyTorch SDPA | Key Highlight |
 |---|---|---|---|
-| **$D = 64$** | **~420 TFLOPS** | **~94% – 101%** | Outperforms SDPA at $N=512$ (348 vs. 346 TFLOPS) |
-| **$D = 128$** | **~588 TFLOPS** | **~98% – 103%** | Outperforms SDPA up to $N=1024$ (525 vs. 519 TFLOPS) |
-| **$D = 256$** | **~641 TFLOPS** | **~99% – 101%** | Maintains ~99% throughput scaling across long contexts ($16\text{k}$) |
+| **$D = 64$** | **~407 TFLOPS** | **~93% – 98%** | Highest relative parity at short contexts (98.3% at $N=512$), sustaining ~407 TFLOPS (~93%–94% parity) at $N \ge 4\text{k}$ |
+| **$D = 128$** | **~590 TFLOPS** | **~99% – 102%** | **Exceeds SDPA** at multiple sequence lengths (up to 101.6% at $N=512$, 100.7% at $N=4\text{k}$) and maintains ~99.8% parity at $16\text{k}$ |
+| **$D = 256$** | **~635 TFLOPS** | **~98% – 100%** | Compute-bound scaling reaching **~635 TFLOPS** with tight ~99% parity across all sequence lengths from $2\text{k}$ to $16\text{k}$ |
+
 
 ![](./attention/results/plots/FA3_Benchmark_HEAD_DIM_64.png)
 ![](./attention/results/plots/FA3_Benchmark_HEAD_DIM_128.png)

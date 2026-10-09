@@ -11,3 +11,9 @@ ondemand/
 *.sif
 
 compression/count_cycle/
+
+attention_evaluation/data/
+
+.cache/
+
+.bash_history

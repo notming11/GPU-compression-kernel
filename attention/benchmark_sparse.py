@@ -350,7 +350,7 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune
 
     return results
 
-def plot_benchmark_results(df: pd.DataFrame, head_dim: int, active_kernel_names: list, output_dir: str = "Benchmark"):
+def plot_benchmark_results(df: pd.DataFrame, head_dim: int, active_kernel_names: list, output_dir: str = "Benchmark", plot_suffix: str = ""):
     if df.empty:
         print("No valid data points to plot.")
         return
@@ -416,7 +416,8 @@ def plot_benchmark_results(df: pd.DataFrame, head_dim: int, active_kernel_names:
 
     plt.tight_layout()
     os.makedirs(output_dir, exist_ok=True)
-    output_image = os.path.join(output_dir, f"FA3_Benchmark_sparse_HEAD_DIM_{head_dim}.png")
+    suffix_str = f"_{plot_suffix}" if plot_suffix else ""
+    output_image = os.path.join(output_dir, f"FA3_Benchmark_sparse{suffix_str}_HEAD_DIM_{head_dim}.png")
     plt.savefig(output_image, dpi=300, bbox_inches="tight")
     print(f"\n[INFO] Benchmark chart saved successfully to '{output_image}'")
     plt.close(fig)
@@ -429,11 +430,18 @@ if __name__ == "__main__":
     
     # Kernel File Paths
     parser.add_argument("--module-4part", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_pingpong_overlap.py", help="4-Partition Dense script")
-    parser.add_argument("--module-sparse", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py", help="4-Partition 2:4 Sparse script")
+    parser.add_argument("--module-qk-sparse", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_qk_sparse.py", help="4-Partition QK 2:4 Sparse script")
+    parser.add_argument("--module-qkv-sparse", type=str, default="/home/notming/links/scratch/attention/kernels/gluon_attention_qkv_sparse.py", help="4-Partition QKV 2:4 Sparse script")
+    parser.add_argument("--module-sparse", type=str, default=None, help="Legacy alias for sparse kernel script")
     
-    # Execution Flags
+    # Execution Flags & Toggles
     parser.add_argument("--skip-4part", action="store_true", help="Skip 4-Partition Dense kernel")
-    parser.add_argument("--skip-sparse", action="store_true", help="Skip 4-Partition 2:4 Sparse kernel")
+    parser.add_argument("--skip-qk-sparse", action="store_true", help="Skip QK Sparse kernel")
+    parser.add_argument("--skip-qkv-sparse", action="store_true", help="Skip QKV Sparse kernel")
+    parser.add_argument("--skip-sparse", action="store_true", help="Legacy flag: skip sparse kernel")
+    parser.add_argument("--qk-only", action="store_true", help="Benchmark only QK Sparse (+ Dense baseline)")
+    parser.add_argument("--qkv-only", action="store_true", help="Benchmark only QKV Sparse (+ Dense baseline)")
+    parser.add_argument("--plot-suffix", type=str, default=None, help="Optional custom suffix for output plot filenames")
     
     # Benchmark Parameters
     parser.add_argument("--head-dims", type=int, nargs="+", default=[64, 128, 256], help="Head dimensions to evaluate in one shot")
@@ -456,10 +464,18 @@ if __name__ == "__main__":
             print(f"[WARN] Failed loading '{path}': {e}")
             return None
 
-    # Load targets dynamically (Dense 3-Part, Dense 4-Part, Sparse 4-Part)
+    # Resolve legacy module-sparse argument if passed
+    qk_sparse_path = args.module_qk_sparse
+    qkv_sparse_path = args.module_sparse if args.module_sparse is not None else args.module_qkv_sparse
+
+    skip_qk = args.skip_qk_sparse or args.qkv_only or (args.skip_sparse and args.module_sparse is None)
+    skip_qkv = args.skip_qkv_sparse or args.qk_only or (args.skip_sparse and args.module_sparse is not None)
+
+    # Load targets dynamically (Dense 4-Part, QK Sparse, QKV Sparse)
     candidate_modules = {
         "4-Part (Dense)": (args.module_4part, args.skip_4part),
-        "4-Part (Sparse 2:4)": (args.module_sparse, args.skip_sparse),
+        "4-Part (QK Sparse 2:4)": (qk_sparse_path, skip_qk),
+        "4-Part (QKV Sparse 2:4)": (qkv_sparse_path, skip_qkv),
     }
 
     active_modules = {}
@@ -537,10 +553,23 @@ if __name__ == "__main__":
         print(df_dim[display_cols].to_string(index=False))
         print(f"{'='*70}\n")
 
+        # Determine plot suffix based on active kernels or CLI override
+        if args.plot_suffix is not None:
+            plot_suffix = args.plot_suffix
+        elif "4-Part (QK Sparse 2:4)" in active_modules and "4-Part (QKV Sparse 2:4)" not in active_modules:
+            plot_suffix = "qk"
+        elif "4-Part (QKV Sparse 2:4)" in active_modules and "4-Part (QK Sparse 2:4)" not in active_modules:
+            plot_suffix = "qkv"
+        elif "4-Part (QK Sparse 2:4)" in active_modules and "4-Part (QKV Sparse 2:4)" in active_modules:
+            plot_suffix = "all"
+        else:
+            plot_suffix = ""
+
         # Plotting per Head Dimension
         plot_benchmark_results(
             df_dim, 
             head_dim=head_dim, 
             active_kernel_names=list(active_modules.keys()), 
-            output_dir=args.output_dir
+            output_dir=args.output_dir,
+            plot_suffix=plot_suffix
         )
