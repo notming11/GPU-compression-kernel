@@ -37,16 +37,16 @@ Prunes + compresses input tiles before the matmul. The compression overhead domi
 ## Key Results — Sparse Attention 
 
 ### Dense FlashAttention-3
-Custom 4-Part FlashAttention-3 kernel implementation achieving near-native parity with PyTorch SDPA across standard Transformer head dimensions ($D \in \{64, 128, 256\}$) and sequence lengths up to $16\text{k}$.
+Custom 4-Part FlashAttention-3 kernel implementation matching or outperforming PyTorch SDPA across standard Transformer head dimensions ($D \in \{64, 128, 256\}$) and sequence lengths up to $16\text{k}$.
 
-- Kernel: [here](attention/kernels/gluon_attention_pingpong_overlap.py)
-- Results: [here](attention/results/logs/FA3_baseline.txt)
+- Kernel: [`attention/kernels/gluon_attention_pingpong_overlap.py`](attention/kernels/gluon_attention_pingpong_overlap.py)
+- Results: [`attention/results/logs/FA3_baseline.txt`](attention/results/logs/FA3_baseline.txt)
 
 | Head Dim ($D$) | Peak Sustained ($N \ge 8\text{k}$) | Parity vs. PyTorch SDPA | Key Highlight |
 |---|---|---|---|
-| **$D = 64$** | **~407 TFLOPS** | **~93% – 98%** | Highest relative parity at short contexts (98.3% at $N=512$), sustaining ~407 TFLOPS (~93%–94% parity) at $N \ge 4\text{k}$ |
-| **$D = 128$** | **~590 TFLOPS** | **~99% – 102%** | **Exceeds SDPA** at multiple sequence lengths (up to 101.6% at $N=512$, 100.7% at $N=4\text{k}$) and maintains ~99.8% parity at $16\text{k}$ |
-| **$D = 256$** | **~635 TFLOPS** | **~98% – 100%** | Compute-bound scaling reaching **~635 TFLOPS** with tight ~99% parity across all sequence lengths from $2\text{k}$ to $16\text{k}$ |
+| **$D = 64$** | **~430 TFLOPS** | **~97% – 102%** | Outperforms SDPA at short contexts (101.6% at $N=512$) and sustains **~430 TFLOPS** (~97.6% parity) at $N \ge 8\text{k}$ |
+| **$D = 128$** | **~600 TFLOPS** | **~100% – 102%** | **Outperforms SDPA across all sequence lengths**, reaching **~600 TFLOPS** (100.7% parity at $16\text{k}$, up to 101.9% at $N=512$) |
+| **$D = 256$** | **~656 TFLOPS** | **~102% – 105%** | **Consistently outperforms SDPA across all sequence lengths**, reaching **~656 TFLOPS** peak sustained throughput (up to 104.7% at $N=512$) |
 
 
 ![](./attention/results/plots/FA3_Benchmark_HEAD_DIM_64.png)

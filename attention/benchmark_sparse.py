@@ -63,7 +63,7 @@ def get_best_config(module, head_dim: int = None):
 def prepare_kernel_runner(module, Q, K, V, tune=True, manual_config=None):
     """
     Pre-allocates host TMA descriptors and output memory once, returning a pure 
-    GPU launch closure compatible with CUDA Graphs, along with O and best_config.
+    GPU launch closure compatible with CUDA Graphs, along with O, best_config, and None for compress_ms.
     """
     BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM = Q.shape
     O = torch.empty_like(Q)
@@ -159,13 +159,13 @@ def prepare_kernel_runner(module, Q, K, V, tune=True, manual_config=None):
                 num_stages=stages, SUBTILE_FACTOR=sf, num_warps=num_warps
             )
 
-    return launch_fn, O_ref, best_cfg
+    return launch_fn, O_ref, best_cfg, None
 
-def prepare_sparse_q_runner(module, Q, K, V, tune=True, manual_config=None, include_pruning=True):
+def prepare_sparse_q_runner(module, Q, K, V, tune=True, manual_config=None, include_pruning=True, rep=100):
     """
     Pre-allocates GPU intermediate compressed buffers (Q_comp, E_Q) and host TMA 
-    descriptors once. Returns a pure GPU launch closure containing both the 2:4 
-    sparsifier kernel and the sparse FA3 kernel, compatible with CUDA Graphs.
+    descriptors once. Returns a pure GPU launch closure, along with standalone 2:4 
+    compression latency measured via CUDA Graphs.
     """
     BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM = Q.shape
     M_total = BATCH * NUM_HEADS * SEQ_LEN
@@ -277,19 +277,22 @@ def prepare_sparse_q_runner(module, Q, K, V, tune=True, manual_config=None, incl
 
     scheduler = module.GroupedPersistentTileScheduler(8)
 
-    # 5. Build Zero-Host-Overhead Launch Closure
+    # 5. Build Zero-Host-Overhead Launch Closures
     compress_kernel = getattr(module, "ws_tma_compress_2_4_kernel", None)
     if compress_kernel is None:
         from sparsifier import ws_tma_compress_2_4_kernel as compress_kernel
 
+    def launch_compress_fn():
+        compress_kernel[grid_compress](
+            a_desc, a_compressed_desc, e_desc,
+            M_total, HEAD_DIM,
+            BLOCK_SIZE_M=prune_bm, BLOCK_SIZE_K=prune_bk,
+            num_warps=prune_warps,
+        )
+
     def launch_fn():
         if include_pruning:
-            compress_kernel[grid_compress](
-                a_desc, a_compressed_desc, e_desc,
-                M_total, HEAD_DIM,
-                BLOCK_SIZE_M=prune_bm, BLOCK_SIZE_K=prune_bk,
-                num_warps=prune_warps,
-            )
+            launch_compress_fn()
         module.fa3_warp_specialized_kernel[grid_fa3](
             q0_desc, q1_desc, eq0_desc, eq1_desc,
             k_desc, v_desc, o0_desc, o1_desc,
@@ -299,7 +302,15 @@ def prepare_sparse_q_runner(module, Q, K, V, tune=True, manual_config=None, incl
             num_stages=stages, SUBTILE_FACTOR=sf, num_warps=fa3_warps,
         )
 
-    return launch_fn, O_ref, best_cfg
+    # Measure standalone 2:4 compression latency using CUDA Graphs
+    ms_compress = None
+    if include_pruning:
+        try:
+            ms_compress = triton.testing.do_bench_cudagraph(launch_compress_fn, rep=rep)
+        except Exception as e:
+            print(f"[WARN] Failed to measure compression latency: {e}")
+
+    return launch_fn, O_ref, best_cfg, ms_compress
 
 def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune: bool = True, rep: int = 100):
     NUM_HEADS = 16
@@ -322,20 +333,19 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune
         print(f"PyTorch SDPA failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")
         tflops_torch, ms_torch = None, None
 
-    results["PyTorch SDPA"] = {"tflops": tflops_torch, "ms": ms_torch}
+    results["PyTorch SDPA"] = {"tflops": tflops_torch, "ms": ms_torch, "compress_ms": None}
 
-    # Evaluate registered modules (both 3-Partition and 4-Partition)
-    # Inside benchmark_fa3_kernel:
+    # Evaluate registered modules
     for name, module in active_modules.items():
         try:
             is_sparse = "run_fa3_sparse_q_kernel" in dir(module)
 
             if is_sparse:
-                launch_fn, O_triton, best_config = prepare_sparse_q_runner(
-                    module, Q, K, V, tune=tune, include_pruning=True
+                launch_fn, O_triton, best_config, ms_compress = prepare_sparse_q_runner(
+                    module, Q, K, V, tune=tune, include_pruning=True, rep=rep
                 )
             else:
-                launch_fn, O_triton, best_config = prepare_kernel_runner(
+                launch_fn, O_triton, best_config, ms_compress = prepare_kernel_runner(
                     module, Q, K, V, tune=tune
                 )
 
@@ -344,9 +354,9 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune
             tflops = to_attention_tflops(ms, seq_len, head_dim, batch=BATCH_SIZE, num_heads=NUM_HEADS)
         except Exception as e:
             print(f"[{name}] benchmark failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")
-            ms, tflops, best_config = None, None, "Kernel Failed / Not Set"
+            ms, tflops, best_config, ms_compress = None, None, "Kernel Failed / Not Set", None
 
-        results[name] = {"tflops": tflops, "ms": ms, "config": best_config}
+        results[name] = {"tflops": tflops, "ms": ms, "config": best_config, "compress_ms": ms_compress}
 
     return results
 
@@ -522,7 +532,11 @@ if __name__ == "__main__":
             for name, data in metrics.items():
                 row[f"{name}_TFLOPS"] = data["tflops"]
                 row[f"{name}_ms"] = data["ms"]
-                if data["tflops"] is not None:
+                if data.get("compress_ms") is not None:
+                    c_ms = data["compress_ms"]
+                    row[f"{name}_compress_ms"] = c_ms
+                    summary_str.append(f"{name}: {data['tflops']:.2f} TFLOPS/ {data['ms']:.4f} ms [Compress: {c_ms*1000.0:.2f} µs ({c_ms:.4f} ms)]")
+                elif data["tflops"] is not None:
                     summary_str.append(f"{name}: {data['tflops']:.2f} TFLOPS/ {data['ms']:.4f} ms")
 
             data_log.append(row)
@@ -549,7 +563,13 @@ if __name__ == "__main__":
         print(f"\n{'='*70}")
         print(f"             BENCHMARK RESULTS TABLE (HEAD_DIM={head_dim})")
         print(f"{'='*70}")
+        
         display_cols = ["SEQ_LEN"] + [f"{k}_TFLOPS" for k in ["PyTorch SDPA"] + list(active_modules.keys())]
+        # Include compression latency columns if present
+        for k in active_modules.keys():
+            if f"{k}_compress_ms" in df_dim.columns:
+                display_cols.append(f"{k}_compress_ms")
+
         print(df_dim[display_cols].to_string(index=False))
         print(f"{'='*70}\n")
 

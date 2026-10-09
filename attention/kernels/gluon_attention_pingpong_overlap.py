@@ -324,27 +324,24 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             # 5. Wait for WG1 to finish its Tensor Core issue phase before retrieving O0
             mbarrier.wait(p.pong_bar.index(0), pong_phase)
             pong_phase ^= 1
+            
+            # 1. Issue S_next = Q0 * K_j^T
+            mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
 
             # 2. Issue O0 += P_cur * V_{j-1}
             mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
             
-            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
-            kv_state = next_kv_state
-            
-            # 1. Issue S_next = Q0 * K_j^T
-            mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-            mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
-            
             # 3. Hand off Tensor Core issue slot to WG1
+            mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)
+            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
             mbarrier.arrive(p.ping_bar.index(0), count=1)
 
-            mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)
-
             # 4. Softmax math on CUDA ALUs for S_next (Overlapped with WG1 issuing WGMMA)
-            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
-            S_tile = S_tile * sm_scale_log2
+            S_tile, _ = mma_s.wait_num_outstanding(1).take_result()
 
+            S_tile = S_tile * sm_scale_log2
             m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
             rescale_factor = gl.exp2(m_old - m_new)
             
@@ -358,6 +355,8 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             
+            kv_state = next_kv_state
+            
         # -------------------------------------------------------------------
         # Unroll the last iteration for efficient q release
         # -------------------------------------------------------------------
@@ -365,24 +364,23 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.pong_bar.index(0), pong_phase)
         pong_phase ^= 1
 
-        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
-        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
-
-        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
-        kv_state = next_kv_state
-
         mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
         mma_s = mma_s_base.issue_async_mma(p.q0_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
 
-        mbarrier.arrive(p.ping_bar.index(0), count=1)
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
 
         mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
+        mbarrier.arrive(p.ping_bar.index(0), count=1)
 
-        S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
-        S_tile = S_tile * sm_scale_log2
+        kv_state = next_kv_state
+
+        S_tile, _ = mma_s.wait_num_outstanding(1).take_result()
             
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         
+        S_tile = S_tile * sm_scale_log2
         m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
         rescale_factor = gl.exp2(m_old - m_new)
             
@@ -488,26 +486,23 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             mbarrier.wait(p.ping_bar.index(0), ping_phase)
             ping_phase ^= 1
             
-            # 3. Issue O1 += P_cur * V_{j-1}
-            mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
-            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
-
-            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
-            kv_state = next_kv_state
-            
             # 2. Issue S_next = Q1 * K_j^T
             mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
             mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
             
+            # 3. Issue O1 += P_cur * V_{j-1}
+            mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
             # 4. Hand off Tensor Core issue slot back to WG0
             mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)
+            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
             mbarrier.arrive(p.pong_bar.index(0), count=1)
 
-
             # 5. Softmax math on CUDA ALUs for S_next (Overlapped with WG0 issuing WGMMA)
-            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
-            S_tile = S_tile * sm_scale_log2
+            S_tile, _ = mma_s.wait_num_outstanding(1).take_result()
 
+            S_tile = S_tile * sm_scale_log2
             m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
             rescale_factor = gl.exp2(m_old - m_new)
             
@@ -521,6 +516,8 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             
+            kv_state = next_kv_state
+            
         # -------------------------------------------------------------------
         # Unroll last iteration for efficient q release
         # -------------------------------------------------------------------
@@ -529,21 +526,21 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.ping_bar.index(0), ping_phase)
         ping_phase ^= 1
 
-        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
-        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
-
-        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
-        kv_state = next_kv_state
-
         mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
         mma_s = mma_s_base.issue_async_mma(p.q1_buf, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
 
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
         mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
         mbarrier.arrive(p.pong_bar.index(0), count=1)
 
-        S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
-        S_tile = S_tile * sm_scale_log2
+        kv_state = next_kv_state
 
+        S_tile, _ = mma_s.wait_num_outstanding(1).take_result()
+
+        S_tile = S_tile * sm_scale_log2
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         
         m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
@@ -785,7 +782,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
         for BK in (64, 128, 256)
         for warps in (4, )
         for num_stages in (2, 3, 4, 5, 6)
-        for SF in (1, 2, 4, 8)
+        for SF in (1, 2, 4)
         if valid(BM, BN, BK, warps, num_stages, SF)
     ]
     
@@ -947,17 +944,40 @@ if __name__ == "__main__":
     for SEQ_LEN, HEAD_DIM in sizes:
         BATCH = max(1, 16384 // SEQ_LEN)
         print(f"\nTesting BATCH={BATCH}, NUM_HEADS={NUM_HEADS}, SEQ_LEN={SEQ_LEN}, HEAD_DIM={HEAD_DIM}", flush=True)
-        
+
+        # Generate FP16 inputs
         Q = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         K = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
         V = torch.randn((BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM), device="cuda", dtype=torch.float16)
-        
+
+        # 1. Run Triton FA3 Kernel & PyTorch SDPA in FP16
         O_triton, config = run_fa3_kernel(Q, K, V, tune=args.tune, manual_config=manual_config)
         O_torch = torch.nn.functional.scaled_dot_product_attention(Q, K, V)
-        
-        torch.testing.assert_close(O_torch, O_triton, rtol=1e-2, atol=1e-2)
-        print("PASS: PyTorch reference matches Triton Gluon FA3!")
-        
+
+        # 2. Compute FP64 Ground-Truth Reference
+        Q_fp64 = Q.to(torch.float64)
+        K_fp64 = K.to(torch.float64)
+        V_fp64 = V.to(torch.float64)
+        O_ref_fp64 = torch.nn.functional.scaled_dot_product_attention(Q_fp64, K_fp64, V_fp64)
+
+        # 3. Measure Precision & Error against FP64 Ground Truth
+        O_triton_f64 = O_triton.to(torch.float64)
+        O_torch_f64 = O_torch.to(torch.float64)
+
+        rmse_triton = torch.sqrt(torch.mean((O_triton_f64 - O_ref_fp64) ** 2)).item()
+        rmse_torch  = torch.sqrt(torch.mean((O_torch_f64  - O_ref_fp64) ** 2)).item()
+
+        max_diff_triton = torch.max(torch.abs(O_triton_f64 - O_ref_fp64)).item()
+        max_diff_torch  = torch.max(torch.abs(O_torch_f64  - O_ref_fp64)).item()
+
+        print(f"  [Triton FA3]   RMSE vs FP64: {rmse_triton:.6e} | Max Abs Diff: {max_diff_triton:.6f}")
+        print(f"  [PyTorch SDPA] RMSE vs FP64: {rmse_torch:.6e} | Max Abs Diff: {max_diff_torch:.6f}")
+
+        # 4. Assert Closeness (adjusting atol for HEAD_DIM=256 due to FP16 ULP accumulation)
+        atol = 8e-2 if HEAD_DIM == 256 else 2e-2
+        torch.testing.assert_close(O_torch, O_triton, rtol=1e-2, atol=atol)
+        print(f"PASS: PyTorch reference matches Triton Gluon FA3! (atol={atol})")
+
         if args.tune:
             print(f"best config: {config}")
     

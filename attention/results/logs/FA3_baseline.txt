@@ -1,41 +1,43 @@
-INFO:    Setting 'NVIDIA_VISIBLE_DEVICES=all' to emulate legacy GPU binding.
-INFO:    Setting --writable-tmpfs (required by nvidia-container-cli)
-[INFO] File not found for '3-Part (Standard)' at '/home/notming/links/scratch/attention/kernels/gluon_attention_alu_xu_pipeline.py'. Skipping.
-
 ======================================================================
    STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=64)
    Active Kernels: ['4-Part']
 ======================================================================
 
 Start SEQ_LEN=512-HEAD_DIM=64 (1/6)
-Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 344.05 TFLOPS, 4-Part: 338.03 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 2.003977e-05 | Max Abs Diff: 0.000268
+Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 347.59 TFLOPS, 4-Part: 353.19 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 5, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=1024-HEAD_DIM=64 (2/6)
-Finish SEQ_LEN=1024-HEAD_DIM=64 -> PyTorch SDPA: 388.50 TFLOPS, 4-Part: 373.23 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 1.436039e-05 | Max Abs Diff: 0.000158
+Finish SEQ_LEN=1024-HEAD_DIM=64 -> PyTorch SDPA: 391.95 TFLOPS, 4-Part: 389.09 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=2048-HEAD_DIM=64 (3/6)
-Finish SEQ_LEN=2048-HEAD_DIM=64 -> PyTorch SDPA: 416.08 TFLOPS, 4-Part: 394.12 TFLOPS
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 1.029491e-05 | Max Abs Diff: 0.000130
+Finish SEQ_LEN=2048-HEAD_DIM=64 -> PyTorch SDPA: 419.62 TFLOPS, 4-Part: 410.51 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=4096-HEAD_DIM=64 (4/6)
-Finish SEQ_LEN=4096-HEAD_DIM=64 -> PyTorch SDPA: 427.59 TFLOPS, 4-Part: 401.99 TFLOPS
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 7.371523e-06 | Max Abs Diff: 0.000074
+Finish SEQ_LEN=4096-HEAD_DIM=64 -> PyTorch SDPA: 432.03 TFLOPS, 4-Part: 420.08 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=8192-HEAD_DIM=64 (5/6)
-Finish SEQ_LEN=8192-HEAD_DIM=64 -> PyTorch SDPA: 432.74 TFLOPS, 4-Part: 407.00 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 5.268387e-06 | Max Abs Diff: 0.000067
+Finish SEQ_LEN=8192-HEAD_DIM=64 -> PyTorch SDPA: 437.44 TFLOPS, 4-Part: 426.86 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=16384-HEAD_DIM=64 (6/6)
-Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 436.76 TFLOPS, 4-Part: 406.39 TFLOPS
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 3.739806e-06 | Max Abs Diff: 0.000036
+Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 440.95 TFLOPS, 4-Part: 430.20 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
 
 ======================================================================
              BENCHMARK RESULTS TABLE (HEAD_DIM=64)
 ======================================================================
  SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part_TFLOPS
-     512           344.054578     338.031680
-    1024           388.502036     373.231368
-    2048           416.079507     394.121852
-    4096           427.593742     401.986133
-    8192           432.743393     407.004474
-   16384           436.762243     406.387715
+     512           347.592650     353.189857
+    1024           391.949500     389.086343
+    2048           419.622986     410.508932
+    4096           432.030173     420.075303
+    8192           437.436934     426.856206
+   16384           440.950946     430.202168
 ======================================================================
 
 
@@ -47,34 +49,40 @@ Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 436.76 TFLOPS, 4-Part: 406.39 
 ======================================================================
 
 Start SEQ_LEN=512-HEAD_DIM=128 (1/6)
-Finish SEQ_LEN=512-HEAD_DIM=128 -> PyTorch SDPA: 448.36 TFLOPS, 4-Part: 455.45 TFLOPS
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
-Start SEQ_LEN=1024-HEAD_DIM=128 (2/6)
-Finish SEQ_LEN=1024-HEAD_DIM=128 -> PyTorch SDPA: 512.87 TFLOPS, 4-Part: 509.28 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 1.999728e-05 | Max Abs Diff: 0.000247
+Finish SEQ_LEN=512-HEAD_DIM=128 -> PyTorch SDPA: 451.68 TFLOPS, 4-Part: 460.09 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+Start SEQ_LEN=1024-HEAD_DIM=128 (2/6)
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 2.025382e-05 | Max Abs Diff: 0.020396
+Finish SEQ_LEN=1024-HEAD_DIM=128 -> PyTorch SDPA: 518.06 TFLOPS, 4-Part: 521.90 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=2048-HEAD_DIM=128 (3/6)
-Finish SEQ_LEN=2048-HEAD_DIM=128 -> PyTorch SDPA: 554.99 TFLOPS, 4-Part: 555.14 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 1.253193e-05 | Max Abs Diff: 0.013689
+Finish SEQ_LEN=2048-HEAD_DIM=128 -> PyTorch SDPA: 558.83 TFLOPS, 4-Part: 565.66 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=4096-HEAD_DIM=128 (4/6)
-Finish SEQ_LEN=4096-HEAD_DIM=128 -> PyTorch SDPA: 569.76 TFLOPS, 4-Part: 573.98 TFLOPS
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 7.343318e-06 | Max Abs Diff: 0.000074
+Finish SEQ_LEN=4096-HEAD_DIM=128 -> PyTorch SDPA: 581.88 TFLOPS, 4-Part: 584.68 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
 Start SEQ_LEN=8192-HEAD_DIM=128 (5/6)
-Finish SEQ_LEN=8192-HEAD_DIM=128 -> PyTorch SDPA: 587.86 TFLOPS, 4-Part: 585.33 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 6.745513e-06 | Max Abs Diff: 0.003956
+Finish SEQ_LEN=8192-HEAD_DIM=128 -> PyTorch SDPA: 593.60 TFLOPS, 4-Part: 595.84 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=16384-HEAD_DIM=128 (6/6)
-Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 590.52 TFLOPS, 4-Part: 589.59 TFLOPS
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 3.741913e-06 | Max Abs Diff: 0.000034
+Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 596.22 TFLOPS, 4-Part: 600.42 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
 
 ======================================================================
              BENCHMARK RESULTS TABLE (HEAD_DIM=128)
 ======================================================================
  SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part_TFLOPS
-     512           448.356214     455.450751
-    1024           512.872159     509.277813
-    2048           554.994659     555.140746
-    4096           569.755561     573.979077
-    8192           587.858737     585.329497
-   16384           590.523036     589.590824
+     512           451.680064     460.087655
+    1024           518.058520     521.901155
+    2048           558.825844     565.657744
+    4096           581.884172     584.679904
+    8192           593.598444     595.839549
+   16384           596.223657     600.419184
 ======================================================================
 
 
@@ -86,75 +94,41 @@ Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 590.52 TFLOPS, 4-Part: 589.59
 ======================================================================
 
 Start SEQ_LEN=512-HEAD_DIM=256 (1/6)
-Finish SEQ_LEN=512-HEAD_DIM=256 -> PyTorch SDPA: 470.74 TFLOPS, 4-Part: 462.36 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 1.989158e-05 | Max Abs Diff: 0.000255
+Finish SEQ_LEN=512-HEAD_DIM=256 -> PyTorch SDPA: 474.44 TFLOPS, 4-Part: 496.82 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=1024-HEAD_DIM=256 (2/6)
-Finish SEQ_LEN=1024-HEAD_DIM=256 -> PyTorch SDPA: 546.05 TFLOPS, 4-Part: 538.54 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 4.160014e-05 | Max Abs Diff: 0.034682
+Finish SEQ_LEN=1024-HEAD_DIM=256 -> PyTorch SDPA: 552.04 TFLOPS, 4-Part: 573.99 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=2048-HEAD_DIM=256 (3/6)
-Finish SEQ_LEN=2048-HEAD_DIM=256 -> PyTorch SDPA: 587.19 TFLOPS, 4-Part: 582.60 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 2.154998e-05 | Max Abs Diff: 0.018358
+Finish SEQ_LEN=2048-HEAD_DIM=256 -> PyTorch SDPA: 592.84 TFLOPS, 4-Part: 607.89 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=4096-HEAD_DIM=256 (4/6)
-Finish SEQ_LEN=4096-HEAD_DIM=256 -> PyTorch SDPA: 618.91 TFLOPS, 4-Part: 612.71 TFLOPS
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 4.307975e-05 | Max Abs Diff: 0.031224
+Finish SEQ_LEN=4096-HEAD_DIM=256 -> PyTorch SDPA: 624.92 TFLOPS, 4-Part: 641.42 TFLOPS
   [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=8192-HEAD_DIM=256 (5/6)
-Finish SEQ_LEN=8192-HEAD_DIM=256 -> PyTorch SDPA: 632.46 TFLOPS, 4-Part: 625.44 TFLOPS
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 1.061864e-05 | Max Abs Diff: 0.006725
+Finish SEQ_LEN=8192-HEAD_DIM=256 -> PyTorch SDPA: 639.86 TFLOPS, 4-Part: 651.95 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 Start SEQ_LEN=16384-HEAD_DIM=256 (6/6)
-Finish SEQ_LEN=16384-HEAD_DIM=256 -> PyTorch SDPA: 638.20 TFLOPS, 4-Part: 635.32 TFLOPS
-  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+  [4-Part] PASS (atol=0.05) | RMSE vs FP64: 2.613264e-05 | Max Abs Diff: 0.008014
+Finish SEQ_LEN=16384-HEAD_DIM=256 -> PyTorch SDPA: 644.77 TFLOPS, 4-Part: 656.12 TFLOPS
+  [4-Part] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
 
 ======================================================================
              BENCHMARK RESULTS TABLE (HEAD_DIM=256)
 ======================================================================
  SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part_TFLOPS
-     512           470.736609     462.355809
-    1024           546.045045     538.544831
-    2048           587.189971     582.599587
-    4096           618.913461     612.714845
-    8192           632.464733     625.436763
-   16384           638.200390     635.321803
+     512           474.440017     496.819568
+    1024           552.035521     573.987382
+    2048           592.844223     607.893539
+    4096           624.924429     641.421076
+    8192           639.855340     651.949789
+   16384           644.771999     656.124415
 ======================================================================
 
 
 [INFO] Benchmark chart saved successfully to '/home/notming/links/scratch/attention/results/plots/FA3_Benchmark_HEAD_DIM_256.png'
-
-scontrol show job 914001
-JobId=914001 JobName=FA3_baseline
-   UserId=notming(3159615) GroupId=notming(3159615) MCS_label=N/A
-   Priority=1450162 Nice=0 Account=rrg-mmehride QOS=normal
-   JobState=COMPLETING Reason=None Dependency=(null)
-   Requeue=0 Restarts=0 BatchFlag=1 Reboot=0 ExitCode=0:0
-   RunTime=00:08:43 TimeLimit=02:00:00 TimeMin=N/A
-   SubmitTime=2026-09-13T22:01:50 EligibleTime=2026-09-13T22:01:50
-   AccrueTime=2026-09-13T22:01:50
-   StartTime=2026-09-13T22:02:40 EndTime=2026-09-13T22:11:23 Deadline=N/A
-   SuspendTime=None SecsPreSuspend=0 LastSchedEval=2026-09-13T22:02:40 Scheduler=Backfill
-   Partition=compute AllocNode:Sid=trig-login01:1822334
-   ReqNodeList=(null) ExcNodeList=(null)
-   NodeList=trig0023
-   BatchHost=trig0023
-   NumNodes=1 NumCPUs=24 NumTasks=1 CPUs/Task=1 ReqB:S:C:T=0:0:*:*
-   ReqTRES=cpu=1,mem=187.50G,node=1,billing=1,gres/gpu=1
-   AllocTRES=cpu=24,mem=187.50G,node=1,billing=1,gres/gpu=1
-   Socks/Node=* NtasksPerN:B:S:C=0:0:*:* CoreSpec=*
-   MinCPUsNode=1 MinMemoryNode=187.50G MinTmpDiskNode=0
-   Features=(null) DelayBoot=00:00:00
-   OverSubscribe=OK Contiguous=0 Licenses=(null) LicensesAlloc=(null) Network=(null)
-   Command=/scratch/notming/attention/sbatch_sh/benchmark_fa3_baseline.sh
-   SubmitLine=SBATCH --comment /opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/benchmark_fa3_baseline.sh --export=NONE --get-user-env sbatch_sh/benchmark_fa3_baseline.sh
-   WorkDir=/scratch/notming/attention
-   Comment=/opt/slurm/bin/sbatch --export=NONE --get-user-env sbatch_sh/benchmark_fa3_baseline.sh
-   StdErr=
-   StdIn=/dev/null
-   StdOut=/scratch/notming/attention/FA3_baseline_914001.out
-   CpusPerTres=gpu:24
-   TresPerNode=gres/gpu:1
-
-sacct -j 914001
-JobID           JobName    Account    Elapsed  MaxVMSize     MaxRSS  SystemCPU    UserCPU ExitCode 
------------- ---------- ---------- ---------- ---------- ---------- ---------- ---------- -------- 
-914001       FA3_basel+ rrg-mmehr+   00:08:43                        00:32.146  07:48.457      0:0 
-914001.batch      batch rrg-mmehr+   00:08:43          0   6781576K  00:32.146  07:48.457      0:0 
-914001.exte+     extern rrg-mmehr+   00:08:43                         00:00:00   00:00:00      0:0 
-

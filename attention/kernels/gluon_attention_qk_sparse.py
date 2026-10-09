@@ -110,8 +110,10 @@ class PartitionArgs:
 
     q_ready_bar: gl.shared_memory_descriptor
     q_empty_bar: gl.shared_memory_descriptor
-    kv_empty_bars: gl.shared_memory_descriptor
-    kv_ready_bars: gl.shared_memory_descriptor
+    k_empty_bars: gl.shared_memory_descriptor
+    k_ready_bars: gl.shared_memory_descriptor
+    v_empty_bars: gl.shared_memory_descriptor
+    v_ready_bars: gl.shared_memory_descriptor
     
     o0_empty_bars: gl.shared_memory_descriptor
     o0_ready_bars: gl.shared_memory_descriptor
@@ -130,7 +132,8 @@ class PartitionArgs:
         q0_desc, q1_desc, eq0_desc, eq1_desc, k_desc, v_desc, o0_desc, o1_desc, 
         q0_buf, q1_buf, eq0_buf, eq1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs, 
         q_ready_bar, q_empty_bar, 
-        kv_empty_bars, kv_ready_bars,
+        k_empty_bars, k_ready_bars,
+        v_empty_bars, v_ready_bars,
         o0_empty_bars, o0_ready_bars,
         o1_empty_bars, o1_ready_bars,
         ping_bar, pong_bar,
@@ -157,8 +160,10 @@ class PartitionArgs:
         
         self.q_ready_bar = q_ready_bar
         self.q_empty_bar = q_empty_bar
-        self.kv_empty_bars = kv_empty_bars
-        self.kv_ready_bars = kv_ready_bars
+        self.k_empty_bars = k_empty_bars
+        self.k_ready_bars = k_ready_bars
+        self.v_empty_bars = v_empty_bars
+        self.v_ready_bars = v_ready_bars
         
         self.o0_empty_bars = o0_empty_bars
         self.o0_ready_bars = o0_ready_bars
@@ -236,7 +241,7 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
 
     scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
 
-    kv_state = Counter.create(1, p.kv_empty_bars.shape[0])
+    kv_state = Counter.create(1, p.k_empty_bars.shape[0])
     q_state = Counter.create(1, p.q_empty_bar.shape[0])
 
     for tile_idx in range(scheduler.get_num_tiles()):
@@ -261,12 +266,15 @@ def fa3_producer_partition(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LE
         num_steps = SEQ_LEN // BLOCK_N
 
         for step in range(num_steps):
-            bar = p.kv_ready_bars.index(kv_state.index)
-            mbarrier.wait(p.kv_empty_bars.index(kv_state.index), kv_state.phase)
-
-            mbarrier.expect(bar, p.k_desc.block_type.nbytes + p.v_desc.block_type.nbytes)
-            tma.async_copy_global_to_shared(p.k_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.k_bufs.index(kv_state.index))
-            tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], bar, p.v_bufs.index(kv_state.index))
+            k_bar = p.k_ready_bars.index(kv_state.index)
+            mbarrier.wait(p.k_empty_bars.index(kv_state.index), kv_state.phase)
+            mbarrier.expect(k_bar, p.k_desc.block_type.nbytes)
+            tma.async_copy_global_to_shared(p.k_desc, [kv_global_offset + step * BLOCK_N, 0], k_bar, p.k_bufs.index(kv_state.index))
+            
+            v_bar = p.v_ready_bars.index(kv_state.index)
+            mbarrier.wait(p.v_empty_bars.index(kv_state.index), kv_state.phase)
+            mbarrier.expect(v_bar, p.v_desc.block_type.nbytes)
+            tma.async_copy_global_to_shared(p.v_desc, [kv_global_offset + step * BLOCK_N, 0], v_bar, p.v_bufs.index(kv_state.index))
             
             kv_state = kv_state.next()
             
@@ -279,7 +287,7 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]
     BLOCK_K: gl.constexpr = p.v_desc.block_type.shape[1]
     
-    num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
+    num_stages: gl.constexpr = p.k_ready_bars.shape[0]
     dtype: gl.constexpr = p.q0_desc.dtype
 
     scheduler = SchedulerImpl.initialize(p.o0_desc.shape[0], p.o0_desc.shape[1], BLOCK_M, BLOCK_K)
@@ -306,10 +314,11 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
         e_reg = mma_s_base.issue_metadata_load(p.eq0_buf)
 
-        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+        mbarrier.wait(p.k_ready_bars.index(kv_state.index), kv_state.phase)
         mma_s = mma_s_base.issue_async_sparse_mma(p.q0_buf, e_reg, p.k_bufs.index(kv_state.index).permute((1, 0)))
 
         mbarrier.arrive(p.ping_bar.index(0), count=1)
+        mbarrier.arrive(p.k_empty_bars.index(kv_state.index), count=1)
 
         S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
         S_tile = S_tile * sm_scale_log2
@@ -323,22 +332,27 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         for step in range(1, num_steps - 1):
             next_kv_state = kv_state.next()
             
+            # Wait for WG1 issue slot
             mbarrier.wait(p.pong_bar.index(0), pong_phase)
             pong_phase ^= 1
+            
+            # 1. Issue S_next = Q0 * K_j^T (Sparse) FIRST
+            mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+            mma_s = mma_s_base.issue_async_sparse_mma(p.q0_buf, e_reg, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
 
+            # 2. Issue O0 += P_cur * V_{j-1} (Dense) SECOND
+            mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
             mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
             
-            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-            kv_state = next_kv_state
-            
-            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
-            mma_s = mma_s_base.issue_async_sparse_mma(p.q0_buf, e_reg, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
-            
+            # 3. Hand off issue slot to WG1
+            mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)
+            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
             mbarrier.arrive(p.ping_bar.index(0), count=1)
 
-            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
-            S_tile = S_tile * sm_scale_log2
+            # 4. Softmax on CUDA ALUs (Overlapped with Tensor Core O0)
+            S_tile, _ = mma_s.wait_num_outstanding(1).take_result()
 
+            S_tile = S_tile * sm_scale_log2
             m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
             rescale_factor = gl.exp2(m_old - m_new)
             
@@ -348,29 +362,34 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
             
             P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
+            # 5. Retrieve O0 and apply rescale factor
             o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
             o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
             
+            kv_state = next_kv_state
+
+        # Unroll last iteration
         next_kv_state = kv_state.next()
         mbarrier.wait(p.pong_bar.index(0), pong_phase)
         pong_phase ^= 1
 
-        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
-
-        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-        kv_state = next_kv_state
-
-        mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+        mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
         mma_s = mma_s_base.issue_async_sparse_mma(p.q0_buf, e_reg, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
 
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+        mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
         mbarrier.arrive(p.ping_bar.index(0), count=1)
 
-        S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
-        S_tile = S_tile * sm_scale_log2
-            
+        kv_state = next_kv_state
+
+        S_tile, _ = mma_s.wait_num_outstanding(1).take_result()
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
         
+        S_tile = S_tile * sm_scale_log2
         m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
         rescale_factor = gl.exp2(m_old - m_new)
             
@@ -384,13 +403,15 @@ def fa3_consumer_wg0(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
         mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
+        # EPILOGUE
         mbarrier.wait(p.pong_bar.index(0), pong_phase)
         pong_phase ^= 1
         
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
         mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
         
         mbarrier.arrive(p.ping_bar.index(0), count=1)
-        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
         kv_state = kv_state.next()
         q_state = q_state.next()
 
@@ -410,7 +431,7 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
     BLOCK_N: gl.constexpr = p.k_desc.block_type.shape[0]
     BLOCK_K: gl.constexpr = p.v_desc.block_type.shape[1]
 
-    num_stages: gl.constexpr = p.kv_ready_bars.shape[0]
+    num_stages: gl.constexpr = p.k_ready_bars.shape[0]
     dtype: gl.constexpr = p.q1_desc.dtype
 
     scheduler = SchedulerImpl.initialize(p.o1_desc.shape[0], p.o1_desc.shape[1], BLOCK_M, BLOCK_K)
@@ -440,10 +461,11 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
         mbarrier.wait(p.q_ready_bar.index(0), q_state.phase)
         e_reg = mma_s_base.issue_metadata_load(p.eq1_buf)
 
-        mbarrier.wait(p.kv_ready_bars.index(kv_state.index), kv_state.phase)
+        mbarrier.wait(p.k_ready_bars.index(kv_state.index), kv_state.phase)
         mma_s = mma_s_base.issue_async_sparse_mma(p.q1_buf, e_reg, p.k_bufs.index(kv_state.index).permute((1, 0)))
 
         mbarrier.arrive(p.pong_bar.index(0), count=1)
+        mbarrier.arrive(p.k_empty_bars.index(kv_state.index), count=1)
 
         S_tile, mma_s = mma_s.wait_num_outstanding(0).take_result()
         S_tile = S_tile * sm_scale_log2
@@ -456,83 +478,93 @@ def fa3_consumer_wg1(p: PartitionArgs, SchedulerImpl: gl.constexpr, SEQ_LEN: gl.
 
         for step in range(1, num_steps - 1):
             next_kv_state = kv_state.next()
-
+            
+            # Wait for WG1 issue slot
             mbarrier.wait(p.ping_bar.index(0), ping_phase)
             ping_phase ^= 1
-
-            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
-
-            mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-            kv_state = next_kv_state
-
-            mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+            
+            # 1. Issue S_next = Q0 * K_j^T (Sparse) FIRST
+            mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
             mma_s = mma_s_base.issue_async_sparse_mma(p.q1_buf, e_reg, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
 
+            # 2. Issue O0 += P_cur * V_{j-1} (Dense) SECOND
+            mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+            mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+            
+            # 3. Hand off issue slot to WG1
+            mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)
+            mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
             mbarrier.arrive(p.pong_bar.index(0), count=1)
 
-            S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
-            S_tile = S_tile * sm_scale_log2
+            # 4. Softmax on CUDA ALUs (Overlapped with Tensor Core O0)
+            S_tile, _ = mma_s.wait_num_outstanding(1).take_result()
 
+            S_tile = S_tile * sm_scale_log2
             m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
             rescale_factor = gl.exp2(m_old - m_new)
-
+            
             S_tile = gl.exp2(S_tile - m_new[:, None])
             l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
             m_old = m_new
-
+            
             P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
+            # 5. Retrieve O0 and apply rescale factor
             o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
             o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
             mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
-
+            
+            kv_state = next_kv_state
+            
+        # Unroll last iteration
         next_kv_state = kv_state.next()
-
         mbarrier.wait(p.ping_bar.index(0), ping_phase)
         ping_phase ^= 1
 
-        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
-
-        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
-        kv_state = next_kv_state
-
-        mbarrier.wait(p.kv_ready_bars.index(next_kv_state.index), next_kv_state.phase)
+        mbarrier.wait(p.k_ready_bars.index(next_kv_state.index), next_kv_state.phase)
         mma_s = mma_s_base.issue_async_sparse_mma(p.q1_buf, e_reg, p.k_bufs.index(next_kv_state.index).permute((1, 0)))
 
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+
+        mbarrier.arrive(p.k_empty_bars.index(next_kv_state.index), count=1)
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
         mbarrier.arrive(p.pong_bar.index(0), count=1)
 
-        S_tile, _ = mma_s.wait_num_outstanding(0).take_result()
-        S_tile = S_tile * sm_scale_log2
+        kv_state = next_kv_state
 
+        S_tile, _ = mma_s.wait_num_outstanding(1).take_result()
         mbarrier.arrive(p.q_empty_bar.index(0), count=1)
-
+        
+        S_tile = S_tile * sm_scale_log2
         m_new = gl.maximum(m_old, gl.max(S_tile, axis=1))
         rescale_factor = gl.exp2(m_old - m_new)
-
+            
         S_tile = gl.exp2(S_tile - m_new[:, None])
         l_old = l_old * rescale_factor + gl.sum(S_tile, axis=1)
         m_old = m_new
-
+            
         P_cur_permuted = gl.convert_layout(gl.cast(S_tile, dtype=dtype), p_layout)
 
         o_acc, _ = mma_o.wait_num_outstanding(0).take_result()
         o_acc = o_acc * gl.convert_layout(rescale_factor, m_layout)[:, None]
         mma_o = WGMMA(o_acc, gl.to_tensor(True), mma_o.layout, SUB_BM, BLOCK_K)
 
+        # EPILOGUE
         mbarrier.wait(p.ping_bar.index(0), ping_phase)
         ping_phase ^= 1
-
-        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
-
-        mbarrier.arrive(p.pong_bar.index(0), count=1)
         
-        mbarrier.arrive(p.kv_empty_bars.index(kv_state.index), count=1)
+        mbarrier.wait(p.v_ready_bars.index(kv_state.index), kv_state.phase)
+        mma_o = mma_o.issue_async_mma(P_cur_permuted, p.v_bufs.index(kv_state.index))
+        
+        mbarrier.arrive(p.pong_bar.index(0), count=1)
+        mbarrier.arrive(p.v_empty_bars.index(kv_state.index), count=1)
         kv_state = kv_state.next()
         q_state = q_state.next()
 
         o_acc, mma_o = mma_o.wait_num_outstanding(0).take_result()
         l_final_m = gl.convert_layout(l_old, m_layout)
-        acc_final = (o_acc / l_final_m[:, None]).to(p.o1_desc.dtype)
+        acc_final = (o_acc / l_final_m[:, None]).to(p.o0_desc.dtype)
 
         acc_state = store_acc_to_smem_subtile(acc_final, p.o1_bufs, p.o1_empty_bars, p.o1_ready_bars, acc_state, p.SUBTILE_FACTOR)
 
@@ -608,8 +640,10 @@ def fa3_warp_specialized_kernel(
     q_ready_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
     q_empty_bar = gl.allocate_shared_memory(gl.int64, [1, 1], mbarrier.MBarrierLayout())
     
-    kv_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
-    kv_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+    k_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+    k_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+    v_empty_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
+    v_ready_bars = gl.allocate_shared_memory(gl.int64, [num_stages, 1], mbarrier.MBarrierLayout())
 
     o0_empty_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
     o0_ready_bars = gl.allocate_shared_memory(gl.int64, [2, 1], mbarrier.MBarrierLayout())
@@ -626,8 +660,10 @@ def fa3_warp_specialized_kernel(
     mbarrier.init(pong_bar.index(0), count=1)
 
     for i in gl.static_range(num_stages):
-        mbarrier.init(kv_ready_bars.index(i), count=1)
-        mbarrier.init(kv_empty_bars.index(i), count=2)
+        mbarrier.init(k_ready_bars.index(i), count=1)
+        mbarrier.init(k_empty_bars.index(i), count=2)
+        mbarrier.init(v_ready_bars.index(i), count=1)
+        mbarrier.init(v_empty_bars.index(i), count=2)
 
     for i in gl.static_range(2):
         mbarrier.init(o0_ready_bars.index(i), count=1)
@@ -640,7 +676,8 @@ def fa3_warp_specialized_kernel(
         q0_desc, q1_desc, eq0_desc, eq1_desc, k_desc, v_desc, o0_desc, o1_desc,
         q0_buf, q1_buf, eq0_buf, eq1_buf, k_bufs, v_bufs, o0_bufs, o1_bufs,
         q_ready_bar, q_empty_bar, 
-        kv_empty_bars, kv_ready_bars,
+        k_empty_bars, k_ready_bars,
+        v_empty_bars, v_ready_bars,
         o0_empty_bars, o0_ready_bars,
         o1_empty_bars, o1_ready_bars,
         ping_bar, pong_bar,
@@ -683,7 +720,7 @@ def fa3_get_configs(pre_hook=None, tune=True):
         )
         fp16_smem_bytes = 2 * fp16_elements
         meta_bytes = 2 * (2 * (SUB_BM // 16) * BK) # Metadata EQ0, EQ1
-        num_barriers = 2 + (2 * num_stages) + 8 + 2
+        num_barriers = 2 + (4 * num_stages) + 8 + 2
         barrier_bytes = 8 * num_barriers
 
         total_smem_bytes = fp16_smem_bytes + meta_bytes + barrier_bytes
