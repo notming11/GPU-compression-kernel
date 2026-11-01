@@ -972,7 +972,7 @@ if __name__ == "__main__":
     }
 
     NUM_HEADS = 16
-    sizes = [(4096, 64), (4096, 128), (4096, 256), ]
+    sizes = [(4096, 128)]
 
     for SEQ_LEN, HEAD_DIM in sizes:
         BATCH = max(1, 16384 // SEQ_LEN)
