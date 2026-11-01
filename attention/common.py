@@ -226,6 +226,7 @@ class WGMMA:
         return a_compressed, meta_reordered
     @gluon.jit
     def dense_to_2_4_sparse_unpacked(self, a_dense, num_warps, BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_K: gl.constexpr, in_smem=False):
+        # gl.static_print(a_dense.type.layout.format_tensor_view(a_dense.shape))
         # 2. Define Register Layout
         if num_warps == 4:
             warp_bases: gl.constexpr = [[16, 0], [32, 0]]
@@ -235,8 +236,8 @@ class WGMMA:
             warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
 
         a_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
-            reg_bases=[[0, 1], [0, 2], [8, 0], [0, 16], [0, 32]],
-            lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]],
+            reg_bases=[[0, 1], [0, 2], [0, 8], [0, 16], [0, 32]],
+            lane_bases=[[8, 0], [0, 4], [1, 0], [2, 0], [4, 0]],
             warp_bases=warp_bases,
             block_bases=[],
             shape=[16 * num_warps, 64],
@@ -246,6 +247,8 @@ class WGMMA:
             a_dense = a_dense.load(a_reg_layout)
         else:
             a_dense = gl.convert_layout(a_dense, a_reg_layout)
+        
+        # gl.static_print(a_dense.type.layout.format_tensor_view(a_dense.shape))
         
         a_grouped = a_dense.reshape(BLOCK_SIZE_M, BLOCK_SIZE_K // 4, 2, 2)
         a_even, a_odd = a_grouped.split()
