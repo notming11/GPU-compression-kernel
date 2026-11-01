@@ -30,7 +30,7 @@ os.environ["TMP"] = SCRATCH_WORKSPACE
 os.environ["TEMP"] = SCRATCH_WORKSPACE
 os.environ["CUDA_CACHE_PATH"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
 os.environ["TORCH_HOME"] = os.path.join(SCRATCH_WORKSPACE, f"cuda_cache_{JOB_ID}")
-os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 
 # ---------------------------------------------------------------------------
 # HELPER FUNCTIONS
@@ -63,7 +63,7 @@ def get_best_config(module, head_dim: int = None):
 def prepare_kernel_runner(module, Q, K, V, tune=True, manual_config=None):
     """
     Pre-allocates host TMA descriptors and output memory once, returning a pure 
-    GPU launch closure compatible with CUDA Graphs, along with O, best_config, and None for compress_ms.
+    GPU launch closure compatible with CUDA Graphs, along with O, best_config, None for compress_ms, and None for sparsifier_cfg.
     """
     BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM = Q.shape
     O = torch.empty_like(Q)
@@ -159,13 +159,13 @@ def prepare_kernel_runner(module, Q, K, V, tune=True, manual_config=None):
                 num_stages=stages, SUBTILE_FACTOR=sf, num_warps=num_warps
             )
 
-    return launch_fn, O_ref, best_cfg, None
+    return launch_fn, O_ref, best_cfg, None, None
 
 def prepare_sparse_q_runner(module, Q, K, V, tune=True, manual_config=None, include_pruning=True, rep=100):
     """
     Pre-allocates GPU intermediate compressed buffers (Q_comp, E_Q) and host TMA 
     descriptors once. Returns a pure GPU launch closure, along with standalone 2:4 
-    compression latency measured via CUDA Graphs.
+    compression latency measured via CUDA Graphs and extracted sparsifier config.
     """
     BATCH, NUM_HEADS, SEQ_LEN, HEAD_DIM = Q.shape
     M_total = BATCH * NUM_HEADS * SEQ_LEN
@@ -217,10 +217,12 @@ def prepare_sparse_q_runner(module, Q, K, V, tune=True, manual_config=None, incl
         prune_bm = prune_cfg.kwargs["BLOCK_SIZE_M"]
         prune_bk = prune_cfg.kwargs["BLOCK_SIZE_K"]
         prune_warps = getattr(prune_cfg, "num_warps", 4)
+        sparsifier_config = {"BLOCK_SIZE_M": prune_bm, "BLOCK_SIZE_K": prune_bk, "num_warps": prune_warps}
     else:
         prune_bm = manual_config.get("prune_bm", 128) if manual_config else 128
         prune_bk = HEAD_DIM
         prune_warps = 4
+        sparsifier_config = {"BLOCK_SIZE_M": prune_bm, "BLOCK_SIZE_K": prune_bk, "num_warps": prune_warps}
 
     # 3. Create TMA Descriptors ONCE on host
     dummy_block = [1, 1]
@@ -310,7 +312,7 @@ def prepare_sparse_q_runner(module, Q, K, V, tune=True, manual_config=None, incl
         except Exception as e:
             print(f"[WARN] Failed to measure compression latency: {e}")
 
-    return launch_fn, O_ref, best_cfg, ms_compress
+    return launch_fn, O_ref, best_cfg, ms_compress, sparsifier_config
 
 def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune: bool = True, rep: int = 100):
     NUM_HEADS = 16
@@ -333,7 +335,7 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune
         print(f"PyTorch SDPA failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")
         tflops_torch, ms_torch = None, None
 
-    results["PyTorch SDPA"] = {"tflops": tflops_torch, "ms": ms_torch, "compress_ms": None}
+    results["PyTorch SDPA"] = {"tflops": tflops_torch, "ms": ms_torch, "compress_ms": None, "sparsifier_config": None}
 
     # Evaluate registered modules
     for name, module in active_modules.items():
@@ -341,11 +343,11 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune
             is_sparse = "run_fa3_sparse_q_kernel" in dir(module)
 
             if is_sparse:
-                launch_fn, O_triton, best_config, ms_compress = prepare_sparse_q_runner(
+                launch_fn, O_triton, best_config, ms_compress, sparsifier_cfg = prepare_sparse_q_runner(
                     module, Q, K, V, tune=tune, include_pruning=True, rep=rep
                 )
             else:
-                launch_fn, O_triton, best_config, ms_compress = prepare_kernel_runner(
+                launch_fn, O_triton, best_config, ms_compress, sparsifier_cfg = prepare_kernel_runner(
                     module, Q, K, V, tune=tune
                 )
 
@@ -354,9 +356,15 @@ def benchmark_fa3_kernel(seq_len: int, head_dim: int, active_modules: dict, tune
             tflops = to_attention_tflops(ms, seq_len, head_dim, batch=BATCH_SIZE, num_heads=NUM_HEADS)
         except Exception as e:
             print(f"[{name}] benchmark failed at SEQ_LEN={seq_len}, HEAD_DIM={head_dim}: {e}")
-            ms, tflops, best_config, ms_compress = None, None, "Kernel Failed / Not Set", None
+            ms, tflops, best_config, ms_compress, sparsifier_cfg = None, None, "Kernel Failed / Not Set", None, None
 
-        results[name] = {"tflops": tflops, "ms": ms, "config": best_config, "compress_ms": ms_compress}
+        results[name] = {
+            "tflops": tflops, 
+            "ms": ms, 
+            "config": best_config, 
+            "compress_ms": ms_compress,
+            "sparsifier_config": sparsifier_cfg,
+        }
 
     return results
 
@@ -546,8 +554,12 @@ if __name__ == "__main__":
             # Output autotuned configurations per kernel
             for name, module in active_modules.items():
                 cfg = metrics.get(name, {}).get("config")
+                sparsifier_cfg = metrics.get(name, {}).get("sparsifier_config")
+
                 if cfg is None or (isinstance(cfg, str) and cfg == "Kernel Failed / Not Set"):
                     cfg = get_best_config(module, head_dim)
+                
+                # Print FA3 Kernel Configuration
                 if isinstance(cfg, str):
                     print(f"  [{name}] best config: {cfg}")
                 elif cfg is not None and hasattr(cfg, "kwargs"):
@@ -556,6 +568,10 @@ if __name__ == "__main__":
                     print(f"  [{name}] best config: {cfg}, num_warps={cfg.get('warps', cfg.get('num_warps', 'N/A'))}")
                 else:
                     print(f"  [{name}] best config: {cfg}")
+
+                # Print Sparsifier Configuration if available
+                if sparsifier_cfg is not None:
+                    print(f"  [{name}] sparsifier config: {sparsifier_cfg}")
 
         df_dim = pd.DataFrame(data_log)
         

@@ -224,6 +224,161 @@ class WGMMA:
         )
 
         return a_compressed, meta_reordered
+    @gluon.jit
+    def dense_to_2_4_sparse_unpacked(self, a_dense, num_warps, BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_K: gl.constexpr, in_smem=False):
+        # 2. Define Register Layout
+        if num_warps == 4:
+            warp_bases: gl.constexpr = [[16, 0], [32, 0]]
+        elif num_warps == 8:
+            warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0]]
+        else:
+            warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
+
+        a_reg_layout: gl.constexpr = gl.DistributedLinearLayout(
+            reg_bases=[[0, 1], [0, 2], [8, 0], [0, 16], [0, 32]],
+            lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]],
+            warp_bases=warp_bases,
+            block_bases=[],
+            shape=[16 * num_warps, 64],
+        )   
+
+        if in_smem:
+            a_dense = a_dense.load(a_reg_layout)
+        else:
+            a_dense = gl.convert_layout(a_dense, a_reg_layout)
+        
+        a_grouped = a_dense.reshape(BLOCK_SIZE_M, BLOCK_SIZE_K // 4, 2, 2)
+        a_even, a_odd = a_grouped.split()
+
+        a0, a2 = a_even.split()
+        a1, a3 = a_odd.split()
+
+        # 3. Prune 2:4 (select top 2 values algebraically)
+        c01 = a0 > a1
+        c02 = a0 > a2
+        c03 = a0 > a3
+        c12 = a1 > a2
+        c13 = a1 > a3
+        c23 = a2 > a3
+    
+        c10 = ~c01
+        c20 = ~c02
+        c21 = ~c12
+
+        b0_bool = (c01 & (c02 | c03)) | (c02 & c03)
+        b1_bool = (c10 & (c12 | c13)) | (c12 & c13)
+        b2_bool = (c20 & (c21 | c23)) | (c21 & c23)
+
+        nz0 = gl.where(b0_bool, a0, gl.where(b1_bool, a1, a2))
+        nz1 = gl.where(b0_bool & b1_bool, a1, gl.where(b2_bool & (b0_bool | b1_bool), a2, a3))
+
+        a_compressed = gl.join(nz0, nz1).reshape(BLOCK_SIZE_M, BLOCK_SIZE_K // 2)
+
+        meta_4 = gl.where(b0_bool,
+            gl.where(b1_bool, 4, gl.where(b2_bool, 8, 12)),
+            gl.where(b1_bool, gl.where(b2_bool, 9, 13), 14))
+
+        # gl.static_print(gl.to_linear_layout(meta_4.type.layout, meta_4.type.shape))
+        
+        # # 4. Pack metadata
+        # meta_4_reshaped = meta_4.reshape(BLOCK_SIZE_M // 16, 2, 8, BLOCK_SIZE_K // 64, 4, 2, 2)
+        # meta_4_permuted = meta_4_reshaped.permute(0, 3, 2, 4, 1, 5, 6)
+        # meta_4_ready = meta_4_permuted.reshape(BLOCK_SIZE_M // 16, BLOCK_SIZE_K, 2, 2)
+
+        # meta_even, meta_odd = meta_4_ready.split()
+        # mn0, mn2 = meta_even.split()
+        # mn1, mn3 = meta_odd.split()
+
+        # meta_reordered = gl.inline_asm_elementwise(
+        #     asm="""
+        #     {
+        #     .reg .b32 t1, t2, t3;
+        #     shl.b32 t1, $2, 4;
+        #     shl.b32 t2, $3, 8;
+        #     shl.b32 t3, $4, 12;
+        #     or.b32 $0, $1, t1;
+        #     or.b32 $0, $0, t2;
+        #     or.b32 $0, $0, t3;
+        #     }
+        #     """,
+        #     constraints="=r,r,r,r,r",
+        #     args=[mn0, mn1, mn2, mn3],
+        #     dtype=gl.int16,
+        #     is_pure=True,
+        #     pack=1,
+        # )
+
+        return a_compressed, meta_4
+    
+    @gluon.jit
+    def mma_convert_layout_unpacked(self, a_compressed, meta_4, num_warps, BLOCK_SIZE_M: gl.constexpr, BLOCK_SIZE_K: gl.constexpr):
+        a_compressed = gl.convert_layout(
+            a_compressed,
+            gl.DotOperandLayout(
+                operand_index=0,
+                parent=self.layout,
+                k_width=32 // a_compressed.dtype.primitive_bitwidth,
+                meta=0
+            )
+        )
+        
+        if num_warps == 4:
+            warp_bases: gl.constexpr = [[16, 0], [32, 0]]
+        elif num_warps == 8:
+            warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0]]
+        else:
+            warp_bases: gl.constexpr = [[16, 0], [32, 0], [64, 0], [128, 0]]
+            
+        meta_4 = gl.convert_layout(
+            meta_4,
+            gl.DistributedLinearLayout(
+                reg_bases=[[8, 0], [0, 1], [0, 2], [0, 16]],
+                lane_bases=[[0, 4], [0, 8], [1, 0], [2, 0], [4, 0]],
+                warp_bases=warp_bases,
+                block_bases = [],
+                shape=[16 * num_warps, 32]
+            )
+        )
+        
+        # 4. Pack metadata
+        meta_4_reshaped = meta_4.reshape(BLOCK_SIZE_M // 16, 2, 8, BLOCK_SIZE_K // 64, 4, 2, 2)
+        meta_4_permuted = meta_4_reshaped.permute(0, 3, 2, 4, 1, 5, 6)
+        meta_4_ready = meta_4_permuted.reshape(BLOCK_SIZE_M // 16, BLOCK_SIZE_K, 2, 2)
+
+        meta_even, meta_odd = meta_4_ready.split()
+        mn0, mn2 = meta_even.split()
+        mn1, mn3 = meta_odd.split()
+
+        meta_reordered = gl.inline_asm_elementwise(
+            asm="""
+            {
+            .reg .b32 t1, t2, t3;
+            shl.b32 t1, $2, 4;
+            shl.b32 t2, $3, 8;
+            shl.b32 t3, $4, 12;
+            or.b32 $0, $1, t1;
+            or.b32 $0, $0, t2;
+            or.b32 $0, $0, t3;
+            }
+            """,
+            constraints="=r,r,r,r,r",
+            args=[mn0, mn1, mn2, mn3],
+            dtype=gl.int16,
+            is_pure=True,
+            pack=1,
+        )
+
+        meta_reordered = gl.convert_layout(
+            meta_reordered,
+            gl.DotOperandLayout(
+                operand_index=0,
+                parent=self.layout,
+                k_width=32 // gl.int16.primitive_bitwidth,
+                meta=1
+            )
+        )
+
+        return a_compressed, meta_reordered
 
 # Schedulers
 

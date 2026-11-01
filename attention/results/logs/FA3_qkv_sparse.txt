@@ -1,45 +1,49 @@
-[INFO] Skipping '4-Part (QK Sparse 2:4)' via CLI flag.
-
 ======================================================================
    STARTING FLASHATTENTION-3 BENCHMARK (HEAD_DIM=64)
    Active Kernels: ['4-Part (Dense)', '4-Part (QKV Sparse 2:4)']
 ======================================================================
 
 Start SEQ_LEN=512-HEAD_DIM=64 (1/6)
-Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 345.75 TFLOPS/ 0.0994 ms, 4-Part (Dense): 341.44 TFLOPS/ 0.1006 ms, 4-Part (QKV Sparse 2:4): 197.86 TFLOPS/ 0.1737 ms
+Finish SEQ_LEN=512-HEAD_DIM=64 -> PyTorch SDPA: 348.69 TFLOPS/ 0.0985 ms, 4-Part (Dense): 354.92 TFLOPS/ 0.0968 ms, 4-Part (QKV Sparse 2:4): 199.40 TFLOPS/ 0.1723 ms [Compress: 28.49 µs (0.0285 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 64, 'num_warps': 4}
+Start SEQ_LEN=1024-HEAD_DIM=64 (2/6)
+Finish SEQ_LEN=1024-HEAD_DIM=64 -> PyTorch SDPA: 379.16 TFLOPS/ 0.1812 ms, 4-Part (Dense): 374.17 TFLOPS/ 0.1837 ms, 4-Part (QKV Sparse 2:4): 238.46 TFLOPS/ 0.2882 ms [Compress: 28.81 µs (0.0288 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 5, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 64, 'num_warps': 4}
+Start SEQ_LEN=2048-HEAD_DIM=64 (3/6)
+Finish SEQ_LEN=2048-HEAD_DIM=64 -> PyTorch SDPA: 405.37 TFLOPS/ 0.3390 ms, 4-Part (Dense): 396.20 TFLOPS/ 0.3469 ms, 4-Part (QKV Sparse 2:4): 257.84 TFLOPS/ 0.5330 ms [Compress: 28.82 µs (0.0288 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 64, 'num_warps': 4}
+Start SEQ_LEN=4096-HEAD_DIM=64 (4/6)
+Finish SEQ_LEN=4096-HEAD_DIM=64 -> PyTorch SDPA: 417.20 TFLOPS/ 0.6589 ms, 4-Part (Dense): 404.81 TFLOPS/ 0.6790 ms, 4-Part (QKV Sparse 2:4): 269.64 TFLOPS/ 1.0194 ms [Compress: 28.82 µs (0.0288 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 64, 'num_warps': 4}
+Start SEQ_LEN=8192-HEAD_DIM=64 (5/6)
+Finish SEQ_LEN=8192-HEAD_DIM=64 -> PyTorch SDPA: 423.12 TFLOPS/ 1.2993 ms, 4-Part (Dense): 410.50 TFLOPS/ 1.3392 ms, 4-Part (QKV Sparse 2:4): 276.91 TFLOPS/ 1.9853 ms [Compress: 28.83 µs (0.0288 ms)]
   [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
-Start SEQ_LEN=1024-HEAD_DIM=64 (2/6)
-Finish SEQ_LEN=1024-HEAD_DIM=64 -> PyTorch SDPA: 374.78 TFLOPS/ 0.1834 ms, 4-Part (Dense): 353.62 TFLOPS/ 0.1943 ms, 4-Part (QKV Sparse 2:4): 230.55 TFLOPS/ 0.2981 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 1}, num_warps=4
-  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
-Start SEQ_LEN=2048-HEAD_DIM=64 (3/6)
-Finish SEQ_LEN=2048-HEAD_DIM=64 -> PyTorch SDPA: 399.44 TFLOPS/ 0.3441 ms, 4-Part (Dense): 368.72 TFLOPS/ 0.3727 ms, 4-Part (QKV Sparse 2:4): 248.09 TFLOPS/ 0.5540 ms
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 64, 'num_warps': 4}
+Start SEQ_LEN=16384-HEAD_DIM=64 (6/6)
+Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 426.26 TFLOPS/ 2.5795 ms, 4-Part (Dense): 413.50 TFLOPS/ 2.6590 ms, 4-Part (QKV Sparse 2:4): 280.55 TFLOPS/ 3.9191 ms [Compress: 28.83 µs (0.0288 ms)]
   [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
-Start SEQ_LEN=4096-HEAD_DIM=64 (4/6)
-Finish SEQ_LEN=4096-HEAD_DIM=64 -> PyTorch SDPA: 411.64 TFLOPS/ 0.6678 ms, 4-Part (Dense): 378.47 TFLOPS/ 0.7263 ms, 4-Part (QKV Sparse 2:4): 257.62 TFLOPS/ 1.0670 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 2}, num_warps=4
-  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
-Start SEQ_LEN=8192-HEAD_DIM=64 (5/6)
-Finish SEQ_LEN=8192-HEAD_DIM=64 -> PyTorch SDPA: 417.29 TFLOPS/ 1.3174 ms, 4-Part (Dense): 383.32 TFLOPS/ 1.4342 ms, 4-Part (QKV Sparse 2:4): 264.48 TFLOPS/ 2.0786 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 4, 'SUBTILE_FACTOR': 2}, num_warps=4
-  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
-Start SEQ_LEN=16384-HEAD_DIM=64 (6/6)
-Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 420.17 TFLOPS/ 2.6168 ms, 4-Part (Dense): 382.38 TFLOPS/ 2.8755 ms, 4-Part (QKV Sparse 2:4): 268.41 TFLOPS/ 4.0964 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 64, 'num_stages': 6, 'SUBTILE_FACTOR': 2}, num_warps=4
-  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 64, 'num_stages': 3, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 64, 'num_warps': 4}
 
 ======================================================================
              BENCHMARK RESULTS TABLE (HEAD_DIM=64)
 ======================================================================
- SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part (Dense)_TFLOPS  4-Part (QKV Sparse 2:4)_TFLOPS
-     512           345.754757             341.442214                      197.856189
-    1024           374.777142             353.623744                      230.548158
-    2048           399.436171             368.717379                      248.089153
-    4096           411.639030             378.472854                      257.618257
-    8192           417.293876             383.321291                      264.483466
-   16384           420.169672             382.375391                      268.406204
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part (Dense)_TFLOPS  4-Part (QKV Sparse 2:4)_TFLOPS  4-Part (QKV Sparse 2:4)_compress_ms
+     512           348.686174             354.924412                      199.397414                             0.028494
+    1024           379.161235             374.167698                      238.461035                             0.028811
+    2048           405.368334             396.197720                      257.841722                             0.028824
+    4096           417.197192             404.811198                      269.638813                             0.028820
+    8192           423.116700             410.501470                      276.908553                             0.028829
+   16384           426.255305             413.498939                      280.553358                             0.028827
 ======================================================================
 
 
@@ -51,40 +55,46 @@ Finish SEQ_LEN=16384-HEAD_DIM=64 -> PyTorch SDPA: 420.17 TFLOPS/ 2.6168 ms, 4-Pa
 ======================================================================
 
 Start SEQ_LEN=512-HEAD_DIM=128 (1/6)
-Finish SEQ_LEN=512-HEAD_DIM=128 -> PyTorch SDPA: 432.48 TFLOPS/ 0.1589 ms, 4-Part (Dense): 444.44 TFLOPS/ 0.1546 ms, 4-Part (QKV Sparse 2:4): 310.60 TFLOPS/ 0.2212 ms
+Finish SEQ_LEN=512-HEAD_DIM=128 -> PyTorch SDPA: 437.62 TFLOPS/ 0.1570 ms, 4-Part (Dense): 467.64 TFLOPS/ 0.1470 ms, 4-Part (QKV Sparse 2:4): 313.41 TFLOPS/ 0.2193 ms [Compress: 46.34 µs (0.0463 ms)]
   [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 128, 'num_warps': 4}
 Start SEQ_LEN=1024-HEAD_DIM=128 (2/6)
-Finish SEQ_LEN=1024-HEAD_DIM=128 -> PyTorch SDPA: 496.32 TFLOPS/ 0.2769 ms, 4-Part (Dense): 495.84 TFLOPS/ 0.2772 ms, 4-Part (QKV Sparse 2:4): 380.02 TFLOPS/ 0.3617 ms
+Finish SEQ_LEN=1024-HEAD_DIM=128 -> PyTorch SDPA: 499.95 TFLOPS/ 0.2749 ms, 4-Part (Dense): 522.49 TFLOPS/ 0.2630 ms, 4-Part (QKV Sparse 2:4): 387.22 TFLOPS/ 0.3549 ms [Compress: 46.53 µs (0.0465 ms)]
   [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 128, 'num_warps': 4}
 Start SEQ_LEN=2048-HEAD_DIM=128 (3/6)
-Finish SEQ_LEN=2048-HEAD_DIM=128 -> PyTorch SDPA: 530.78 TFLOPS/ 0.5179 ms, 4-Part (Dense): 526.86 TFLOPS/ 0.5217 ms, 4-Part (QKV Sparse 2:4): 420.21 TFLOPS/ 0.6541 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+Finish SEQ_LEN=2048-HEAD_DIM=128 -> PyTorch SDPA: 534.73 TFLOPS/ 0.5141 ms, 4-Part (Dense): 553.35 TFLOPS/ 0.4967 ms, 4-Part (QKV Sparse 2:4): 428.56 TFLOPS/ 0.6414 ms [Compress: 46.76 µs (0.0468 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 128, 'num_warps': 4}
 Start SEQ_LEN=4096-HEAD_DIM=128 (4/6)
-Finish SEQ_LEN=4096-HEAD_DIM=128 -> PyTorch SDPA: 552.25 TFLOPS/ 0.9955 ms, 4-Part (Dense): 533.90 TFLOPS/ 1.0297 ms, 4-Part (QKV Sparse 2:4): 434.15 TFLOPS/ 1.2663 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 2}, num_warps=4
+Finish SEQ_LEN=4096-HEAD_DIM=128 -> PyTorch SDPA: 555.52 TFLOPS/ 0.9896 ms, 4-Part (Dense): 566.77 TFLOPS/ 0.9700 ms, 4-Part (QKV Sparse 2:4): 448.83 TFLOPS/ 1.2249 ms [Compress: 46.65 µs (0.0466 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 128, 'num_warps': 4}
 Start SEQ_LEN=8192-HEAD_DIM=128 (5/6)
-Finish SEQ_LEN=8192-HEAD_DIM=128 -> PyTorch SDPA: 567.83 TFLOPS/ 1.9363 ms, 4-Part (Dense): 552.48 TFLOPS/ 1.9901 ms, 4-Part (QKV Sparse 2:4): 438.85 TFLOPS/ 2.5054 ms
+Finish SEQ_LEN=8192-HEAD_DIM=128 -> PyTorch SDPA: 573.08 TFLOPS/ 1.9186 ms, 4-Part (Dense): 575.94 TFLOPS/ 1.9091 ms, 4-Part (QKV Sparse 2:4): 460.90 TFLOPS/ 2.3856 ms [Compress: 46.39 µs (0.0464 ms)]
   [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 128, 'num_warps': 4}
 Start SEQ_LEN=16384-HEAD_DIM=128 (6/6)
-Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 570.58 TFLOPS/ 3.8540 ms, 4-Part (Dense): 561.01 TFLOPS/ 3.9197 ms, 4-Part (QKV Sparse 2:4): 441.38 TFLOPS/ 4.9822 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 576.30 TFLOPS/ 3.8158 ms, 4-Part (Dense): 579.38 TFLOPS/ 3.7955 ms, 4-Part (QKV Sparse 2:4): 466.73 TFLOPS/ 4.7115 ms [Compress: 46.57 µs (0.0466 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 128, 'BLOCK_SIZE_K': 128, 'num_stages': 2, 'SUBTILE_FACTOR': 1}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 128, 'num_warps': 4}
 
 ======================================================================
              BENCHMARK RESULTS TABLE (HEAD_DIM=128)
 ======================================================================
- SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part (Dense)_TFLOPS  4-Part (QKV Sparse 2:4)_TFLOPS
-     512           432.479722             444.444943                      310.601512
-    1024           496.323616             495.843589                      380.015151
-    2048           530.776683             526.862014                      420.211490
-    4096           552.253791             533.903747                      434.145652
-    8192           567.833021             552.482036                      438.849131
-   16384           570.583632             561.014713                      441.376989
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part (Dense)_TFLOPS  4-Part (QKV Sparse 2:4)_TFLOPS  4-Part (QKV Sparse 2:4)_compress_ms
+     512           437.622772             467.635327                      313.406486                             0.046343
+    1024           499.953663             522.493659                      387.223189                             0.046527
+    2048           534.729428             553.352851                      428.560413                             0.046758
+    4096           555.521954             566.774037                      448.832840                             0.046647
+    8192           573.078988             575.942073                      460.901730                             0.046394
+   16384           576.297723             579.383297                      466.730729                             0.046568
 ======================================================================
 
 
@@ -96,40 +106,46 @@ Finish SEQ_LEN=16384-HEAD_DIM=128 -> PyTorch SDPA: 570.58 TFLOPS/ 3.8540 ms, 4-P
 ======================================================================
 
 Start SEQ_LEN=512-HEAD_DIM=256 (1/6)
-Finish SEQ_LEN=512-HEAD_DIM=256 -> PyTorch SDPA: 455.47 TFLOPS/ 0.3018 ms, 4-Part (Dense): 471.67 TFLOPS/ 0.2914 ms, 4-Part (QKV Sparse 2:4): 377.65 TFLOPS/ 0.3639 ms
+Finish SEQ_LEN=512-HEAD_DIM=256 -> PyTorch SDPA: 458.68 TFLOPS/ 0.2996 ms, 4-Part (Dense): 484.49 TFLOPS/ 0.2837 ms, 4-Part (QKV Sparse 2:4): 374.36 TFLOPS/ 0.3671 ms [Compress: 81.58 µs (0.0816 ms)]
   [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 256, 'num_warps': 8}
 Start SEQ_LEN=1024-HEAD_DIM=256 (2/6)
-Finish SEQ_LEN=1024-HEAD_DIM=256 -> PyTorch SDPA: 525.83 TFLOPS/ 0.5227 ms, 4-Part (Dense): 532.58 TFLOPS/ 0.5161 ms, 4-Part (QKV Sparse 2:4): 466.41 TFLOPS/ 0.5893 ms
+Finish SEQ_LEN=1024-HEAD_DIM=256 -> PyTorch SDPA: 533.62 TFLOPS/ 0.5151 ms, 4-Part (Dense): 556.14 TFLOPS/ 0.4943 ms, 4-Part (QKV Sparse 2:4): 466.51 TFLOPS/ 0.5892 ms [Compress: 81.21 µs (0.0812 ms)]
   [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 256, 'num_warps': 8}
 Start SEQ_LEN=2048-HEAD_DIM=256 (3/6)
-Finish SEQ_LEN=2048-HEAD_DIM=256 -> PyTorch SDPA: 569.61 TFLOPS/ 0.9651 ms, 4-Part (Dense): 565.46 TFLOPS/ 0.9722 ms, 4-Part (QKV Sparse 2:4): 521.77 TFLOPS/ 1.0536 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
-  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
-Start SEQ_LEN=4096-HEAD_DIM=256 (4/6)
-Finish SEQ_LEN=4096-HEAD_DIM=256 -> PyTorch SDPA: 596.35 TFLOPS/ 1.8437 ms, 4-Part (Dense): 590.16 TFLOPS/ 1.8631 ms, 4-Part (QKV Sparse 2:4): 565.47 TFLOPS/ 1.9444 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
-  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
-Start SEQ_LEN=8192-HEAD_DIM=256 (5/6)
-Finish SEQ_LEN=8192-HEAD_DIM=256 -> PyTorch SDPA: 612.09 TFLOPS/ 3.5927 ms, 4-Part (Dense): 601.20 TFLOPS/ 3.6578 ms, 4-Part (QKV Sparse 2:4): 589.45 TFLOPS/ 3.7307 ms
+Finish SEQ_LEN=2048-HEAD_DIM=256 -> PyTorch SDPA: 570.65 TFLOPS/ 0.9634 ms, 4-Part (Dense): 594.57 TFLOPS/ 0.9246 ms, 4-Part (QKV Sparse 2:4): 525.33 TFLOPS/ 1.0465 ms [Compress: 81.16 µs (0.0812 ms)]
   [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
-Start SEQ_LEN=16384-HEAD_DIM=256 (6/6)
-Finish SEQ_LEN=16384-HEAD_DIM=256 -> PyTorch SDPA: 615.44 TFLOPS/ 7.1462 ms, 4-Part (Dense): 602.23 TFLOPS/ 7.3029 ms, 4-Part (QKV Sparse 2:4): 597.12 TFLOPS/ 7.3654 ms
-  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 256, 'num_warps': 8}
+Start SEQ_LEN=4096-HEAD_DIM=256 (4/6)
+Finish SEQ_LEN=4096-HEAD_DIM=256 -> PyTorch SDPA: 603.50 TFLOPS/ 1.8219 ms, 4-Part (Dense): 622.91 TFLOPS/ 1.7651 ms, 4-Part (QKV Sparse 2:4): 560.37 TFLOPS/ 1.9621 ms [Compress: 80.90 µs (0.0809 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 256, 'num_warps': 8}
+Start SEQ_LEN=8192-HEAD_DIM=256 (5/6)
+Finish SEQ_LEN=8192-HEAD_DIM=256 -> PyTorch SDPA: 617.67 TFLOPS/ 3.5602 ms, 4-Part (Dense): 631.37 TFLOPS/ 3.4830 ms, 4-Part (QKV Sparse 2:4): 576.11 TFLOPS/ 3.8170 ms [Compress: 81.18 µs (0.0812 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
   [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 256, 'num_warps': 8}
+Start SEQ_LEN=16384-HEAD_DIM=256 (6/6)
+Finish SEQ_LEN=16384-HEAD_DIM=256 -> PyTorch SDPA: 621.62 TFLOPS/ 7.0752 ms, 4-Part (Dense): 635.17 TFLOPS/ 6.9242 ms, 4-Part (QKV Sparse 2:4): 590.93 TFLOPS/ 7.4425 ms [Compress: 81.17 µs (0.0812 ms)]
+  [4-Part (Dense)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 4}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] best config: {'BLOCK_SIZE_M': 128, 'BLOCK_SIZE_N': 64, 'BLOCK_SIZE_K': 256, 'num_stages': 2, 'SUBTILE_FACTOR': 8}, num_warps=4
+  [4-Part (QKV Sparse 2:4)] sparsifier config: {'BLOCK_SIZE_M': 256, 'BLOCK_SIZE_K': 256, 'num_warps': 8}
 
 ======================================================================
              BENCHMARK RESULTS TABLE (HEAD_DIM=256)
 ======================================================================
- SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part (Dense)_TFLOPS  4-Part (QKV Sparse 2:4)_TFLOPS
-     512           455.466125             471.665636                      377.646205
-    1024           525.830603             532.575256                      466.413786
-    2048           569.613156             565.457005                      521.772296
-    4096           596.354885             590.156173                      565.468962
-    8192           612.089432             601.195490                      589.445273
-   16384           615.435260             602.232400                      597.124715
+ SEQ_LEN  PyTorch SDPA_TFLOPS  4-Part (Dense)_TFLOPS  4-Part (QKV Sparse 2:4)_TFLOPS  4-Part (QKV Sparse 2:4)_compress_ms
+     512           458.681522             484.487795                      374.356411                             0.081584
+    1024           533.624248             556.141113                      466.512697                             0.081206
+    2048           570.653182             594.571914                      525.325503                             0.081157
+    4096           603.502386             622.906481                      560.366160                             0.080905
+    8192           617.669555             631.366145                      576.114448                             0.081180
+   16384           621.617110             635.167126                      590.933824                             0.081166
 ======================================================================
 
 
